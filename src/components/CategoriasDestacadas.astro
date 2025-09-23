@@ -1,0 +1,35 @@
+---
+const { categorias } = Astro.props;
+---
+
+<section class="py-12 bg-neutral-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2
+            class="text-3xl font-heading font-bold text-center text-neutral-dark mb-8"
+        >
+            Categorías destacadas
+        </h2>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {
+                categorias.map((cat) => (
+                    <a
+                        href={`/categoria/${cat.slug}`}
+                        class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition"
+                    >
+                        <img
+                            src={cat.imagen}
+                            alt={cat.nombre}
+                            class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                        />
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition" />
+                        <h3 class="absolute inset-x-0 bottom-4 text-center text-white text-lg font-heading font-semibold">
+                            {cat.nombre}
+                        </h3>
+                    </a>
+                ))
+            }
+        </div>
+    </div>
+</section>

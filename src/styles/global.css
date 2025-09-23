@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  /* forzar que --font-sans use Jost (fallbacks incluidos) */
+  --font-sans: "Jost", "Helvetica", "Arial", "Lucida", sans-serif;
+
+  /* opcional: alias para headings/body si quieres */
+  --font-heading: var(--font-sans);
+  --font-body: var(--font-sans);
+}

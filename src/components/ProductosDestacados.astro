@@ -1,0 +1,54 @@
+---
+const { productos } = Astro.props
+---
+
+<section class="py-16 bg-neutral-light">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Título de sección -->
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-dark">
+        Productos más vendidos
+      </h2>
+      <p class="mt-2 text-neutral-medium">
+        Descubre lo que nuestros clientes más disfrutan
+      </p>
+    </div>
+
+    <!-- Grid de productos -->
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {productos.map((prod) => (
+        <div
+          class="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition"
+        >
+          <!-- Imagen -->
+          <div class="aspect-square overflow-hidden">
+            <img
+              src={prod.imagen}
+              alt={prod.nombre}
+              class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+            />
+          </div>
+
+          <!-- Info -->
+          <div class="p-4 flex flex-col h-full">
+            <h3 class="font-heading text-lg font-semibold text-neutral-dark mb-1">
+              {prod.nombre}
+            </h3>
+            <p class="text-primary font-bold text-xl mb-4">
+              S/ {prod.precio}
+            </p>
+
+            <!-- CTA -->
+            <div class="mt-4">
+              <button
+                class="w-full bg-primary py-2 px-4 rounded-lg font-medium shadow-md hover:bg-primary/90 hover:shadow-lg transition cursor-pointer"
+              >
+                Añadir al carrito
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

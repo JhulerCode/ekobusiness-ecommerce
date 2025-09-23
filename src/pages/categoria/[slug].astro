@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const { slug } = Astro.params;
+---
+
+<BaseLayout title={`Categoría: ${slug}`}>
+  <h1>Productos en {slug}</h1>
+  <p>Aquí listarías productos dinámicos desde tu API</p>
+</BaseLayout>
