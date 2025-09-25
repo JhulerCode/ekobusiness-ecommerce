@@ -52,7 +52,7 @@ export async function getProductos(filtros_extra) {
     }
 
     const response = await apiGet("productos", { qry })
-
+    console.log(response)
     return response.data.map((prod) => ({
         id: prod.id,
         nombre: prod.nombre,

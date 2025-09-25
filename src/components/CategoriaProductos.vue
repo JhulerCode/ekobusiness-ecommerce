@@ -39,15 +39,6 @@
             v-if="productosFiltrados.length > 0"
         />
 
-        <!-- <div
-            v-for="item in productosFiltrados"
-            :key="item.id"
-            class="group bg-white overflow-hidden transition flex flex-col"
-            v-if="productosFiltrados.length > 0"
-        >
-            <Producto :producto="item" />
-        </div> -->
-
         <div v-else>No hay productos disponibles</div>
     </div>
 </template>

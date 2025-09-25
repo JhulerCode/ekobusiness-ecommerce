@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Beneficios from '../../components/Beneficios.astro';
-import ProductosGrid from '../../components/ProductosGrid.vue';
+import CategoriaProductos from '../../components/CategoriaProductos.vue';
 import { getCategorias, getProductos } from '../../lib/api.js';
 
 const { slug } = Astro.params;
@@ -48,7 +48,7 @@ const lineas = [
         <p class="max-w-xl">{categorias[0].descripcion}</p>
     </div>
 
-    <ProductosGrid client:load productos={productos} lineas={lineas} />
+    <CategoriaProductos client:load productos={productos} lineas={lineas} />
 
     <Beneficios />
 </BaseLayout>

@@ -1,6 +1,10 @@
 ---
 import { getCategorias } from '../lib/api';
-const categorias = await getCategorias();
+
+const categoriasFltr = {
+    is_destacado: { op: 'Es', val: true },
+};
+const categorias = await getCategorias(categoriasFltr);
 ---
 
 <section class="py-16 bg-gray-50">

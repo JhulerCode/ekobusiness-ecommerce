@@ -1,71 +1,59 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getProductosByCategoria } from '../../lib/api.js';
+import Beneficios from '../../components/Beneficios.astro';
+import LineaProductos from '../../components/LineaProductos.vue';
+import { getCategorias, getProductos } from '../../lib/api.js';
 
 const { slug } = Astro.params;
-const productos = await getProductosByCategoria(slug);
+
+const lineas = [
+    {
+        id: '1',
+        nombre: 'FILTRANTE',
+        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
+        descripcion:
+            'Las infusiones Filtrante combinan sabor y pureza, seleccionando ingredientes cuidadosamente para una experiencia de té ligera y refrescante en cada sorbo.',
+        slug: 'filtrante',
+    },
+    {
+        id: '2',
+        nombre: 'GRANEL',
+        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
+        descripcion:
+            'Las mezclas a granel permiten explorar aromas auténticos y naturales, con la flexibilidad de preparar tu té según tu gusto y cantidad favorita.',
+        slug: 'granel',
+    },
+    {
+        id: '3',
+        nombre: 'LUXURY',
+        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
+        descripcion:
+            'Las líneas Luxury representan la máxima sofisticación en cada hoja, ofreciendo sabores exclusivos y aromas intensos que transforman la taza en un momento de placer.',
+        slug: 'luxury',
+    },
+];
+
+const linea = lineas.find((a) => a.slug == slug);
+
+const productosFltr = {
+    produccion_tipo: { op: 'Es', val: linea.id },
+};
+const productos = await getProductos(productosFltr);
+
+const categorias = await getCategorias();
 ---
 
 <BaseLayout title={`Categoría: ${slug}`}>
-    <section class="max-w-7xl mx-auto px-6 py-12">
-        <h1 class="text-3xl font-bold mb-8 capitalize">Categoría: {slug}</h1>
+    <div
+        class="mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-start gap-8 md:gap-16"
+    >
+        <h1 class="text-3xl md:text-4xl font-semibold">
+            {linea.nombre}
+        </h1>
+        <p class="max-w-xl">{linea.descripcion}</p>
+    </div>
 
-        {
-            productos.length === 0 ? (
-                <p class="text-gray-600">
-                    No hay productos disponibles en esta categoría.
-                </p>
-            ) : (
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {productos.map((item) => (
-                        <div
-                        class="group bg-white rounded-2xl overflow-hidden transition flex flex-col"
-                    >
-                        <!-- Imagen -->
-                        <div class="aspect-square overflow-hidden">
-                            <img
-                                :src="item.imagen"
-                                :alt="item.nombre"
-                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
-                        </div>
+    <LineaProductos client:load productos={productos} categorias={categorias} />
 
-                        <!-- Contenido -->
-                        <div class="p-4 flex flex-col flex-grow">
-                            <p
-                                class="text-gray-700 text-sm line-clamp-2 mb-2 min-h-[2.5rem]"
-                            >
-                                { item.nombre }
-                            </p>
-
-                            <div class="flex flex-col gap-1">
-                                <div
-                                    v-if="item.precio_antes"
-                                    class="flex justify-between text-gray-400 text-sm"
-                                >
-                                    <span>Antes</span>
-                                    <span class="line-through">
-                                        S/ { item.precio_antes }
-                                    </span>
-                                </div>
-
-                                <div
-                                    class="flex justify-between text-gray-700 font-semibold"
-                                >
-                                    <span>Precio</span>
-                                    <span>S/ { item.precio }</span>
-                                </div>
-                            </div>
-                            {/* <button
-                                class="w-full mt-2 bg-black text-white border border-black py-2 px-4 rounded-lg font-medium shadow-sm hover:bg-white hover:text-black transition cursor-pointer"
-                            >
-                                Añadir al carrito
-                            </button> */}
-                        </div>
-                    </div>
-                    ))}
-                </div>
-            )
-        }
-    </section>
+    <Beneficios />
 </BaseLayout>

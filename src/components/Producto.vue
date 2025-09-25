@@ -26,22 +26,21 @@
                     </span>
                 </div>
 
-                <div class="flex justify-between text-gray-700 font-semibold">
+                <div class="flex justify-between text-gray-800 font-semibold">
                     <span>Precio</span>
                     <span>S/ {{ producto.precio }}</span>
                 </div>
             </div>
         </a>
 
-        <div class="flex">
-            <!-- <button class="cursor-pointer" @click="agregarAlCarrito(producto)"> -->
+        <!-- <div class="flex"> -->
             <button
-                class="cursor-pointer ml-auto p-1 text-black rounded-full hover:bg-gray-200 transition flex items-center justify-center"
+                class="cursor-pointer ml-auto p-1 text-gray-800 rounded-full hover:bg-gray-100 transition flex items-center justify-center"
                 @click="agregarAlCarrito(producto)"
             >
                 <ShoppingCartPlus />
             </button>
-        </div>
+        <!-- </div> -->
     </div>
 </template>
 
