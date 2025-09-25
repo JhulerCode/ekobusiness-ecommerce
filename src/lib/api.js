@@ -31,9 +31,9 @@ export async function getCategorias(filtros_extra) {
         id: cat.id,
         nombre: cat.nombre,
         descripcion: cat.descripcion,
-        slug: cat.nombre.toLowerCase().replace(/\s+/g, "-"),
         foto: `${host}/uploads/${cat.imagen}`,
         foto2: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-4.jpg',
+        slug: cat.nombre.toLowerCase().replace(/\s+/g, "-"),
     }))
 }
 
@@ -44,7 +44,7 @@ export async function getProductos(filtros_extra) {
             marca: { op: "Es", val: "SUNKA" },
             is_combo: { op: "Es", val: false },
         },
-        cols: ['nombre', 'precio', 'fotos'],
+        cols: ['nombre', 'produccion_tipo', 'categoria', 'precio', 'fotos'],
     }
 
     if (filtros_extra) {
@@ -56,9 +56,12 @@ export async function getProductos(filtros_extra) {
     return response.data.map((prod) => ({
         id: prod.id,
         nombre: prod.nombre,
+        produccion_tipo: prod.produccion_tipo,
+        categoria: prod.categoria,
         precio: prod.precio.toFixed(2),
         precio_antes: (10).toFixed(2),
         foto: `${host}/uploads/${prod.fotos == null ? '' : prod.fotos[0].id}`,
         fotos: prod.fotos,
+        slug: prod.nombre.toLowerCase().replace(/\s+/g, "-"),
     }))
 }
