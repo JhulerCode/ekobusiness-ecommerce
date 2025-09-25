@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Beneficios from '../../components/Beneficios.astro';
 import CategoriaProductos from '../../components/CategoriaProductos.vue';
 import { getCategorias, getProductos } from '../../lib/api.js';
+import { lineas } from '../../lib/lineas.js';
 
 const { slug } = Astro.params;
 
@@ -10,45 +11,30 @@ const categoriasFltr = {
     nombre: { op: 'Es', val: slug.replaceAll('-', ' ') },
 };
 const categorias = await getCategorias(categoriasFltr);
+const categoria = categorias[0];
 
 const productosFltr = {
-    categoria: { op: 'Es', val: categorias[0].id },
+    categoria: { op: 'Es', val: categoria.id },
 };
 const productos = await getProductos(productosFltr);
 
-const lineas = [
-    {
-        id: '1',
-        nombre: 'FILTRANTE',
-        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
-        slug: 'filtrante',
-    },
-    {
-        id: '2',
-        nombre: 'GRANEL',
-        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
-        slug: 'granel',
-    },
-    {
-        id: '3',
-        nombre: 'LUXURY',
-        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
-        slug: 'luxury',
-    },
-];
+const produccionTipos = new Set(
+    productos.map((p) => String(p.produccion_tipo))
+);
+const lineas2 = lineas.filter((l) => produccionTipos.has(String(l.id)));
 ---
 
-<BaseLayout title={`Categoría: ${slug}`}>
+<BaseLayout title={`${categoria?.nombre}`}>
     <div
         class="mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-start gap-8 md:gap-16"
     >
         <h1 class="text-3xl md:text-4xl font-semibold">
-            {categorias[0].nombre}
+            {categoria.nombre}
         </h1>
-        <p class="max-w-xl">{categorias[0].descripcion}</p>
+        <p class="max-w-xl">{categoria.descripcion}</p>
     </div>
 
-    <CategoriaProductos client:load productos={productos} lineas={lineas} />
+    <CategoriaProductos client:load productos={productos} lineas={lineas2} />
 
     <Beneficios />
 </BaseLayout>

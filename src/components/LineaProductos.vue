@@ -1,6 +1,6 @@
 <template>
     <div class="border-y border-gray-200 py-4 px-6">
-        <div class="flex flex-wrap items-center gap-4">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
             <button
                 @click="setFiltro('todos')"
                 :class="[

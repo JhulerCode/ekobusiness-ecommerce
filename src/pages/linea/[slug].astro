@@ -2,55 +2,35 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Beneficios from '../../components/Beneficios.astro';
 import LineaProductos from '../../components/LineaProductos.vue';
-import { getCategorias, getProductos } from '../../lib/api.js';
+import { getProductos } from '../../lib/api.js';
+import { lineas } from '../../lib/lineas.js';
 
 const { slug } = Astro.params;
-
-const lineas = [
-    {
-        id: '1',
-        nombre: 'FILTRANTE',
-        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
-        descripcion:
-            'Las infusiones Filtrante combinan sabor y pureza, seleccionando ingredientes cuidadosamente para una experiencia de té ligera y refrescante en cada sorbo.',
-        slug: 'filtrante',
-    },
-    {
-        id: '2',
-        nombre: 'GRANEL',
-        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
-        descripcion:
-            'Las mezclas a granel permiten explorar aromas auténticos y naturales, con la flexibilidad de preparar tu té según tu gusto y cantidad favorita.',
-        slug: 'granel',
-    },
-    {
-        id: '3',
-        nombre: 'LUXURY',
-        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
-        descripcion:
-            'Las líneas Luxury representan la máxima sofisticación en cada hoja, ofreciendo sabores exclusivos y aromas intensos que transforman la taza en un momento de placer.',
-        slug: 'luxury',
-    },
-];
 
 const linea = lineas.find((a) => a.slug == slug);
 
 const productosFltr = {
-    produccion_tipo: { op: 'Es', val: linea.id },
+    produccion_tipo: { op: 'Es', val: linea?.id },
 };
-const productos = await getProductos(productosFltr);
+const productos = await getProductos(productosFltr, ['categoria1']);
 
-const categorias = await getCategorias();
+const categorias = [];
+for (const a of productos) {
+    const i = categorias.findIndex((b) => b.id == a.categoria);
+    if (i === -1) {
+        categorias.push(a.categoria1);
+    }
+}
 ---
 
-<BaseLayout title={`Categoría: ${slug}`}>
+<BaseLayout title={`${linea?.nombre}`}>
     <div
         class="mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-start gap-8 md:gap-16"
     >
         <h1 class="text-3xl md:text-4xl font-semibold">
-            {linea.nombre}
+            {linea?.nombre}
         </h1>
-        <p class="max-w-xl">{linea.descripcion}</p>
+        <p class="max-w-xl">{linea?.descripcion}</p>
     </div>
 
     <LineaProductos client:load productos={productos} categorias={categorias} />
