@@ -15,10 +15,14 @@ async function apiGet(endpoint, params = {}) {
     return res.json()
 }
 
-export async function getCategoriasDestacadas() {
+export async function getCategorias(filtros_extra) {
     const qry = {
         fltr: { tipo: { op: "Es", val: 2 } },
-        cols: ["nombre", "imagen"],
+        cols: ['id', 'nombre', 'imagen', 'descripcion'],
+    }
+
+    if (filtros_extra) {
+        qry.fltr = { ...qry.fltr, ...filtros_extra }
     }
 
     const response = await apiGet("categorias", { qry })
@@ -26,21 +30,25 @@ export async function getCategoriasDestacadas() {
     return response.data.map((cat) => ({
         id: cat.id,
         nombre: cat.nombre,
-        descripcion: 'Prueba la excelencia y dsifruta con sunka',
+        descripcion: cat.descripcion,
         slug: cat.nombre.toLowerCase().replace(/\s+/g, "-"),
-        // imagen: `${host}/uploads/${cat.imagen}`,
-        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
-        imagen2: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-4.jpg',
+        foto: `${host}/uploads/${cat.imagen}`,
+        foto2: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-4.jpg',
     }))
 }
 
-export async function getProductosDestacados() {
+export async function getProductos(filtros_extra) {
     const qry = {
         fltr: {
             tipo: { op: "Es", val: 2 },
-            nombre: { op: "Contiene", val: 'jengibre' },
+            marca: { op: "Es", val: "SUNKA" },
+            is_combo: { op: "Es", val: false },
         },
         cols: ['nombre', 'precio', 'fotos'],
+    }
+
+    if (filtros_extra) {
+        qry.fltr = { ...qry.fltr, ...filtros_extra }
     }
 
     const response = await apiGet("productos", { qry })
@@ -50,6 +58,7 @@ export async function getProductosDestacados() {
         nombre: prod.nombre,
         precio: prod.precio.toFixed(2),
         precio_antes: (10).toFixed(2),
-        imagen: `${host}/uploads/${prod.fotos == null ? '' : prod.fotos[0].id}`,
+        foto: `${host}/uploads/${prod.fotos == null ? '' : prod.fotos[0].id}`,
+        fotos: prod.fotos,
     }))
 }

@@ -1,10 +1,87 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getCategorias, getProductos } from '../../lib/api.js'
 
 const { slug } = Astro.params;
+
+const categoriasFltr = {
+	nombre: {op: 'Es', val: slug.replaceAll("-", " ")}
+}
+const categorias = await getCategorias(categoriasFltr)
+
+const productosFltr = {
+	categoria: {op: 'Es', val: categorias[0].id}
+}
+const productos = await getProductos(productosFltr)
 ---
 
 <BaseLayout title={`Categoría: ${slug}`}>
-  <h1>Productos en {slug}</h1>
-  <p>Aquí listarías productos dinámicos desde tu API</p>
+    <section class="max-w-7xl mx-auto px-6 py-12">
+		<div class="mb-8 flex flex-col md:flex-row justify-between items-start gap-8 md:gap-16">
+			<h1 class="text-3xl font-semibold">{categorias[0].nombre}</h1>
+			<p class="max-w-xl">{categorias[0].descripcion}</p>
+		</div>
+
+		<div class="filtros">
+
+		</div>
+
+        {
+            productos.length === 0 ? (
+                <p class="text-gray-600">
+                    No hay productos disponibles en esta categoría.
+                </p>
+            ) : (
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {productos.map((item) => (
+                        <div
+                        class="group bg-white rounded-2xl overflow-hidden transition flex flex-col"
+                    >
+                        <!-- Imagen -->
+                        <div class="aspect-square overflow-hidden">
+                            <img
+                                src={item.foto}
+                                alt={item.nombre}
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="p-4 flex flex-col flex-grow">
+                            <p
+                                class="text-gray-700 text-sm line-clamp-2 mb-2 min-h-[2.5rem]"
+                            >
+                                { item.nombre }
+                            </p>
+
+                            <div class="flex flex-col gap-1">
+                                <div
+                                    v-if="item.precio_antes"
+                                    class="flex justify-between text-gray-400 text-sm"
+                                >
+                                    <span>Antes</span>
+                                    <span class="line-through">
+                                        S/ { item.precio_antes }
+                                    </span>
+                                </div>
+
+                                <div
+                                    class="flex justify-between text-gray-700 font-semibold"
+                                >
+                                    <span>Precio</span>
+                                    <span>S/ { item.precio }</span>
+                                </div>
+                            </div>
+                            {/* <button
+                                class="w-full mt-2 bg-black text-white border border-black py-2 px-4 rounded-lg font-medium shadow-sm hover:bg-white hover:text-black transition cursor-pointer"
+                            >
+                                Añadir al carrito
+                            </button> */}
+                        </div>
+                    </div>
+                    ))}
+                </div>
+            )
+        }
+    </section>
 </BaseLayout>

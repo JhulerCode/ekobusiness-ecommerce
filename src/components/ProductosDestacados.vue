@@ -20,7 +20,7 @@
                         <!-- Imagen -->
                         <div class="aspect-square overflow-hidden">
                             <img
-                                :src="item.imagen"
+                                :src="item.foto"
                                 :alt="item.nombre"
                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
@@ -69,7 +69,7 @@
 
 <script>
 import Carousel from './Carousel.vue';
-import { getProductosDestacados } from '../lib/api';
+import { getProductos } from '../lib/api';
 
 export default {
     name: 'ProductosCarousel',
@@ -78,7 +78,10 @@ export default {
         productos: [],
     }),
     async mounted() {
-        this.productos = await getProductosDestacados();
+        const productosFltr = {
+            nombre: { op: 'Contiene', val: 'coca' },
+        };
+        this.productos = await getProductos(productosFltr);
     },
 };
 </script>
