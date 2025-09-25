@@ -1,6 +1,159 @@
-<footer class="footer">
-    <div>
-        <p>© {new Date().getFullYear()} Mi Tienda de Té 🍵</p>
-        <p><a href="/politica-privacidad">Política de privacidad</a></p>
+---
+import logo from '../assets/logo-sunka-white.webp';
+import BrandFacebookIcon from '../assets/icons/brand-facebook.astro';
+import BrandInstagramIcon from '../assets/icons/brand-instagram.astro';
+---
+
+<!-- Footer.astro -->
+<footer class="bg-black text-gray-400 pt-16 pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Grid principal -->
+        <div class="grid gap-12 md:gap-24 md:grid-cols-4">
+            <!-- Logo & descripción -->
+            <div>
+                <img src={logo.src} alt="logo-sunka-white" class="h-10 mb-6" />
+                <p class="text-sm leading-relaxed">
+                    Té natural seleccionado con cuidado, directo del origen a tu
+                    taza.
+                </p>
+
+                <!-- Redes sociales -->
+                <div class="flex gap-5 mt-6">
+                    <a
+                        href="https://www.facebook.com/SunkaTea"
+                        aria-label="Facebook"
+                        class="hover:text-white transition"
+                        target="_blank"
+                    >
+                        <BrandFacebookIcon class="w-7 h-7 text-inherit" />
+                    </a>
+                    <a
+                        href="https://www.instagram.com/sunka.pe"
+                        aria-label="Instagram"
+                        target="_blank"
+                        class="hover:text-white transition"
+                    >
+                        <BrandInstagramIcon class="w-7 h-7 text-inherit" />
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contacto -->
+            <div>
+                <h3
+                    class="font-heading text-sm font-semibold mb-4 uppercase tracking-wider text-white"
+                >
+                    Contáctanos
+                </h3>
+                <ul class="space-y-4 text-sm">
+                    <li>
+                        <strong class="text-gray-300">Habla con nosotros</strong
+                        ><br />
+                        <p>Resolvemos todas tus dudas</p>
+                        <a
+                            href="https://wa.me/51999888777"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="hover:text-white transition"
+                        >
+                            +51 999 888 777
+                        </a>
+                    </li>
+                    <li>
+                        <strong class="text-gray-300">Escríbenos</strong><br />
+                        <p>Estamos para ayudarte</p>
+                        <a
+                            href="mailto:comercial@sunka.pe"
+                            class="hover:text-white transition"
+                        >
+                            comercial@sunka.pe
+                        </a>
+                    </li>
+                    <li>
+                        <strong class="text-gray-300">Llámanos</strong><br />
+                        <p>De lunes a domingo de 8:00 am a 8:00 pm</p>
+                        <a
+                            href="tel:+51014657896"
+                            class="hover:text-white transition"
+                        >
+                            (01) 465-7896
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soporte -->
+            <div>
+                <h3
+                    class="font-heading text-sm font-semibold mb-4 uppercase tracking-wider text-white"
+                >
+                    Soporte
+                </h3>
+                <ul class="space-y-2 text-sm">
+                    <li>
+                        <a href="/faq" class="hover:text-white transition"
+                            >Preguntas frecuentes</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/envios" class="hover:text-white transition"
+                            >Políticas de envío</a
+                        >
+                    </li>
+                    <li>
+                        <a href="/terminos" class="hover:text-white transition"
+                            >Términos y condiciones</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="/privacidad"
+                            class="hover:text-white transition"
+                            >Política de privacidad</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="/derechos-arco"
+                            class="hover:text-white transition">Derechos ARCO</a
+                        >
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div>
+                <h3
+                    class="font-heading text-sm font-semibold mb-4 uppercase tracking-wider text-white"
+                >
+                    Newsletter
+                </h3>
+                <p class="text-sm mb-4">
+                    Suscríbete y recibe todas nuestras ofertas exclusivas y
+                    novedades.
+                </p>
+                <form class="flex flex-col gap-3">
+                    <input
+                        type="email"
+                        placeholder="Tu correo electrónico"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-600 bg-transparent text-sm text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+                        required
+                    />
+                    <button
+                        type="submit"
+                        class="w-full px-4 py-2 bg-white text-black rounded-lg text-sm font-medium hover:bg-gray-200 transition"
+                    >
+                        Suscribirme
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- línea divisoria -->
+        <div
+            class="border-t border-gray-700 mt-12 pt-6 text-center text-xs text-gray-500"
+        >
+            © {new Date().getFullYear()} Sunka Herbal tea. Todos los derechos reservados.
+        </div>
     </div>
 </footer>

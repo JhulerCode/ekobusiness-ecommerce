@@ -1,73 +1,92 @@
 ---
-import logo from "../assets/logo-sunka-black.webp";
+import logo from '../assets/logo-sunka-black.webp';
 
 const navLinks = [
-  { name: "Inicio", href: "/" },
-  { name: "Productos", href: "/productos" },
-  { name: "Nosotros", href: "/nosotros" },
-  { name: "Blog", href: "/blog" },
-  { name: "Contacto", href: "/contacto" },
+    { name: 'Inicio', href: '/' },
+    { name: 'Productos', href: '/productos' },
+    { name: 'Nosotros', href: '/nosotros' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Contacto', href: '/contacto' },
 ];
 ---
 
-<header class="w-full bg-white shadow-md sticky top-0 z-50">
-<!-- <header class="w-full bg-white shadow-md fixed top-0 left-0 z-50"> -->
-  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
-    <!-- Logo -->
-    <a href="/" class="flex items-center gap-2">
-      <img src={logo.src} alt="Logo" class="h-8 w-auto" />
-    </a>
-
-    <!-- Navegación (desktop) -->
-    <nav class="hidden md:flex items-center gap-8">
-      {navLinks.map(link => (
-        <a 
-          href={link.href} 
-          class="text-neutral-medium hover:text-primary font-body text-sm transition-colors"
-        >
-          {link.name}
+<header class="w-full bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2">
+            <img src={logo.src} alt="logo-sunka-dark" class="h-8 w-auto" />
         </a>
-      ))}
-    </nav>
 
-    <!-- Acciones -->
-    <div class="flex items-center gap-4">
-      <!-- Botón CTA -->
-      <a 
-        href="/productos" 
-        class="hidden md:inline-block bg-primary text-white font-body px-4 py-2 rounded-lg text-sm hover:bg-secondary transition-colors"
-      >
-        Comprar ahora
-      </a>
+        <!-- Navegación (desktop) -->
+        <nav class="hidden md:flex items-center gap-8">
+            {
+                navLinks.map((link) => (
+                    <a
+                        href={link.href}
+                        class="text-gray-700 hover:text-black font-body text-sm transition-colors"
+                    >
+                        {link.name}
+                    </a>
+                ))
+            }
+        </nav>
 
-      <!-- Carrito -->
-      <a href="/carrito" class="relative">
-        <svg xmlns="http://www.w3.org/2000/svg" 
-             fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
-             stroke="currentColor" class="w-6 h-6 text-neutral-dark hover:text-primary">
-          <path stroke-linecap="round" stroke-linejoin="round" 
-                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 
+        <!-- Acciones -->
+        <div class="flex items-center gap-4">
+            <!-- Botón CTA -->
+            <a
+                href="/productos"
+                class="hidden md:inline-block bg-black text-white font-body px-4 py-2 rounded-lg text-sm border border-black hover:bg-white hover:text-black transition-colors"
+            >
+                Comprar ahora
+            </a>
+
+            <!-- Carrito -->
+            <a href="/carrito" class="relative">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6 text-gray-900 hover:text-black"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 
                    14.25a3 3 0 106 0m-6 0h6m6-6H5.25M21 8.25l-1.5 
                    6.75H7.125M6.75 18.75a.75.75 0 11-1.5 
                    0 .75.75 0 011.5 0zm10.5 0a.75.75 
-                   0 11-1.5 0 .75.75 0 011.5 0z" />
-        </svg>
-        <!-- Badge -->
-        <span class="absolute -top-2 -right-2 bg-error text-white text-xs rounded-full px-1.5 py-0.5">
-          2
-        </span>
-      </a>
+                   0 11-1.5 0 .75.75 0 011.5 0z"
+                    ></path>
+                </svg>
+                <!-- Badge -->
+                <span
+                    class="absolute -top-2 -right-2 bg-gray-900 text-white text-xs rounded-full px-1.5 py-0.5"
+                >
+                    2
+                </span>
+            </a>
 
-      <!-- Botón hamburguesa (mobile) -->
-      <button class="md:hidden text-neutral-dark hover:text-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" 
-             fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
-             stroke="currentColor" class="w-7 h-7">
-          <path stroke-linecap="round" stroke-linejoin="round" 
-                d="M3.75 5.25h16.5M3.75 12h16.5m-16.5 
-                   6.75h16.5" />
-        </svg>
-      </button>
+            <!-- Botón hamburguesa (mobile) -->
+            <button class="md:hidden text-gray-900 hover:text-black">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-7 h-7"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3.75 5.25h16.5M3.75 12h16.5m-16.5 
+                   6.75h16.5"
+                    ></path>
+                </svg>
+            </button>
+        </div>
     </div>
-  </div>
 </header>

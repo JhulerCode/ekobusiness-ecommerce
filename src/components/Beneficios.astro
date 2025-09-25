@@ -1,0 +1,111 @@
+---
+import truckIcon from '../assets/icons/truck.svg';
+import seedlingIcon from '../assets/icons/seedling.svg';
+import creditCardIcon from '../assets/icons/credit-card.svg';
+import awardIcon from '../assets/icons/award.svg';
+---
+
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Título -->
+        <div class="text-center mb-12">
+            <h2
+                class="text-3xl md:text-4xl font-heading font-bold text-gray-900"
+            >
+                Nuestros beneficios
+            </h2>
+            <p class="mt-2 text-gray-600">
+                Porque queremos que disfrutes una experiencia única
+            </p>
+        </div>
+
+        <!-- Grid de beneficios -->
+        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- Beneficio 1 -->
+            <div class="flex flex-col items-center text-center p-6 border border-neutral-300 rounded-2xl">
+                <div
+                    class="w-14 h-14 flex items-center justify-center rounded-full bg-gray-100 mb-4"
+                >
+                    <img
+                        src={truckIcon.src}
+                        alt="Envíos gratis"
+                        class="w-7 h-7"
+                    />
+                </div>
+                <h3
+                    class="font-heading text-lg font-semibold text-gray-900 mb-2"
+                >
+                    Envíos gratis
+                </h3>
+                <p class="text-gray-600">
+                    Recibe tu pedido sin costo en compras mayores a <span
+                        class="font-bold">S/50</span
+                    >.
+                </p>
+            </div>
+
+            <!-- Beneficio 2 -->
+            <div class="flex flex-col items-center text-center p-6 border border-neutral-300 rounded-2xl">
+                <div
+                    class="w-14 h-14 flex items-center justify-center rounded-full bg-gray-100 mb-4"
+                >
+                    <img
+                        src={seedlingIcon.src}
+                        alt="ingredientes naturales"
+                        class="w-7 h-7"
+                    />
+                </div>
+                <h3
+                    class="font-heading text-lg font-semibold text-gray-900 mb-2"
+                >
+                    Ingredientes naturales
+                </h3>
+                <p class="text-gray-600">
+                    Usamos solo insumos seleccionados y 100% naturales.
+                </p>
+            </div>
+
+            <!-- Beneficio 3 -->
+            <div class="flex flex-col items-center text-center p-6 border border-neutral-300 rounded-2xl">
+                <div
+                    class="w-14 h-14 flex items-center justify-center rounded-full bg-gray-100 mb-4"
+                >
+                    <img
+                        src={creditCardIcon.src}
+                        alt="ingredientes naturales"
+                        class="w-7 h-7"
+                    />
+                </div>
+                <h3
+                    class="font-heading text-lg font-semibold text-gray-900 mb-2"
+                >
+                    Pago seguro
+                </h3>
+                <p class="text-gray-600">
+                    Transacciones protegidas y métodos de pago confiables.
+                </p>
+            </div>
+
+            <!-- Beneficio 4 -->
+            <div class="flex flex-col items-center text-center p-6 border border-neutral-300 rounded-2xl">
+                <div
+                    class="w-14 h-14 flex items-center justify-center rounded-full bg-gray-100 mb-4"
+                >
+                    <img
+                        src={awardIcon.src}
+                        alt="ingredientes naturales"
+                        class="w-7 h-7"
+                    />
+                </div>
+                <h3
+                    class="font-heading text-lg font-semibold text-gray-900 mb-2"
+                >
+                    Calidad garantizada
+                </h3>
+                <p class="text-gray-600">
+                    Cada producto está cuidadosamente evaluado para ti.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

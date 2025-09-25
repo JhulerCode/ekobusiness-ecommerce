@@ -26,8 +26,10 @@ export async function getCategoriasDestacadas() {
     return response.data.map((cat) => ({
         id: cat.id,
         nombre: cat.nombre,
+        descripcion: 'Prueba la excelencia y dsifruta con sunka',
         slug: cat.nombre.toLowerCase().replace(/\s+/g, "-"),
-        imagen: `${host}/uploads/${cat.imagen}`,
+        // imagen: `${host}/uploads/${cat.imagen}`,
+        imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
     }))
 }
 
@@ -35,9 +37,9 @@ export async function getProductosDestacados() {
     const qry = {
         fltr: {
             tipo: { op: "Es", val: 2 },
-            nombre: { op: "Contiene", val: 'verde' },
+            nombre: { op: "Contiene", val: 'jengibre' },
         },
-        cols: ["nombre"],
+        cols: ['nombre', 'precio', 'fotos'],
     }
 
     const response = await apiGet("productos", { qry })
@@ -45,7 +47,8 @@ export async function getProductosDestacados() {
     return response.data.map((prod) => ({
         id: prod.id,
         nombre: prod.nombre,
-        precio: prod.precio,
-        imagen: `${host}/uploads/${prod.imagen}`,
+        precio: prod.precio.toFixed(2),
+        precio_antes: (10).toFixed(2),
+        imagen: `${host}/uploads/${prod.fotos == null ? '' : prod.fotos[0].id}`,
     }))
 }
