@@ -30,6 +30,7 @@ export async function getCategoriasDestacadas() {
         slug: cat.nombre.toLowerCase().replace(/\s+/g, "-"),
         // imagen: `${host}/uploads/${cat.imagen}`,
         imagen: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-3.jpg',
+        imagen2: 'https://sunka.pe/wp-content/uploads/2022/04/MGC15SL-4.jpg',
     }))
 }
 

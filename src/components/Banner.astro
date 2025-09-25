@@ -1,34 +1,39 @@
+<!-- <section
+    class="relative w-full h-[93vh] flex items-center justify-center overflow-hidden"
+> -->
 <section
-    class="relative w-full h-[80vh] flex items-center justify-center overflow-hidden"
+    class="relative w-full h-[70vh] sm:h-[80vh] md:h-[93vh] flex items-center justify-center overflow-hidden"
 >
-    <!-- Imagen de fondo -->
-    <img
-        src="https://economia3.com/wp-content/uploads/2021/02/oportunidad-de-negocio-en-el-mundo-del-te.jpg"
-        alt="Tienda de tés naturales"
-        class="absolute inset-0 w-full h-full object-cover filter grayscale brightness-75"
-    />
+    <picture>
+        <!-- <source
+            srcset="https://la.benetton.com/on/demandware.static/-/Library-Sites-BenettonSharedLibrary/default/dw739fa766/01-REDESIGN/LANDER2/AU-lander-ADULTO-FW24_mobile.jpg"
+            media="(max-width: 640px)"
+        /> -->
 
-    <!-- Overlay degradado oscuro -->
-    <div class="absolute inset-0 bg-black/30"></div>
+        <source
+            srcset="https://la.benetton.com/on/demandware.static/-/Library-Sites-BenettonSharedLibrary/default/dw739fa766/01-REDESIGN/LANDER2/AU-lander-ADULTO-FW24_mobile.jpg"
+            media="(max-width: 1024px)"
+        />
 
-    <!-- Contenido centrado -->
-    <div class="relative z-10 text-center max-w-2xl px-6">
-        <h1 class="text-4xl md:text-6xl font-heading text-white mb-4">
-            Vive la experiencia del <span class="text-gray-200">té natural</span
-            >
+        <img
+            src="https://la.benetton.com/on/demandware.static/-/Library-Sites-BenettonSharedLibrary/default/dw4697c075/01-REDESIGN/LANDER2/AU-lander-ADULTO-FW24.jpg"
+            alt="Tienda Sunka Herbal Tea"
+            class="absolute inset-0 w-full h-full object-cover"
+        />
+    </picture>
+
+    <div class="relative text-center max-w-2xl px-6">
+        <h1 class="text-4xl font-heading mb-4 text-white md:text-6xl">
+            Vive la experiencia del <strong>té natural</strong>
         </h1>
-        <p class="text-lg md:text-xl text-gray-300 mb-6">
-            Descubre sabores únicos que cuidan tu cuerpo y tu mente.
+        <p class="text-lg md:text-xl text-gray-200 mb-16">
+            Sabores auténticos que inspiran bienestar
         </p>
         <a
             href="/productos"
-            class="relative inline-block px-8 py-4 bg-black text-white font-semibold rounded-xl border-2 border-white/30 hover:bg-white hover:text-black transition-colors"
+            class="px-8 py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-200"
         >
-            <span class="relative z-10">Ver productos</span>
-            <!-- Glow detrás del botón -->
-            <span
-                class="absolute inset-0 rounded-xl bg-white/20 blur-xl opacity-50"
-            ></span>
+            Ver productos
         </a>
     </div>
 </section>
