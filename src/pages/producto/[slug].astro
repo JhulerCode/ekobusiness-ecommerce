@@ -1,8 +1,56 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductoFotos from '../../components/ProductoFotos.vue';
+import { getProductos } from '../../lib/api.js';
 
 const { slug } = Astro.params;
+const productos = await getProductos(slug);
+const producto = productos[0];
 ---
 
-<BaseLayout title={`Categoría: ${slug}`}>
+<BaseLayout title={`Producto: ${slug}`}>
+    <section class="w-full px-4 md:px-6 py-16 flex flex-col md:flex-row gap-12">
+        <div class="flex-[2]">
+            <ProductoFotos producto={producto} client:load />
+        </div>
+
+        <div class="producto-info flex-[1.5] flex flex-col">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-semibold mb-4">
+                    {producto.nombre}
+                </h1>
+
+                <div class="text-gray-900 font-semibold">
+                    <span class="text-2xl">S/ {producto.precio}</span>
+                    <span>Precio</span>
+                </div>
+
+                {
+                    producto.precio_antes && (
+                        <div class="text-gray-400 text-sm mb-2">
+                            <span class="line-through">
+                                S/ {producto.precio_antes}
+                            </span>
+                            <span>Antes</span>
+                        </div>
+                    )
+                }
+
+                <p class="text-gray-700 mb-6">
+                    {
+                        producto.descripcion ||
+                            'Descripción breve del producto aquí.'
+                    }
+                </p>
+            </div>
+
+            <div class="flex justify-end">
+                <button
+                    class="bg-black text-white p-3 rounded-lg hover:bg-gray-900 transition flex items-center gap-2"
+                >
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+    </section>
 </BaseLayout>

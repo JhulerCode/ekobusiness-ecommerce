@@ -67,7 +67,12 @@ export async function getProductos(filtros_extra, incl) {
         precio: prod.precio.toFixed(2),
         precio_antes: (10).toFixed(2),
         foto: `${host}/uploads/${prod.fotos == null ? '' : prod.fotos[0].id}`,
-        fotos: prod.fotos,
-        slug: prod.nombre.toLowerCase().replace(/\s+/g, "-"),
+        fotos: prod.fotos
+            ? prod.fotos.map((f) => ({
+                ...f,
+                url: `${host}/uploads/${f.id}`,
+            }))
+            : [],
+        slug: prod.id,
     }))
 }
