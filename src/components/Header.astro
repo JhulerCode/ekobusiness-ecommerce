@@ -1,15 +1,14 @@
 ---
 import logo from '../assets/logo-sunka-black.webp';
-import ShoppingCart from '../assets/icons/shopping-cart.astro';
 import Menu from '../assets/icons/menu.astro';
 import User from '../assets/icons/user.astro';
 import Xmark from '../assets/icons/xmark.astro';
+import CartIcon from '../components/CartIcon.vue';
 
 const navLinks = [
     { name: 'Filtrante', href: '/linea/filtrante' },
     { name: 'Granel', href: '/linea/granel' },
     { name: 'Luxury', href: '/linea/luxury' },
-    // { name: 'Ofertas', href: '/ofertas' },
 ];
 ---
 
@@ -41,14 +40,7 @@ const navLinks = [
                 <User />
             </a>
 
-            <a href="/cart" class="relative">
-                <ShoppingCart />
-                <span
-                    class="absolute -top-2 -right-2 bg-gray-900 text-white text-xs rounded-full px-1.5 py-0.5"
-                >
-                    2
-                </span>
-            </a>
+            <CartIcon client:load />
 
             <button
                 id="menu-toggle"

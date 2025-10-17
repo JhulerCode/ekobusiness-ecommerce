@@ -33,19 +33,27 @@
             </div>
         </a>
 
-        <!-- <div class="flex"> -->
-            <button
-                class="cursor-pointer ml-auto p-1 text-gray-800 rounded-full hover:bg-gray-100 transition flex items-center justify-center"
-                @click="agregarAlCarrito(producto)"
+        <button
+            class="cursor-pointer ml-auto p-1 text-gray-800 rounded-full hover:bg-gray-100 transition flex items-center justify-center"
+            @click="addToCart(producto)"
+        >
+            <ShoppingCartPlus />
+        </button>
+
+        <transition name="fade">
+            <div
+                v-if="showToast"
+                class="fixed top-12 right-15 bg-gray-900 text-white px-5 py-3 rounded-lg shadow-lg text-sm flex items-center gap-3 z-50"
             >
-                <ShoppingCartPlus />
-            </button>
-        <!-- </div> -->
+                Producto agregado al carrito
+            </div>
+        </transition>
     </div>
 </template>
 
 <script>
 import ShoppingCartPlus from '../assets/icons/shopping-cart-plus.vue';
+import { Cart } from '../../src/lib/cart.js';
 
 export default {
     components: {
@@ -58,9 +66,21 @@ export default {
             default: () => ({}),
         },
     },
+    data() {
+        return {
+            showToast: false,
+            timeOutCloseToast: null,
+        };
+    },
     methods: {
-        agregarAlCarrito(producto) {
-            console.log('Producto añadido:', producto.nombre);
+        addToCart() {
+            Cart.add({ ...this.producto, cantidad: this.cantidad });
+            clearTimeout(this.timeOutCloseToast);
+            this.showToast = true;
+
+            this.timeOutCloseToast = setTimeout(() => {
+                this.showToast = false;
+            }, 2500);
         },
     },
 };

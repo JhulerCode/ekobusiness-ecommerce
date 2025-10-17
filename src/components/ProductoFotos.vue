@@ -1,6 +1,7 @@
 <template>
-    <div class="flex gap-4">
-        <div class="flex flex-col gap-2">
+    <div class="flex flex-col md:flex-row gap-4">
+        <!-- Miniaturas -->
+        <div class="flex md:flex-col gap-2 order-2 md:order-1">
             <img
                 v-for="(foto, index) in producto.fotos"
                 :key="foto.id"
@@ -16,20 +17,16 @@
             />
         </div>
 
-        <!-- <div class="flex-1">
-            <img
-                :src="producto.fotos[imagenSeleccionada].url"
-                :alt="producto.nombre"
-                class="w-full h-auto rounded-2xl object-cover shadow-md"
-            />
-        </div> -->
-
+        <!-- Imagen principal -->
         <div
-            class="relative overflow-hidden rounded-2xl flex-1 shadow-md"
+            class="relative overflow-hidden rounded-2xl flex-1 order-1 md:order-2"
             @mousemove="handleMouseMove"
             @mouseleave="resetZoom"
             ref="container"
-            style="cursor: zoom-in"
+            style="
+                cursor: zoom-in;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.08);
+            "
         >
             <img
                 :src="producto.fotos[imagenSeleccionada].url"

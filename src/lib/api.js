@@ -37,7 +37,7 @@ export async function getCategorias(filtros_extra) {
     }))
 }
 
-export async function getProductos(filtros_extra, incl) {
+export async function getProductos(fltr, incl, cols) {
     const qry = {
         fltr: {
             tipo: { op: "Es", val: 2 },
@@ -48,23 +48,28 @@ export async function getProductos(filtros_extra, incl) {
         incl: []
     }
 
-    if (filtros_extra) {
-        qry.fltr = { ...qry.fltr, ...filtros_extra }
+    if (fltr) {
+        qry.fltr = { ...qry.fltr, ...fltr }
     }
 
     if (incl) {
         qry.incl = incl
     }
 
+    if (cols) {
+        qry.cols.push(...cols)
+    }
+    console.log(qry)
     const response = await apiGet("productos", { qry })
-    // console.log(response.data[0])
+    // console.log(response.data)
     return response.data.map((prod) => ({
-        id: prod.id,
-        nombre: prod.nombre,
-        produccion_tipo: prod.produccion_tipo,
-        categoria: prod.categoria,
-        categoria1: prod.categoria1,
-        precio: prod.precio.toFixed(2),
+        ...prod,
+        // id: prod.id,
+        // nombre: prod.nombre,
+        // produccion_tipo: prod.produccion_tipo,
+        // categoria: prod.categoria,
+        // categoria1: prod.categoria1,
+        precio: Number(prod.precio).toFixed(2),
         precio_antes: (10).toFixed(2),
         foto: `${host}/uploads/${prod.fotos == null ? '' : prod.fotos[0].id}`,
         fotos: prod.fotos
@@ -74,5 +79,12 @@ export async function getProductos(filtros_extra, incl) {
             }))
             : [],
         slug: prod.id,
+
+        // descripcion: prod.descripcion,
+        // contenido_neto: prod.contenido_neto,
+        // ingredientes: prod.ingredientes,
+        // beneficios: prod.beneficios,
+        // dimenciones: prod.dimenciones,
+        // envase_tipo: prod.envase_tipo,
     }))
 }

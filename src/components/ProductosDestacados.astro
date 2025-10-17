@@ -1,0 +1,24 @@
+---
+import ProductosCarrusel from './ProductosCarrusel.vue';
+import { getProductos } from '../lib/api';
+
+const productosFltr = { nombre: { op: 'Contiene', val: 'coca' } };
+const productos = await getProductos(productosFltr);
+---
+
+<section class="py-16 bg-white">
+    <div class="max-w-8xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2
+                class="text-3xl md:text-4xl font-heading font-bold text-gray-900"
+            >
+                Productos más vendidos
+            </h2>
+            <p class="mt-2 text-gray-600">
+                Descubre lo que nuestros clientes más disfrutan
+            </p>
+        </div>
+
+        <ProductosCarrusel productos={productos} client:load />
+    </div>
+</section>

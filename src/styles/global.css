@@ -6,3 +6,14 @@
     --font-heading: var(--font-sans);
     --font-body: var(--font-sans);
 }
+
+::selection {
+  background: black; /* Color de fondo del texto seleccionado */
+  color: white;      /* Color del texto seleccionado */
+}
+
+/* Para compatibilidad con Firefox */
+::-moz-selection {
+  background: black;
+  color: white;
+}

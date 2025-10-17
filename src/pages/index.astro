@@ -3,7 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Banner from '../components/Banner.astro';
 import LineasProductos from '../components/LineasProductos.astro';
 import CategoriasDestacadas from '../components/CategoriasDestacadas.astro';
-import ProductosDestacados from '../components/ProductosDestacados.vue';
+// import ProductosDestacados from '../components/ProductosDestacados.vue';
+import ProductosDestacados from '../components/ProductosDestacados.astro';
 import Beneficios from '../components/Beneficios.astro';
 import NewsLetter from '../components/NewsLetter.astro';
 ---
@@ -15,7 +16,7 @@ import NewsLetter from '../components/NewsLetter.astro';
 
     <CategoriasDestacadas />
 
-    <ProductosDestacados client:load />
+    <ProductosDestacados />
 
     <Beneficios />
 
