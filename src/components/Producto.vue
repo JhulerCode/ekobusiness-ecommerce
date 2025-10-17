@@ -74,7 +74,7 @@ export default {
     },
     methods: {
         addToCart() {
-            Cart.add({ ...this.producto, cantidad: this.cantidad });
+            Cart.add({ ...this.producto, cantidad: 1 });
             clearTimeout(this.timeOutCloseToast);
             this.showToast = true;
 

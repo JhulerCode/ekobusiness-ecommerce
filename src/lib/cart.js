@@ -24,6 +24,11 @@ export const Cart = {
         this.save(cart);
     },
 
+    remove(id) {
+        const cart = this.get().filter(p => p.id !== id);
+        this.save(cart);
+    },
+
     clear() {
         this.save([]);
     },
@@ -33,38 +38,74 @@ export const Cart = {
     }
 };
 
+// src/lib/cart.js
+// const CART_KEY = 'sunka_cart';
+
+// function isClient() {
+//     return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+// }
+
 // export const Cart = {
 //     get() {
-//         return JSON.parse(localStorage.getItem('cart') || '[]')
+//         if (!isClient()) return [];
+//         try {
+//             const data = localStorage.getItem(CART_KEY);
+//             return data ? JSON.parse(data) : [];
+//         } catch (err) {
+//             console.warn('Cart.get error', err);
+//             return [];
+//         }
 //     },
 
-//     save(items) {
-//         localStorage.setItem('cart', JSON.stringify(items))
+//     save(cart) {
+//         if (!isClient()) return;
+//         try {
+//             localStorage.setItem(CART_KEY, JSON.stringify(cart));
+//             // emitir evento solo en cliente
+//             window.dispatchEvent(new CustomEvent('cart-updated', { detail: cart }));
+//         } catch (err) {
+//             console.warn('Cart.save error', err);
+//         }
 //     },
 
-//     add(product, cantidad = 1) {
-//         const cart = this.get()
-//         const existing = cart.find(p => p.id === product.id)
+//     add(producto) {
+//         if (!isClient()) return;
+//         const cart = this.get();
+//         const existing = cart.find(p => p.id === producto.id);
 
 //         if (existing) {
-//             existing.cantidad += cantidad
+//             existing.cantidad = Number(existing.cantidad || 0) + Number(producto.cantidad || 1);
 //         } else {
-//             cart.push({ ...product, cantidad })
+//             cart.push({
+//                 id: producto.id,
+//                 nombre: producto.nombre,
+//                 precio: Number(producto.precio || 0),
+//                 cantidad: Number(producto.cantidad || 1),
+//                 imagen: producto.imagen || producto.imagen_principal || ''
+//             });
 //         }
 
-//         this.save(cart)
+//         this.save(cart);
 //     },
 
 //     remove(id) {
-//         const cart = this.get().filter(p => p.id !== id)
-//         this.save(cart)
+//         if (!isClient()) return;
+//         const cart = this.get().filter(p => p.id !== id);
+//         this.save(cart);
 //     },
 
 //     clear() {
-//         localStorage.removeItem('cart')
+//         if (!isClient()) return;
+//         this.save([]);
+//     },
+
+//     count() {
+//         if (!isClient()) return 0;
+//         return this.get().reduce((sum, p) => sum + Number(p.cantidad || 0), 0);
 //     },
 
 //     total() {
-//         return this.get().reduce((sum, p) => sum + p.precio * p.cantidad, 0)
+//         if (!isClient()) return 0;
+//         return this.get().reduce((sum, p) => sum + Number(p.precio || 0) * Number(p.cantidad || 0), 0);
 //     }
-// }
+// };
