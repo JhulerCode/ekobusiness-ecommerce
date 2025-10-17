@@ -112,7 +112,7 @@
 
                 <button
                     @click="checkout"
-                    class="w-full mt-6 bg-black text-white py-3 rounded-xl hover:bg-gray-900 transition"
+                    class="w-full mt-6 bg-black text-white py-3 rounded-xl hover:bg-gray-900 transition cursor-pointer"
                 >
                     Proceder compra
                 </button>
@@ -162,17 +162,17 @@ export default {
             this.load();
         },
         checkout() {
-            const cart = Cart.get();
-            if (cart.length === 0) {
-                // aquí puedes usar un toast bonito en lugar de alert
-                alert('Tu carrito está vacío 🛒');
-                return;
-            }
-            const user = localStorage.getItem('user');
-            if (!user) {
-                window.location.href = '/login?redirect=/checkout';
-                return;
-            }
+            // const cart = Cart.get();
+            // if (cart.length === 0) {
+            //     // aquí puedes usar un toast bonito en lugar de alert
+            //     alert('Tu carrito está vacío 🛒');
+            //     return;
+            // }
+            // const user = localStorage.getItem('user');
+            // if (!user) {
+            //     window.location.href = '/login?redirect=/checkout';
+            //     return;
+            // }
             window.location.href = '/checkout';
         },
     },
