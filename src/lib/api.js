@@ -1,4 +1,4 @@
-const host = "http://localhost:4000"
+export const host = import.meta.env.PUBLIC_API_URL
 
 async function apiGet(endpoint, params = {}) {
     const url = new URL(`${host}/store/${endpoint}`)
@@ -59,7 +59,7 @@ export async function getProductos(fltr, incl, cols) {
     if (cols) {
         qry.cols.push(...cols)
     }
-    console.log(qry)
+    // console.log(qry)
     const response = await apiGet("productos", { qry })
     // console.log(response.data)
     return response.data.map((prod) => ({

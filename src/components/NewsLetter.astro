@@ -1,3 +1,7 @@
+---
+import NewsLetterForm from './NewsLetterForm.vue';
+---
+
 <section class="bg-neutral-50 py-16">
     <div class="max-w-4xl mx-auto px-6 text-center">
         <!-- título -->
@@ -11,7 +15,7 @@
         </p>
 
         <!-- formulario -->
-        <form class="flex flex-col sm:flex-row gap-4 justify-center">
+        <!-- <form class="flex flex-col sm:flex-row gap-4 justify-center">
             <input
                 type="email"
                 placeholder="Tu correo electrónico"
@@ -24,12 +28,11 @@
             >
                 Suscribirme
             </button>
-        </form>
+        </form> -->
+        <NewsLetterForm client:load />
 
         <!-- beneficios debajo -->
-        <div
-            class="mt-8 text-sm text-neutral-600 text-center"
-        >
+        <div class="mt-8 text-sm text-neutral-600 text-center">
             <p class="mb-2">
                 Puedes cancelar tu suscripción en cualquier momento.
             </p>
