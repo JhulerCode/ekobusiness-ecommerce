@@ -2,6 +2,7 @@
 import logo from '../assets/logo-sunka-white.webp';
 import BrandFacebookIcon from '../assets/icons/brand-facebook.astro';
 import BrandInstagramIcon from '../assets/icons/brand-instagram.astro';
+import NewsLetterForm from '../components/NewsLetterForm.vue';
 ---
 
 <!-- Footer.astro -->
@@ -132,20 +133,8 @@ import BrandInstagramIcon from '../assets/icons/brand-instagram.astro';
                     Suscríbete y recibe todas nuestras ofertas exclusivas y
                     novedades.
                 </p>
-                <form class="flex flex-col gap-3">
-                    <input
-                        type="email"
-                        placeholder="Tu correo electrónico"
-                        class="w-full px-4 py-2 rounded-lg border border-gray-600 bg-transparent text-sm text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
-                        required
-                    />
-                    <button
-                        type="submit"
-                        class="w-full px-4 py-2 bg-white text-black rounded-lg text-sm font-medium hover:bg-gray-200 transition cursor-pointer"
-                    >
-                        Suscribirme
-                    </button>
-                </form>
+
+                <NewsLetterForm client:load theme="dark" layout="vertical" />
             </div>
         </div>
 

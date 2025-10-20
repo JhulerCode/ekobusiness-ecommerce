@@ -1,18 +1,75 @@
 export const host = import.meta.env.PUBLIC_API_URL
 
-async function apiGet(endpoint, params = {}) {
-    const url = new URL(`${host}/store/${endpoint}`)
+const urls = {
+    categorias: `${host}/store/categorias`,
+    productos: `${host}/store/productos`,
+    newsletter: `${host}/store/newsletter`,
+}
+
+function jmsg(type, msg) {
+    console.log(type, msg)
+}
+
+async function get(endpoint, params = {}) {
+    const url = new URL(urls[endpoint])
 
     if (params.qry) {
         url.searchParams.set("qry", JSON.stringify(params.qry))
     }
 
-    const res = await fetch(url)
-    if (!res.ok) {
-        throw new Error(`Error al obtener ${endpoint}: ${res.status}`)
+    let response
+    try {
+        response = await fetch(url, {
+            method: 'GET',
+        })
+    } catch (error) {
+        jmsg('error', error)
+        return { code: -2 }
     }
 
-    return res.json()
+    const data = await response.json()
+
+    if (data.code == -1) jmsg('error', 'Algo salió mal')
+
+    if (data.code > 0) jmsg('error', data.msg)
+
+    return data
+
+    // const res = await fetch(url)
+    // if (!res.ok) {
+    //     throw new Error(`Error al obtener ${endpoint}: ${res.status}`)
+    // }
+
+    // return res.json()
+}
+
+export async function post(endpoint, item, ms) {
+    let query
+
+    try {
+        query = await fetch(urls[endpoint], {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item),
+        })
+    } catch (error) {
+        jmsg('error', error)
+        return { code: -2 }
+    }
+
+    const res = await query.json()
+
+    if (res.code == -1) jmsg('error', 'Algo salió mal')
+
+    if (res.code > 0) jmsg('error', res.msg)
+
+    if (res.code == 0) {
+        if (ms != false) {
+            jmsg('success', ms == undefined ? 'Creado con éxito' : ms)
+        }
+    }
+
+    return res
 }
 
 export async function getCategorias(filtros_extra) {
@@ -28,9 +85,11 @@ export async function getCategorias(filtros_extra) {
         qry.fltr = { ...qry.fltr, ...filtros_extra }
     }
 
-    const response = await apiGet("categorias", { qry })
+    const res = await get("categorias", { qry })
 
-    return response.data.map((cat) => ({
+    if (res.code != 0) return []
+
+    return res.data.map((cat) => ({
         ...cat,
         foto: cat.fotos[0].url,
         foto2: cat.fotos[1].url,
@@ -62,9 +121,11 @@ export async function getProductos(fltr, incl, cols) {
         qry.cols.push(...cols)
     }
     // console.log(qry)
-    const response = await apiGet("productos", { qry })
-    // console.log(response.data)
-    return response.data.map((prod) => ({
+    const res = await get("productos", { qry })
+    // console.log(data)
+    if (res.code != 0) return []
+
+    return res.data.map((prod) => ({
         ...prod,
         precio: Number(prod.precio).toFixed(2),
         precio_antes: (10).toFixed(2),
