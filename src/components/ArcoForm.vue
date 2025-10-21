@@ -76,7 +76,7 @@
                     <label class="label">Adjuntar documento*</label>
                     <input
                         type="file"
-                        @change="handleFile($event, 'documento')"
+                        @change="handleFile($event, 'doc_file')"
                         accept=".jpg,.jpeg,.png,.pdf"
                         class="input text-sm"
                     />
@@ -174,7 +174,7 @@
                     >
                     <input
                         type="file"
-                        @change="handleFile($event, 'repDocumento')"
+                        @change="handleFile($event, 'rep_doc_file')"
                         accept=".jpg,.jpeg,.png,.pdf"
                         class="input text-sm"
                     />
@@ -286,9 +286,17 @@
         <div class="flex justify-center pt-4">
             <button
                 type="submit"
-                class="w-full sm:w-auto bg-neutral-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-neutral-800 transition cursor-pointer"
+                :disabled="loading"
+                :class="[
+                    'rounded-lg font-medium transition cursor-pointer flex items-center justify-center border',
+                    'px-6 py-3 max-h-[3rem] w-40',
+                    loading
+                        ? 'bg-neutral-400 border-neutral-400 text-white cursor-not-allowed'
+                        : 'border-neutral-900 bg-neutral-900 text-white hover:bg-white hover:text-neutral-900',
+                ]"
             >
-                Enviar solicitud
+                <span v-if="loading">Enviando…</span>
+                <span v-else>Enviar</span>
             </button>
         </div>
     </form>
@@ -381,6 +389,7 @@ export default {
     methods: {
         handleFile(event, field) {
             const file = event.target.files[0];
+
             if (file && file.size > 5 * 1024 * 1024) {
                 this.errors[field] = 'El archivo no debe superar los 5MB.';
                 this.form[field] = null;
@@ -396,27 +405,32 @@ export default {
             if (!this.form.nombres) this.errors.nombres = 'Campo obligatorio.';
             if (!this.form.apellidos)
                 this.errors.apellidos = 'Campo obligatorio.';
-            // if (!this.form.doc_tipo)
-            //     this.errors.doc_tipo = 'Seleccione un tipo de documento.';
-            // if (!this.form.doc_numero)
-            //     this.errors.doc_numero = 'Campo obligatorio.';
-            // if (!this.form.doc_file)
-            //     this.errors.doc_file = 'Debe adjuntar su documento.';
-            // if (
-            //     !this.form.email ||
-            //     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)
-            // )
-            //     this.errors.email = 'Ingrese un email válido.';
-            // if (!this.form.domicilio)
-            //     this.errors.domicilio = 'Campo obligatorio.';
-            // if (!this.form.tipo)
-            //     this.errors.tipo = 'Seleccione un tipo de solicitud.';
+            if (!this.form.doc_tipo)
+                this.errors.doc_tipo = 'Seleccione un tipo de documento.';
+            if (!this.form.doc_numero)
+                this.errors.doc_numero = 'Campo obligatorio.';
+            if (!this.form.doc_file)
+                this.errors.doc_file = 'Debe adjuntar su documento.';
+            if (
+                !this.form.email ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)
+            )
+                this.errors.email = 'Ingrese un email válido.';
+            if (!this.form.domicilio)
+                this.errors.domicilio = 'Campo obligatorio.';
+            if (!this.form.tipo)
+                this.errors.tipo = 'Seleccione un tipo de solicitud.';
             if (!this.form.detalle)
                 this.errors.detalle = 'Describa su solicitud.';
             if (!this.form.captcha)
                 this.errors.captcha = 'Resuelve el captcha.';
 
             return Object.values(this.errors).every((e) => !e);
+        },
+
+        shapeDatos() {
+            this.form.is_form_data = true;
+            this.form.fecha_recepcion = new Date();
         },
 
         async submitForm() {
@@ -446,6 +460,8 @@ export default {
             this.loading = true;
             this.resMsg = '';
 
+            this.shapeDatos();
+
             try {
                 const res = await post('arco', this.form);
                 this.resMsg = res.msg;
@@ -474,14 +490,17 @@ export default {
                     // ✅ Limpiar todo el formulario
                     Object.keys(this.form).forEach((k) => {
                         if (
-                            [
-                                'documento',
-                                'repDocumento',
-                                'extras_doc',
-                            ].includes(k)
+                            ['doc_file', 'rep_doc_file', 'extras_doc'].includes(
+                                k
+                            )
                         )
                             this.form[k] = null;
                         else this.form[k] = '';
+                    });
+
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth',
                     });
                 }
             } catch (error) {

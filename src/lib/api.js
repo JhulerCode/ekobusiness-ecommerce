@@ -11,6 +11,40 @@ function jmsg(type, msg) {
     console.log(type, msg)
 }
 
+function setHeaders(item) {
+    const headers = {}
+
+    if (!item.is_form_data) {
+        headers['Content-Type'] = 'application/json'
+    }
+
+    return headers
+}
+
+function setFormData(item) {
+    const formData = new FormData()
+
+    const { archivo, archivos, ...resto } = item
+
+    // Soporte para campos personalizados con archivos
+    for (const [key, value] of Object.entries(resto)) {
+        if (value instanceof File) {
+            formData.append(key, value)
+            delete resto[key]
+        } else if (Array.isArray(value) && value.every(v => v instanceof File)) {
+            value.forEach(v => formData.append(key, v))
+            delete resto[key]
+        }
+    }
+
+    if (archivo) formData.append('archivo', archivo)
+    if (archivos && Array.isArray(archivos)) archivos.forEach(f => formData.append('archivos', f))
+
+    formData.append('datos', JSON.stringify(resto))
+    return formData
+}
+
+
 async function get(endpoint, params = {}) {
     const url = new URL(urls[endpoint])
 
@@ -35,13 +69,6 @@ async function get(endpoint, params = {}) {
     if (data.code > 0) jmsg('error', data.msg)
 
     return data
-
-    // const res = await fetch(url)
-    // if (!res.ok) {
-    //     throw new Error(`Error al obtener ${endpoint}: ${res.status}`)
-    // }
-
-    // return res.json()
 }
 
 export async function post(endpoint, item, ms) {
@@ -50,8 +77,8 @@ export async function post(endpoint, item, ms) {
     try {
         query = await fetch(urls[endpoint], {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(item),
+            headers: setHeaders(item),
+            body: item.is_form_data ? setFormData(item) : JSON.stringify(item),
         })
     } catch (error) {
         jmsg('error', error)
