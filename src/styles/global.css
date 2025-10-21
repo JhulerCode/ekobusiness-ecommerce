@@ -21,3 +21,24 @@
 .input {
   @apply w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-black;
 }
+
+
+.politicas-privacidad p {
+  @apply text-gray-700;
+}
+
+.politicas-privacidad ul {
+  @apply list-disc ml-6 mt-2 text-gray-700;
+}
+
+.politicas-privacidad h2 {
+  @apply text-2xl font-semibold text-gray-800 mt-10 mb-4 border-l-4 border-gray-800 pl-3;
+}
+
+.politicas-privacidad h3 {
+  @apply text-lg font-semibold text-gray-700 mt-8 mb-3 border-b border-gray-300 pb-1;
+}
+
+.politicas-privacidad th, td {
+  @apply border border-gray-500 px-4 py-2 text-gray-700;
+}

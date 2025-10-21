@@ -1,135 +1,3 @@
-<!-- <template>
-    <form
-        @submit.prevent="submit"
-        :class="[
-            'flex gap-3 justify-center',
-            layout === 'vertical' ? 'flex-col' : 'flex-col sm:flex-row',
-        ]"
-    >
-        <div class="flex-1 flex flex-col">
-            <input
-                v-model="email"
-                type="email"
-                placeholder="Tu correo electrónico"
-                :class="[
-                    'px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition w-full',
-                    theme === 'dark'
-                        ? [
-                              'bg-transparent text-gray-200 placeholder-gray-400',
-                              error
-                                  ? 'border-red-500 focus:ring-red-500'
-                                  : 'border-gray-600 focus:ring-white',
-                          ]
-                        : [
-                              'bg-white text-black placeholder-gray-500',
-                              error
-                                  ? 'border-red-500 focus:ring-red-500'
-                                  : 'border-neutral-300 focus:ring-neutral-800',
-                          ],
-                ]"
-            />
-            <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
-            <p v-if="success" class="text-sm mt-1">
-                <span>¡Suscrito correctamente!</span>
-            </p>
-            <p v-if="resMsg" class="text-sm mt-1">
-                <span>{{ resMsg }}</span>
-            </p>
-        </div>
-
-        <button
-            type="submit"
-            :disabled="loading"
-            :class="[
-                'px-6 py-3 rounded-lg border font-medium shadow-sm transition cursor-pointer flex items-center justify-center',
-                layout === 'vertical' ? 'w-full' : 'max-h-[3rem]',
-                theme === 'dark'
-                    ? loading
-                        ? 'bg-gray-500 border-gray-500 text-gray-200 cursor-not-allowed'
-                        : 'bg-white text-black hover:bg-gray-200 border-white'
-                    : loading
-                    ? 'bg-neutral-400 border-neutral-400 text-white cursor-not-allowed'
-                    : 'border-neutral-900 bg-neutral-900 text-white hover:bg-white hover:text-neutral-900',
-            ]"
-        >
-            <span v-if="loading">Enviando…</span>
-            <span v-else>Suscribirme</span>
-        </button>
-    </form>
-</template>
-
-<script>
-import { post } from '../lib/api.js';
-
-export default {
-    name: 'NewsletterForm',
-    props: {
-        theme: {
-            type: String,
-            default: 'light', // 'light' o 'dark'
-        },
-        layout: {
-            type: String,
-            default: 'horizontal', // 'horizontal' o 'vertical'
-        },
-    },
-    data() {
-        return {
-            email: '',
-            loading: false,
-            error: '',
-            success: false,
-            resMsg: null,
-        };
-    },
-    watch: {
-        email(value) {
-            if (!value) {
-                this.error = '';
-                return;
-            }
-            this.error = this.validEmail(value)
-                ? ''
-                : 'Por favor ingresa un correo válido.';
-        },
-    },
-    methods: {
-        validEmail(e) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-        },
-        async submit() {
-            if (this.loading) return;
-            if (!this.validEmail(this.email)) {
-                this.error = 'Por favor ingresa un correo válido.';
-                return;
-            }
-
-            this.loading = true;
-            this.error = '';
-            this.success = false;
-
-            try {
-                const res = await post(
-                    'newsletter',
-                    { correo: this.email },
-                    'Correo'
-                );
-                this.resMsg = res.msg;
-
-                if (res.code != 0) return;
-
-                this.success = true;
-                this.email = '';
-            } catch (err) {
-                this.error = 'Ocurrió un error. Intenta nuevamente.';
-            } finally {
-                this.loading = false;
-            }
-        },
-    },
-};
-</script> -->
-
 <template>
     <form
         @submit.prevent="submit"
@@ -151,26 +19,86 @@ export default {
                     theme === 'dark'
                         ? [
                               'bg-transparent text-gray-200 placeholder-gray-400',
-                              error
-                                  ? 'border-red-500 focus:ring-red-500'
-                                  : 'border-gray-600 focus:ring-white',
+                              'border-gray-600 focus:ring-white',
                           ]
                         : [
                               'bg-white text-black placeholder-gray-500',
-                              error
-                                  ? 'border-red-500 focus:ring-red-500'
-                                  : 'border-neutral-300 focus:ring-neutral-800',
+                              'border-neutral-300 focus:ring-neutral-800',
                           ],
                 ]"
             />
 
-            <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
-            <p v-if="success" class="text-sm mt-1 text-green-600">
-                ¡Suscrito correctamente!
+            <p
+                v-if="emailError"
+                class="text-left text-red-500 text-xs mt-1 ml-2"
+            >
+                {{ emailError }}
             </p>
-            <p v-if="resMsg" class="text-sm mt-1">{{ resMsg }}</p>
+
+            <!-- Checkbox de privacidad -->
+            <label
+                class="text-sm leading-snug cursor-pointer select-none mt-3 flex items-start gap-2"
+                :class="[theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >
+                <input
+                    v-model="acceptedPrivacy"
+                    type="checkbox"
+                    class="appearance-none w-4 h-4 rounded-md border relative flex-shrink-0 cursor-pointer before:content-['✓'] before:absolute before:text-[10px] before:inset-0 before:flex before:items-center before:justify-center before:text-white checked:before:opacity-100 before:opacity-0 transition-all"
+                    :class="[
+                        theme === 'dark'
+                            ? [
+                                  'bg-transparent text-gray-200 placeholder-gray-400',
+                                  'border-gray-600 focus:ring-white',
+                                  'text-gray-200',
+                              ]
+                            : [
+                                  'bg-white text-black placeholder-gray-500',
+                                  'border-neutral-300 focus:ring-neutral-800',
+                                  'dark:before:text-black',
+                              ],
+                    ]"
+                />
+                <span class="text-left">
+                    He leído la
+                    <a
+                        href="/politica-de-privacidad"
+                        target="_blank"
+                        class="underline"
+                        :class="[
+                            theme === 'dark'
+                                ? 'hover:text-white'
+                                : 'hover:text-gray-900',
+                        ]"
+                    >
+                        Política de Privacidad de SUNKA
+                    </a>
+                    y declaro haber sido informado sobre el tratamiento de mis
+                    datos personales.
+                </span>
+            </label>
+
+            <p
+                v-if="privacyError"
+                class="text-left text-red-500 text-xs mt-1 ml-2"
+            >
+                {{ privacyError }}
+            </p>
+
+            <!-- Mensajes -->
+            <template v-if="showMsg">
+                <p v-if="success" class="text-sm mt-1 text-green-600">
+                    ¡Suscrito correctamente!
+                </p>
+                <p
+                    v-if="resMsg && !success"
+                    class="text-sm mt-1 text-amber-500"
+                >
+                    {{ resMsg }}
+                </p>
+            </template>
         </div>
 
+        <!-- Botón -->
         <button
             type="submit"
             :disabled="loading"
@@ -202,64 +130,79 @@ export default {
     props: {
         theme: {
             type: String,
-            default: 'light', // "light" o "dark"
+            default: 'light',
         },
         layout: {
             type: String,
-            default: 'horizontal', // "horizontal" o "vertical"
+            default: 'horizontal',
         },
     },
     data() {
         return {
             email: '',
+            acceptedPrivacy: false,
+            emailError: '',
+            privacyError: '',
+
             loading: false,
-            error: '',
             success: false,
             resMsg: null,
+            showMsg: false,
+            timeOutShowMsg: null,
         };
-    },
-    watch: {
-        email(value) {
-            if (!value) {
-                this.error = '';
-                return;
-            }
-            this.error = this.validEmail(value)
-                ? ''
-                : 'Por favor ingresa un correo válido.';
-        },
     },
     methods: {
         validEmail(e) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
         },
-        async submit() {
-            if (this.loading) return;
-            if (!this.validEmail(this.email)) {
-                this.error = 'Por favor ingresa un correo válido.';
-                return;
-            }
 
-            this.loading = true;
-            this.error = '';
+        async submit() {
+            // Reiniciar errores
+            this.emailError = '';
+            this.privacyError = '';
             this.success = false;
 
+            // Validar correo
+            if (!this.email.trim() || !this.validEmail(this.email)) {
+                this.emailError = 'Por favor, ingrese un correo válido.';
+            }
+
+            // Validar privacidad
+            if (!this.acceptedPrivacy) {
+                this.privacyError = 'Este campo es obligatorio.';
+            }
+
+            // Si hay errores, detener envío
+            if (this.emailError || this.privacyError) return;
+
+            // Enviar datos
+            this.loading = true;
             try {
                 const res = await post(
                     'newsletter',
                     { correo: this.email },
                     'Correo'
                 );
+                this.showMsg = true;
                 this.resMsg = res.msg;
 
                 if (res.code != 0) return;
 
                 this.success = true;
                 this.email = '';
+                this.acceptedPrivacy = false;
             } catch (err) {
-                this.error = 'Ocurrió un error. Intenta nuevamente.';
+                this.showMsg = true;
+                this.resMsg = 'Ocurrió un error. Intenta nuevamente.';
             } finally {
                 this.loading = false;
+
+                clearTimeout(this.timeOutShowMsg);
+
+                this.timeOutShowMsg = setTimeout(() => {
+                    this.resMsg = null;
+                    this.showMsg = false;
+                }, 4000);
             }
         },
     },

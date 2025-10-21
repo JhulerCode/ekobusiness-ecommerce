@@ -1,0 +1,1810 @@
+---
+// src/pages/politica-de-privacidad.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'Política de privacidad';
+const lastUpdated = '20 de octubre de 2025';
+// const companyName = 'EKOBUSINESS S.A.C.';
+// const companySite = 'https://www.sunka.pe';
+// const contactEmail = 'comercial@sunkatea.com'; // reemplaza si corresponde
+// const companyRUC = '20557053213';
+// const companyAddress =
+//     'Av. Mariscal La Mar Nro. 638, Distrito de Miraflores, Provincia y Departamento de Lima, Perú';
+import {
+    companyName,
+    companySite,
+    contactEmail,
+    companyRUC,
+    companyAddress,
+    whatsappNumber,
+    emailSoporte,
+} from '../lib/empresa.js';
+
+const secciones = [
+    { id: 'responsable', texto: '¿Quién es el Responsable del Tratamiento?' },
+    { id: 'que-recogemos', texto: '¿Qué información recopilamos?' },
+    { id: 'como-recogemos', texto: '¿Cómo recopilamos esa información?' },
+    { id: 'finalidades', texto: 'Finalidades y base legal' },
+    // { id: 'consecuencias', texto: 'Consecuencias de no brindar datos' },
+    { id: 'seguridad', texto: '¿Cómo protegemos tu información?' },
+    // { id: 'conservacion', texto: 'Periodo de conservación' },
+    {
+        id: 'transferencias',
+        texto: 'Transferencias nacionales e internacionales',
+    },
+    { id: 'redes-sociales', texto: 'Redes sociales' },
+    { id: 'menores', texto: 'Privacidad de menores' },
+    {
+        id: 'desiciones-automatizadas',
+        texto: 'Decisiones automatizadas y elaboración de perfiles',
+    },
+    { id: 'cambios', texto: 'Cambios en la política' },
+    { id: 'arco', texto: 'Derechos ARCO' },
+    { id: 'oficial', texto: 'Oficial de Protección de Datos / Contacto' },
+];
+---
+
+<BaseLayout
+    title={title}
+    description="Política de privacidad y manejo de datos personales de SUNKA."
+>
+    <main
+        class="politicas-privacidad max-w-5xl mx-auto px-6 py-12 prose prose-neutral"
+    >
+        <header>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+                {title}
+            </h1>
+
+            <p class="text-sm text-gray-400">
+                Última actualización: <strong>{lastUpdated}</strong>
+            </p>
+        </header>
+
+        <section class="space-y-4 leading-relaxed mt-4">
+            <p>
+                Bienvenido al e-commerce (<a
+                    href={companySite}
+                    class="underline text-blue-600 hover:text-blue-800"
+                    target="_blank">{companySite}</a
+                >) y demás canales digitales de
+                <strong>{companyName}</strong> (en adelante, “SUNKA”).
+            </p>
+
+            <p>
+                SUNKA respeta la privacidad de los usuarios que utilizan su
+                tienda virtual, redes sociales y otros canales digitales. La
+                presente <strong>Política de Privacidad</strong> tiene como finalidad
+                informarte, como usuario, cliente o postulante, sobre los tipos de
+                información que la empresa puede recopilar de ti en relación con
+                tu uso del e-commerce y redes sociales de SUNKA. Asimismo, explica
+                las condiciones bajo las cuales SUNKA utiliza y divulga dicha información,
+                y los derechos que te asisten respecto a ella.
+            </p>
+
+            <p>
+                Cuando navegas por nuestro sitio web o interactúas a través de
+                nuestros canales digitales, compartes información con nosotros.
+                Entendemos que esto puede afectar tu privacidad, por lo que
+                queremos ser completamente transparentes acerca de qué
+                información recopilamos, cómo la utilizamos, de qué manera la
+                protegemos y qué opciones te ofrecemos para acceder, actualizar
+                o eliminar tus datos personales.
+            </p>
+
+            <p>
+                La presente Política de Privacidad se aplica al tratamiento de
+                los datos personales de los usuarios y clientes de SUNKA.
+            </p>
+
+            <p>
+                En esta política se detallan los aspectos sobre cómo utilizamos
+                tus datos personales y cuáles son tus derechos en relación con
+                ellos (por ejemplo, puedes solicitarnos que eliminemos tu
+                información, que te confirmemos qué datos tenemos sobre ti o
+                retirar los consentimientos otorgados, entre otros).
+            </p>
+        </section>
+
+        <nav aria-label="Índice de la política" class="mt-6">
+            <p>En esta política encontrarás:</p>
+
+            <ul class="list-disc ml-6 mt-2">
+                {
+                    secciones.map((s) => (
+                        <li>
+                            <a href={`#${s.id}`} class="underline">
+                                {s.texto}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </nav>
+
+        <section id="responsable" class="mt-8">
+            <h2>¿Quién es el responsable del tratamiento?</h2>
+
+            <p class="mt-2">
+                El responsable del tratamiento de los datos personales recabados
+                a través de nuestros canales digitales es:
+            </p>
+
+            <div class="mt-2">
+                <p><strong>Razón social:</strong> {companyName}</p>
+                <p><strong>RUC:</strong> {companyRUC}</p>
+                <p><strong>Dirección:</strong> {companyAddress}</p>
+                <p>
+                    <strong>Correo de contacto:</strong>
+                    <a href={`mailto:${contactEmail}`} class="underline"
+                        >{contactEmail}</a
+                    >
+                </p>
+            </div>
+        </section>
+
+        <section id="que-recogemos" class="mt-8">
+            <h2>¿Qué información recopilamos?</h2>
+
+            <p>
+                Dependiendo de cómo utilices nuestro sitio web, formulario de
+                contacto o redes sociales, en SUNKA recopilamos, usamos y
+                almacenamos distintos tipos de datos personales. A continuación
+                te detallamos las categorías de datos que podríamos tratar:
+            </p>
+
+            <h3>Usuarios del e-commerce</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th><strong>Categoría de datos personales</strong></th>
+                        <th><strong>Datos personales</strong></th>
+                    </tr>
+                </thead>
+                <tbody
+                    ><tr>
+                        <td>Información de contacto</td>
+                        <td
+                            ><p>- N° de documento de identidad</p><p>
+                                - Dirección de correo electrónico
+                            </p><p>- Teléfono móvil</p></td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Información de registro</td>
+                        <td
+                            ><p>- Dirección de correo electrónico</p><p>
+                                - Contraseña
+                            </p><p>- Facebook ID</p><p>- Google ID</p></td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Información de cuenta</td>
+                        <td
+                            ><p>- Nombres y Apellidos</p><p>
+                                - Dirección de correo electrónico
+                            </p><p>- Documento de Identidad</p><p>
+                                - Género (opcional)
+                            </p><p>- Fecha de nacimiento (opcional)</p><p>
+                                - Teléfono
+                            </p><p>- Datos de persona jurídica (opcional)</p><p>
+                                - Nombre Visible
+                            </p><p>- Dirección de facturación</p><p>
+                                - Dirección de domicilio
+                            </p><p>- Contraseña</p><p>- Pedidos</p><p>
+                                - Artículos adquiridos
+                            </p><p>- Preferencias de compra</p></td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Información de compras</td>
+                        <td
+                            ><p>- Nombres y apellidos</p><p>
+                                - Dirección de correo electrónico
+                            </p><p>- Número de teléfono o celular</p><p>
+                                - Dirección del domicilio
+                            </p><p>- Número de pedido</p><p>
+                                - Origen de la compra
+                            </p><p>
+                                - Información sobre la navegación en el sitio
+                                web (productos vistos y buscados),
+                            </p><p>
+                                - Historial de búsqueda y preferencias de
+                                productos
+                            </p><p>- Categorías de productos de interés,</p><p>
+                                - Datos de sesiones de usuario
+                            </p><p>- Fotos de DNI</p><p>
+                                - Historial de productos y/o servicios
+                                adquiridos
+                            </p><p>- Historial de compras</p><p>
+                                - Datos de entrega
+                            </p><p>- Dirección de envío</p><p>
+                                - Historial de compras
+                            </p><p>
+                                - Datos de atención al cliente y postventa
+                                (estado de pedidos, detalles de seguimiento,
+                                notas de atención al cliente, encuestas de
+                                satisfacción o evaluación de servicio, historial
+                                de consultas, transcripciones de chats o
+                                llamadas)
+                            </p><p>
+                                - Listas de deseos o productos favoritos
+                            </p><p>- Preferencias de comunicación</p><p>
+                                - Datos de interacción y uso
+                            </p><p>
+                                - Datos de programas de fidelización (puntos
+                                acumulados, historial de redención)
+                            </p><p>- Historial de devoluciones o cambios</p><p>
+                                - Información de garantías.
+                            </p><p>- Datos bancarios</p><p>
+                                - Monto total de compra
+                            </p><p>- Información tributaria</p><p>
+                                - Origen de lugar de compra
+                            </p><p>- Datos de facturación</p><p>
+                                - Información de método de pago
+                            </p><p>- Datos de transacciones</p><p>
+                                - Hábitos de compras
+                            </p><p>
+                                - Datos de preferencias y comportamiento
+                            </p></td
+                        >
+                    </tr>
+                    <tr>
+                        <td
+                            >Información de contacto de vendedores en el
+                            marketplace</td
+                        >
+                        <td
+                            ><p>- Nombres y Apellidos</p><p>
+                                - Teléfono celular/fijo
+                            </p><p>- Dirección de correo electrónico</p><p>
+                                - Nombre comercial del seller
+                            </p></td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Información generada automáticamente/técnica</td>
+                        <td
+                            ><p>- Información del ordenador</p><p>
+                                - Información del dispositivo
+                            </p><p>- Dirección IP</p><p>
+                                - Software del navegador web
+                            </p><p>- Sitio web remitente</p><p>
+                                - Geolocalización
+                            </p><p>- Contenido</p><p>
+                                - <code> </code>visualizado
+                            </p><p>- Tiempo de permanencia</p></td
+                        >
+                    </tr>
+                    <tr>
+                        <td
+                            >Información de reclamos y quejas (Libro de
+                            Reclamaciones Online)</td
+                        >
+                        <td
+                            ><p>- Nombres y Apellidos</p><p>
+                                - N° de documento de identidad
+                            </p><p>- Dirección de domicilio</p><p>
+                                - Referencia
+                            </p><p>- Teléfono fijo</p><p>- N° de celular</p><p>
+                                - Dirección de correo electrónico
+                            </p><p>- Datos de facturación</p><p>
+                                - N° de pedido
+                            </p><p>- Descripción del producto o servicio</p><p>
+                                - Monto reclamado
+                            </p><p>- Descripción del reclamo o queja</p></td
+                        >
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Usuarios de redes sociales</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th><strong>Categoría de datos personales</strong></th>
+                        <th><strong>Datos personales</strong></th>
+                    </tr>
+                </thead>
+                <tbody
+                    ><tr>
+                        <td>Información de redes sociales</td>
+                        <td
+                            ><p>- Nombres y apellidos</p><p>
+                                - Dirección de correo electrónico
+                            </p><p>- Número de teléfono o celular</p><p>
+                                - Dirección del domicilio
+                            </p><p>
+                                - Nombre y perfil de usuario de redes sociales
+                            </p><p>- Consultas</p><p>- Comentarios</p><p>
+                                - Datos de interacción con publicaciones
+                            </p><p>- Anuncios</p><p>- Contenido</p><p>
+                                - Mensajería
+                            </p><p>
+                                - Historial de conversaciones y mensajes
+                            </p><p>- Respuestas a encuestas y formularios</p><p>
+                                - Preferencias de productos y servicios
+                            </p><p>
+                                - Datos de preferencias y comportamiento
+                            </p><p>- Preferencias de compras</p><p>
+                                - Intereses en productos o categorías
+                                específicas
+                            </p><p>- Datos de feedback</p><p>
+                                - Satisfacción
+                            </p><p>- Opiniones</p><p>- Calificaciones</p><p>
+                                - Gestiones del asistente virtual - Chatbot
+                                (obtención de comprobantes de pago,
+                                administración de servicios, actualización de
+                                personas autorizadas a recibir pedidos,
+                                trámites).
+                            </p></td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Información de reclamos y quejas</td>
+                        <td
+                            ><p>- Nombres y Apellidos</p><p>
+                                - N° de documento de identidad
+                            </p><p>- Dirección de domicilio</p><p>
+                                - Teléfono fijo
+                            </p><p>- N° de celular</p><p>
+                                - Dirección de correo electrónico
+                            </p><p>- Datos de facturación</p><p>
+                                - N° de pedido
+                            </p><p>- Descripción del producto o servicio</p><p>
+                                - Monto reclamado
+                            </p><p>- Descripción del reclamo o queja</p></td
+                        >
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Veracidad de los datos personales</h3>
+            <p>
+                El titular de los datos garantiza que la información
+                proporcionada es veraz, exacta, completa y actualizada. SUNKA no
+                se responsabiliza por cualquier daño o perjuicio que pudiera
+                derivarse del incumplimiento de esta obligación. El titular
+                podrá ejercer en cualquier momento su derecho de rectificación,
+                actualización o supresión de sus datos personales.
+            </p>
+
+            <h3>Datos personales de terceros</h3>
+            <p>
+                En caso de que el usuario proporcione datos personales de
+                terceros (por ejemplo, destinatarios de envíos), declara contar
+                con el consentimiento de dichos terceros y se compromete a
+                informarles sobre los términos de esta Política. SUNKA podrá
+                realizar las verificaciones necesarias para comprobar este
+                hecho, conforme a la normativa vigente.
+            </p>
+
+            <h3>¿Es obligatorio brindar mis datos personales?</h3>
+            <p>
+                No es obligatorio brindar tus datos personales; sin embargo,
+                para realizar compras, suscribirte al newsletter o enviarnos
+                consultas, será necesario que completes los formularios
+                correspondientes. En caso contrario, no podremos procesar tus
+                solicitudes ni brindarte los servicios ofrecidos.
+            </p>
+        </section>
+
+        <section id="como-recogemos" class="mt-8">
+            <h2>¿Cómo recopilamos esa información?</h2>
+
+            <p>
+                SUNKA recopila los datos personales de sus usuarios y
+                postulantes a través de distintas formas, dependiendo del tipo
+                de interacción que mantengan con nuestros canales digitales.
+            </p>
+
+            <h3>Interacciones directas</h3>
+            <p>
+                Recopilamos los datos personales que los usuarios nos
+                proporcionan de manera directa, tales como cuando:
+            </p>
+            <ul>
+                <li>
+                    Completa formularios en nuestro e-commerce o redes sociales.
+                </li>
+                <li>
+                    Visita nuestro sitio web <a
+                        href={companySite}
+                        target="_blank"
+                        class="underline text-blue-600 hover:text-blue-800"
+                        >{companySite}</a
+                    >.
+                </li>
+                <li>
+                    Se contacta con nosotros a través de nuestros canales de
+                    atención o redes sociales.
+                </li>
+                <li>Se registra o crea una cuenta en nuestro e-commerce.</li>
+                <li>Realiza una compra o transacción en línea.</li>
+                <li>
+                    Participa en promociones, encuestas o programas de
+                    fidelización.
+                </li>
+                <li>Nos brinda su opinión, comentarios o feedback.</li>
+                <li>
+                    Presenta un reclamo o queja a través de nuestros medios de
+                    atención.
+                </li>
+            </ul>
+
+            <h3>Interacciones o tecnologías automatizadas</h3>
+            <p>
+                Recopilamos de forma automática información técnica, de
+                marketing o de comunicación cuando interactúas con nuestro sitio
+                web o redes sociales. Esto puede incluir tu dirección IP, tipo
+                de navegador, identificadores de dispositivo, patrones de
+                navegación, páginas visitadas, productos consultados, tiempo de
+                permanencia en el sitio y otras métricas similares obtenidas
+                mediante cookies o tecnologías equivalentes.
+            </p>
+
+            <h3>Terceros o fuentes accesibles al público</h3>
+            <p>
+                También podemos obtener información personal de terceros o de
+                fuentes de acceso público, siempre respetando los principios de
+                legalidad y calidad establecidos en la normativa vigente. Esto
+                incluye, por ejemplo, verificaciones necesarias para cumplir con
+                obligaciones legales, prevenir fraudes o cumplir con
+                regulaciones relacionadas con la prevención del lavado de
+                activos y financiamiento del terrorismo.
+            </p>
+        </section>
+
+        <section id="finalidades" class="mt-8">
+            <h2>Finalidades y base legal</h2>
+
+            <p>
+                En SUNKA tratamos los datos personales de nuestros usuarios
+                respetando siempre sus derechos y aplicando el principio de
+                proporcionalidad. Esto significa que recopilamos y utilizamos
+                únicamente los datos adecuados, pertinentes y limitados al
+                cumplimiento de las finalidades específicas para las cuales
+                fueron obtenidos, de acuerdo con las bases legales aplicables.
+            </p>
+            <br />
+            <p>
+                A continuación, se detallan las finalidades del tratamiento de
+                tus datos personales y las bases legales para dichos
+                tratamientos:
+            </p>
+
+            <h3>Usuarios del e-commerce</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th><strong>Finalidad del Tratamiento</strong></th>
+                        <th><strong>Categorías de datos personales</strong></th>
+                        <th><strong>Base Legal del Tratamiento</strong></th>
+                        <th><strong>Periodo de Almacenamiento</strong></th>
+                        <th
+                            ><strong
+                                >Carácter obligatorio u opcional del tratamiento</strong
+                            ></th
+                        >
+                    </tr>
+                </thead>
+                <tbody
+                    ><tr>
+                        <td
+                            >Para mejorar la administración de nuestros
+                            servicios y la calidad de la experiencia cuando un
+                            usuario interactúa en el e-commerce de <strong
+                                >SUNKA.</strong
+                            ></td
+                        >
+                        <td
+                            ><p>- Información de contacto</p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Contar con un registro en nuestro sistema de los
+                            usuarios que se registran y crean una cuenta en el
+                            e-commerce de <strong>SUNKA</strong>.</td
+                        >
+                        <td
+                            ><p>- Información de registro</p><p>
+                                - Información de cuenta
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Realizar consultas, dar seguimiento y brindar
+                            información relacionada con el estado de los pedidos
+                            a través del canal de comunicación de WhatsApp.</td
+                        >
+                        <td
+                            ><p>- Información de cuenta</p><p>
+                                - Información de compras
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Gestionar la compra de productos a través de la
+                            plataforma de comercio electrónico de <strong
+                                >SUNKA</strong
+                            >, incluyendo la validación de pedidos, la
+                            tramitación del pago, y la emisión de comprobantes
+                            de pago correspondientes.</td
+                        >
+                        <td
+                            ><p>- Información de cuenta</p><p>
+                                - Información de compras
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Administrar las compras, actualizar el estado de
+                            los pedidos y coordinar la entrega de productos.</td
+                        >
+                        <td
+                            ><p>- Información de cuenta</p><p>
+                                - Información de compras
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Compartir la información necesaria con empresas de
+                            transporte para garantizar la entrega oportuna y
+                            segura.</td
+                        >
+                        <td
+                            ><p>- Información de cuenta</p><p>
+                                - Información de compras
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Enviar comunicaciones relacionadas con el
+                            seguimiento de pedidos, actualizaciones de entrega y
+                            encuestas de satisfacción.</td
+                        >
+                        <td
+                            ><p>- Información de cuenta</p><p>
+                                - Información de compras
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Responder consultas y ofrecer asistencia tras la
+                            compra.</td
+                        >
+                        <td
+                            ><p>- Información de cuenta</p><p>
+                                - Información de compras
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Verificar y completar las transacciones a través de
+                            la pasarela de pagos.</td
+                        >
+                        <td>- Información de compras</td>
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Prevenir actividades fraudulentas y proteger tanto
+                            al usuario como a la empresa.</td
+                        >
+                        <td
+                            ><p>- Información de contacto</p><p>
+                                - Información de compras
+                            </p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Optimizar procesos internos y desarrollar
+                            estrategias de mercado más eficaces.</td
+                        >
+                        <td
+                            ><p>- Información de contacto</p><p>
+                                - Información de compras
+                            </p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Recopilar y analizar retroalimentación de los
+                            usuarios para ajustar y perfeccionar los procesos.</td
+                        >
+                        <td
+                            ><p>- Información de contacto</p><p>
+                                - Información de compras
+                            </p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Proporcionar información sobre la disposición y
+                            recolección de Residuos de Aparatos Eléctricos y
+                            Electrónicos (RAEE), en cumplimiento de la normativa
+                            ambiental.</td
+                        >
+                        <td
+                            >- Información de Residuos de Aparatos Eléctricos y
+                            Eléctronicos</td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Gestionar la comunicación con personas interesadas
+                            en vender en nuestro marketplace.</td
+                        >
+                        <td
+                            ><p>
+                                - Información de contacto de vendedores en el
+                                Marketplace
+                            </p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Compartir los datos personales con Intercorp
+                            Retail, responsable de la administración del
+                            marketplace de <strong>SUNKA</strong>, para la
+                            gestión y operación de la plataforma e-commerce.</td
+                        >
+                        <td
+                            ><p>
+                                - Información de contacto de vendedores en el
+                                Marketplace
+                            </p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Para la gestión de quejas, reclamos y/o
+                            sugerencias.</td
+                        >
+                        <td
+                            ><p>- Información de reclamos y quejas</p><p>
+                                - Información de redes sociales
+                            </p></td
+                        >
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan durante 4 años desde la formalización
+                            de la queja o la resolución del ejercicio de los
+                            derechos de los interesados.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Gestionar las solicitudes de contacto de los
+                            usuarios con <strong>SUNKA</strong> a través de los canales
+                            dispuestos para ello en e-commerce de <strong
+                                >SUNKA</strong
+                            >.</td
+                        >
+                        <td>- Información de contacto</td>
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Para realizar el control informático de la página
+                            web para prevenir cualquier violación de la
+                            seguridad de los datos.</td
+                        >
+                        <td>- Información generada automáticamente/técnica</td>
+                        <td
+                            >Cumplimiento de la relación contractual. Artículo
+                            14° numeral 5 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            ><a name="_hlk190341694"></a>Para analizar los
+                            perfiles de intereses y segmentar a los usuarios con
+                            el objetivo de ofrecer contenido más relevante y
+                            adaptado a sus preferencias individuales,
+                            permitiendo así una personalización efectiva de
+                            ofertas, promociones y comunicaciones.</td
+                        >
+                        <td
+                            ><p>- Información de contacto</p><p>
+                                - Información de compras
+                            </p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Consentimiento. Artículo 13° de la Ley de
+                            Protección de Datos Personales.</td
+                        >
+                        <td
+                            >Se conservan por un plazo de 10 años o hasta que el
+                            usuario decida ejercer su derecho de oposición.</td
+                        >
+                        <td>Opcional</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Para el envío de publicidad y marketing
+                            personalizado a los usuarios, incluyendo información
+                            sobre productos, servicios, novedades, descuentos,
+                            ofertas, promociones, actividades y eventos de <strong
+                                >SUNKA</strong
+                            >.</td
+                        >
+                        <td
+                            ><p>- Información de contacto</p><p>
+                                - Información de compras
+                            </p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Consentimiento. Artículo 13° de la Ley de
+                            Protección de Datos Personales.</td
+                        >
+                        <td
+                            >Se conservan por un plazo de 10 años o hasta que el
+                            usuario decida ejercer su derecho de oposición.</td
+                        >
+                        <td>Opcional</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Para compartir información de los usuarios con
+                            empresas de nuestro grupo empresarial con el
+                            propósito de enviar comunicaciones publicitarias
+                            sobre sus productos, servicios, promociones, eventos
+                            y otras actividades comerciales que puedan resultar
+                            de interés para los usuarios del e-commerce.</td
+                        >
+                        <td
+                            ><p>- Información de contacto</p><p>
+                                - Información de compras
+                            </p><p>
+                                - Información generada automáticamente/técnica
+                            </p></td
+                        >
+                        <td
+                            >Consentimiento. Artículo 13° de la Ley de
+                            Protección de Datos Personales.</td
+                        >
+                        <td
+                            >Se conservan por un plazo de 10 años o hasta que el
+                            usuario decida ejercer su derecho de oposición.</td
+                        >
+                        <td>Opcional</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Para fines estadísticos, históricos y científicos.</td
+                        >
+                        <td>- Información generada automáticamente/técnica</td>
+                        <td
+                            >Anonimización. Artículo 14ª numeral 8 de la Ley de
+                            Protección de Datos Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                    <tr>
+                        <td
+                            >Para contar con los datos que hagan posible que <strong
+                                >SUNKA,</strong
+                            > cumpla con la normatividad legal nacional vigente.</td
+                        >
+                        <td><p></p><p></p><p></p></td>
+                        <td
+                            >Cumplimiento de obligaciones legales. Artículo 14°
+                            numeral 13 de la Ley de Protección de Datos
+                            Personales.</td
+                        >
+                        <td
+                            >Se conservan mientras el usuario se mantenga activo
+                            y posteriormente durante un periodo máximo de 10
+                            años.</td
+                        >
+                        <td>Obligatorio</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Usuarios de redes sociales</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th><strong>Categoría de datos personales</strong></th>
+                        <th><strong>Datos personales</strong></th>
+                    </tr>
+                </thead>
+                <tbody
+                    ><tr>
+                        <td>Información de redes sociales</td>
+                        <td
+                            ><p>- Nombres y apellidos</p><p>
+                                - Dirección de correo electrónico
+                            </p><p>- Número de teléfono o celular</p><p>
+                                - Dirección del domicilio
+                            </p><p>
+                                - Nombre y perfil de usuario de redes sociales
+                            </p><p>- Consultas</p><p>- Comentarios</p><p>
+                                - Datos de interacción con publicaciones
+                            </p><p>- Anuncios</p><p>- Contenido</p><p>
+                                - Mensajería
+                            </p><p>
+                                - Historial de conversaciones y mensajes
+                            </p><p>- Respuestas a encuestas y formularios</p><p>
+                                - Preferencias de productos y servicios
+                            </p><p>
+                                - Datos de preferencias y comportamiento
+                            </p><p>- Preferencias de compras</p><p>
+                                - Intereses en productos o categorías
+                                específicas
+                            </p><p>- Datos de feedback</p><p>
+                                - Satisfacción
+                            </p><p>- Opiniones</p><p>- Calificaciones</p><p>
+                                - Gestiones del asistente virtual - Chatbot
+                                (obtención de comprobantes de pago,
+                                administración de servicios, actualización de
+                                personas autorizadas a recibir pedidos,
+                                trámites).
+                            </p></td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Información de reclamos y quejas</td>
+                        <td
+                            ><p>- Nombres y Apellidos</p><p>
+                                - N° de documento de identidad
+                            </p><p>- Dirección de domicilio</p><p>
+                                - Teléfono fijo
+                            </p><p>- N° de celular</p><p>
+                                - Dirección de correo electrónico
+                            </p><p>- Datos de facturación</p><p>
+                                - N° de pedido
+                            </p><p>- Descripción del producto o servicio</p><p>
+                                - Monto reclamado
+                            </p><p>- Descripción del reclamo o queja</p></td
+                        >
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="seguridad" class="mt-8">
+            <h2>¿Cómo protegemos tu información?</h2>
+
+            <p>
+                En <strong>SUNKA</strong> nos esforzamos continuamente por brindarte
+                el mejor servicio y, para ello, buscamos implementar de manera permanente
+                nuevas tecnologías y procesos que nos permitan proteger mejor tus
+                datos personales. En ese sentido, seguimos las siguientes medidas
+                de seguridad técnicas, legales y organizativas:
+            </p>
+            <br />
+            <p>
+                Adoptamos las medidas de seguridad apropiadas para proteger
+                contra el acceso no autorizado, alteración, divulgación, pérdida
+                o destrucción de tu información personal, bajo los parámetros
+                establecidos en la normativa aplicable de protección de datos
+                personales. Estos mecanismos incluyen, sin limitarse a:
+            </p>
+            <!-- <br /> -->
+            <ul>
+                <li>
+                    Revisiones internas de nuestro sistema de recopilación de
+                    datos.
+                </li>
+                <li>
+                    Supervisión del almacenamiento y prácticas de procesamiento.
+                </li>
+                <li>Implementación de medidas de seguridad electrónicas.</li>
+                <li>
+                    Aplicación de medidas de seguridad físicas para proteger del
+                    acceso no autorizado a nuestros espacios físicos y virtuales
+                    donde se almacenan tus datos personales.
+                </li>
+            </ul>
+            <br />
+            <p>
+                Nuestro personal que tiene acceso a tu información personal está
+                sujeto al deber de confidencialidad y a las obligaciones
+                establecidas en la normativa aplicable sobre protección de datos
+                personales. El incumplimiento de estas obligaciones puede
+                conllevar medidas disciplinarias, incluyendo el despido y el
+                pago de indemnizaciones, según corresponda, por el uso o
+                divulgación no autorizada de tus datos personales.
+            </p>
+            <br />
+            <p>
+                En cuanto a la confidencialidad del procesamiento, el titular se
+                asegurará de que cualquier persona que esté autorizada por el
+                titular para procesar los datos del usuario, incluido su
+                personal, colaboradores y prestadores, esté bajo la obligación
+                apropiada de confidencialidad, ya sea un deber contractual o
+                legal.
+            </p>
+            <br />
+            <p>
+                En caso de que se presente algún incidente de seguridad, <strong
+                    >SUNKA</strong
+                > notificará al titular de los datos tan pronto tenga conocimiento
+                del hecho, conforme a lo establecido en la normativa vigente.
+            </p>
+            <br />
+            <p>
+                Finalmente, si bien adoptamos todas las medidas razonables para
+                proteger tu información, reconocemos que no es posible
+                garantizar la absoluta inexpugnabilidad de Internet ni evitar
+                totalmente la posibilidad de accesos fraudulentos a los datos
+                por parte de terceros.
+            </p>
+        </section>
+
+        <section id="transferencias" class="mt-8">
+            <h2>Transferencias y destinatarios</h2>
+
+            <p>
+                <strong>SUNKA</strong> podrá transferir tus datos personales a proveedores
+                de servicios de terceros que nos ayudan a facilitar o brindar determinados
+                servicios en relación con nuestras operaciones y, por lo tanto, procesan
+                datos personales en nuestro nombre. Esto puede incluir:
+            </p>
+
+            <ul>
+                <li>Empresas de nuestro grupo empresarial.</li>
+                <li>Empresas proveedoras de servicios.</li>
+                <li>Aseguradoras.</li>
+                <li>Proveedores de alojamiento web y dominio.</li>
+                <li>Empresas de transporte y logística.</li>
+                <li>Empresas tecnológicas.</li>
+                <li>Proveedores de servicios de pago.</li>
+            </ul>
+            <br />
+            <p>
+                En todos estos casos, <strong>SUNKA</strong> se compromete a celebrar
+                convenios de confidencialidad y de protección de datos personales
+                conforme a lo establecido en la normativa vigente.
+            </p>
+            <br />
+            <p>
+                Los proveedores externos estarán autorizados a utilizar tus
+                datos personales únicamente cuando sea necesario para brindarnos
+                sus servicios. Asimismo, puedes consultar el detalle de nuestros
+                destinatarios a nivel nacional en la siguiente tabla:
+            </p>
+            <br />
+            <table>
+                <thead>
+                    <tr>
+                        <th>Denominación Social</th>
+                        <th>Domicilio</th>
+                        <th>Finalidad</th>
+                        <th>Tipo de transferencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Google LLC</td>
+                        <td
+                            >1600 Amphitheatre Pkwy, Mountain View, CA 94043,
+                            United States</td
+                        >
+                        <td>Almacenamiento en la nube</td>
+                        <td>Internacional</td>
+                    </tr>
+                    <tr>
+                        <td>Contabo GmbH</td>
+                        <td>Aschauer Straße 32a, 81549 Múnich, Alemania</td>
+                        <td
+                            >Proveedor de servicios de alojamiento web y
+                            servidores</td
+                        >
+                        <td>Internacional</td>
+                    </tr>
+
+                    <tr>
+                        <td>Urbaner</td>
+                        <td
+                            >Av. Alfredo Benavides 1180, Miraflores 15047, Lima</td
+                        >
+                        <td>Servicio de courier</td>
+                        <td>Nacional</td>
+                    </tr>
+                    <tr>
+                        <td>Nirex</td>
+                        <td>Av. Circunvalación 423, Santiago de Surco, Lima</td>
+                        <td>Servicio de courier</td>
+                        <td>Nacional</td>
+                    </tr>
+                    <tr>
+                        <td>IZIPAY</td>
+                        <td>Av. Jorge Chávez Nº 275, Miraflores, Lima</td>
+                        <td>Procesamiento de pagos</td>
+                        <td>Nacional</td>
+                    </tr>
+                    <tr>
+                        <td>Kushki Perú</td>
+                        <td
+                            >Av. República de Panamá 3420, Urb. Limatambo, San
+                            Isidro, Lima</td
+                        >
+                        <td>Procesamiento de pagos</td>
+                        <td>Nacional</td>
+                    </tr>
+                    <tr>
+                        <td>BCP</td>
+                        <td
+                            >Calle Centenario 156, Urb. Las Laderas de
+                            Melgarejo, La Molina, Lima</td
+                        >
+                        <td>Procesamiento de pagos</td>
+                        <td>Nacional</td>
+                    </tr>
+                    <tr>
+                        <td>Scotiabank</td>
+                        <td>Av. Dionisio Derteano 102, San Isidro, Lima</td>
+                        <td>Procesamiento de pagos</td>
+                        <td>Nacional</td>
+                    </tr>
+                    <tr>
+                        <td>HubSpot Inc.</td>
+                        <td
+                            >25 First Street, 2nd Floor, Cambridge, MA 02141,
+                            United States</td
+                        >
+                        <td>Servicio de email marketing y CRM</td>
+                        <td>Internacional</td>
+                    </tr>
+                    <tr>
+                        <td>MailChimp</td>
+                        <td
+                            >675 Ponce de Leon Ave NE, Suite 5000, Atlanta, GA
+                            30308, United States</td
+                        >
+                        <td>Servicio de email marketing y CRM</td>
+                        <td>Internacional</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br />
+            <p>
+                Eventualmente, tus datos personales podrían ser tratados por
+                terceros aún no determinados, tales como entidades bancarias,
+                abogados, tribunales administrativos o judiciales, en caso de
+                existir un procedimiento o proceso legal.
+            </p>
+            <br />
+            <p>
+                Asimismo, <strong>SUNKA</strong> podría compartir tu información
+                personal con entidades del Estado cuando exista una ley expresa o
+                un mandato judicial que lo requiera. Además, en caso de que <strong
+                    >SUNKA</strong
+                > participe en una venta, fusión, consolidación o adquisición, tus
+                datos personales podrían ser compartidos con las entidades involucradas
+                en dicho proceso, siempre garantizando la confidencialidad y el cumplimiento
+                de la normativa aplicable.
+            </p>
+        </section>
+
+        <section id="redes-sociales" class="mt-8">
+            <h2>Redes Sociales</h2>
+
+            <p>
+                El titular de datos personales dispone de un perfil en las redes
+                sociales de <strong>SUNKA</strong> y ha decidido interactuar con
+                alguna de las páginas creadas por nuestra empresa, mostrando así
+                interés en la información que publicamos en nuestras cuentas. Al
+                interactuar con nuestras páginas, usted se somete a las presentes
+                políticas de privacidad.
+            </p>
+            <br />
+            <p>
+                <strong>SUNKA</strong> le recuerda que cada red social cuenta con
+                su propia Política de Privacidad, por lo que recomendamos al usuario
+                leerlas detenidamente. <strong>SUNKA</strong> podrá visualizar su
+                información pública de usuario; sin embargo, esta información no
+                se incorporará en ninguna base de datos, salvo que se cumpla con
+                un procedimiento de anonimización.
+            </p>
+            <br />
+            <table>
+                <tr>
+                    <th>Red Social</th>
+                    <th>Cuenta</th>
+                </tr>
+                <tr>
+                    <td>Facebook</td>
+                    <td>@SunkaTea</td>
+                </tr>
+                <tr>
+                    <td>Instagram</td>
+                    <td>@sunka.pe</td>
+                </tr>
+                <tr>
+                    <td>WhatsApp</td>
+                    <td>{whatsappNumber}</td>
+                </tr>
+            </table>
+
+            <h3>Facebook</h3>
+            <p>
+                Si haces click en el botón “Me Gusta” establecerás una conexión
+                con nosotros y te convertirás en seguidor de nuestra página.
+                Aunque podrás aparecer en la lista de personas a las que les
+                gusta esta página, nosotros no podremos ver tu perfil ni tu
+                información personal, sólo los datos identificativos que
+                Facebook permita y que compartas según tu configuración de
+                privacidad.
+            </p>
+            <br />
+            <p>
+                Al hacerte fan de esta página consientes:
+                <ul>
+                    <li>
+                        El tratamiento de tus datos personales conforme a las
+                        políticas de privacidad de Facebook (<a
+                            href="https://www.facebook.com/privacy/explanation"
+                            target="_blank">ver política</a
+                        >);
+                    </li>
+                    <li>
+                        El acceso de <strong>SUNKA</strong> a los datos que publiques
+                        en nuestra página;
+                    </li>
+                    <li>
+                        Que las publicaciones de <strong>SUNKA</strong> puedan aparecer
+                        en tu muro o sección de noticias.
+                    </li>
+                </ul>
+            </p>
+            <br />
+            <p>
+                Si deseas dejar de ser seguidor/a, puedes hacer nuevamente click
+                en “Te Gusta”. Para gestionar tu privacidad o bloquear una
+                página, revisa las opciones en:
+                <a
+                    href="http://es-es.facebook.com/help/privacy/pages"
+                    target="_blank">Configuración de privacidad de Facebook</a
+                >.
+            </p>
+
+            <h3>Instagram</h3>
+            <p>
+                Si haces click en el botón “Seguir” establecerás una conexión
+                con nosotros y te convertirás en seguidor de nuestra página.
+                Aunque podrás aparecer en la lista de “seguidores”, nosotros no
+                podremos ver tu perfil ni tu información personal, sólo los
+                datos que Instagram permita y que compartas según tu
+                configuración de privacidad.
+            </p>
+            <br />
+            <p>
+                Al seguirnos consientes:
+                <ul>
+                    <li>
+                        El tratamiento de tus datos personales conforme a las
+                        políticas de privacidad de Instagram (<a
+                            href="https://www.facebook.com/help/instagram/155833707900388"
+                            target="_blank">ver política</a
+                        >);
+                    </li>
+                    <li>
+                        El acceso de <strong>SUNKA</strong> a los datos que publiques
+                        en nuestro perfil;
+                    </li>
+                    <li>
+                        Que nuestras publicaciones puedan aparecer en tu sección
+                        principal.
+                    </li>
+                </ul>
+            </p>
+            <br />
+            <p>
+                Si deseas dejar de seguirnos, haz click en “Siguiendo” y luego
+                en “Dejar de seguir”. Puedes revisar cómo gestionar tu
+                privacidad en:
+                <a
+                    href="https://www.facebook.com/help/instagram/?rdrhc"
+                    target="_blank">Configuración de privacidad de Instagram</a
+                >.
+            </p>
+
+            <h3>WhatsApp</h3>
+            <p>
+                <strong>SUNKA</strong> utiliza WhatsApp principalmente para mejorar
+                la experiencia del cliente y ofrecer un canal de comunicación rápido
+                y conveniente con sus usuarios, clientes y prospectos.
+            </p>
+            <br />
+            <p>
+                Los datos personales recopilados a través de WhatsApp se
+                utilizan para:
+                <ul>
+                    <li>Comunicarse con los usuarios y atender solicitudes.</li>
+                    <li>Brindar información sobre productos o servicios.</li>
+                    <li>Ofrecer promociones y descuentos exclusivos.</li>
+                    <li>Gestionar compras, pagos, envíos y devoluciones.</li>
+                    <li>Garantizar la seguridad de las transacciones.</li>
+                </ul>
+            </p>
+            <br />
+            <p>
+                Al comunicarse con <strong>SUNKA</strong> por WhatsApp, acepta el
+                tratamiento de sus datos personales según las políticas de privacidad
+                de WhatsApp (<a
+                    href="https://www.whatsapp.com/legal/privacy-policy"
+                    target="_blank">ver política</a
+                >).
+            </p>
+            <br />
+            <p>
+                Si no estás de acuerdo con estas condiciones, te pedimos no
+                aceptar recibir información por este medio. Puedes salir del
+                grupo o bloquear nuestro contacto en cualquier momento desde la
+                configuración de tu cuenta.
+            </p>
+
+            <h3>Reglas para todas nuestras redes</h3>
+            <p>
+                <strong>SUNKA</strong> está comprometido con el cumplimiento de la
+                ley y el respeto en nuestras plataformas. Por ello, hemos establecido
+                los siguientes lineamientos:
+            </p>
+            <ul>
+                <li>Ser mayor de edad es requisito indispensable.</li>
+                <li>
+                    No se tolerará ninguna falta de respeto, discriminación o
+                    contenido ofensivo.
+                </li>
+                <li>
+                    Evita publicar información con derechos de autor sin citar
+                    su fuente.
+                </li>
+                <li>No se permite spam ni contenido ilegal.</li>
+                <li>
+                    Comparte sólo los datos personales necesarios para tu
+                    atención.
+                </li>
+                <li>
+                    <strong>SUNKA</strong> se reserva el derecho de eliminar mensajes
+                    que no cumplan las normas de respeto y legalidad, así como cualquier
+                    contenido ofensivo o amenazante, siempre que la plataforma lo
+                    permita.
+                </li>
+                <li>
+                    <strong>SUNKA</strong> no se hace responsable por los incumplimientos
+                    de estas normas por parte de los usuarios. Además, podrá eliminar
+                    de forma unilateral cualquier contenido que vulnere la ley o
+                    estas políticas.
+                </li>
+            </ul>
+        </section>
+
+        <section id="menores">
+            <h2>Privacidad de menores de edad</h2>
+
+            <p>
+                Para el uso de nuestros servicios, los usuarios deben tener más
+                de 18 años de edad. Por lo tanto, no recopilamos información de
+                menores de edad. Si <strong>SUNKA</strong> detecta que un usuario
+                es menor de edad y no cuenta con la autorización de sus padres o
+                tutores,
+                <strong>SUNKA</strong> se reserva el derecho de bloquear o eliminar
+                su cuenta, no atender sus solicitudes ni interactuar con su perfil.
+                Los padres o tutores del menor podrán contactarnos a través de los
+                medios indicados en la sección de derechos del usuario. De esta manera,
+                <strong>SUNKA</strong> quedará expresamente exonerada de cualquier
+                responsabilidad derivada del uso de nuestros servicios por parte
+                de menores.
+            </p>
+            <br />
+            <p>
+                <strong>SUNKA</strong> asume la responsabilidad de proteger el interés
+                superior del niño y sus derechos fundamentales en el entorno digital.
+                Nos comprometemos a salvaguardar los datos personales de los menores
+                de edad. Nuestros servicios no están dirigidos a menores de 18 años
+                y no recopilamos deliberadamente información personal de ellos sin
+                el consentimiento de sus padres o tutores legales. Dada la naturaleza
+                de internet, resulta difícil determinar con certeza si un usuario
+                registrado es menor de edad; por ello, los padres o tutores son responsables
+                de supervisar la actividad en línea de sus hijos y garantizar que
+                no proporcionen datos personales sin su consentimiento.
+            </p>
+            <br />
+            <p>
+                No obstante, hemos implementado medidas técnicas y organizativas
+                de seguridad para asegurar la confidencialidad, integridad y
+                disponibilidad de los datos personales de los menores de edad,
+                evitando su alteración, pérdida o acceso no autorizado.
+                Asimismo, realizamos esfuerzos razonables para verificar la
+                identidad de las personas que utilizan nuestros servicios y
+                otorgan su consentimiento para el tratamiento de datos,
+                empleando los medios tecnológicos disponibles para asegurar la
+                legitimidad de dicho consentimiento.
+            </p>
+            <br />
+            <p>
+                Los padres o tutores tienen derecho a revisar y solicitar la
+                eliminación de los datos personales de sus hijos. Si usted es
+                padre o tutor y desea ejercer los derechos de acceso,
+                rectificación, cancelación, oposición o portabilidad respecto a
+                los datos de su hijo, le invitamos a revisar la sección
+                correspondiente al Ejercicio de Derechos ARCO.
+            </p>
+        </section>
+
+        <section id="decisiones-automatizadas">
+            <h2>Decisiones Automatizadas y Elaboración de Perfiles</h2>
+
+            <p>
+                La toma de decisiones automatizada se refiere a aquellas
+                decisiones que se realizan exclusivamente con base en el
+                tratamiento automatizado de tus datos personales, sin
+                intervención humana directa. Esto incluye el uso de algoritmos o
+                software que analizan la información para generar resultados o
+                acciones automáticas.
+            </p>
+            <br />
+            <p>
+                El perfilamiento es una parte esencial de este proceso, ya que
+                permite analizar y clasificar a los usuarios según
+                características específicas para ofrecer experiencias
+                personalizadas. Por ejemplo:
+            </p>
+
+            <ul>
+                <li>
+                    Un cliente que compra frecuentemente un tipo de producto
+                    puede recibir recomendaciones personalizadas según sus
+                    hábitos de compra.
+                </li>
+                <li>
+                    Un sistema de precios dinámicos puede ofrecer descuentos o
+                    promociones en función de la frecuencia o el volumen de sus
+                    compras.
+                </li>
+            </ul>
+            <br />
+            <p>
+                En <strong>SUNKA</strong>, empleamos decisiones automatizadas
+                para mejorar la experiencia del cliente, personalizar servicios
+                y reforzar la seguridad de las transacciones. Algunos ejemplos
+                incluyen:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Personalización de la experiencia de compra:</strong
+                    > adaptamos nuestras plataformas para mostrar productos y promociones
+                    según tus intereses.
+                </li>
+                <li>
+                    <strong>Precios y ofertas dinámicas:</strong> aplicamos descuentos
+                    y beneficios basados en tu comportamiento y preferencia de compra.
+                </li>
+                <li>
+                    <strong>Prevención de fraude y seguridad:</strong> implementamos
+                    sistemas que detectan patrones sospechosos y bloquean transacciones
+                    de riesgo.
+                </li>
+            </ul>
+            <br />
+            <p>
+                Estas decisiones automatizadas se basan en los siguientes
+                fundamentos jurídicos:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Consentimiento:</strong> cuando personalizamos tu experiencia
+                    o te enviamos publicidad dirigida.
+                </li>
+                <li>
+                    <strong>Anonimización:</strong> cuando analizamos información
+                    de forma anónima para optimizar nuestros servicios y procesos.
+                </li>
+                <li>
+                    <strong>Mandato legal:</strong> cuando es necesario prevenir
+                    fraudes informáticos u otros delitos digitales.
+                </li>
+            </ul>
+            <br />
+            <p>
+                <strong>SUNKA</strong> reconoce tu derecho a no ser objeto de decisiones
+                basadas únicamente en tratamientos automatizados, incluida la elaboración
+                de perfiles, que puedan tener efectos jurídicos o afectar significativamente
+                tus derechos. En tales casos, podrás:
+            </p>
+
+            <ul>
+                <li>
+                    Solicitar información sobre la lógica utilizada en la
+                    decisión.
+                </li>
+                <li>
+                    Expresar tu punto de vista y solicitar una revisión manual.
+                </li>
+                <li>
+                    Oponerte al tratamiento automatizado si consideras que te
+                    afecta negativamente.
+                </li>
+            </ul>
+            <br />
+            <p>
+                <strong>SUNKA</strong> asegura que, cuando se realicen decisiones
+                basadas en sistemas automatizados, estas no producen efectos jurídicos
+                significativos sobre los usuarios o incluyen la intervención humana
+                en el proceso. Nuestro compromiso es mantener la transparencia, equidad
+                y protección de tus datos personales en todo momento.
+            </p>
+        </section>
+
+        <section id="cambios">
+            <h2>Cambios en la Política de Privacidad</h2>
+
+            <p>
+                El usuario reconoce que esta Política de Privacidad y Protección
+                de Datos Personales forma parte integrante de los Términos y
+                Condiciones de Uso de <strong>SUNKA</strong>, los cuales regulan
+                el acceso y uso de nuestros servicios.
+            </p>
+            <br />
+            <p>
+                Es importante tener en cuenta que nuestros servicios y la
+                legislación aplicable pueden modificarse, por lo que <strong
+                    >SUNKA</strong
+                > se reserva el derecho de actualizar o cambiar esta Política de
+                Privacidad en cualquier momento. En caso de realizar cambios sustanciales
+                en la forma en que tratamos tus datos personales, te notificaremos
+                oportunamente y, de ser necesario, solicitaremos nuevamente tu consentimiento.
+            </p>
+            <br />
+            <p>
+                Sin perjuicio de lo anterior, te recomendamos revisar esta
+                Política de Privacidad de forma periódica, especialmente antes
+                de proporcionar información personal adicional. Esta Política
+                fue actualizada en la fecha indicada al final del documento.
+            </p>
+        </section>
+
+        <section>
+            <h2>Derechos ARCO</h2>
+            <p>
+                En <strong>SUNKA</strong>, reconocemos que el derecho a la
+                protección de los datos personales permite a cada persona
+                mantener el control sobre su información personal. Por ello, la
+                normativa establece los llamados derechos “ARCO”, los cuales te
+                permiten exigir que tus datos sean tratados de manera adecuada y
+                transparente.
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Acceso:</strong> Tienes derecho a obtener información
+                    sobre los datos personales que <strong>SUNKA</strong> trata sobre
+                    ti, cómo fueron recopilados, con qué finalidad, a solicitud de
+                    quién y las transferencias realizadas o previstas.
+                </li>
+                <li>
+                    <strong>Rectificación (actualización o inclusión):</strong> Puedes
+                    solicitar la modificación de tus datos personales cuando sean
+                    inexactos, incompletos, erróneos o desactualizados.
+                </li>
+                <li>
+                    <strong>Cancelación:</strong> Puedes solicitar la eliminación
+                    o cancelación de tus datos cuando hayan dejado de ser necesarios
+                    para la finalidad con la que fueron recopilados, cuando revoques
+                    tu consentimiento o cuando se estén tratando en contravención
+                    de la ley.
+                </li>
+                <li>
+                    <strong>Oposición:</strong> Tienes derecho a oponerte, por motivos
+                    legítimos y fundados, al tratamiento de tus datos personales
+                    o a figurar en un banco de datos, salvo disposición legal en
+                    contrario.
+                </li>
+                <li>
+                    <strong>Información:</strong> Puedes solicitar información clara,
+                    detallada y previa sobre el tratamiento de tus datos personales,
+                    así como volver a requerirla en cualquier momento.
+                </li>
+                <li>
+                    <strong>Revocación:</strong> Puedes revocar tu consentimiento
+                    para el tratamiento de tus datos personales en cualquier momento,
+                    sin necesidad de justificarte y sin efectos retroactivos.
+                </li>
+                <li>
+                    <strong>Portabilidad:</strong> Puedes solicitar que tus datos
+                    personales sean entregados en un formato estructurado, de uso
+                    común y lectura mecánica, o requerir su transmisión a otro responsable,
+                    siempre que el tratamiento se base en tu consentimiento o en
+                    una relación contractual.
+                </li>
+            </ul>
+            <br />
+            <p>
+                Para ejercer tus derechos sobre tu información personal, puedes
+                acceder al formulario correspondiente o escribirnos a
+                <a
+                    href={`mailto:${emailSoporte}`}
+                    class="underline text-blue-600 hover:text-blue-800"
+                >
+                    {emailSoporte}
+                </a>.
+            </p>
+            <br />
+            <p>
+                Si consideras que no has sido atendido adecuadamente en el
+                ejercicio de tus derechos, puedes presentar una reclamación ante
+                la
+                <strong
+                    >Autoridad Nacional de Protección de Datos Personales</strong
+                >, dirigiéndote a la Mesa de Partes del
+                <strong>Ministerio de Justicia y Derechos Humanos</strong>,
+                ubicada en Calle Scipión Llona N° 350, Miraflores, Lima.
+            </p>
+        </section>
+
+        <section>
+            <h2>Aceptación de la Política de Privacidad</h2>
+
+            <p>
+                El Usuario, al hacer “click” en el checkbox que señala
+                <em
+                    >“He leído la Política de Privacidad de SUNKA y declaro
+                    haber sido informado sobre el tratamiento de mis datos
+                    personales.”</em
+                >, reconoce haber sido informado acerca del tratamiento de sus
+                datos personales conforme a lo dispuesto por el artículo 18° de
+                la
+                <strong
+                    >Ley N.º 29733, Ley de Protección de Datos Personales</strong
+                >.
+            </p>
+            <br />
+            <p>
+                Asimismo, al hacer “click” en el checkbox que señala
+                <em
+                    >“Autorizo el análisis de mis intereses y la segmentación de
+                    mi perfil para personalizar contenido, promociones y
+                    comunicaciones de acuerdo con mis preferencias, con la
+                    finalidad de recibir publicidad y comunicaciones de
+                    marketing personalizadas sobre productos, servicios,
+                    novedades, descuentos, ofertas, promociones, actividades y
+                    eventos de SUNKA.”</em
+                >, el Usuario declara haber leído la Política de Privacidad y
+                brindar su consentimiento para dicho tratamiento, conforme a lo
+                dispuesto por el artículo 13° de la Ley N.º 29733 y los
+                artículos 2, 3, 4, 5 y 6° de su Reglamento, aprobado mediante
+                Decreto Supremo N.º 016-2024-JUS.
+            </p>
+            <br />
+            <p>
+                Del mismo modo, al hacer “click” en el checkbox que señala
+                <em
+                    >“Acepto el compartir mi información con empresas del grupo
+                    empresarial de SUNKA para el envío de comunicaciones
+                    publicitarias sobre sus productos, servicios, promociones,
+                    eventos y otras actividades comerciales de interés.”</em
+                >, el Usuario declara haber leído la Política de Privacidad y
+                brindar su consentimiento para el tratamiento de datos
+                personales en ese sentido, conforme a lo dispuesto por el
+                artículo 13° de la Ley N.º 29733 y los artículos 2, 3, 4, 5 y 6°
+                de su Reglamento, aprobado mediante Decreto Supremo N.º
+                016-2024-JUS.
+            </p>
+        </section>
+    </main>
+</BaseLayout>
