@@ -1,15 +1,8 @@
 ---
-// src/pages/politica-de-privacidad.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const title = 'Política de privacidad';
 const lastUpdated = '20 de octubre de 2025';
-// const companyName = 'EKOBUSINESS S.A.C.';
-// const companySite = 'https://www.sunka.pe';
-// const contactEmail = 'comercial@sunkatea.com'; // reemplaza si corresponde
-// const companyRUC = '20557053213';
-// const companyAddress =
-//     'Av. Mariscal La Mar Nro. 638, Distrito de Miraflores, Provincia y Departamento de Lima, Perú';
 import {
     companyName,
     companySite,
@@ -21,26 +14,24 @@ import {
 } from '../lib/empresa.js';
 
 const secciones = [
-    { id: 'responsable', texto: '¿Quién es el Responsable del Tratamiento?' },
+    { id: 'responsable', texto: '¿Quién es el responsable del tratamiento?' },
     { id: 'que-recogemos', texto: '¿Qué información recopilamos?' },
     { id: 'como-recogemos', texto: '¿Cómo recopilamos esa información?' },
     { id: 'finalidades', texto: 'Finalidades y base legal' },
-    // { id: 'consecuencias', texto: 'Consecuencias de no brindar datos' },
     { id: 'seguridad', texto: '¿Cómo protegemos tu información?' },
-    // { id: 'conservacion', texto: 'Periodo de conservación' },
     {
         id: 'transferencias',
         texto: 'Transferencias nacionales e internacionales',
     },
     { id: 'redes-sociales', texto: 'Redes sociales' },
-    { id: 'menores', texto: 'Privacidad de menores' },
+    { id: 'menores', texto: 'Privacidad de menores de edad' },
     {
         id: 'desiciones-automatizadas',
         texto: 'Decisiones automatizadas y elaboración de perfiles',
     },
-    { id: 'cambios', texto: 'Cambios en la política' },
+    { id: 'cambios', texto: 'Cambios en la política de privacidad' },
     { id: 'arco', texto: 'Derechos ARCO' },
-    { id: 'oficial', texto: 'Oficial de Protección de Datos / Contacto' },
+    { id: 'aceptacion', texto: 'Aceptación de la política de privacidad' },
 ];
 ---
 
@@ -1546,7 +1537,7 @@ const secciones = [
         </section>
 
         <section id="decisiones-automatizadas">
-            <h2>Decisiones Automatizadas y Elaboración de Perfiles</h2>
+            <h2>Decisiones automatizadas y elaboración de perfiles</h2>
 
             <p>
                 La toma de decisiones automatizada se refiere a aquellas
@@ -1652,7 +1643,7 @@ const secciones = [
         </section>
 
         <section id="cambios">
-            <h2>Cambios en la Política de Privacidad</h2>
+            <h2>Cambios en la política de privacidad</h2>
 
             <p>
                 El usuario reconoce que esta Política de Privacidad y Protección
@@ -1679,7 +1670,7 @@ const secciones = [
             </p>
         </section>
 
-        <section>
+        <section id="arco">
             <h2>Derechos ARCO</h2>
             <p>
                 En <strong>SUNKA</strong>, reconocemos que el derecho a la
@@ -1757,8 +1748,8 @@ const secciones = [
             </p>
         </section>
 
-        <section>
-            <h2>Aceptación de la Política de Privacidad</h2>
+        <section id="aceptacion">
+            <h2>Aceptación de la política de privacidad</h2>
 
             <p>
                 El Usuario, al hacer “click” en el checkbox que señala

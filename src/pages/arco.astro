@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArcoForm from '../components/ArcoForm.vue';
+import { companyRUC, companyAddress, companyName } from '../lib/empresa.js';
+---
+
+<BaseLayout title="Derechos ARCO">
+    <section class="max-w-4xl mx-auto px-6 py-12">
+        <div class="text-center mb-6">
+            <h1
+                class="text-2xl text-center font-semibold mb-6 text-neutral-900 tracking-[0.15rem] sm:tracking-[0.25rem] md:tracking-[0.4rem]"
+            >
+                FORMATO VIRTUAL DE SOLICITUD DE DERECHOS ARCO – SUNKA
+            </h1>
+
+            <div class="w-24 h-[2px] bg-neutral-800 mx-auto mt-2 rounded-full">
+            </div>
+        </div>
+
+        <p class="text-sm leading-relaxed mb-8 text-gray-700">
+            Derechos de Acceso, Rectificación, Cancelación, Oposición,
+            Información, Revocación y Portabilidad.
+            <br /><br />
+            <strong>{companyName}</strong>, con RUC N° <strong
+                >{companyRUC}</strong
+            >, domiciliado en
+            <strong>{companyAddress}</strong>, en cumplimiento de lo dispuesto
+            por la Ley Nº 29733, Ley de Protección de Datos Personales, y su
+            Reglamento aprobado por el Decreto Supremo Nº 016-2024-JUS, pone a
+            su disposición el presente procedimiento para ejercer sus derechos
+            ARCO respecto a sus datos personales contenidos en nuestros bancos
+            de datos.
+        </p>
+
+        <ArcoForm client:load />
+    </section>
+</BaseLayout>

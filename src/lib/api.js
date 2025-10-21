@@ -4,6 +4,7 @@ const urls = {
     categorias: `${host}/store/categorias`,
     productos: `${host}/store/productos`,
     newsletter: `${host}/store/newsletter`,
+    arco: `${host}/store/arco`,
 }
 
 function jmsg(type, msg) {

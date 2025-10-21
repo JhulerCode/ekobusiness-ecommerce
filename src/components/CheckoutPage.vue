@@ -99,9 +99,7 @@
                     <div class="grid md:grid-cols-2 gap-4">
                         <!-- Correo -->
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Correo*</label
-                            >
+                            <label class="label">Correo*</label>
                             <input
                                 v-model="form.email"
                                 @blur="marcarTocado('email')"
@@ -123,9 +121,7 @@
 
                         <!-- Teléfono -->
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Teléfono*</label
-                            >
+                            <label class="label">Teléfono*</label>
                             <input
                                 v-model="form.telefono"
                                 @blur="marcarTocado('telefono')"
@@ -149,9 +145,7 @@
 
                         <!-- Nombre -->
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Nombres*</label
-                            >
+                            <label class="label">Nombres*</label>
                             <input
                                 v-model="form.nombre"
                                 @blur="marcarTocado('nombre')"
@@ -175,9 +169,7 @@
 
                         <!-- Apellidos -->
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Apellidos*</label
-                            >
+                            <label class="label">Apellidos*</label>
                             <input
                                 v-model="form.apellidos"
                                 @blur="marcarTocado('apellidos')"
@@ -202,9 +194,7 @@
 
                         <!-- Tipo de documento -->
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Tipo de documento*</label
-                            >
+                            <label class="label">Tipo de documento*</label>
                             <select
                                 v-model="form.tipoDocumento"
                                 @blur="marcarTocado('tipoDocumento')"
@@ -236,9 +226,7 @@
 
                         <!-- Número de documento -->
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Número de documento*</label
-                            >
+                            <label class="label">Número de documento*</label>
                             <input
                                 v-model="form.numeroDocumento"
                                 @blur="marcarTocado('numeroDocumento')"
@@ -372,9 +360,7 @@
                     >
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1"
-                                    >Dirección*</label
-                                >
+                                <label class="label">Dirección*</label>
                                 <input
                                     v-model="form.direccion"
                                     type="text"
@@ -390,9 +376,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1"
-                                    >Distrito*</label
-                                >
+                                <label class="label">Distrito*</label>
                                 <input
                                     v-model="form.distrito"
                                     type="text"
@@ -408,9 +392,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1"
-                                    >Número</label
-                                >
+                                <label class="label">Número</label>
                                 <input
                                     v-model="form.numero"
                                     type="text"
@@ -419,9 +401,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1"
-                                    >Piso / Dpto</label
-                                >
+                                <label class="label">Piso / Dpto</label>
                                 <input
                                     v-model="form.piso"
                                     type="text"
@@ -431,9 +411,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Referencia*</label
-                            >
+                            <label class="label">Referencia*</label>
                             <textarea
                                 v-model="form.referencia"
                                 class="input resize-none"
@@ -455,9 +433,7 @@
                         class="space-y-5 mt-6"
                     >
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Punto de retiro</label
-                            >
+                            <label class="label">Punto de retiro</label>
                             <div
                                 class="border border-gray-200 rounded-xl p-4 bg-white"
                             >
@@ -469,9 +445,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1"
-                                >Fecha de retiro*</label
-                            >
+                            <label class="label">Fecha de retiro*</label>
                             <input
                                 v-model="form.fechaRetiro"
                                 type="date"
@@ -728,9 +702,10 @@
                             <p class="text-xs text-gray-500">
                                 Cantidad: {{ item.cantidad }}
                             </p>
-                            
+
                             <p class="text-sm font-semibold text-gray-700 mt-1">
-                                S/ {{ (item.precio * item.cantidad).toFixed(2) }}
+                                S/
+                                {{ (item.precio * item.cantidad).toFixed(2) }}
                             </p>
                         </div>
                     </div>
