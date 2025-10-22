@@ -3,7 +3,10 @@
         <!-- Columna izquierda: pasos -->
         <div class="md:col-span-2 space-y-8">
             <!-- Encabezado -->
-            <div class="flex items-center justify-between mb-10 relative">
+            <div
+                class="flex items-center justify-between mb-10 relative"
+                ref="seccionForm1"
+            >
                 <!-- Paso 1 -->
                 <div class="flex flex-col items-center flex-1">
                     <div
@@ -102,20 +105,11 @@
                             <label class="label">Correo*</label>
                             <input
                                 v-model="form.email"
-                                @blur="marcarTocado('email')"
-                                @input="tocados.email && validarCampo('email')"
                                 type="email"
                                 class="input"
-                                :class="{
-                                    'border-red-500':
-                                        errores.email && tocados.email,
-                                }"
                             />
-                            <p
-                                v-if="errores.email && tocados.email"
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores.email }}
+                            <p v-if="errors1.email" class="input-error">
+                                {{ errors1.email }}
                             </p>
                         </div>
 
@@ -124,22 +118,11 @@
                             <label class="label">Teléfono*</label>
                             <input
                                 v-model="form.telefono"
-                                @blur="marcarTocado('telefono')"
-                                @input="
-                                    tocados.telefono && validarCampo('telefono')
-                                "
                                 type="text"
                                 class="input"
-                                :class="{
-                                    'border-red-500':
-                                        errores.telefono && tocados.telefono,
-                                }"
                             />
-                            <p
-                                v-if="errores.telefono && tocados.telefono"
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores.telefono }}
+                            <p v-if="errors1.telefono" class="input-error">
+                                {{ errors1.telefono }}
                             </p>
                         </div>
 
@@ -147,23 +130,12 @@
                         <div>
                             <label class="label">Nombres*</label>
                             <input
-                                v-model="form.nombre"
-                                @blur="marcarTocado('nombre')"
-                                @input="
-                                    tocados.nombre && validarCampo('nombre')
-                                "
+                                v-model="form.nombres"
                                 type="text"
                                 class="input"
-                                :class="{
-                                    'border-red-500':
-                                        errores.nombre && tocados.nombre,
-                                }"
                             />
-                            <p
-                                v-if="errores.nombre && tocados.nombre"
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores.nombre }}
+                            <p v-if="errors1.nombres" class="input-error">
+                                {{ errors1.nombres }}
                             </p>
                         </div>
 
@@ -172,55 +144,24 @@
                             <label class="label">Apellidos*</label>
                             <input
                                 v-model="form.apellidos"
-                                @blur="marcarTocado('apellidos')"
-                                @input="
-                                    tocados.apellidos &&
-                                        validarCampo('apellidos')
-                                "
                                 type="text"
                                 class="input"
-                                :class="{
-                                    'border-red-500':
-                                        errores.apellidos && tocados.apellidos,
-                                }"
                             />
-                            <p
-                                v-if="errores.apellidos && tocados.apellidos"
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores.apellidos }}
+                            <p v-if="errors1.apellidos" class="input-error">
+                                {{ errors1.apellidos }}
                             </p>
                         </div>
 
                         <!-- Tipo de documento -->
                         <div>
                             <label class="label">Tipo de documento*</label>
-                            <select
-                                v-model="form.tipoDocumento"
-                                @blur="marcarTocado('tipoDocumento')"
-                                @change="
-                                    tocados.tipoDocumento &&
-                                        validarCampo('tipoDocumento')
-                                "
-                                class="input"
-                                :class="{
-                                    'border-red-500':
-                                        errores.tipoDocumento &&
-                                        tocados.tipoDocumento,
-                                }"
-                            >
+                            <select v-model="form.doc_tipo" class="input">
                                 <option value="DNI">DNI</option>
                                 <option value="CE">Carné de Extranjería</option>
                                 <option value="PAS">Pasaporte</option>
                             </select>
-                            <p
-                                v-if="
-                                    errores.tipoDocumento &&
-                                    tocados.tipoDocumento
-                                "
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores.tipoDocumento }}
+                            <p v-if="errors1.doc_tipo" class="input-error">
+                                {{ errors1.doc_tipo }}
                             </p>
                         </div>
 
@@ -228,57 +169,45 @@
                         <div>
                             <label class="label">Número de documento*</label>
                             <input
-                                v-model="form.numeroDocumento"
-                                @blur="marcarTocado('numeroDocumento')"
-                                @input="
-                                    tocados.numeroDocumento &&
-                                        validarCampo('numeroDocumento')
-                                "
+                                v-model="form.doc_numero"
                                 type="text"
                                 class="input"
-                                :class="{
-                                    'border-red-500':
-                                        errores.numeroDocumento &&
-                                        tocados.numeroDocumento,
-                                }"
                             />
-                            <p
-                                v-if="
-                                    errores.numeroDocumento &&
-                                    tocados.numeroDocumento
-                                "
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores.numeroDocumento }}
+                            <p v-if="errors1.doc_numero" class="input-error">
+                                {{ errors1.doc_numero }}
                             </p>
                         </div>
 
-                        <div class="flex flex-col gap-2 text-sm text-gray-600">
-                            <label class="flex items-start gap-2">
+                        <div class="col-span-2">
+                            <label class="checkbox">
                                 <input
-                                    type="checkbox"
                                     v-model="form.privacidad"
+                                    type="checkbox"
                                 />
                                 <span>
-                                    He leído y acepto la
+                                    He leído la
                                     <a
                                         href="/politica-de-privacidad"
                                         target="_blank"
-                                        class="underline hover:text-neutral-800 transition"
+                                        class="underline hover:text-gray-900"
                                     >
-                                        política de privacidad </a
-                                    >.
+                                        Política de Privacidad de SUNKA
+                                    </a>
+                                    y declaro haber sido informado sobre el
+                                    tratamiento de mis datos personales.
                                 </span>
                             </label>
+
+                            <p v-if="errors1.privacidad" class="input-error">
+                                {{ errors1.privacidad }}
+                            </p>
                         </div>
                     </div>
 
+                    <!-- Botones -->
                     <div class="flex justify-end">
-                        <button
-                            @click="continuarEntrega"
-                            class="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-900 transition cursor-pointer"
-                        >
-                            Ir a la Entrega →
+                        <button @click="continuarEntrega" class="button">
+                            Ir a la Entrega <ArrowRight />
                         </button>
                     </div>
                 </div>
@@ -295,16 +224,17 @@
                         </p>
                         <p>
                             <span class="font-medium">Nombre:</span>
-                            {{ form.nombre }} {{ form.apellidos }}
+                            {{ form.nombres }} {{ form.apellidos }}
                         </p>
                         <p>
                             <span class="font-medium">Teléfono:</span>
                             {{ form.telefono }}
                         </p>
                     </div>
+
                     <button
                         @click="step = 1"
-                        class="text-xs text-blue-600 hover:underline"
+                        class="text-xs text-blue-600 hover:underline cursor-pointer"
                     >
                         Editar
                     </button>
@@ -315,6 +245,7 @@
             <div
                 class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
                 v-if="step >= 2"
+                ref="seccionForm2"
             >
                 <h2 class="text-xl font-semibold">2. Entrega</h2>
 
@@ -322,40 +253,28 @@
                 <div v-if="step === 2" class="space-y-6">
                     <!-- Opciones principales -->
                     <div class="flex gap-4">
-                        <button
-                            @click="
-                                form.entregaTipo = 'domicilio';
-                                errores2 = {};
-                            "
-                            :class="[
-                                'flex-1 py-3 rounded-xl border transition font-medium cursor-pointer',
-                                form.entregaTipo === 'domicilio'
-                                    ? 'bg-black text-white border-black'
-                                    : 'bg-white text-gray-700 border-gray-300 hover:border-black',
-                            ]"
-                        >
-                            Envío a domicilio
-                        </button>
+                        <label class="radio">
+                            <input
+                                v-model="form.entrega_tipo"
+                                type="radio"
+                                value="domicilio"
+                            />
+                            <span>Envío a domicilio</span>
+                        </label>
 
-                        <button
-                            @click="
-                                form.entregaTipo = 'retiro';
-                                errores2 = {};
-                            "
-                            :class="[
-                                'flex-1 py-3 rounded-xl border transition font-medium cursor-pointer',
-                                form.entregaTipo === 'retiro'
-                                    ? 'bg-black text-white border-black'
-                                    : 'bg-white text-gray-700 border-gray-300 hover:border-black',
-                            ]"
-                        >
-                            Retira tu producto
-                        </button>
+                        <label class="radio">
+                            <input
+                                v-model="form.entrega_tipo"
+                                type="radio"
+                                value="retiro"
+                            />
+                            <span>Retira tu producto</span>
+                        </label>
                     </div>
 
                     <!-- Envío a domicilio -->
                     <div
-                        v-if="form.entregaTipo === 'domicilio'"
+                        v-if="form.entrega_tipo === 'domicilio'"
                         class="space-y-5 mt-6"
                     >
                         <div class="grid md:grid-cols-2 gap-4">
@@ -365,13 +284,9 @@
                                     v-model="form.direccion"
                                     type="text"
                                     class="input"
-                                    @blur="validarCampo2('direccion')"
                                 />
-                                <p
-                                    v-if="errores2.direccion"
-                                    class="text-red-500 text-sm mt-1"
-                                >
-                                    {{ errores2.direccion }}
+                                <p v-if="errors2.direccion" class="input-error">
+                                    {{ errors2.direccion }}
                                 </p>
                             </div>
 
@@ -381,20 +296,16 @@
                                     v-model="form.distrito"
                                     type="text"
                                     class="input"
-                                    @blur="validarCampo2('distrito')"
                                 />
-                                <p
-                                    v-if="errores2.distrito"
-                                    class="text-red-500 text-sm mt-1"
-                                >
-                                    {{ errores2.distrito }}
+                                <p v-if="errors2.distrito" class="input-error">
+                                    {{ errors2.distrito }}
                                 </p>
                             </div>
 
                             <div>
                                 <label class="label">Número</label>
                                 <input
-                                    v-model="form.numero"
+                                    v-model="form.direccion_numero"
                                     type="text"
                                     class="input"
                                 />
@@ -403,7 +314,7 @@
                             <div>
                                 <label class="label">Piso / Dpto</label>
                                 <input
-                                    v-model="form.piso"
+                                    v-model="form.direccion_piso"
                                     type="text"
                                     class="input"
                                 />
@@ -416,20 +327,16 @@
                                 v-model="form.referencia"
                                 class="input resize-none"
                                 rows="1"
-                                @blur="validarCampo2('referencia')"
                             ></textarea>
-                            <p
-                                v-if="errores2.referencia"
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores2.referencia }}
+                            <p v-if="errors2.referencia" class="input-error">
+                                {{ errors2.referencia }}
                             </p>
                         </div>
                     </div>
 
                     <!-- Retiro en tienda -->
                     <div
-                        v-if="form.entregaTipo === 'retiro'"
+                        v-if="form.entrega_tipo === 'retiro'"
                         class="space-y-5 mt-6"
                     >
                         <div>
@@ -447,32 +354,24 @@
                         <div>
                             <label class="label">Fecha de retiro*</label>
                             <input
-                                v-model="form.fechaRetiro"
+                                v-model="form.fecha_retiro"
                                 type="date"
                                 class="input"
-                                @blur="validarCampo2('fechaRetiro')"
                             />
-                            <p
-                                v-if="errores2.fechaRetiro"
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores2.fechaRetiro }}
+                            <p v-if="errors2.fecha_retiro" class="input-error">
+                                {{ errors2.fecha_retiro }}
                             </p>
                         </div>
                     </div>
 
+                    <!-- Botones -->
                     <div class="flex justify-between">
-                        <button
-                            @click="prevStep"
-                            class="text-gray-600 hover:text-black transition cursor-pointer"
-                        >
-                            ← Volver
+                        <button @click="prevStep" class="button2">
+                            <ArrowLeft /> Volver
                         </button>
-                        <button
-                            @click="continuarPago"
-                            class="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-900 transition cursor-pointer"
-                        >
-                            Ir al Pago →
+
+                        <button @click="continuarPago" class="button">
+                            Ir al Pago <ArrowRight />
                         </button>
                     </div>
                 </div>
@@ -483,7 +382,7 @@
                     class="bg-gray-50 p-4 rounded-xl text-sm text-gray-700 shadow-inner flex justify-between items-start"
                 >
                     <div>
-                        <template v-if="form.entregaTipo === 'domicilio'">
+                        <template v-if="form.entrega_tipo === 'domicilio'">
                             <p>
                                 <span class="font-medium"
                                     >Tipo de entrega:</span
@@ -493,6 +392,12 @@
                             <p>
                                 <span class="font-medium">Dirección:</span>
                                 {{ form.direccion }}
+                                <template v-if="form.direccion_numero">
+                                    Nro: {{ form.direccion_numero }}
+                                </template>
+                                <template v-if="form.direccion_piso">
+                                    Piso: {{ form.direccion_piso }}
+                                </template>
                             </p>
                             <p>
                                 <span class="font-medium">Distrito:</span>
@@ -504,7 +409,7 @@
                             </p>
                         </template>
 
-                        <template v-else-if="form.entregaTipo === 'retiro'">
+                        <template v-else-if="form.entrega_tipo === 'retiro'">
                             <p>
                                 <span class="font-medium"
                                     >Tipo de entrega:</span
@@ -521,14 +426,14 @@
                                 <span class="font-medium"
                                     >Fecha de retiro:</span
                                 >
-                                {{ form.fechaRetiro }}
+                                {{ form.fecha_retiro }}
                             </p>
                         </template>
                     </div>
 
                     <button
                         @click="step = 2"
-                        class="text-xs text-blue-600 hover:underline"
+                        class="text-xs text-blue-600 hover:underline cursor-pointer"
                     >
                         Editar
                     </button>
@@ -539,6 +444,7 @@
             <div
                 class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
                 v-if="step >= 3"
+                ref="seccionForm3"
             >
                 <h2 class="text-xl font-semibold">3. Pago</h2>
 
@@ -546,31 +452,23 @@
                 <div v-if="step === 3" class="space-y-6">
                     <!-- Tipo de comprobante -->
                     <div>
-                        <label class="block text-sm font-medium mb-2"
-                            >Tipo de comprobante</label
-                        >
+                        <label class="label">Tipo de comprobante*</label>
 
                         <div class="flex gap-6">
-                            <label
-                                class="flex items-center gap-2 cursor-pointer"
-                            >
+                            <label class="radio">
                                 <input
+                                    v-model="form.comprobante_tipo"
                                     type="radio"
                                     value="boleta"
-                                    v-model="form.tipoComprobante"
-                                    class="text-black"
                                 />
                                 <span>Boleta</span>
                             </label>
 
-                            <label
-                                class="flex items-center gap-2 cursor-pointer"
-                            >
+                            <label class="radio">
                                 <input
+                                    v-model="form.comprobante_tipo"
                                     type="radio"
                                     value="factura"
-                                    v-model="form.tipoComprobante"
-                                    class="text-black"
                                 />
                                 <span>Factura</span>
                             </label>
@@ -579,90 +477,63 @@
 
                     <!-- Campos adicionales si es Factura -->
                     <div
-                        v-if="form.tipoComprobante === 'factura'"
-                        class="space-y-4 grid md:grid-cols-2 gap-4"
+                        v-if="form.comprobante_tipo === 'factura'"
+                        class="grid md:grid-cols-2 gap-4"
                     >
                         <div>
-                            <label class="block text-sm font-medium mb-1"
-                                >RUC*</label
-                            >
+                            <label class="label">RUC*</label>
                             <input
                                 type="text"
                                 v-model="form.ruc"
                                 maxlength="11"
-                                @input="validarCampo3('ruc')"
-                                class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black focus:outline-none"
+                                class="input"
                             />
-                            <p
-                                v-if="errores3.ruc"
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores3.ruc }}
+                            <p v-if="errors3.ruc" class="input-error">
+                                {{ errors3.ruc }}
                             </p>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium mb-1"
-                                >Razón Social*</label
-                            >
+                            <label class="label">Razón Social*</label>
                             <input
                                 type="text"
-                                v-model="form.razonSocial"
-                                @input="validarCampo3('razonSocial')"
-                                class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black focus:outline-none"
+                                v-model="form.razon_social"
+                                class="input"
                             />
-                            <p
-                                v-if="errores3.razonSocial"
-                                class="text-red-500 text-sm mt-1"
-                            >
-                                {{ errores3.razonSocial }}
+                            <p v-if="errors3.razon_social" class="input-error">
+                                {{ errors3.razon_social }}
                             </p>
                         </div>
                     </div>
 
                     <!-- Método de pago -->
                     <div>
-                        <label class="block text-sm font-medium mb-2"
-                            >Método de pago</label
-                        >
-                        <div class="space-y-3">
-                            <label
-                                class="flex items-center gap-3 border border-gray-300 rounded-xl p-4 cursor-pointer"
-                            >
-                                <input
-                                    type="radio"
-                                    v-model="form.metodoPago"
-                                    value="tarjeta"
-                                />
-                                <span>Tarjeta de crédito o débito</span>
-                            </label>
+                        <label class="label">Método de pago*</label>
 
+                        <div class="space-y-2">
                             <label
-                                class="flex items-center gap-3 border border-gray-300 rounded-xl p-4 cursor-pointer"
+                                v-for="a in pago_metodos"
+                                :key="a.id"
+                                class="radio border border-gray-300 rounded-xl p-4"
                             >
                                 <input
                                     type="radio"
-                                    v-model="form.metodoPago"
-                                    value="yape"
+                                    v-model="form.pago_metodo"
+                                    :value="a.id"
                                 />
-                                <span>Yape / Plin</span>
+                                <span>{{ a.nombre }}</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Botones -->
                     <div class="flex justify-between">
-                        <button
-                            @click="prevStep"
-                            class="text-gray-600 hover:text-black transition cursor-pointer"
-                        >
-                            ← Volver
+                        <button @click="prevStep" class="button2">
+                            <ArrowLeft /> Volver
                         </button>
-                        <button
-                            @click="pagar"
-                            class="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-900 transition cursor-pointer"
-                        >
-                            Ir a pagar
+
+                        <button @click="pagar" class="button">
+                            Ir a pagar <ArrowRight />
                         </button>
                     </div>
                 </div>
@@ -741,35 +612,47 @@
 
 <script>
 import { Cart } from '../../src/lib/cart.js';
+import ArrowLeft from '../assets/icons/arrow-left.vue';
+import ArrowRight from '../assets/icons/arrow-right.vue';
 
 export default {
+    components: {
+        ArrowLeft,
+        ArrowRight,
+    },
+    props: {
+        pago_metodos: {
+            type: Array,
+            default: () => [],
+        },
+    },
     data() {
         return {
+            theme: 'light',
             step: 1,
             form: {
                 email: '',
                 telefono: '',
-                nombre: '',
+                nombres: '',
                 apellidos: '',
-                tipoDocumento: 'DNI',
-                numeroDocumento: '',
+                doc_tipo: 'DNI',
+                doc_numero: '',
                 privacidad: false,
 
-                entregaTipo: 'domicilio',
+                entrega_tipo: 'domicilio',
                 direccion: '',
                 distrito: '',
                 referencia: '',
-                fechaRetiro: '',
+                fecha_retiro: '',
 
-                tipoComprobante: 'boleta',
+                comprobante_tipo: 'boleta',
                 ruc: '',
-                razonSocial: '',
-                metodoPago: 'tarjeta',
+                razon_social: '',
+                pago_metodo: 'tarjeta',
             },
-            errores: {},
-            errores2: {},
-            errores3: {},
-            tocados: {},
+            errors1: {},
+            errors2: {},
+            errors3: {},
             items: [],
         };
     },
@@ -782,7 +665,7 @@ export default {
         },
         costoEnvio() {
             // Puedes ajustarlo según tu lógica
-            return this.form.entregaTipo === 'domicilio' ? 10 : 0;
+            return this.form.entrega_tipo === 'domicilio' ? 10 : 0;
         },
         total() {
             return this.subtotal + this.costoEnvio;
@@ -792,162 +675,105 @@ export default {
         this.items = Cart.get();
     },
     methods: {
-        validarCampo(campo) {
-            const valor = this.form[campo];
-            let error = '';
+        validateForm1() {
+            Object.keys(this.errors1).forEach((k) => (this.errors1[k] = ''));
 
-            switch (campo) {
-                case 'email':
-                    if (!valor) error = 'El correo es obligatorio.';
-                    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor))
-                        error = 'El correo no es válido.';
-                    break;
+            if (
+                !this.form.email ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)
+            )
+                this.errors1.email = 'Ingrese un email válido.';
+            if (!this.form.telefono)
+                this.errors1.telefono = 'Este campo es obligatorio.';
+            if (!this.form.nombres)
+                this.errors1.nombres = 'Este campo es obligatorio.';
+            if (!this.form.apellidos)
+                this.errors1.apellidos = 'Describa su solicitud.';
+            if (!this.form.doc_tipo)
+                this.errors1.doc_tipo = 'Seleccione un tipo de documento.';
+            if (!this.form.doc_numero)
+                this.errors1.doc_numero = 'Este campo es obligatorio.';
+            if (!this.form.privacidad)
+                this.errors1.privacidad = 'Este campo es obligatorio.';
 
-                case 'telefono':
-                    if (!valor) error = 'El teléfono es obligatorio.';
-                    else if (!/^\d{9}$/.test(valor))
-                        error = 'Debe tener 9 dígitos numéricos.';
-                    break;
-
-                case 'nombre':
-                    if (!valor) error = 'El nombre es obligatorio.';
-                    break;
-
-                case 'apellidos':
-                    if (!valor) error = 'Los apellidos son obligatorios.';
-                    break;
-
-                case 'tipoDocumento':
-                    if (!valor) error = 'Seleccione un tipo de documento.';
-                    break;
-
-                case 'numeroDocumento':
-                    if (!valor) {
-                        error = 'El número de documento es obligatorio';
-                    } else if (
-                        this.form.tipoDocumento === 'DNI' &&
-                        !/^\d{8}$/.test(valor)
-                    ) {
-                        error = 'El DNI debe tener 8 carácteres';
-                    } else if (
-                        (this.form.tipoDocumento === 'CE' ||
-                            this.form.tipoDocumento === 'PAS') &&
-                        !/^[A-Za-z0-9]{1,12}$/.test(valor)
-                    ) {
-                        error = 'Debe tener hasta 12 carácteres';
-                    }
-                    break;
-            }
-
-            this.errores[campo] = error;
-        },
-
-        // 🔹 cuando el usuario toque un campo
-        marcarTocado(campo) {
-            this.tocados[campo] = true;
-            this.validarCampo(campo);
+            return Object.values(this.errors1).every((e) => !e);
         },
         continuarEntrega() {
-            [
-                'email',
-                'telefono',
-                'nombre',
-                'apellidos',
-                'tipoDocumento',
-                'numeroDocumento',
-            ].forEach((campo) => this.validarCampo(campo));
+            if (!this.validateForm1()) return;
 
-            // Si hay errores, no avanzar
-            const tieneErrores = Object.values(this.errores).some((e) => e);
-            if (tieneErrores) {
-                alert('Ingrese todos los campos obligatorios.');
-                return;
-            }
-
-            // Verificar checkbox de privacidad
-            if (!this.form.privacidad) {
-                alert(
-                    'Debes aceptar la Política de Privacidad antes de continuar.'
-                );
-                return;
-            }
-
-            // Si todo está correcto, pasar al paso 2
             this.step = 2;
+            this.scrollToForm('seccionForm2');
         },
 
-        validarCampo2(campo) {
-            switch (campo) {
-                case 'direccion':
-                    this.errores2.direccion = this.form.direccion.trim()
-                        ? ''
-                        : 'La dirección es obligatoria.';
-                    break;
-                case 'distrito':
-                    this.errores2.distrito = this.form.distrito.trim()
-                        ? ''
-                        : 'El distrito es obligatorio.';
-                    break;
-                case 'referencia':
-                    this.errores2.referencia = this.form.referencia.trim()
-                        ? ''
-                        : 'La referencia es obligatoria.';
-                    break;
-                case 'fechaRetiro':
-                    this.errores2.fechaRetiro = this.form.fechaRetiro
-                        ? ''
-                        : 'La fecha de retiro es obligatoria.';
-                    break;
+        validateForm2() {
+            Object.keys(this.errors2).forEach((k) => (this.errors2[k] = ''));
+
+            if (this.form.entrega_tipo === 'domicilio') {
+                if (!this.form.direccion)
+                    this.errors2.direccion = 'Este campo es obligatorio.';
+                if (!this.form.distrito)
+                    this.errors2.distrito = 'Este campo es obligatorio.';
+                if (!this.form.referencia)
+                    this.errors2.referencia = 'Describa su solicitud.';
             }
+
+            if (this.form.entrega_tipo === 'retiro') {
+                if (!this.form.fecha_retiro)
+                    this.errors2.fecha_retiro =
+                        'Seleccione un tipo de documento.';
+            }
+
+            return Object.values(this.errors2).every((e) => !e);
         },
         continuarPago() {
-            // Si elige envío a domicilio
-            if (this.form.entregaTipo === 'domicilio') {
-                // Forzar validación de todos los campos requeridos
-                ['direccion', 'distrito', 'referencia'].forEach((campo) =>
-                    this.validarCampo2(campo)
-                );
-            }
+            if (!this.validateForm2()) return;
 
-            // Si elige retiro en tienda
-            if (this.form.entregaTipo === 'retiro') {
-                this.validarCampo2('fechaRetiro');
-            }
-
-            // Verificar si hay errores
-            const tieneErrores = Object.values(this.errores2).some((e) => e);
-            if (tieneErrores) {
-                alert('Ingrese todos los campos obligatorios.');
-                return;
-            }
-
-            this.step = 3; // Avanza al paso 3 solo si no hay errores
+            this.step = 3;
+            this.scrollToForm('seccionForm3');
         },
 
-        validarCampo3(campo) {
-            switch (campo) {
-                case 'ruc':
-                    if (!this.form.ruc.trim())
-                        this.errores3.ruc = 'El RUC es obligatorio.';
-                    else if (!/^\d{11}$/.test(this.form.ruc))
-                        this.errores3.ruc =
-                            'El RUC debe tener 11 dígitos numéricos.';
-                    else this.errores3.ruc = '';
-                    break;
-                case 'razonSocial':
-                    this.errores3.razonSocial = this.form.razonSocial.trim()
-                        ? ''
-                        : 'La razón social es obligatoria.';
-                    break;
+        validarForm3() {
+            Object.keys(this.errors3).forEach((k) => (this.errors3[k] = ''));
+
+            if (this.form.comprobante_tipo === 'factura') {
+                if (!this.form.ruc || !/^\d{11}$/.test(this.form.ruc))
+                    this.errors3.ruc =
+                        'El RUC debe tener 11 dígitos numéricos.';
+                if (!this.form.razon_social)
+                    this.errors3.razon_social = 'Describa su solicitud.';
             }
+
+            return Object.values(this.errors3).every((e) => !e);
+        },
+        pagar() {
+            if (!this.validarForm3()) return;
+            alert('Pagar');
         },
 
         prevStep() {
             if (this.step > 1) this.step--;
-        },
 
-        pagar() {
-            alert('Pagar');
+            if (this.step === 1) {
+                this.errors1 = {};
+                this.scrollToForm('seccionForm1');
+            }
+            if (this.step === 2) {
+                this.errors2 = {};
+                this.scrollToForm('seccionForm2');
+            }
+            if (this.step === 3) {
+                this.errors3 = {};
+                this.scrollToForm('seccionForm3');
+            }
+        },
+        scrollToForm(id) {
+            setTimeout(() => {
+                this.$refs[id].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'end',
+                    // top: 0,
+                });
+            }, 100);
         },
     },
 };

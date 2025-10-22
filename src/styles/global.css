@@ -8,40 +8,69 @@
 }
 
 ::selection {
-  background: black; /* Color de fondo del texto seleccionado */
-  color: white;      /* Color del texto seleccionado */
+    background: black; /* Color de fondo del texto seleccionado */
+    color: white; /* Color del texto seleccionado */
 }
 
 /* Para compatibilidad con Firefox */
 ::-moz-selection {
-  background: black;
-  color: white;
+    background: black;
+    color: white;
+}
+
+.button {
+    @apply rounded-lg font-medium transition cursor-pointer flex items-center justify-center border px-6 py-3 border-neutral-900 bg-neutral-900 text-white hover:bg-white hover:text-neutral-900;
+}
+
+.button2 {
+    @apply text-gray-600 hover:text-black transition cursor-pointer flex items-center justify-center;
 }
 
 .input {
-  @apply w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-black;
+    @apply w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-black;
 }
 
 .label {
-  @apply block text-sm text-gray-600 mb-1;
+    @apply block text-sm text-gray-600 mb-1;
+}
+
+.input-error {
+    @apply text-left text-red-500 text-xs mt-1 ml-2;
+}
+
+.checkbox, .radio {
+    @apply text-sm text-gray-600 cursor-pointer select-none flex items-start gap-2;
+}
+
+.checkbox span, .radio span {
+    @apply text-left;
+}
+
+.checkbox input {
+    @apply appearance-none w-4 h-4 rounded-md border relative flex-shrink-0 cursor-pointer before:content-['✓'] before:absolute before:text-[10px] before:inset-0 before:flex before:items-center before:justify-center checked:before:opacity-100 before:opacity-0 transition-all bg-white text-black placeholder-gray-500 border-neutral-300 focus:ring-neutral-800 before:text-black;
+}
+
+.radio input {
+    @apply appearance-none w-4 h-4 rounded-full border relative flex-shrink-0 cursor-pointer transition-all before:content-[''] before:absolute before:inset-[4px] before:rounded-full before:scale-0 before:transition-transform checked:before:scale-100 bg-white border-neutral-300 before:bg-neutral-800 checked:border-neutral-800;
 }
 
 .politicas-privacidad p {
-  @apply text-gray-700;
+    @apply text-gray-700;
 }
 
 .politicas-privacidad ul {
-  @apply list-disc ml-6 mt-2 text-gray-700;
+    @apply list-disc ml-6 mt-2 text-gray-700;
 }
 
 .politicas-privacidad h2 {
-  @apply text-2xl font-semibold text-gray-800 mt-10 mb-4 border-l-4 border-gray-800 pl-3;
+    @apply text-2xl font-semibold text-gray-800 mt-10 mb-4 border-l-4 border-gray-800 pl-3;
 }
 
 .politicas-privacidad h3 {
-  @apply text-lg font-semibold text-gray-700 mt-8 mb-3 border-b border-gray-300 pb-1;
+    @apply text-lg font-semibold text-gray-700 mt-8 mb-3 border-b border-gray-300 pb-1;
 }
 
-.politicas-privacidad th, td {
-  @apply border border-gray-500 px-4 py-2 text-gray-700;
+.politicas-privacidad th,
+td {
+    @apply border border-gray-500 px-4 py-2 text-gray-700;
 }

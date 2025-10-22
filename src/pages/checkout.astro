@@ -1,8 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CheckoutPage from '../components/CheckoutPage.vue';
+
+const pago_metodos = [
+    { id: 'tarjeta', nombre: 'Tarjeta de crédito o débito' },
+    { id: 'yape', nombre: 'Yape' },
+];
 ---
 
-<BaseLayout title="Tu carrito">
-    <CheckoutPage client:load />
+<BaseLayout title="Checkout">
+    <CheckoutPage client:load pago_metodos={pago_metodos} />
 </BaseLayout>

@@ -195,34 +195,13 @@
                 <label
                     v-for="(desc, tipo) in tiposSolicitud"
                     :key="tipo"
-                    class="text-sm leading-snug cursor-pointer select-none flex items-start gap-2"
-                    :class="[
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600',
-                    ]"
+                    class="radio"
                 >
-                    <input
-                        v-model="form.tipo"
-                        type="radio"
-                        :value="tipo"
-                        class="appearance-none w-4 h-4 rounded-full border relative flex-shrink-0 cursor-pointer transition-all before:content-[''] before:absolute before:inset-[4px] before:rounded-full before:scale-0 before:transition-transform checked:before:scale-100"
-                        :class="[
-                            theme === 'dark'
-                                ? [
-                                      'bg-transparent border-gray-600 before:bg-gray-200',
-                                      'checked:border-gray-200',
-                                  ]
-                                : [
-                                      'bg-white border-neutral-300 before:bg-neutral-800',
-                                      'checked:border-neutral-800',
-                                  ],
-                        ]"
-                    />
-                    <span class="text-left"
-                        ><span>
-                            <strong>{{ desc.titulo }}:</strong>
-                            {{ desc.descripcion }}
-                        </span></span
-                    >
+                    <input v-model="form.tipo" type="radio" :value="tipo" />
+                    <span class="text-left">
+                        <strong>{{ desc.titulo }}:</strong>
+                        {{ desc.descripcion }}
+                    </span>
                 </label>
             </div>
 
@@ -322,7 +301,6 @@ export default {
 
     data() {
         return {
-            theme: 'light',
             siteKey: import.meta.env.RECAPTCHA_SITE_KEY,
             recaptchaContainer: null,
             loading: false,
