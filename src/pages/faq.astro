@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+import { contactEmail } from '../lib/empresa.js';
+
+const faqs = [
+    {
+        question: '¿Qué tipos de productos ofrece Sunka?',
+        answer: 'Sunka ofrece líneas especializada de productos filtrantes, infusiones y hierbas a granel para infusión, desarrollados para garantizar calidad, pureza y un sabor óptimo en cada sorbo. Nuestros productos se elaboran con materiales y materia prima de alta calidad.',
+    },
+    {
+        question: '¿Cómo puedo realizar una compra?',
+        answer: 'Puedes realizar tu compra directamente a través de nuestra tienda online. Solo debes seleccionar el producto, añadirlo al carrito y seguir el proceso de pago seguro. También puedes contactarnos si necesitas una cotización personalizada.',
+    },
+    {
+        question: '¿Qué métodos de pago aceptan?',
+        answer: 'Aceptamos transferencias bancarias a sus cuentas corrientes, pago con billetera electrónica (Yape, Plin) y tarjetas bancarias Visa, MasterCard, American Express y Diners Club tanto crédito como débito. Por ningún motivo, una compra puede ser combinado con dos medios de pagos expuestos anteriormente.',
+    },
+    {
+        question: '¿Hacen envíos a todo el país?',
+        answer: 'Sí. Realizamos envíos a todo el territorio nacional mediante operadores logísticos confiables. Los tiempos de entrega varían dependiendo la ubicación.',
+    },
+    {
+        question: '¿Puedo recoger mi pedido en tienda?',
+        answer: 'Sí. Si te encuentras en Lima, puedes optar por recoger tu pedido directamente en nuestras instalaciones. Te notificaremos cuando esté listo para retiro.',
+    },
+    {
+        question: '¿Qué hago si recibo un producto defectuoso?',
+        answer: 'Si el producto presenta algún defecto de fabricación, puedes contactarnos dentro de los 7 días posteriores a la recepción. Evaluaremos el caso y coordinaremos el cambio o la devolución según corresponda.',
+    },
+    {
+        question: '¿Ofrecen productos personalizados o a medida?',
+        answer: 'Sí. Podemos desarrollar soluciones filtrantes a medida según las especificaciones técnicas de tu empresa o proyecto. Contáctanos para más información.',
+    },
+    {
+        question: '¿Cómo puedo comunicarme con el equipo de Sunka?',
+        answer: `Puedes escribirnos a ${contactEmail} o llenar el formulario en nuestra página de contacto. Nuestro equipo responderá a la brevedad.`,
+    },
+];
+---
+
+<BaseLayout
+    title="Preguntas frecuentes"
+    description="Encuentra respuestas a las preguntas más comunes sobre los productos filtrantes y servicios de Sunka."
+>
+    <section class="max-w-4xl mx-auto px-6 py-20 text-gray-800">
+        <h1
+            class="text-4xl font-semibold text-center mb-12 tracking-tight text-gray-900"
+        >
+            Preguntas frecuentes
+        </h1>
+
+        <div class="divide-y divide-gray-300">
+            {
+                faqs.map((faq, index) => (
+                    <details
+                        class="group py-6 cursor-pointer transition-all"
+                        open={index === 0}
+                    >
+                        <summary class="flex justify-between items-center text-lg font-medium text-gray-900 hover:text-gray-600">
+                            {faq.question}
+                            <span class="ml-2 transition-transform group-open:rotate-180">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5 text-gray-500"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M19 9l-7 7-7-7"
+                                    />
+                                </svg>
+                            </span>
+                        </summary>
+                        <p class="mt-3 text-gray-600 leading-relaxed">
+                            {faq.answer}
+                        </p>
+                    </details>
+                ))
+            }
+        </div>
+    </section>
+</BaseLayout>
