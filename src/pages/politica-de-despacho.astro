@@ -1,0 +1,185 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const lastUpdated = '20 de octubre de 2025';
+import {
+    companyName,
+    companyNameComercial,
+    companySite,
+    contactEmail,
+    companyRUC,
+    companyAddress,
+    whatsappNumber,
+    emailSoporte,
+    companyPhone,
+} from '../lib/empresa.js';
+
+const secciones = [
+    {
+        id: 'empresa',
+        texto: 'Identificación de la empresa con quien contratas',
+    },
+    { id: 'productos', texto: 'Productos ofrecidos' },
+    { id: 'pasos-para-uso', texto: 'Pasos para usar el tienda virtual' },
+    {
+        id: 'consideraciones',
+        texto: 'Aspectos a considerar al usar el tienda virtual',
+    },
+    { id: 'medios-de-pago', texto: 'Medios de pago aceptados' },
+    {
+        id: 'comprobantes',
+        texto: 'Comprobantes de pago',
+    },
+    { id: 'consentimiento', texto: 'Formación del consentimiento' },
+    { id: 'menores', texto: 'Stock' },
+    {
+        id: 'productos-sustitutos',
+        texto: 'Productos sustitutos',
+    },
+    {
+        id: 'devolucion-cambios',
+        texto: 'Politica de devolucion o cambio de producto',
+    },
+    { id: 'despacho', texto: 'Política de despacho' },
+    { id: 'precio-promociones', texto: 'Precio y promociones' },
+    { id: 'propiedad-intelectual', texto: 'Propiedad intelectual' },
+    { id: 'ley-aplicable', texto: 'Ley aplicable' },
+];
+---
+
+<BaseLayout
+    title="Términos y condiciones"
+    description="Consulta los términos y condiciones de Divergente. Conoce las políticas que regulan el uso de nuestros servicios y la protección de tus datos personales, garantizando transparencia y confianza."
+>
+    <main
+        class="politicas-privacidad max-w-5xl mx-auto px-6 py-12 prose prose-neutral"
+    >
+        <header class="text-center mb-6">
+            <h1
+                class="text-2xl text-center font-semibold mb-6 text-neutral-900 tracking-[0.15rem] sm:tracking-[0.25rem] md:tracking-[0.4rem]"
+            >
+                POLÍTICA DE DESPACHO
+            </h1>
+
+            <p class="text-xs text-gray-400 mb-6">
+                Última actualización: <strong>{lastUpdated}</strong>
+            </p>
+
+            <div class="w-24 h-[2px] bg-neutral-800 mx-auto mt-2 rounded-full">
+            </div>
+        </header>
+
+        <section class="mt-8">
+            <h2>Recojo en tienda</h2>
+
+            <p>
+                Realiza tu compra a través de nuestra tienda online y acércate a
+                recoger personalmente en la dirección de {companyAddress}. Este
+                servicio es completamente gratuito.
+            </p>
+            <br />
+            <p>
+                Previamente debe comunicarse a nuestro canal de whatsapp
+                {whatsappNumber} o a nuestra línea telefónica {companyPhone} indicando
+                su número de pedido (enviado a su correo una vez finalizado la compra).
+            </p>
+            <br />
+            <p>
+                El horario de atención para este servicio es de 9:00 am a 5:00
+                pm de lunes a viernes. No contempla los días sábados, domingos
+                ni feriados.
+            </p>
+        </section>
+
+        <section class="mt-8">
+            <h2>Envío express (mismo día)</h2>
+
+            <p>
+                Los días y horarios de entrega son de lunes a viernes de 9:00 am
+                y 5:00 pm. El tiempo promedio de entrega para este servicio son
+                de 3 horas aproximadamente, contados desde la validación del
+                pago correspondiente.
+            </p>
+            <br />
+            <p>
+                Para recibir su pedido el mismo día, las órdenes de compra deben
+                generarse entre las 0:00 horas. y 4:00 pm de lunes a viernes.
+                Los pedidos realizados a partir de las 4:00 pm se enviarán al
+                día siguiente hábil.
+            </p>
+            <br />
+            <p>
+                Este servicio contempla un (01) punto de recojo/entrega del bien
+                adquirido.
+            </p>
+            <br />
+            <p>
+                Los pedidos generados en días sábados, domingos y/o feriados en
+                cualquier horario, serán enviados al día siguiente hábil en el
+                rango de 9:00am y 5:00pm horas.
+            </p>
+            <ul>
+                <li>
+                    <strong>Costos del servicio:</strong> Podrán ser verificados
+                    en la página del checkout al momento de tu compra.
+                </li>
+                <li>
+                    <strong>Cobertura:</strong> Podrán ser verificados en la página
+                    del checkout al momento de tu compra.
+                </li>
+            </ul>
+        </section>
+
+        <section class="mt-8">
+            <h2>Envío siguiente día</h2>
+
+            <p>
+                Los días y horarios de entrega son de lunes a viernes de 9:00am
+                a 10:00pm. No se realizan entregas los días sábados, domingos ni
+                feriados.
+            </p>
+            <br />
+            <p>
+                Para recibir su pedido al día siguiente, las órdenes de compra
+                deben generarse entre las 0:00 horas y 6:00pm entre lunes y
+                viernes.
+            </p>
+            <br />
+            <p>
+                Los pedidos generados sábados, domingos y/o feriados en
+                cualquier horario serán enviados hasta en dos días hábiles
+                posterior en el rango de 8:00 am y 10:00 pm. horas.
+            </p>
+            <br />
+            <p>
+                Este servicio contempla un (01) punto de recojo/entrega del bien
+                adquirido.
+            </p>
+            <ul>
+                <li>
+                    <strong>Costos del servicio:</strong> Podrán ser verificados
+                    en la página del checkout al momento de tu compra.
+                </li>
+                <li>
+                    <strong>Cobertura:</strong> Podrán ser verificados en la página
+                    del checkout al momento de tu compra.
+                </li>
+            </ul>
+            <br />
+            <p>
+                Si no hay alguna persona que reciba el producto o si la
+                dirección informada por el cliente es errónea y no se puede
+                realizar la entrega del producto, la empresa procederá a ponerse
+                en contacto con el usuario, de no tener éxito es importante
+                conocer que en caso desee realizar la reprogramación del envío
+                de los productos tiene un costo adicional de S/. 5.00; de
+                necesitar una tercera reprogramación esta tendrá nuevamente un
+                costo original expresada en la página del checkout de la tienda
+                online, finalmente de no tener éxito en la entrega por ausencia
+                o dirección errónea, el cliente tendrá la opción de recoger en
+                la dirección de {companyAddress} comunicándose previamente para tal
+                efecto con el área de atención al cliente de la empresa.
+            </p>
+        </section>
+    </main>
+</BaseLayout>
