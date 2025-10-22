@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const title = 'Política de privacidad';
+const title = '';
 const lastUpdated = '20 de octubre de 2025';
 import {
     companyName,
@@ -36,20 +36,25 @@ const secciones = [
 ---
 
 <BaseLayout
-    title={title}
+    title="Política de privacidad"
     description="Política de privacidad y manejo de datos personales de SUNKA."
 >
     <main
         class="politicas-privacidad max-w-5xl mx-auto px-6 py-12 prose prose-neutral"
     >
-        <header>
-            <h1 class="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-                {title}
+        <header class="text-center mb-6">
+            <h1
+                class="text-2xl text-center font-semibold mb-6 text-neutral-900 tracking-[0.15rem] sm:tracking-[0.25rem] md:tracking-[0.4rem]"
+            >
+                PÓLITICA DE PRIVACIDAD
             </h1>
 
-            <p class="text-sm text-gray-400">
+            <p class="text-sm text-gray-400 mb-6">
                 Última actualización: <strong>{lastUpdated}</strong>
             </p>
+
+            <div class="w-24 h-[2px] bg-neutral-800 mx-auto mt-2 rounded-full">
+            </div>
         </header>
 
         <section class="space-y-4 leading-relaxed mt-4">

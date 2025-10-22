@@ -1,4 +1,5 @@
-const companyName = 'EKOBUSINESS S.A.C.';
+const companyName = 'EKO BUSINESS S.A.C.';
+const companyNameComercial = 'SUNKA';
 const companyRUC = '20557053213';
 const companySite = 'https://www.sunka.pe';
 const contactEmail = 'comercial@sunkatea.com'; // reemplaza si corresponde
@@ -10,9 +11,11 @@ const instagramUrl = 'https://www.instagram.com/sunka.pe'
 const whatsappNumber = '+51 999 888 777'
 const whatsappUrl = 'https://wa.me/51999888777'
 const emailSoporte = 'soporte@sunkatea.com'
+const companyGerente = 'Jaime Pinedo Zafra'
 
 export {
     companyName,
+    companyNameComercial,
     companyRUC,
     companySite,
     contactEmail,

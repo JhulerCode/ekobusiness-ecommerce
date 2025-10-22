@@ -1,0 +1,853 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const lastUpdated = '20 de octubre de 2025';
+import {
+    companyName,
+    companyNameComercial,
+    companySite,
+    contactEmail,
+    companyRUC,
+    companyAddress,
+    whatsappNumber,
+    emailSoporte,
+    companyPhone,
+} from '../lib/empresa.js';
+
+const secciones = [
+    {
+        id: 'empresa',
+        texto: 'Identificación de la empresa con quien contratas',
+    },
+    { id: 'productos', texto: 'Productos ofrecidos' },
+    { id: 'pasos-para-uso', texto: 'Pasos para usar el tienda virtual' },
+    {
+        id: 'consideraciones',
+        texto: 'Aspectos a considerar al usar el tienda virtual',
+    },
+    { id: 'medios-de-pago', texto: 'Medios de pago aceptados' },
+    {
+        id: 'comprobantes',
+        texto: 'Comprobantes de pago',
+    },
+    { id: 'consentimiento', texto: 'Formación del consentimiento' },
+    { id: 'menores', texto: 'Stock' },
+    {
+        id: 'productos-sustitutos',
+        texto: 'Productos sustitutos',
+    },
+    {
+        id: 'devolucion-cambios',
+        texto: 'Politica de devolucion o cambio de producto',
+    },
+    { id: 'despacho', texto: 'Política de despacho' },
+    { id: 'precio-promociones', texto: 'Precio y promociones' },
+    { id: 'propiedad-intelectual', texto: 'Propiedad intelectual' },
+    { id: 'ley-aplicable', texto: 'Ley aplicable' },
+];
+---
+
+<BaseLayout
+    title="Términos y condiciones"
+    description="Consulta los términos y condiciones de Divergente. Conoce las políticas que regulan el uso de nuestros servicios y la protección de tus datos personales, garantizando transparencia y confianza."
+>
+    <main
+        class="politicas-privacidad max-w-5xl mx-auto px-6 py-12 prose prose-neutral"
+    >
+        <header class="text-center mb-6">
+            <h1
+                class="text-2xl text-center font-semibold mb-6 text-neutral-900 tracking-[0.15rem] sm:tracking-[0.25rem] md:tracking-[0.4rem]"
+            >
+                TÉRMINOS Y CONDICIONES
+            </h1>
+
+            <p class="text-xs text-gray-400 mb-6">
+                Última actualización: <strong>{lastUpdated}</strong>
+            </p>
+
+            <div class="w-24 h-[2px] bg-neutral-800 mx-auto mt-2 rounded-full">
+            </div>
+        </header>
+
+        <section class="space-y-4 leading-relaxed mt-4">
+            <p>
+                Como parte de nuestra política de transparencia ponemos a
+                disposición los siguientes Términos y Condiciones, cláusulas
+                contractuales que regirán la relación comercial y/o de consumo
+                entre ustedes, nuestros clientes/consumidores, y nosotros
+                <strong>{companyName}</strong> (en adelante, “SUNKA”), a través del
+                uso de la tienda virtual
+                <a
+                    href={companySite}
+                    class="underline text-blue-600 hover:text-blue-800"
+                    target="_blank">{companySite}</a
+                >
+                .
+            </p>
+        </section>
+
+        <nav aria-label="Índice de la política" class="mt-6">
+            <p>En esta página encontrarás:</p>
+
+            <ul class="list-disc ml-6 mt-2">
+                {
+                    secciones.map((s) => (
+                        <li>
+                            <a href={`#${s.id}`} class="underline">
+                                {s.texto}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </nav>
+
+        <section id="empresa" class="mt-8">
+            <h2>Identificación de la empresa con quien contratas</h2>
+
+            <p class="mt-2">
+                <strong>{companyNameComercial}</strong> es una empresa debidamente
+                constituida en el Perú e inscrita en el Registro de Personas Jurídicas
+                de la Superintendencia Nacional de los Registros Públicos (SUNARP)
+                con Partida Registral No. 13194945 y con Registro Único de Contribuyentes
+                (RUC) No. {companyRUC}.
+            </p>
+            <br />
+            <p>
+                El Gerente General de <strong>{companyNameComercial}</strong> es
+                el Señor Jaime Pinedo Zafra y tiene como domicilio fiscal la dirección
+                {companyAddress},
+            </p>
+            <br />
+            <p>
+                Somos una empresa que respeta el Código de Protección y Defensa
+                del Consumidor, por lo cual contamos con un historial sin
+                infracciones. Dicha información podrá ser constatada ingresando
+                a la plataforma
+                <a
+                    href="https://enlinea.indecopi.gob.pe/miraaquienlecompras/#/inicio"
+                    class="underline text-blue-600 hover:text-blue-800"
+                    target="_blank">mira a quien le compras</a
+                >
+                del INDECOPI.
+            </p>
+        </section>
+
+        <section id="productos" class="mt-8">
+            <h2>Productos ofrecidos</h2>
+
+            <p>
+                A través de la tienda virtual <a
+                    href={companySite}
+                    class="underline text-blue-600 hover:text-blue-800"
+                    target="_blank">{companySite}</a
+                >, distinguida por la marca SUNKA TEA, ofrecemos una línea de
+                productos de té e infusiones, lo cuales se adquieren a través de
+                la referida tienda virtual sujetándose a las cláusulas del
+                presente documento.
+            </p>
+            <br />
+            <p>
+                La información detallada de cada producto disponible en la
+                tienda virtual puede visualizarse en la página específica o URL
+                correspondiente a dicho producto. Todos los productos
+                alimenticios ofrecidos a través de la tienda cuentan con
+                Registros Sanitarios vigentes, debidamente inscritos ante la
+                Autoridad Competente, lo que garantiza su inocuidad y aptitud
+                para el consumo humano.
+            </p>
+            <br />
+            <p>
+                Tenga en cuenta que los colores y la apariencia de nuestros
+                productos ofertados en la tienda virtual pueden variar
+                ligeramente con lo recibido. En tal sentido, no podemos
+                garantizar que la pantalla de su monitor refleje con precisión
+                el color del producto real.
+            </p>
+        </section>
+
+        <section id="pasos-para-uso" class="mt-8">
+            <h2>Pasos para usar el tienda virtual</h2>
+
+            <p>
+                Nuestra tienda virtual te brinda la posibilidad de crear un
+                usuario; sin embargo, ello no es indispensable para adquirir
+                alguno de los productos de nuestro catálogo.
+            </p>
+            <br />
+            <p>
+                En caso desees crear un usuario en la tienda virtual tendrás que
+                ingresar tus (1) nombres completos; y, (2) una dirección de
+                correo electrónico válida. Posteriormente, recibirás un correo
+                de bienvenida con un enlace para establecer tu contraseña.
+            </p>
+            <br />
+            <p>
+                Al tener un usuario en la tienda virtual, podrás acceder a un
+                panel de control con las siguientes secciones: (1) Escritorio,
+                (2) Pedidos, (3) Dirección, (4) Detalles de la Cuenta, (5) Mis
+                medios de pago.
+            </p>
+        </section>
+
+        <section id="consideraciones" class="mt-8">
+            <h2>Aspectos a considerar al usar el tienda virtual</h2>
+
+            <h3>
+                Exactitud, veracidad, vigencia y autenticidad de los datos
+                personales ingresados
+            </h3>
+            <p>
+                Para usar la tienda virtual y acceder a sus servicios, productos
+                y promociones, usted como usuario debe completar el formulario
+                con datos válidos y verdaderos. Asimismo, se responsabiliza por
+                la exactitud, veracidad, vigencia y autenticidad de los Datos
+                Personales ingresados; no obstante, <strong
+                    >{companyNameComercial}</strong
+                > podrá aplicar los controles de validación que considere conveniente,
+                lo cual podría implicar, sin limitarse, a solicitar información complementaria
+                para verificar los Datos Personales ingresados por el usuario. Ante
+                la negativa del usuario, <strong>{companyNameComercial}</strong>
+                podrá suspender o eliminar la cuenta del usuario.
+            </p>
+
+            <h3>Cuenta asignada por usuario registrado</h3>
+            <p>
+                Cada usuario registrado tendrá únicamente una cuenta en la
+                tienda virtual. En caso <strong>{companyNameComercial}</strong>
+                detecte que el usuario tenga más de una cuenta, podrá agrupar todas
+                sus cuentas en una sola, eliminando las demás. Esta acción será comunicada
+                al usuario al último correo electrónico registrado.
+            </p>
+
+            <h3>
+                Uso fraudulento de la tienda virtual o contrario a los Términos
+                y Condiciones
+            </h3>
+            <p>
+                En caso <strong>{companyNameComercial}</strong> verifique o sospeche
+                un uso fraudulento o contrario a los Términos y Condiciones que rigen
+                la tienda virtual, tendrá derecho de dar de baja las cuentas.
+            </p>
+
+            <h3>Confidencialidad del uso de la clave</h3>
+            <p>
+                El usuario se responsabiliza de mantener en estricta
+                confidencialidad su clave de acceso. Dicha clave es de uso
+                personal, y no es de responsabilidad de <strong
+                    >{companyNameComercial}</strong
+                > un uso incorrecto, indebido y/o negligente.
+            </p>
+
+            <h3>Capacidad legal para contratar</h3>
+            <p>
+                El usuario reconoce tener la capacidad legal suficiente para
+                adquirir los productos ofrecidos en la tienda virtual conforme a
+                la legislación peruana. Si el usuario no tiene la capacidad
+                legal para contratar deberá abstener de usar la tienda virtual
+            </p>
+
+            <h3>Aceptación de los Términos y Condiciones</h3>
+            <p>
+                Es requisito indispensable para adquirir los productos ofrecidos
+                mediante la tienda virtual la aceptación de los presentes
+                Términos y Condiciones. En tal sentido, cualquier usuario que
+                realice una transacción en la tienda virtual, ya sea como
+                visitante o usuario registrado, conoce y acepta los presentes
+                Términos y Condiciones. <strong>{companyNameComercial}</strong> se
+                reserva el derecho de modificar y/o actualizar los presentes Términos
+                y Condiciones en cualquier momento y sin previo aviso. Por tanto,
+                se recomienda al usuario revisar constantemente la presente sección.
+            </p>
+
+            <h3>Disponibilidad de la tienda virtual</h3>
+            <p>
+                <strong>{companyNameComercial}</strong> se compromete a realizar
+                los mejores esfuerzos para asegurar la disponibilidad, sin interrupciones,
+                de los servicios de la tienda virtual, y disminuir los errores en
+                cualquier transmisión de información que pudiera tener lugar. No
+                obstante, y debido a la naturaleza misma del internet no es posible
+                garantizar tales extremos, por lo tanto el acceso a los servicios
+                de la tienda virtual podría eventualmente verse suspendido o restringido
+                a efectos de la realización de trabajos de mantenimiento, modernización
+                de nuestros productos o servicios, reparación de dificultades técnicas,
+                fallas de internet o por cualquier otra circunstancia ajena a la
+                empresa; en tales casos se procurará tomar las acciones pertinentes
+                para solucionar los inconvenientes en el menor tiempo posible, sin
+                que por ello pueda imputársele algún tipo de responsabilidad a
+                <strong>{companyNameComercial}</strong>
+            </p>
+
+            <h3>Disponibilidad de la tienda virtual</h3>
+            <p>
+                El alcance de los productos ofrecidos en la tienda virtual es
+                exclusivamente para el territorio peruano.
+            </p>
+        </section>
+
+        <section id="medios-de-pago" class="mt-8">
+            <h2>Medios de pago aceptados</h2>
+
+            <p>
+                <strong>{companyNameComercial}</strong> acepta transferencias bancarias
+                a sus cuentas corrientes, pago con billetera electrónica (Yape, Plin)
+                y tarjetas bancarias Visa, MasterCard, American Express y Diners
+                Club tanto crédito como débito. Por ningún motivo, una compra puede
+                ser combinado con dos medios de pagos expuestos anteriormente.
+            </p>
+
+            <h3>Transferencia bancaria a las cuentas corrientes</h3>
+            <p>
+                El usuario podrá realizar una transferencia bancaria a las
+                cuentas corrientes de <strong>{companyNameComercial}</strong> debidamente
+                indicadas al momento de realizar la compra en la tienda virtual.
+                Una vez realizado el depósito el cliente debe contactarse al correo
+                {contactEmail}
+                adjuntando la constancia del depósito. El despacho de los productos
+                adquiridos estará sujeto a la conformidad de <strong
+                    >{companyNameComercial}</strong
+                >
+            </p>
+
+            <h3>Pago con billetera electrónica (Yape y Plin)</h3>
+            <p>
+                El usuario podrá usar su billetera electrónica Yape o Plin,
+                escaneando el código QR que aparece al momento de realizar la
+                compra en la tienda virtual, por el cual se realizará un cargo a
+                la tarjeta afiliada a la billetera móvil. Una vez realizado el
+                depósito el cliente debe contactarse al correo
+                {contactEmail} adjuntando la constancia del depósito. El despacho
+                de los productos adquiridos estará sujeto a la conformidad de <strong
+                    >{companyNameComercial}</strong
+                >
+            </p>
+
+            <h3>
+                Tarjetas bancarias (Visa, MasterCard, American Express y Diners
+                Club)
+            </h3>
+            <p>
+                El usuario podrá pagar con tarjetas bancarias Visa, MasterCard,
+                American Express y Diners Club. Las transacciones serán
+                procesadas por izipay para su validación y confirmación. Le
+                recordamos que el procesador de pago autorizado se hará cargo
+                del procesamiento de la compra, por ende, ante cualquier
+                eventualidad que pudiera surgir con el pago, el usuario deberá
+                dirigir sus comunicaciones al procesador de pago, que en este
+                caso es izipay.
+            </p>
+            <br />
+            <p>
+                El uso de las tarjetas indicadas precedentemente aceptadas en la
+                tienda virtual, aspectos relacionados a estas como la fecha de
+                emisión, caducidad, bloqueos, monto de línea de crédito, entre
+                otros, se regirán por el respectivo Contrato de Apertura y
+                Reglamento de Uso firmado entre el usuario y la entidad
+                financiera correspondiente. <strong
+                    >{companyNameComercial}</strong
+                > no tendrá responsabilidad en cualquiera de los puntos antes señalados.
+            </p>
+            <br />
+            <p>
+                <strong>{companyNameComercial}</strong> garantiza al 100% la seguridad
+                de los pagos. Al momento de pagar con tarjeta de crédito o débito,
+                toda la información es cifrada mediante el mejor sistema de protección
+                Secure Sockets Layer (SSL).
+            </p>
+            <br />
+            <p>
+                Algunos medios de pago señalados en el presente documento pueden
+                ser ocultos sin previo aviso por razones de mejoras continuas.
+            </p>
+        </section>
+
+        <section id="comprobantes" class="mt-8">
+            <h2>Comprobantes de pago</h2>
+
+            <p>
+                Según el Reglamento de Comprobantes de Pago aprobado por
+                Resolución de Superintendencia Nº 007-99 / SUNAT (RCP) y el
+                Texto Único Ordenado de la Ley del Impuesto General a las Ventas
+                e Impuesto Selectivo al Consumo, aprobado mediante Decreto
+                Supremo Nº 055-99-EF y normas modificatorias (TUO del IGV), se
+                concluye:
+            </p>
+            <br />
+            <p>
+                “No existe ningún procedimiento vigente que permita el canje de
+                boletas de venta por facturas, más aún las notas de crédito no
+                se encuentran previstas para modificar al adquirente o usuario
+                que figura en el comprobante de pago original”.
+            </p>
+            <br />
+            <p>
+                Por lo cual el cliente deberá elegir correctamente el documento
+                que solicitará como comprobante en el momento de su compra, ya
+                que, según los párrafos citados, luego no procederá cambio
+                alguno.
+            </p>
+            <br />
+            <p>
+                Las facturas electrónicas, las boletas de venta electrónicas y
+                las notas electrónicas vinculadas con estos comprobantes
+                electrónicos se enviarán al correo electrónico designado por el
+                cliente, así como también los datos necesarios para que este
+                pueda consultar el comprobante electrónico y tenga la
+                posibilidad de descargarlo, de acuerdo con el Artículo 15º de la
+                Resolución de Superintendencia Nº 097-2012/SUNAT, con la cual se
+                creó el Sistema de Emisión Electrónica desarrollado desde los
+                sistemas del contribuyente.
+            </p>
+        </section>
+
+        <section id="consentimiento" class="mt-8">
+            <h2>Formación del consentimiento</h2>
+
+            <p>
+                A través de la tienda virtual <strong
+                    >{companyNameComercial}</strong
+                > realiza ofertas de productos que podrán ser aceptadas vía electrónica,
+                utilizando los mecanismos que la tienda virtual pone a disposición
+                de los usuarios.
+            </p>
+            <br />
+            <p>
+                Toda aceptación de oferta quedará supeditada, como condición
+                suspensiva, a que <strong>{companyNameComercial}</strong> valide
+                la transacción. Por tanto, para que la transacción se efectúe en
+                la tienda virtual, la confirmación y/o validación, y/o verificación
+                por parte de
+                <strong>{companyNameComercial}</strong> será esencial para la formación
+                del consentimiento, y por tanto, el contrato quede perfeccionado.
+            </p>
+            <br />
+            <p>
+                Como consecuencia, <strong>{companyNameComercial}</strong> deberá
+                confirmar y/o validar, y/o verificar lo siguiente:
+            </p>
+            <ol>
+                <li>El precio del producto.</li>
+                <li>Stock disponible del producto.</li>
+                <li>
+                    Cuando se trate de ofertas y/o promociones, el pedido
+                    respecto las condiciones detalladas en los Términos y
+                    Condiciones.
+                </li>
+                <li>
+                    Validación y aceptación del medio de pago ofrecido por el
+                    usuario.
+                </li>
+                <li>
+                    Confirmación del pago o depósito informada por los
+                    operadores de las pasarelas de pago o de la oficina de
+                    tesorería de <strong>{companyNameComercial}</strong>.
+                </li>
+                <li>
+                    Los datos registrados por el usuario en la tienda virtual
+                    coinciden con los proporcionados al efectuar su aceptación
+                    de oferta.
+                </li>
+            </ol>
+            <br />
+
+            <p>
+                Concluida la confirmación, validación y/o verificación, <strong
+                    >{companyNameComercial}</strong
+                > contactará al usuario vía email o a través de cualquier medio de
+                comunicación que garantice el debido y oportuno conocimiento del
+                consumidor. El consentimiento se entenderá formado, y por tanto,
+                el contrato queda perfeccionado, desde el momento en que <strong
+                    >{companyNameComercial}</strong
+                > concluya con éxito la validación e informe de esta al usuario,
+                emitiendo el correspondiente comprobante de venta.
+            </p>
+            <br />
+            <p>
+                En atención a lo señalado en los párrafos anteriores, <strong
+                    >{companyNameComercial}</strong
+                > podrá dejar sin efecto/anular los pedidos cuando verifique que
+                no se cumple con una o más de las condiciones precedentes, para lo
+                cual contactará al usuario vía email o a través de cualquier medio
+                de comunicación autorizado por el usuario. Asimismo, <strong
+                    >{companyNameComercial}</strong
+                >, y en tanto corresponda, comunicará este hecho a la entidad
+                financiera emisora de la tarjeta utilizada por el usuario en su
+                solicitud de compra. Dicha entidad financiera será la única
+                responsable de proceder con la liberación del importe retenido
+                para la compra, de acuerdo con sus procedimientos y políticas
+                correspondientes.
+            </p>
+            <br />
+            <p>
+                Los pagos realizados mediante depósito directo a las cuentas de
+                <strong>{companyNameComercial}</strong> se reembolsarán a través
+                de depósito en cuenta bancaria del titular del pedido, nunca a terceros
+                ni por medio de giros o cheques.
+            </p>
+            <br />
+            <p>
+                Todo reembolso de dinero es afecto a descuentos por concepto de
+                gastos y comisiones. El detalle del monto de devolución será
+                informado oportunamente al cliente.
+            </p>
+            <br />
+        </section>
+
+        <section id="stock" class="mt-8">
+            <h2>Stock</h2>
+
+            <p>
+                <strong>{companyNameComercial}</strong> se encarga de la actualización
+                de la tienda virtual y la revisión constante de los productos que
+                se exhiben en el mismo. Del mismo modo, <strong
+                    >{companyNameComercial}</strong
+                > puede modificar y/o descontinuar los productos en cualquier momento
+                sin contraer ninguna responsabilidad frente al usuario.
+            </p>
+            <br />
+
+            <p>
+                <strong>{companyNameComercial}</strong> no garantiza un stock mayor
+                al stock mínimo de 1 (una) unidad de sus productos durante el proceso
+                de despacho de los productos. Al respecto, <strong
+                    >{companyNameComercial}</strong
+                > se reserva el derecho de no aprobar la solicitud de compra y en
+                consecuencia de no despachar un producto si este no cuenta con el
+                stock solicitado. Toda solicitud de compra que se realice a través
+                de la tienda virtual será validada según stock de producto, entre
+                otras condiciones señaladas en la sección anterior. En caso alguna
+                de estas validaciones diera negativo, no se procederá a la atención
+                de la solicitud de compra, notificándose al usuario dicho rechazo
+                vía email o a través de cualquier medio de comunicación autorizado.
+            </p>
+        </section>
+
+        <section id="productos-sustitutos" class="mt-8">
+            <h2>Productos sustitutos</h2>
+
+            <p>
+                <strong>{companyNameComercial}</strong> pese a realizar sus mejores
+                esfuerzos, es posible que no disponga de alguno de los productos.
+                Sin perjuicio de que <strong>{companyNameComercial}</strong> pueda
+                dejar sin efecto o anular el pedido por falta de stock conforme a
+                lo señalado en la sección de “Formación del consentimiento”, <strong
+                    >{companyNameComercial}</strong
+                > podrá brindar al usuario la opción de elegir entre alguno de los
+                criterios de sustitución durante el proceso de compra:
+            </p>
+            <ol>
+                <li>Misma marca del producto con otra presentación.</li>
+                <li>Mismo precio con otra marca</li>
+            </ol>
+            <br />
+
+            <p>
+                En caso el usuario no desee que se sustituya el producto, se
+                procederá a dejar sin efecto/anular el pedido por lo cual se
+                seguirán los pasos de devolución del dinero conforme a lo
+                señalado en la sección de “Formación del consentimiento”.
+            </p>
+        </section>
+
+        <section id="devolucion-cambios" class="mt-8">
+            <h2>Politica de devolucion o cambio de producto</h2>
+
+            <p>
+                <strong>{companyNameComercial}</strong> aceptará la devolución o
+                cambio de los productos únicamente en casos de que el producto enviado
+                se encuentre vencido o tenga alguna falla de calidad, por lo cual
+                el usuario deberá presentar el comprobante de compra. En tal sentido,
+                <strong>{companyNameComercial}</strong>
+                asumirá el costo de envío.
+            </p>
+            <br />
+
+            <p>
+                <strong>{companyNameComercial}</strong> ofrece al usuario la posibilidad
+                de cambiar el producto o la devolución del dinero a través de una
+                nota de crédito o un extorno de dinero a la tarjeta usada en la compra.
+                Todo cambio o devolución estará sujeto a evaluación.
+            </p>
+            <br />
+
+            <p>
+                Para hacer efectivo el derecho al cambio, es indispensable que
+                el usuario entregue el producto adquirido y los documentos con
+                los que se le entregó (boleta o factura), caso contrario, el
+                cambio no procederá.
+            </p>
+            <br />
+
+            <p>
+                Los cambios del producto estarán sujetos a stock. En caso no
+                exista stock del producto, <strong
+                    >{companyNameComercial}</strong
+                > hará entrega de una nota de crédito al usuario, para que pueda
+                optar por otro producto de su preferencia en la tienda virtual conforme
+                a los criterios señalados en la Sección de “Productos Sustitutos”.
+                En caso de que el usuario opte por un producto de mayor valor al
+                de su nota de crédito, deberá asumir la diferencia. En caso de que
+                el usuario opte por un producto de menor valor, <strong
+                    >{companyNameComercial}</strong
+                > no devolverá la diferencia.
+            </p>
+            <br />
+
+            <p>
+                Para hacer efectivo el derecho a la devolución, es indispensable
+                que el usuario entregue el producto adquirido y los documentos
+                con los que se le entregó (boleta o factura), caso contrario, la
+                devolución no procederá. Las devoluciones de dinero serán
+                efectuadas mediante el mismo medio de pago utilizado en la
+                transacción original de compra. También se podrá coordinar
+                directamente con el área de Servicio al Cliente para realizar la
+                devolución a una cuenta bancaria que brinde el cliente. Si es
+                extorno de tarjeta de crédito o débito, el tiempo dependerá del
+                Banco emisor de la tarjeta, que es generalmente entre 20 y 25
+                días hábiles.
+            </p>
+
+            <h3>¿Cómo puedo realizar cambios o devoluciones?</h3>
+            <p>
+                El usuario se deberá comunicar al correo {contactEmail}
+                o llamando al {whatsappNumber}. Mediante esta comunicación
+                deberá indicar sus nombres, apellidos, número de pedido y fecha
+                en que realizó la compra, el motivo del cambio o devolución y
+                fotográficas del artículo que sustente su disconformidad.
+            </p>
+            <br />
+            <p>
+                En los casos de solicitud de cambio, el cliente deberá coordinar
+                con el área de Servicio al Cliente para programar una logística
+                inversa, es decir, el Courier a cargo recogerá el producto en la
+                dirección donde se entregó originalmente, haciendo un máximo de
+                hasta dos visitas. En el caso que el cliente no cumpla con la
+                devolución en estas visitas y los requisitos expuestos, se dará
+                por rechazada la solicitud de cambio y/o devolución. Este recojo
+                no implica que la solicitud haya sido aceptada.
+            </p>
+        </section>
+
+        <section id="despacho" class="mt-8">
+            <h2>Política de despacho</h2>
+
+            <h3>Recojo en tienda</h3>
+            <p>
+                Realiza tu compra a través de nuestra tienda online y acércate a
+                recoger personalmente en la dirección de {companyAddress}. Este
+                servicio es completamente gratuito.
+            </p>
+            <br />
+            <p>
+                Previamente debe comunicarse a nuestro canal de whatsapp
+                {whatsappNumber} o a nuestra línea telefónica {companyPhone} indicando
+                su número de pedido (enviado a su correo una vez finalizado la compra).
+            </p>
+            <br />
+            <p>
+                El horario de atención para este servicio es de 9:00 am a 5:00
+                pm de lunes a viernes. No contempla los días sábados, domingos
+                ni feriados.
+            </p>
+
+            <h3>Envío express (mismo día)</h3>
+            <p>
+                Los días y horarios de entrega son de lunes a viernes de 9:00 am
+                y 5:00 pm. El tiempo promedio de entrega para este servicio son
+                de 3 horas aproximadamente, contados desde la validación del
+                pago correspondiente.
+            </p>
+            <br />
+            <p>
+                Para recibir su pedido el mismo día, las órdenes de compra deben
+                generarse entre las 0:00 horas. y 4:00 pm de lunes a viernes.
+                Los pedidos realizados a partir de las 4:00 pm se enviarán al
+                día siguiente hábil.
+            </p>
+            <br />
+            <p>
+                Este servicio contempla un (01) punto de recojo/entrega del bien
+                adquirido.
+            </p>
+            <br />
+            <p>
+                Los pedidos generados en días sábados, domingos y/o feriados en
+                cualquier horario, serán enviados al día siguiente hábil en el
+                rango de 9:00am y 5:00pm horas.
+            </p>
+            <ul>
+                <li>
+                    <strong>Costos del servicio:</strong> Podrán ser verificados
+                    en la página del checkout al momento de tu compra.
+                </li>
+                <li>
+                    <strong>Cobertura:</strong> Podrán ser verificados en la página
+                    del checkout al momento de tu compra.
+                </li>
+            </ul>
+
+            <h3>Envío siguiente día</h3>
+            <p>
+                Los días y horarios de entrega son de lunes a viernes de 9:00am
+                a 10:00pm. No se realizan entregas los días sábados, domingos ni
+                feriados.
+            </p>
+            <br />
+            <p>
+                Para recibir su pedido al día siguiente, las órdenes de compra
+                deben generarse entre las 0:00 horas y 6:00pm entre lunes y
+                viernes.
+            </p>
+            <br />
+            <p>
+                Los pedidos generados sábados, domingos y/o feriados en
+                cualquier horario serán enviados hasta en dos días hábiles
+                posterior en el rango de 8:00 am y 10:00 pm. horas.
+            </p>
+            <br />
+            <p>
+                Este servicio contempla un (01) punto de recojo/entrega del bien
+                adquirido.
+            </p>
+            <ul>
+                <li>
+                    <strong>Costos del servicio:</strong> Podrán ser verificados
+                    en la página del checkout al momento de tu compra.
+                </li>
+                <li>
+                    <strong>Cobertura:</strong> Podrán ser verificados en la página
+                    del checkout al momento de tu compra.
+                </li>
+            </ul>
+            <br />
+            <p>
+                Si no hay alguna persona que reciba el producto o si la
+                dirección informada por el cliente es errónea y no se puede
+                realizar la entrega del producto, la empresa procederá a ponerse
+                en contacto con el usuario, de no tener éxito es importante
+                conocer que en caso desee realizar la reprogramación del envío
+                de los productos tiene un costo adicional de S/. 5.00; de
+                necesitar una tercera reprogramación esta tendrá nuevamente un
+                costo original expresada en la página del checkout de la tienda
+                online, finalmente de no tener éxito en la entrega por ausencia
+                o dirección errónea, el cliente tendrá la opción de recoger en
+                la dirección de {companyAddress} comunicándose previamente para tal
+                efecto con el área de atención al cliente de la empresa.
+            </p>
+        </section>
+
+        <section id="precio-promociones" class="mt-8">
+            <h2>Precio y promociones</h2>
+
+            <p>
+                Los precios de los productos de la tienda virtual, mientras
+                aparezcan como disponibles, solo tendrán vigencia y aplicación
+                en éste y no serán aplicables a otros canales de venta
+                utilizados por <strong>{companyNameComercial}</strong>
+            </p>
+            <br />
+            <p>
+                Los precios de los productos ofrecidos en la tienda virtual
+                están expresados en Soles. Los precios ofrecidos corresponden
+                exclusivamente al valor del bien ofrecido (incluido IGV) y no
+                incluyen gastos de transporte, manejo, envío, ni ningún otro
+                ítem adicional o cobro de intereses bancarios por el método de
+                pago utilizado.
+            </p>
+            <br />
+            <p>
+                Los precios y/o promociones de los productos y servicios
+                publicados en este sitio, se encuentran vigentes únicamente
+                mientras aparezcan en él. <strong>{companyNameComercial}</strong
+                > podrá modificar cualquier información contenida en este sitio.
+                No aplica para ventas al por mayor ni corporativas.
+            </p>
+
+            <h3>Código promocional</h3>
+            <ol>
+                <li>
+                    El código promocional aplica para compras realizadas
+                    exclusivamente en la tienda virtual.
+                </li>
+                <li>
+                    Cuando se ofrezcan códigos promocionales, se señalará en la
+                    publicidad el monto o porcentaje de descuento aplicable al
+                    precio de lista vigente, la suma mínima de compra para poder
+                    aplicar el porcentaje de descuento del código promocional y
+                    las fechas válidas para su aplicación.
+                </li>
+                <li>
+                    Cada código promocional es personal e intransferible y
+                    pueden hacer uso de él las personas naturales mayores de
+                    dieciocho (18) años. Cada código promocional solamente podrá
+                    ser usado una (1) vez por cada cliente y tan solo un (1)
+                    código promocional podrá ser aplicado por cada orden o
+                    pedido de compra.
+                </li>
+                <li>
+                    Los códigos promocionales no aplican a costos de envío. Los
+                    códigos promocionales no son acumulables entre sí, solo se
+                    puede utilizar un código promocional por promoción. Cada
+                    código promocional tiene restricciones particulares
+                    publicadas en banners y en el presente documento.
+                </li>
+                <li>
+                    <strong>{companyNameComercial}</strong> se reserva el derecho
+                    de cancelar órdenes o pedidos de compra que no cumplan con las
+                    condiciones de cada código promocional.
+                </li>
+                <li>
+                    El código promocional no es válido para usarlo con Gift
+                    Cards ni en ventas por mayor, también conocidas como ventas
+                    mayoristas, institucionales o corporativas. Se entiende como
+                    ventas por mayor aquellas en las cuales la orden o pedido de
+                    compra incluya más de doce (12) unidades de una misma
+                    familia o categoría de productos.
+                </li>
+                <li>
+                    El monto máximo de compra para el uso del código promocional
+                    está explícitamente indicado en los elementos gráficos de la
+                    campaña.
+                </li>
+                <li>
+                    Los códigos promocionales no son acumulables con otras
+                    promociones.
+                </li>
+                <li>
+                    Al realizar una compra con un código promocional se entiende
+                    que el consumidor ha aceptado íntegramente los presentes
+                    Términos y Condiciones.
+                </li>
+                <li>
+                    El porcentaje de descuento de un código promocional
+                    prevalece por sobre cualquier otro descuento previamente
+                    establecido para cada ítem dentro de una orden o pedido de
+                    compra.
+                </li>
+                <li>
+                    Al aplicarse un código promocional, el valor total de la
+                    compra se recalculará aplicando el descuento del código
+                    promocional sobre la suma de los precios regulares de los
+                    productos seleccionados.
+                </li>
+            </ol>
+        </section>
+
+        <section id="propiedad-intelectual" class="mt-8">
+            <h2>Propiedad intelectual</h2>
+
+            <p>
+                Todo el contenido incluido o puesto a disposición del usuario en la tienda virtual textos, gráficos, logos, íconos, imágenes, videos, archivos de audio, descargas digitales y cualquier otra información es de propiedad de {companyNameComercial} En tal sentido, el usuario debe abstenerse de extraer y/o reutilizar total o parcialmente dicho contenido y queda prohibido de utilizarlo sin el consentimiento previo y por escrito de <strong>{companyNameComercial}</strong>
+            </p>
+        </section>
+
+        <section id="ley-aplicable" class="mt-8">
+            <h2>Ley aplicable</h2>
+
+            <p>
+                Este acuerdo será gobernado e interpretado de acuerdo con las leyes de Perú. Si alguna disposición de estos Términos y Condiciones es declarada ilegal, o presenta un vacío, o por cualquier razón resulta inaplicable, la misma deberá ser interpretada dentro del marco del mismo y en cualquier caso no afectará la validez y la aplicabilidad de las provisiones restantes.
+            </p>
+            <br />
+        </section>
+    </main>
+</BaseLayout>
