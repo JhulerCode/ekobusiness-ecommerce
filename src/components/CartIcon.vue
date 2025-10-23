@@ -4,7 +4,7 @@
 
         <span
             v-if="count > 0"
-            class="absolute -top-2 -right-2 bg-gray-900 text-white text-xs rounded-full px-1.5 py-0.5"
+            class="absolute -top-3 -right-2 bg-gray-900 text-white text-xs rounded-full min-w-5 h-5 flex items-center justify-center px-1.5"
         >
             {{ count }}
         </span>

@@ -1,10 +1,11 @@
 export const host = import.meta.env.PUBLIC_API_URL
 
-const urls = {
+export const urls = {
     categorias: `${host}/store/categorias`,
     productos: `${host}/store/productos`,
     newsletter: `${host}/store/newsletter`,
     arco: `${host}/store/arco`,
+    auth: `${host}/store/auth`,
 }
 
 function jmsg(type, msg) {
@@ -74,8 +75,10 @@ async function get(endpoint, params = {}) {
 export async function post(endpoint, item, ms) {
     let query
 
+    const link = endpoint.includes('http') ? endpoint : urls[endpoint]
+
     try {
-        query = await fetch(urls[endpoint], {
+        query = await fetch(link, {
             method: 'POST',
             headers: setHeaders(item),
             body: item.is_form_data ? setFormData(item) : JSON.stringify(item),

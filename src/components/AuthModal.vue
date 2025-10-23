@@ -1,9 +1,22 @@
 <template>
     <div>
-        <!-- Botón que abre el modal -->
-        <UserIcon @click="openModal('login')" class="cursor-pointer" />
+        <div>
+            <UserIcon
+                v-if="!user"
+                @click="openModal('login')"
+                class="cursor-pointer"
+            />
 
-        <!-- Modal -->
+            <a v-else href="/account" class="flex items-center">
+                <UserIcon />
+                <div>
+                    <span class="text-xs">
+                        Hola, {{ userName }}
+                    </span>
+                </div>
+            </a>
+        </div>
+
         <transition name="fade">
             <div
                 v-if="isOpen"
@@ -13,7 +26,7 @@
                     class="relative bg-white rounded-2xl shadow-xl text-gray-800 w-90 max-w-md mx-4 px-8 py-8"
                 >
                     <button
-                        class="absolute top-4 right-6 text-gray-500 hover:text-gray-700 text-2xl cursor-pointer"
+                        class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl cursor-pointer"
                         @click="closeModal"
                     >
                         <Xmark />
@@ -29,20 +42,20 @@
                             <div>
                                 <label class="label">Correo electrónico</label>
                                 <input
-                                    v-model="form.email"
-                                    type="email"
+                                    v-model="form.correo"
+                                    type="correo"
                                     required
                                     class="input"
                                 />
-                                <p v-if="errors.email" class="input-error">
-                                    {{ errors.email }}
+                                <p v-if="errors.correo" class="input-error">
+                                    {{ errors.correo }}
                                 </p>
                             </div>
 
                             <div class="relative">
                                 <label class="label">Contraseña</label>
                                 <input
-                                    v-model="form.password"
+                                    v-model="form.contrasena"
                                     :type="showPassword ? 'text' : 'password'"
                                     required
                                     class="input pr-10"
@@ -55,8 +68,8 @@
                                     <EyeOpen v-if="showPassword" />
                                     <EyeCancel v-else />
                                 </button>
-                                <p v-if="errors.password" class="input-error">
-                                    {{ errors.password }}
+                                <p v-if="errors.contrasena" class="input-error">
+                                    {{ errors.contrasena }}
                                 </p>
                             </div>
 
@@ -65,7 +78,7 @@
                                     >Confirmar contraseña</label
                                 >
                                 <input
-                                    v-model="form.confirm"
+                                    v-model="form.contrasena_confirmar"
                                     :type="showConfirm ? 'text' : 'password'"
                                     required
                                     class="input pr-10"
@@ -78,14 +91,29 @@
                                     <EyeOpen v-if="showConfirm" />
                                     <EyeCancel v-else />
                                 </button>
-                                <p v-if="errors.confirm" class="input-error">
-                                    {{ errors.confirm }}
+                                <p
+                                    v-if="errors.contrasena_confirmar"
+                                    class="input-error"
+                                >
+                                    {{ errors.contrasena_confirmar }}
                                 </p>
                             </div>
 
-                            <button @click="submitForm" class="w-full button">
-                                {{ isLogin ? 'Ingresar' : 'Registrarme' }}
+                            <button
+                                @click="submitForm"
+                                class="w-full button"
+                                :disabled="isLoading"
+                            >
+                                <template v-if="isLoading"
+                                    >Enviando...</template
+                                >
+                                <template v-else>{{
+                                    isLogin ? 'Ingresar' : 'Registrarme'
+                                }}</template>
                             </button>
+                            <p v-if="errors.general" class="input-error">
+                                {{ errors.general }}
+                            </p>
                         </div>
 
                         <p class="text-center text-sm mt-6 text-gray-600">
@@ -117,6 +145,7 @@ import UserIcon from '../assets/icons/user.vue';
 import EyeOpen from '../assets/icons/eye-open.vue';
 import EyeCancel from '../assets/icons/eye-cancel.vue';
 import Xmark from '../assets/icons/xmark.vue';
+import { urls, post } from '../lib/api.js';
 
 export default {
     name: 'AuthModal',
@@ -131,13 +160,15 @@ export default {
             isOpen: false,
             isLogin: true,
             form: {
-                email: '',
-                password: '',
-                confirm: '',
+                correo: '',
+                contrasena: '',
+                contrasena_confirmar: '',
             },
             errors: {},
             showPassword: false,
             showConfirm: false,
+            isLoading: false,
+            user: null,
         };
     },
     methods: {
@@ -147,6 +178,7 @@ export default {
             document.body.style.overflow = 'hidden'; // evita scroll en fondo
         },
         closeModal() {
+            this.form = {};
             this.isOpen = false;
             document.body.style.overflow = ''; // restaura scroll
         },
@@ -158,32 +190,74 @@ export default {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
             if (
-                !this.form.email ||
-                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)
+                !this.form.correo ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.correo)
             )
-                this.errors.email = 'Ingrese un email válido.';
+                this.errors.correo = 'Ingrese un correo válido.';
 
-            if (!this.form.password)
-                this.errors.password = 'Este campo es obligatorio.';
+            if (!this.form.contrasena)
+                this.errors.contrasena = 'Este campo es obligatorio.';
 
             if (!this.isLogin) {
-                if (!this.form.confirm)
-                    this.errors.confirm = 'Este campo es obligatorio.';
+                if (!this.form.contrasena_confirmar)
+                    this.errors.contrasena_confirmar =
+                        'Este campo es obligatorio.';
 
-                if (!this.isLogin && this.form.password !== this.form.confirm) {
-                    this.errors.confirm = 'Las contraseñas no coinciden.';
+                if (
+                    !this.isLogin &&
+                    this.form.contrasena !== this.form.contrasena_confirmar
+                ) {
+                    this.errors.contrasena_confirmar =
+                        'Las contraseñas no coinciden.';
                     return;
                 }
             }
 
             return Object.values(this.errors).every((e) => !e);
         },
-        submitForm() {
+        async submitForm() {
+            if (this.isLoading) return;
             if (!this.validateForm()) return;
 
-            // Aquí iría la llamada a tu backend o API
-            console.log('Formulario enviado:', this.form);
-            this.closeModal();
+            this.isLoading = true;
+            if (this.isLogin) {
+                const res = await post(`${urls.auth}/login`, this.form);
+                this.isLoading = false;
+                console.log('ASD');
+                if (res.code == 1) {
+                    console.log('ASD1');
+                    this.errors.general = res.msg;
+                } else if (res.code == 0) {
+                    console.log('ASD2');
+                    this.user = { correo: this.form.correo };
+                    localStorage.setItem('token', JSON.stringify(res.token));
+                    localStorage.setItem('user', JSON.stringify(this.user));
+                    this.closeModal();
+                }
+            } else {
+                const res = await post(`${urls.auth}/register`, this.form);
+                this.isLoading = false;
+
+                if (res.code == 1) {
+                    this.errors.correo = res.msg;
+                } else if (res.code == 0) {
+                    this.user = { correo: this.form.correo };
+                    localStorage.setItem('token', JSON.stringify(res.token));
+                    localStorage.setItem('user', JSON.stringify(this.user));
+                    this.closeModal();
+                }
+            }
+        },
+    },
+    mounted() {
+        const saved = localStorage.getItem('user');
+        if (saved) {
+            this.user = JSON.parse(saved);
+        }
+    },
+    computed: {
+        userName() {
+            return this.user ? this.user.correo.split('@')[0] : '';
         },
     },
 };
