@@ -1,9 +1,9 @@
 ---
 import logo from '../assets/logo-sunka-black.webp';
 import Menu from '../assets/icons/menu.astro';
-import User from '../assets/icons/user.astro';
-import Xmark from '../assets/icons/xmark.astro';
+import XmakIcon from '../assets/icons/xmark.astro';
 import CartIcon from '../components/CartIcon.vue';
+import AuthModal from '../components/AuthModal.vue';
 
 const navLinks = [
     { name: 'Filtrante', href: '/linea/filtrante' },
@@ -36,9 +36,7 @@ const navLinks = [
         </nav>
 
         <div class="flex items-center gap-4">
-            <a href="/account/login">
-                <User />
-            </a>
+            <AuthModal client:load />
 
             <CartIcon client:load />
 
@@ -50,7 +48,7 @@ const navLinks = [
                     <Menu />
                 </div>
                 <div id="icon-close" class="hidden">
-                    <Xmark />
+                    <XmakIcon />
                 </div>
             </button>
         </div>

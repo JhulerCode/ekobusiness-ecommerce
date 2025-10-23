@@ -19,7 +19,7 @@
 }
 
 .button {
-    @apply rounded-lg font-medium transition cursor-pointer flex items-center justify-center border px-6 py-3 border-neutral-900 bg-neutral-900 text-white hover:bg-white hover:text-neutral-900;
+    @apply rounded-lg font-medium transition cursor-pointer flex items-center justify-center border px-6 py-3 border-neutral-900 bg-neutral-900 text-white hover:bg-gray-800;
 }
 
 .button2 {
@@ -38,11 +38,13 @@
     @apply text-left text-red-500 text-xs mt-1 ml-2;
 }
 
-.checkbox, .radio {
+.checkbox,
+.radio {
     @apply text-sm text-gray-600 cursor-pointer select-none flex items-start gap-2;
 }
 
-.checkbox span, .radio span {
+.checkbox span,
+.radio span {
     @apply text-left;
 }
 
