@@ -6,16 +6,21 @@ export const urls = {
     newsletter: `${host}/store/newsletter`,
     arco: `${host}/store/arco`,
     auth: `${host}/store/auth`,
+    account: `${host}/store/account`,
 }
 
 function jmsg(type, msg) {
     console.log(type, msg)
 }
 
-function setHeaders(item) {
+function setHeaders(item, user_token) {
     const headers = {}
 
-    if (!item.is_form_data) {
+    if (user_token) {
+        headers['Authorization'] = `Bearer ${user_token}`
+    }
+
+    if (item != null && !item.is_form_data) {
         headers['Content-Type'] = 'application/json'
     }
 
@@ -46,21 +51,29 @@ function setFormData(item) {
 }
 
 
-async function get(endpoint, params = {}) {
-    const url = new URL(urls[endpoint])
+export async function get(endpoint, params = {}, user_token) {
+    const link = new URL(endpoint.includes('http') ? endpoint : urls[endpoint])
 
-    if (params.qry) {
-        url.searchParams.set("qry", JSON.stringify(params.qry))
+    if (params && params.qry) {
+        link.searchParams.set("qry", JSON.stringify(params.qry))
     }
 
     let response
+
     try {
-        response = await fetch(url, {
+        response = await fetch(link, {
             method: 'GET',
+            headers: setHeaders(null, user_token),
         })
     } catch (error) {
         jmsg('error', error)
         return { code: -2 }
+    }
+
+    if (response.status == 401) {
+        jmsg('error', 'Acceso denegado: autenticación incorrecta')
+        localStorage.removeItem('token')
+        return { code: 401 }
     }
 
     const data = await response.json()
@@ -73,12 +86,11 @@ async function get(endpoint, params = {}) {
 }
 
 export async function post(endpoint, item, ms) {
-    let query
-
     const link = endpoint.includes('http') ? endpoint : urls[endpoint]
+    let response
 
     try {
-        query = await fetch(link, {
+        response = await fetch(link, {
             method: 'POST',
             headers: setHeaders(item),
             body: item.is_form_data ? setFormData(item) : JSON.stringify(item),
@@ -88,7 +100,7 @@ export async function post(endpoint, item, ms) {
         return { code: -2 }
     }
 
-    const res = await query.json()
+    const res = await response.json()
 
     if (res.code == -1) jmsg('error', 'Algo salió mal')
 

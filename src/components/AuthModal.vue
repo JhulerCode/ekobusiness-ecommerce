@@ -10,9 +10,7 @@
             <a v-else href="/account" class="flex items-center">
                 <UserIcon />
                 <div>
-                    <span class="text-xs">
-                        Hola, {{ userName }}
-                    </span>
+                    <span class="text-xs"> Hola, {{ userName }} </span>
                 </div>
             </a>
         </div>
@@ -145,7 +143,7 @@ import UserIcon from '../assets/icons/user.vue';
 import EyeOpen from '../assets/icons/eye-open.vue';
 import EyeCancel from '../assets/icons/eye-cancel.vue';
 import Xmark from '../assets/icons/xmark.vue';
-import { urls, post } from '../lib/api.js';
+import { urls, post, get } from '../lib/api.js';
 
 export default {
     name: 'AuthModal',
@@ -230,8 +228,7 @@ export default {
                 } else if (res.code == 0) {
                     console.log('ASD2');
                     this.user = { correo: this.form.correo };
-                    localStorage.setItem('token', JSON.stringify(res.token));
-                    localStorage.setItem('user', JSON.stringify(this.user));
+                    localStorage.setItem('token', res.token);
                     this.closeModal();
                 }
             } else {
@@ -242,18 +239,30 @@ export default {
                     this.errors.correo = res.msg;
                 } else if (res.code == 0) {
                     this.user = { correo: this.form.correo };
-                    localStorage.setItem('token', JSON.stringify(res.token));
-                    localStorage.setItem('user', JSON.stringify(this.user));
+                    localStorage.setItem('token', res.token);
                     this.closeModal();
+                }
+            }
+        },
+        async validateSession() {
+            const user_token = localStorage.getItem('token');
+
+            if (user_token) {
+                const res = await get(
+                    `${urls.account}/verify`,
+                    null,
+                    user_token
+                );
+
+                if (res.code == 0) {
+                    this.user = res.data;
+                    console.log(this.user);
                 }
             }
         },
     },
     mounted() {
-        const saved = localStorage.getItem('user');
-        if (saved) {
-            this.user = JSON.parse(saved);
-        }
+        this.validateSession();
     },
     computed: {
         userName() {
