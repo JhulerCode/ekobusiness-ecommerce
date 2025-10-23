@@ -32,7 +32,7 @@
 
                     <!-- Contenedor del formulario -->
                     <div class="w-full max-w-sm">
-                        <h2 class="text-2xl font-semibold text-center mb-6">
+                        <h2 class="text-lg font-semibold text-center mb-6">
                             {{ isLogin ? 'Iniciar sesión' : 'Crear cuenta' }}
                         </h2>
 
@@ -103,7 +103,7 @@
                                 :disabled="isLoading"
                             >
                                 <template v-if="isLoading"
-                                    >Enviando...</template
+                                    >Cargando...</template
                                 >
                                 <template v-else>{{
                                     isLogin ? 'Ingresar' : 'Registrarme'
@@ -176,9 +176,9 @@ export default {
             document.body.style.overflow = 'hidden'; // evita scroll en fondo
         },
         closeModal() {
-            this.form = {};
             this.isOpen = false;
             document.body.style.overflow = ''; // restaura scroll
+            this.form = {};
         },
         toggleMode() {
             this.isLogin = !this.isLogin;
@@ -221,12 +221,10 @@ export default {
             if (this.isLogin) {
                 const res = await post(`${urls.auth}/login`, this.form);
                 this.isLoading = false;
-                console.log('ASD');
+
                 if (res.code == 1) {
-                    console.log('ASD1');
                     this.errors.general = res.msg;
                 } else if (res.code == 0) {
-                    console.log('ASD2');
                     this.user = { correo: this.form.correo };
                     localStorage.setItem('token', res.token);
                     this.closeModal();
@@ -256,7 +254,6 @@ export default {
 
                 if (res.code == 0) {
                     this.user = res.data;
-                    console.log(this.user);
                 }
             }
         },

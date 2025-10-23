@@ -263,17 +263,14 @@
 
         <!-- Enviar -->
         <div class="flex justify-center pt-4">
-            <button
-                type="submit"
-                :disabled="loading"
-                :class="[
+            <button type="submit" :disabled="loading" class="button w-60">
+                <!-- :class="[
                     'rounded-lg font-medium transition cursor-pointer flex items-center justify-center border',
                     'px-6 py-3 max-h-[3rem] w-40',
                     loading
                         ? 'bg-neutral-400 border-neutral-400 text-white cursor-not-allowed'
                         : 'border-neutral-900 bg-neutral-900 text-white hover:bg-white hover:text-neutral-900',
-                ]"
-            >
+                ]" -->
                 <span v-if="loading">Enviando…</span>
                 <span v-else>Enviar</span>
             </button>

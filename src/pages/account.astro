@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AccountPanel from '../components/AccountPanel.vue';
+---
+
+<BaseLayout title="Mi cuenta">
+    <section class=" mx-auto px-16 py-16 bg-gray-50">
+        <AccountPanel client:load />
+    </section>
+</BaseLayout>
