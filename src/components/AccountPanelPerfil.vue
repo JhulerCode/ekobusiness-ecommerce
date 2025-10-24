@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="flex justify-between mb-4">
-            <h2 class="text-xl font-semibold capitalize">
+            <h2 class="text-xl font-semibold">
                 {{ headText }}
             </h2>
 

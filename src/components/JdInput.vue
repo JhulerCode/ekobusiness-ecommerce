@@ -12,6 +12,7 @@
             v-model="inputModel"
             class="input"
             :class="{ 'to-right': toRight }"
+            :maxlength="maxlength"
         />
 
         <div
@@ -55,6 +56,7 @@ export default {
         disabled: { type: Boolean, default: false },
         toRight: { type: Boolean, default: false },
         error: { type: String, default: null },
+        maxlength: { type: Number, default: null },
     },
     computed: {
         inputModel: {

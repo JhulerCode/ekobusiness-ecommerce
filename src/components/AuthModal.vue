@@ -226,7 +226,7 @@ export default {
                 const res = await post(`${urls.auth}/login`, this.form);
                 this.isLoading = false;
 
-                if (res.code == 1) {
+                if (res.code != 0) {
                     this.errors.general = res.msg;
                 } else if (res.code == 0) {
                     this.user = { correo: this.form.correo };

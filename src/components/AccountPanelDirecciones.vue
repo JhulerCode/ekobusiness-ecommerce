@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="flex justify-between mb-4">
-            <h2 class="text-xl font-semibold capitalize">
+            <h2 class="text-xl font-semibold">
                 {{ headText }}
             </h2>
 
-            <button @click="openModal" class="button">Agregar dirección</button>
+            <button @click="openModal" class="button">Agregar</button>
         </div>
 
         <div
@@ -33,19 +33,21 @@
                     </p>
 
                     <p class="text-sm text-gray-600" v-if="dir.ubigeo1">
-                        {{ dir.ubigeo1.distrito }}, {{ dir.ubigeo1.provincia }}, {{ dir.ubigeo1.departamento }}
+                        {{ dir.ubigeo1.distrito }}, {{ dir.ubigeo1.provincia }},
+                        {{ dir.ubigeo1.departamento }}
                     </p>
 
                     <p class="text-sm text-gray-600">
                         Referencia: {{ dir.referencia }}
+                        <template v-if="dir.principal">
+                            |
+                            <span
+                                class="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-lg"
+                            >
+                                Principal
+                            </span>
+                        </template>
                     </p>
-
-                    <span
-                        v-if="dir.principal"
-                        class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-lg"
-                    >
-                        Principal
-                    </span>
                 </div>
 
                 <div class="flex flex-col space-y-2">

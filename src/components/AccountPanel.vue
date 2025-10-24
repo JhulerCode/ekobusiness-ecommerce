@@ -45,9 +45,11 @@
                     :headText="menuText"
                 />
 
-                <div v-else-if="active === 'pagos'" :headText="menuText">
-                    <p>No hay medios de pago guardados.</p>
-                </div>
+                <AccountPanelPagoMetodos
+                    v-else-if="active === 'pago_metodos'"
+                    :user="user"
+                    :headText="menuText"
+                />
 
                 <div
                     v-else-if="active === 'autenticacion'"
@@ -79,20 +81,22 @@
 import { urls, get } from '../lib/api.js';
 import AccountPanelPerfil from './AccountPanelPerfil.vue';
 import AccountPanelDirecciones from './AccountPanelDirecciones.vue';
+import AccountPanelPagoMetodos from './AccountPanelPagoMetodos.vue';
 
 export default {
     components: {
         AccountPanelPerfil,
         AccountPanelDirecciones,
+        AccountPanelPagoMetodos,
     },
     data() {
         return {
             user: null,
-            active: 'direcciones',
+            active: 'pago_metodos',
             menu: [
                 { key: 'perfil', label: 'Perfil' },
                 { key: 'direcciones', label: 'Direcciones' },
-                { key: 'pagos', label: 'Medios de pago' },
+                { key: 'pago_metodos', label: 'Medios de pago' },
                 { key: 'autenticacion', label: 'Autenticación' },
                 { key: 'pedidos', label: 'Pedidos' },
             ],

@@ -1,85 +1,68 @@
 <template>
-    <div>
-        <div class="flex justify-between mb-4">
-            <h2 class="text-xl font-semibold capitalize">
-                {{ headText }}
-            </h2>
+    <div class="flex justify-between mb-4">
+        <h2 class="text-xl font-semibold">
+            {{ headText }}
+        </h2>
 
-            <button @click="openModal" class="button">Agregar dirección</button>
-        </div>
+        <button @click="openModal" class="button">Agregar</button>
+    </div>
 
+    <div
+        v-if="user.pago_metodos && user.pago_metodos.length > 0"
+        class="space-y-4"
+    >
         <div
-            v-if="user.direcciones && user.direcciones.length > 0"
-            class="space-y-4"
+            v-for="(dir, i) in user.pago_metodos"
+            :key="i"
+            class="flex justify-between items-start bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200"
         >
-            <div
-                v-for="(dir, i) in user.direcciones"
-                :key="i"
-                class="flex justify-between items-start bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200"
-            >
-                <div>
-                    <p class="font-medium text-gray-800">
-                        {{ dir.nombre }}
-                    </p>
+            <div>
+                <p class="font-medium text-gray-800">VISA {{ dir.ultimos4 }}</p>
 
-                    <p class="text-sm text-gray-600">
-                        {{ dir.direccion }}
-                        <template v-if="dir.numero">
-                            Nro: {{ dir.numero }}
-                        </template>
-                        <template v-if="dir.piso">
-                            Piso: {{ dir.piso }}
-                        </template>
-                    </p>
-
-                    <p class="text-sm text-gray-600" v-if="dir.ubigeo1">
-                        {{ dir.ubigeo1.distrito }}, {{ dir.ubigeo1.provincia }}, {{ dir.ubigeo1.departamento }}
-                    </p>
-
-                    <p class="text-sm text-gray-600">
-                        Referencia: {{ dir.referencia }}
-                    </p>
-
-                    <span
-                        v-if="dir.principal"
-                        class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-lg"
-                    >
-                        Principal
-                    </span>
-                </div>
-
-                <div class="flex flex-col space-y-2">
-                    <button
-                        @click="openQuestion(i)"
-                        title="Eliminar"
-                        class="text-sm text-red-500 cursor-pointer"
-                    >
-                        <Trash />
-                    </button>
-                    <button
-                        v-if="!dir.principal"
-                        @click="setPrincipal(i)"
-                        title="Marcar como principal"
-                        class="text-sm text-gray-700 cursor-pointer"
-                    >
-                        <Star />
-                        <LoadingSpin v-if="loadingSetPrincipal" />
-                    </button>
-                </div>
+                <p class="text-sm text-gray-600">
+                    {{ doc_tipos.find((t) => t.id == dir.doc_tipo).nombre }} |
+                    Expira el {{ dir.vencimiento }}
+                    <template v-if="dir.principal">
+                        |
+                        <span
+                            class="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-lg"
+                        >
+                            Principal
+                        </span>
+                    </template>
+                </p>
             </div>
-        </div>
 
-        <div v-else class="text-gray-600 text-center">
-            <p>No tienes direcciones registradas.</p>
+            <div class="flex flex-col space-y-2">
+                <button
+                    @click="openQuestion(i)"
+                    title="Eliminar"
+                    class="text-sm text-red-500 cursor-pointer"
+                >
+                    <Trash />
+                </button>
+                <button
+                    v-if="!dir.principal"
+                    @click="setPrincipal(i)"
+                    title="Marcar como principal"
+                    class="text-sm text-gray-700 cursor-pointer"
+                >
+                    <Star />
+                    <LoadingSpin v-if="loadingSetPrincipal" />
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal simple para agregar dirección -->
+    <div v-else class="text-gray-600 text-center">
+        <p>No tienes medios de pago registrados.</p>
+    </div>
+
     <transition name="fade">
         <div v-if="showAddModal" class="modal">
             <div class="center">
                 <header>
-                    <h3>Nueva dirección</h3>
+                    <h3>Nuevo medio de pago</h3>
 
                     <button @click="closeModal">
                         <Xmark />
@@ -88,52 +71,49 @@
 
                 <main>
                     <div class="grid md:grid-cols-2 gap-4">
-                        <JdInput
-                            label="Nombre"
-                            placeholder="Ej. Casa, Trabajo"
+                        <JdSelect
+                            label="Tipo"
                             :nec="true"
-                            v-model="form.nombre"
-                            :error="errors.nombre"
+                            :lista="doc_tipos"
+                            v-model="form.doc_tipo"
+                            :error="errors.doc_tipo"
                         />
 
-                        <JdInput
-                            label="Dirección"
+                        <!-- <JdInput
+                            label="Marca"
                             :nec="true"
-                            v-model="form.direccion"
-                            :error="errors.direccion"
+                            v-model="form.marca"
+                            :error="errors.marca"
+                        /> -->
+
+                        <JdInput
+                            label="Nro de tarjeta"
+                            :nec="true"
+                            placeholder="0000 0000 0000 0000"
+                            maxlength="19"
+                            v-model="form.ultimos4"
+                            :error="errors.ultimos4"
+                            @input="agruparCada4"
                             class="col-span-2"
                         />
 
                         <JdInput
-                            label="Número"
-                            v-model="form.numero"
-                            :error="errors.numero"
+                            label="Expiración"
+                            :nec="true"
+                            placeholder="MM/AA"
+                            maxlength="5"
+                            v-model="form.vencimiento"
+                            :error="errors.vencimiento"
+                            @input="agruparCada2ConSlash"
                         />
 
                         <JdInput
-                            label="Piso / Dpto"
-                            v-model="form.piso"
-                            :error="errors.piso"
-                        />
-
-                        <JdSelectQuery
-                            label="Distrito"
+                            label="Código de seguridad"
                             :nec="true"
-                            v-model="form.distrito"
-                            :spin="ubigeosLoading"
-                            :lista="ubigeos"
-                            @search="loadUbigeos"
-                            @elegir="setUbigeo"
-                            :error="errors.distrito"
-                            class="col-span-2"
-                        />
-
-                        <JdTextArea
-                            label="Referencia"
-                            :nec="true"
-                            v-model="form.referencia"
-                            :error="errors.referencia"
-                            class="col-span-2"
+                            placeholder="CVV"
+                            maxlength="3"
+                            v-model="form.cvv"
+                            :error="errors.cvv"
                         />
 
                         <JdCheckBox
@@ -149,6 +129,8 @@
                         :loading="loadingCreate"
                         @click="grabar"
                     />
+
+                    {{ errors.general }}
                 </footer>
             </div>
         </div>
@@ -177,6 +159,7 @@
 <script>
 import JdInput from '../components/JdInput.vue';
 import JdTextArea from '../components/JdTextArea.vue';
+import JdSelect from '../components/JdSelect.vue';
 import JdSelectQuery from '../components/JdSelectQuery.vue';
 import JdCheckBox from '../components/JdCheckBox.vue';
 import JdButton from '../components/JdButton.vue';
@@ -191,6 +174,7 @@ export default {
     components: {
         JdInput,
         JdTextArea,
+        JdSelect,
         JdSelectQuery,
         JdCheckBox,
         JdButton,
@@ -207,13 +191,24 @@ export default {
         return {
             showAddModal: false,
             showQuestion: false,
+
             loadingCreate: false,
             loadingDelete: false,
             loadingSetPrincipal: false,
+
             form: {},
             errors: {},
-            ubigeos: [],
-            ubigeosLoading: false,
+
+            doc_tipos: [
+                {
+                    id: 'credito',
+                    nombre: 'CRÉDITO',
+                },
+                {
+                    id: 'debito',
+                    nombre: 'DÉBITO',
+                },
+            ],
         };
     },
     methods: {
@@ -236,53 +231,35 @@ export default {
             document.body.style.overflow = '';
         },
 
-        async loadUbigeos(txtBuscar) {
-            if (!txtBuscar) {
-                this.ubigeos.length = 0;
-                return;
-            }
-
-            const qry = {
-                fltr: {
-                    distrito: { op: 'Contiene', val: txtBuscar },
-                },
-                cols: ['departamento', 'provincia', 'distrito', 'nombre'],
-            };
-
-            this.ubigeosLoading = true;
-            const res = await get(
-                'ubigeos',
-                { qry },
-                localStorage.getItem('token')
-            );
-            this.ubigeosLoading = false;
-
-            if (res.code !== 0) return;
-
-            this.ubigeos = res.data;
+        agruparCada4() {
+            const limpio = this.form.ultimos4.replace(/\s+/g, '');
+            this.form.ultimos4 = limpio.replace(/(.{4})/g, '$1 ').trim();
         },
-        setUbigeo(item) {
-            this.form.ubigeo1 = item;
+        agruparCada2ConSlash() {
+            const limpio = this.form.vencimiento.replace(/\//g, '');
+            this.form.vencimiento = limpio
+                .replace(/(.{2})/g, '$1/')
+                .replace(/\/$/, '');
         },
 
         validateForm() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
-            if (!this.form.nombre)
-                this.errors.nombre = 'Este campo es obligatorio.';
-            if (!this.form.direccion)
-                this.errors.direccion = 'Este campo es obligatorio.';
-            if (!this.form.distrito)
-                this.errors.distrito = 'Este campo es obligatorio.';
-            if (!this.form.referencia)
-                this.errors.referencia = 'Este campo es obligatorio.';
+            // if (!this.form.nombre)
+            //     this.errors.nombre = 'Este campo es obligatorio.';
+            // if (!this.form.direccion)
+            //     this.errors.direccion = 'Este campo es obligatorio.';
+            // if (!this.form.distrito)
+            //     this.errors.distrito = 'Este campo es obligatorio.';
+            // if (!this.form.referencia)
+            //     this.errors.referencia = 'Este campo es obligatorio.';
 
             return Object.values(this.errors).every((e) => !e);
         },
-        shapeDatos(direcciones) {
+        shapeDatos(pago_metodos) {
             return {
                 id: this.user.id,
-                direcciones,
+                pago_metodos,
                 tipo: 2,
                 comes_from: 'ecommerce',
                 user_token: localStorage.getItem('token'),
@@ -292,15 +269,15 @@ export default {
             if (this.loadingCreate) return;
             if (!this.validateForm()) return;
 
-            const direcciones = JSON.parse(
-                JSON.stringify(this.user.direcciones)
+            const pago_metodos = JSON.parse(
+                JSON.stringify(this.user.pago_metodos)
             );
             if (this.form.principal == true) {
-                direcciones.forEach((d) => (d.principal = false));
+                pago_metodos.forEach((d) => (d.principal = false));
             }
-            direcciones.push({ ...this.form });
+            pago_metodos.push({ ...this.form });
 
-            const send = this.shapeDatos(direcciones);
+            const send = this.shapeDatos(pago_metodos);
 
             this.loadingCreate = true;
             const res = await patch('account', send);
@@ -308,41 +285,43 @@ export default {
 
             if (res.code == 0) {
                 this.closeModal();
-                this.user.direcciones = res.data.direcciones;
+                this.user.pago_metodos = res.data.pago_metodos;
+            } else {
+                this.errors.general = res.msg;
             }
         },
         async eliminar() {
-            const direcciones = JSON.parse(
-                JSON.stringify(this.user.direcciones)
+            const pago_metodos = JSON.parse(
+                JSON.stringify(this.user.pago_metodos)
             );
-            direcciones.splice(this.toDelete, 1);
+            pago_metodos.splice(this.toDelete, 1);
 
-            const send = this.shapeDatos(direcciones);
+            const send = this.shapeDatos(pago_metodos);
 
             this.loadingDelete = true;
             const res = await patch('account', send);
             this.loadingDelete = false;
 
             if (res.code == 0) {
-                this.user.direcciones = res.data.direcciones;
+                this.user.pago_metodos = res.data.pago_metodos;
                 this.closeQuestion();
             }
         },
         async setPrincipal(i) {
-            const direcciones = JSON.parse(
-                JSON.stringify(this.user.direcciones)
+            const pago_metodos = JSON.parse(
+                JSON.stringify(this.user.pago_metodos)
             );
-            direcciones.forEach((d) => (d.principal = false));
-            direcciones[i].principal = true;
+            pago_metodos.forEach((d) => (d.principal = false));
+            pago_metodos[i].principal = true;
 
-            const send = this.shapeDatos(direcciones);
+            const send = this.shapeDatos(pago_metodos);
 
             this.loadingSetPrincipal = true;
             const res = await patch('account', send);
             this.loadingSetPrincipal = false;
 
             if (res.code == 0) {
-                this.user.direcciones = res.data.direcciones;
+                this.user.pago_metodos = res.data.pago_metodos;
             }
         },
     },
