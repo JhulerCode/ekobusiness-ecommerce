@@ -2,7 +2,7 @@
     <div v-if="user">
         <div class="mb-6 text-2xl">Hola, {{ userName }}</div>
 
-        <div class="text-gray-700 flex flex-col md:flex-row gap-8">
+        <div class="text-gray-700 flex flex-col md:flex-row items-start gap-8">
             <!-- 📂 Menú lateral -->
             <aside class="md:w-1/4 p-8 rounded-2xl bg-white shadow-md">
                 <nav class="space-y-3">
@@ -35,11 +35,13 @@
             <main class="flex-1 p-8 rounded-2xl bg-white shadow-md">
                 <AccountPanelPerfil
                     v-if="active === 'perfil'"
+                    :user="user"
                     :headText="menuText"
                 />
 
                 <AccountPanelDirecciones
                     v-else-if="active === 'direcciones'"
+                    :user="user"
                     :headText="menuText"
                 />
 
@@ -86,7 +88,7 @@ export default {
     data() {
         return {
             user: null,
-            active: 'perfil',
+            active: 'direcciones',
             menu: [
                 { key: 'perfil', label: 'Perfil' },
                 { key: 'direcciones', label: 'Direcciones' },
@@ -95,7 +97,6 @@ export default {
                 { key: 'pedidos', label: 'Pedidos' },
             ],
             errors: {},
-            editing: false,
         };
     },
     methods: {
@@ -152,6 +153,9 @@ export default {
         menuText() {
             return this.menu.find((m) => m.key === this.active)?.label;
         },
+        // updateUser(item) {
+        //     Object.assign(this.user, item);
+        // },
     },
 };
 </script>

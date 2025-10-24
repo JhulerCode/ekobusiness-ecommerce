@@ -5,92 +5,64 @@
                 {{ headText }}
             </h2>
 
-            <button @click="showAddModal = true" class="button">
-                Editar
-            </button>
+            <div class="flex gap-2">
+                <JdButton
+                    :text="editing ? 'Cancelar' : 'Editar'"
+                    :tipo="editing ? 2 : 1"
+                    @click="editing = !editing"
+                />
+
+                <JdButton
+                    text="Actualizar"
+                    :loading="loading"
+                    @click="actualizar"
+                    v-if="editing"
+                />
+            </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4">
+            <JdInput
+                label="Nombres"
+                v-model="user.nombres"
+                :disabled="!editing"
+            />
+
+            <JdInput
+                label="Apellidos"
+                v-model="user.apellidos"
+                :disabled="!editing"
+            />
+
+            <JdSelect
+                label="Tipo de documento"
+                :lista="doc_tipos"
+                v-model="user.doc_tipo"
+                :disabled="!editing"
+            />
+
+            <JdInput
+                label="Número de documento"
+                v-model="user.doc_numero"
+                :disabled="!editing"
+            />
+
+            <JdInput
+                label="Teléfono"
+                v-model="user.telefono1"
+                :disabled="!editing"
+            />
+
             <div>
-                <label class="label">Nombres:</label>
-                <p>{{ user.nombres ? user.nombres : '-' }}</p>
-                <input
-                    v-model="user.nombres"
-                    type="text"
-                    class="input"
-                    v-if="editing"
-                />
-                <p v-if="errors.nombres" class="input-error">
-                    {{ errors.nombres }}
-                </p>
-            </div>
-    
-            <div>
-                <label class="label">Apellidos:</label>
-                <p>{{ user.apellidos ? user.apellidos : '-' }}</p>
-                <input
-                    v-model="user.apellidos"
-                    type="text"
-                    class="input"
-                    v-if="editing"
-                />
-                <p v-if="errors.apellidos" class="input-error">
-                    {{ errors.apellidos }}
-                </p>
-            </div>
-    
-            <div>
-                <label class="label">Tipo de documento:</label>
-                <p>{{ user.doc_tipo ? user.doc_tipo : '-' }}</p>
-                <select v-model="user.doc_tipo" class="input" v-if="editing">
-                    <option value="DNI">DNI</option>
-                    <option value="CE">Carné de Extranjería</option>
-                    <option value="PAS">Pasaporte</option>
-                </select>
-                <p v-if="errors.doc_tipo" class="input-error">
-                    {{ errors.doc_tipo }}
-                </p>
-            </div>
-    
-            <div>
-                <label class="label">Número de documento:</label>
-                <p>{{ user.doc_numero ? user.doc_numero : '-' }}</p>
-                <input
-                    v-model="user.doc_numero"
-                    type="text"
-                    class="input"
-                    v-if="editing"
-                />
-                <p v-if="errors.doc_numero" class="input-error">
-                    {{ errors.doc_numero }}
-                </p>
-            </div>
-    
-            <div>
-                <label class="label">Correo:</label>
-                <p>{{ user.correo }}</p>
-                <input
+                <JdInput
+                    label="Correo"
                     v-model="user.correo"
-                    type="email"
-                    class="input"
-                    v-if="editing"
+                    :disabled="true"
                 />
-                <p v-if="errors.correo" class="input-error">
-                    {{ errors.correo }}
-                </p>
-            </div>
-    
-            <div>
-                <label class="label">Teléfono:</label>
-                <p>{{ user.telefono1 ? user.telefono1 : '-' }}</p>
-                <input
-                    v-model="user.telefono1"
-                    type="text"
-                    class="input"
-                    v-if="editing"
-                />
-                <p v-if="errors.telefono1" class="input-error">
-                    {{ errors.telefono1 }}
+
+                <p class="text-xs text-gray-400 mt-2" v-if="editing">
+                    Por tu seguridad, no es posible cambiar tu correo. Si
+                    quieres usar otro, crea una nueva cuenta.
                 </p>
             </div>
         </div>
@@ -98,19 +70,83 @@
 </template>
 
 <script>
-import { urls, get } from '../lib/api.js';
+import JdInput from '../components/JdInput.vue';
+import JdSelect from '../components/JdSelect.vue';
+import JdLoading from '../components/LoadingSpin.vue';
+import JdButton from '../components/JdButton.vue';
+import { urls, get, patch } from '../lib/api.js';
 
 export default {
+    components: {
+        JdInput,
+        JdSelect,
+        JdLoading,
+        JdButton,
+    },
     props: {
         headText: { type: String, default: '' },
         user: { type: Object, default: () => ({}) },
     },
     data() {
         return {
-            errors: {},
             editing: false,
+            loading: false,
+            errors: {},
+            doc_tipos: [
+                {
+                    id: 'DNI',
+                    nombre: 'DNI',
+                },
+                {
+                    id: 'CE',
+                    nombre: 'Carné de Extranjería',
+                },
+                {
+                    id: 'PAS',
+                    nombre: 'Pasaporte',
+                },
+            ],
         };
     },
-    methods: {},
+    methods: {
+        // validateForm() {
+        //     Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
+
+        //     if (!this.form.correo)
+        //         this.errors.correo = 'Este campo es obligatorio.';
+
+        //     return Object.values(this.errors).every((e) => !e);
+        // },
+        shapeDatos() {
+            const { id, nombres, apellidos, doc_tipo, doc_numero, telefono1 } =
+                this.user;
+
+            return {
+                id,
+                nombres,
+                apellidos,
+                doc_tipo,
+                doc_numero,
+                telefono1,
+                tipo: 2,
+                comes_from: 'ecommerce',
+                user_token: localStorage.getItem('token'),
+            };
+        },
+        async actualizar() {
+            if (this.loading) return;
+            // if (!this.validateForm()) return;
+
+            const send = this.shapeDatos();
+
+            this.loading = true;
+            const res = await patch('account', send);
+            this.loading = false;
+
+            if (res.code == 0) {
+                this.editing = false;
+            }
+        },
+    },
 };
 </script>

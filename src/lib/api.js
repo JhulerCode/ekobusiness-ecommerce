@@ -7,6 +7,7 @@ export const urls = {
     arco: `${host}/store/arco`,
     auth: `${host}/store/auth`,
     account: `${host}/store/account`,
+    ubigeos: `${host}/store/account/ubigeos`,
 }
 
 function jmsg(type, msg) {
@@ -49,7 +50,6 @@ function setFormData(item) {
     formData.append('datos', JSON.stringify(resto))
     return formData
 }
-
 
 export async function get(endpoint, params = {}, user_token) {
     const link = new URL(endpoint.includes('http') ? endpoint : urls[endpoint])
@@ -109,6 +109,47 @@ export async function post(endpoint, item, ms) {
     if (res.code == 0) {
         if (ms != false) {
             jmsg('success', ms == undefined ? 'Creado con éxito' : ms)
+        }
+    }
+
+    return res
+}
+
+export async function patch(endpoint, item, ms) {
+    const link = endpoint.includes('http') ? endpoint : urls[endpoint]
+    let response
+
+    try {
+        response = await fetch(`${link}/${item.id}`, {
+            method: 'PATCH',
+            headers: setHeaders(item, item.user_token),
+            body: item.formData ? setFormData(item) : JSON.stringify(item),
+        })
+    } catch (error) {
+        jmsg('error', error)
+        return { code: -2 }
+    }
+
+    if (response.status == 401) {
+        jmsg('error', 'Acceso denegado: autenticación incorrecta')
+        localStorage.removeItem('token')
+        return { code: 401 }
+    }
+
+    if (response.status == 403) {
+        jmsg('error', 'Acceso denegado: permisos insuficientes')
+        return { code: 403 }
+    }
+
+    const res = await response.json()
+
+    if (res.code == -1) jmsg('error', 'Algo salió mal')
+
+    if (res.code > 0) jmsg('error', res.msg)
+
+    if (res.code == 0) {
+        if (ms != false) {
+            jmsg('success', ms == undefined ? 'Actualizado con éxito' : ms)
         }
     }
 

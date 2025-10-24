@@ -20,12 +20,12 @@
 
 .button {
     /* @apply rounded-lg font-medium transition cursor-pointer flex items-center justify-center border px-6 py-3 border-neutral-900 bg-neutral-900 text-white hover:bg-gray-800; */
-    @apply px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-800 cursor-pointer flex;
+    @apply px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-800 cursor-pointer flex justify-center;
 }
 
 .button2 {
     /* @apply text-gray-600 hover:text-black transition cursor-pointer flex items-center justify-center; */
-    @apply px-4 py-2 rounded-lg cursor-pointer flex;
+    @apply px-4 py-2 rounded-lg cursor-pointer flex justify-center;
 }
 
 .input {
@@ -33,7 +33,7 @@
 }
 
 .label {
-    @apply block text-sm text-gray-600 mb-1;
+    @apply text-sm text-gray-600 mb-1 flex;
 }
 
 .input-error {
@@ -81,4 +81,44 @@
 .politicas-privacidad th,
 td {
     @apply border border-gray-500 px-4 py-2 text-gray-700;
+}
+
+/* Oculta la barra de desplazamiento pero mantiene el scroll funcional */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none; /* IE y Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+textarea {
+    field-sizing: content;
+}
+
+.modal {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm;
+}
+
+.modal .center {
+  @apply bg-white rounded-2xl shadow-xl w-auto max-w-[95vw] mx-4 max-h-[90vh] flex flex-col;
+}
+
+.modal header {
+    @apply border-b border-gray-300 p-4 flex justify-between items-center;
+}
+
+.modal header h3 {
+    @apply text-lg font-semibold;
+}
+.modal header button {
+    @apply text-gray-500 hover:text-black cursor-pointer;
+}
+
+.modal footer {
+    @apply border-t border-gray-300 flex justify-end gap-3 p-4;
+}
+
+.modal main {
+    @apply overflow-y-auto flex-1 p-6;
 }
