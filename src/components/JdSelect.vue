@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import Xmark from '../assets/icons/Xmark.vue';
+import Xmark from '../assets/icons/xmark.vue';
 import ChevronUp from '../assets/icons/chevron-up.vue';
 import ChevronDown from '../assets/icons/chevron-down.vue';
 

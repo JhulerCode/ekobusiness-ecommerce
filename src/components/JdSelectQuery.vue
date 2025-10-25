@@ -87,7 +87,7 @@
 
 <script>
 import LoadingSpin from './LoadingSpin.vue';
-import Xmark from '../assets/icons/Xmark.vue';
+import Xmark from '../assets/icons/xmark.vue';
 
 export default {
     components: {
