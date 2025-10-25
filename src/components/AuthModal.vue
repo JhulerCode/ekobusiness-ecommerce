@@ -54,6 +54,7 @@
                                     :text="isLogin ? 'Ingresar' : 'Registrarme'"
                                     @click="submitForm"
                                     :loading="isLoading"
+                                    class="w-full"
                                 />
 
                                 <p v-if="errors.general" class="input-error">
@@ -114,8 +115,8 @@ export default {
             isOpen: false,
             isLogin: true,
             form: {
-                correo: 'jhuler1615@gmail.com',
-                contrasena: 'a',
+                correo: '',
+                contrasena: '',
                 contrasena_confirmar: '',
             },
             errors: {},
@@ -186,6 +187,7 @@ export default {
                     this.user = { correo: this.form.correo };
                     localStorage.setItem('token', res.token);
                     this.closeModal();
+                    window.location.href = '/account';
                 }
             } else {
                 const res = await post(`${urls.auth}/register`, this.form);
@@ -197,6 +199,7 @@ export default {
                     this.user = { correo: this.form.correo };
                     localStorage.setItem('token', res.token);
                     this.closeModal();
+                    window.location.href = '/account';
                 }
             }
         },

@@ -56,7 +56,7 @@ export default {
         disabled: { type: Boolean, default: false },
         toRight: { type: Boolean, default: false },
         error: { type: String, default: null },
-        maxlength: { type: Number, default: null },
+        maxlength: { type: [String, Number], default: null },
     },
     computed: {
         inputModel: {

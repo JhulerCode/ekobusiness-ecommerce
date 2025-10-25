@@ -4,7 +4,12 @@ import AccountPanel from '../components/AccountPanel.vue';
 ---
 
 <BaseLayout title="Mi cuenta">
-    <section class=" mx-auto px-16 py-16 bg-gray-50">
+    <!-- <section class=" mx-auto px-16 py-16 bg-gray-50">
         <AccountPanel client:load />
+    </section> -->
+    <section class="w-full bg-gray-50 py-12 sm:py-16 lg:py-20">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16">
+            <AccountPanel client:load />
+        </div>
     </section>
 </BaseLayout>

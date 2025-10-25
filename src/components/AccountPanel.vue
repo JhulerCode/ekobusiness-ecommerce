@@ -1,27 +1,33 @@
 <template>
-    <div v-if="user">
-        <div class="mb-6 text-2xl">Hola, {{ userName }}</div>
+    <div v-if="user" class="text-gray-800">
+        <!-- Encabezado -->
+        <div class="mb-8 text-2xl font-semibold text-center md:text-left">
+            Hola, {{ userName }}
+        </div>
 
-        <div class="text-gray-700 flex flex-col md:flex-row items-start gap-8">
+        <!-- Layout principal -->
+        <div class="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start">
             <!-- 📂 Menú lateral -->
-            <aside class="md:w-1/4 p-8 rounded-2xl bg-white shadow-md">
-                <nav class="space-y-3">
+            <aside
+                class="w-full lg:w-1/4 bg-white rounded-2xl shadow-md p-6 sm:p-8"
+            >
+                <nav class="space-y-2 sm:space-y-3">
                     <button
                         v-for="item in menu"
                         :key="item.key"
                         @click="active = item.key"
-                        class="block w-full text-left py-1 rounded-md font-medium transition-colors cursor-pointer"
+                        class="block w-full text-left py-2 px-2 rounded-md font-medium transition-colors duration-200 cursor-pointer"
                         :class="[
                             active === item.key
-                                ? 'text-black font-semibold'
-                                : 'text-gray-500 hover:text-black',
+                                ? 'text-black font-semibold bg-gray-100'
+                                : 'text-gray-500 hover:text-black hover:bg-gray-50',
                         ]"
                     >
                         {{ item.label }}
                     </button>
                 </nav>
 
-                <div class="mt-8 border-t border-gray-200 pt-3">
+                <div class="mt-8 border-t border-gray-200 pt-4">
                     <button
                         @click="logout"
                         class="text-red-500 hover:text-red-600 font-medium cursor-pointer"
@@ -32,7 +38,8 @@
             </aside>
 
             <!-- 🧾 Contenido dinámico -->
-            <main class="flex-1 p-8 rounded-2xl bg-white shadow-md">
+            <main class="w-full lg:flex-1 bg-white rounded-2xl shadow-md p-6 sm:p-8 min-h-[400px]">
+
                 <AccountPanelPerfil
                     v-if="active === 'perfil'"
                     :user="user"
@@ -57,22 +64,18 @@
                     :headText="menuText"
                 />
 
-                <div v-else-if="active === 'pedidos'" :headText="menuText">
+                <div
+                    v-else-if="active === 'pedidos'"
+                    class="text-gray-600 text-center py-12"
+                >
                     <p>No hay pedidos disponibles.</p>
                 </div>
             </main>
         </div>
     </div>
 
-    <div v-else class="text-center text-gray-600">
+    <div v-else class="text-center text-gray-600 py-20">
         <p>No has iniciado sesión.</p>
-
-        <button
-            @click="$emit('open-login')"
-            class="mt-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
-        >
-            Iniciar sesión
-        </button>
     </div>
 </template>
 
