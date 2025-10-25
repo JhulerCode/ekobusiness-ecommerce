@@ -108,14 +108,72 @@
             </div>
         </div>
 
-        <div>
+        <div class="mt-30">
             <h3
                 class="text-md font-semibold text-gray-700 mt-8 mb-3 border-b border-gray-300 pb-1"
             >
                 Eliminar cuenta
             </h3>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Al eliminar tu cuenta de
+                <span class="font-semibold">{{ companySite }}</span
+                >, perderás el acceso permanente a tu información e historial.
+                Ya no podrás:
+            </p>
+
+            <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
+                <li>Realizar compras online.</li>
+                <li>Revisar tu historial de pedidos.</li>
+                <li>Gestionar tus datos personales.</li>
+                <li>Solicitar devoluciones o seguimiento de pedidos.</li>
+            </ul>
+
+            <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-6">
+                <p class="text-sm text-gray-500">
+                    Esta acción es
+                    <span class="text-red-600 font-medium">irreversible</span>.
+                    Si eliminas tu cuenta, todos tus datos personales asociados
+                    serán eliminados definitivamente.
+                </p>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <JdButton
+                    text="Eliminar cuenta definitivamente"
+                    @click="openQuestion"
+                    class="bg-red-600 hover:bg-red-700 border-none"
+                />
+            </div>
         </div>
     </div>
+
+    <transition name="fade">
+        <div v-if="showQuestion" class="modal">
+            <div class="center">
+                <main>
+                    <p>¡Esta acción no se puede deshacer!</p>
+                    <p>
+                        Tu cuenta y todos tus datos serán eliminados
+                        permanentemente.
+                    </p>
+
+                    <p v-if="errors.eliminar" class="input-error">
+                        {{ errors.eliminar }}
+                    </p>
+                </main>
+
+                <footer>
+                    <JdButton text="Cancelar" tipo="2" @click="closeQuestion" />
+                    <JdButton
+                        text="Sí, eliminar cuenta"
+                        :loading="loadingDelete"
+                        @click="eliminar"
+                    />
+                </footer>
+            </div>
+        </div>
+    </transition>
 </template>
 
 <script>
@@ -124,7 +182,8 @@ import JdInputPassword from '../components/JdInputPassword.vue';
 import JdSelect from '../components/JdSelect.vue';
 import JdLoading from '../components/LoadingSpin.vue';
 import JdButton from '../components/JdButton.vue';
-import { urls, post } from '../lib/api.js';
+import { urls, post, delet } from '../lib/api.js';
+import { companySite } from '../lib/empresa.js';
 
 export default {
     components: {
@@ -149,6 +208,11 @@ export default {
             codigo_enviado: false,
             showEnviarCodigo: true,
             timeOutShowEnviarCodigo: null,
+
+            showQuestion: false,
+            loadingDelete: false,
+
+            companySite,
         };
     },
     computed: {
@@ -293,6 +357,38 @@ export default {
                 this.timeOutShowMsgs = setTimeout(() => {
                     this.errors.success = false;
                 }, 1000 * 5);
+            }
+        },
+
+        openQuestion(i) {
+            this.showQuestion = true;
+            document.body.style.overflow = 'hidden'; // evita scroll en fondo
+            this.toDelete = i;
+        },
+        closeQuestion() {
+            this.showQuestion = false;
+            document.body.style.overflow = '';
+        },
+        async eliminar() {
+            const send = {
+                user_token: localStorage.getItem('token'),
+                id: this.user.id,
+            };
+
+            this.loadingDelete = true;
+            const res = await delet('account', send);
+            this.loadingDelete = false;
+
+            if (res.code < 0) {
+                this.errors.eliminar = 'Algo salió mal';
+            } else if (res.code > 0) {
+                this.errors.eliminar = res.data;
+            } else if (res.code == 0) {
+                this.closeQuestion();
+
+                localStorage.removeItem('token');
+                window.location.href = '/';
+                this.user = null;
             }
         },
     },

@@ -14,7 +14,7 @@
         <div
             v-for="(dir, i) in user.pago_metodos"
             :key="i"
-            class="flex justify-between items-start bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200"
+            class="flex justify-between items-start bg-gray-50 p-4 rounded-xl border border-gray-200"
         >
             <div>
                 <p class="font-medium text-gray-800">VISA {{ dir.ultimos4 }}</p>

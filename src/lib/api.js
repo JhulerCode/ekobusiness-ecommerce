@@ -157,6 +157,42 @@ export async function patch(endpoint, item, ms) {
     return res
 }
 
+export async function delet(endpoint, item, ms) {
+    const link = endpoint.includes('http') ? endpoint : urls[endpoint]
+    let response
+
+    try {
+        response = await fetch(`${link}/${item.id}`, {
+            method: 'DELETE',
+            headers: setHeaders(item, item.user_token),
+            body: JSON.stringify(item),
+        })
+    } catch (error) {
+        jmsg('error', error)
+        return { code: -2 }
+    }
+
+    const res = await response.json()
+
+    if (response.status == 401) {
+        localStorage.removeItem('token')
+        jmsg('error', res.msg)
+        return { code: 401, msg: res.msg }
+    }
+
+    if (res.code == -1) jmsg('error', 'Algo salió mal')
+
+    if (res.code > 0) jmsg('error', res.msg)
+
+    if (res.code == 0) {
+        if (ms != false) {
+            jmsg('success', ms == undefined ? 'Eliminado con éxito' : ms)
+        }
+    }
+
+    return res
+}
+
 export async function getCategorias(filtros_extra) {
     const qry = {
         fltr: {
