@@ -31,87 +31,31 @@
                     <main>
                         <div class="w-80">
                             <div class="space-y-4">
-                                <div>
-                                    <label class="label"
-                                        >Correo electrónico</label
-                                    >
-                                    <input
-                                        v-model="form.correo"
-                                        type="correo"
-                                        required
-                                        class="input"
-                                    />
-                                    <p v-if="errors.correo" class="input-error">
-                                        {{ errors.correo }}
-                                    </p>
-                                </div>
+                                <JdInput
+                                    label="Correo electrónico"
+                                    :nec="true"
+                                    v-model="form.correo"
+                                />
 
-                                <div class="relative">
-                                    <label class="label">Contraseña</label>
-                                    <input
-                                        v-model="form.contrasena"
-                                        :type="
-                                            showPassword ? 'text' : 'password'
-                                        "
-                                        required
-                                        class="input pr-10"
-                                    />
-                                    <button
-                                        type="button"
-                                        @click="showPassword = !showPassword"
-                                        class="absolute right-3 top-8 text-gray-500 cursor-pointer"
-                                    >
-                                        <EyeOpen v-if="showPassword" />
-                                        <EyeCancel v-else />
-                                    </button>
-                                    <p
-                                        v-if="errors.contrasena"
-                                        class="input-error"
-                                    >
-                                        {{ errors.contrasena }}
-                                    </p>
-                                </div>
+                                <JdInputPassword
+                                    label="Nueva contraseña"
+                                    :nec="true"
+                                    v-model="form.contrasena"
+                                />
 
-                                <div v-if="!isLogin" class="relative">
-                                    <label class="label"
-                                        >Confirmar contraseña</label
-                                    >
-                                    <input
-                                        v-model="form.contrasena_confirmar"
-                                        :type="
-                                            showConfirm ? 'text' : 'password'
-                                        "
-                                        required
-                                        class="input pr-10"
-                                    />
-                                    <button
-                                        type="button"
-                                        @click="showConfirm = !showConfirm"
-                                        class="absolute right-3 top-8 text-gray-500 cursor-pointer"
-                                    >
-                                        <EyeOpen v-if="showConfirm" />
-                                        <EyeCancel v-else />
-                                    </button>
-                                    <p
-                                        v-if="errors.contrasena_confirmar"
-                                        class="input-error"
-                                    >
-                                        {{ errors.contrasena_confirmar }}
-                                    </p>
-                                </div>
+                                <JdInputPassword
+                                    label="Confirmar contraseña"
+                                    :nec="true"
+                                    v-model="form.contrasena_confirmar"
+                                    v-if="!isLogin"
+                                />
 
-                                <button
+                                <JdButton
+                                    :text="isLogin ? 'Ingresar' : 'Registrarme'"
                                     @click="submitForm"
-                                    class="w-full button"
-                                    :disabled="isLoading"
-                                >
-                                    <template v-if="isLoading"
-                                        >Cargando...</template
-                                    >
-                                    <template v-else>{{
-                                        isLogin ? 'Ingresar' : 'Registrarme'
-                                    }}</template>
-                                </button>
+                                    :loading="isLoading"
+                                />
+
                                 <p v-if="errors.general" class="input-error">
                                     {{ errors.general }}
                                 </p>
@@ -144,6 +88,11 @@
 
 <script>
 import UserIcon from '../assets/icons/user.vue';
+
+import JdInput from '../components/JdInput.vue';
+import JdInputPassword from '../components/JdInputPassword.vue';
+import JdButton from '../components/JdButton.vue';
+
 import EyeOpen from '../assets/icons/eye-open.vue';
 import EyeCancel from '../assets/icons/eye-cancel.vue';
 import Xmark from '../assets/icons/xmark.vue';
@@ -153,6 +102,9 @@ export default {
     name: 'AuthModal',
     components: {
         UserIcon,
+        JdInput,
+        JdInputPassword,
+        JdButton,
         EyeOpen,
         EyeCancel,
         Xmark,
@@ -162,8 +114,8 @@ export default {
             isOpen: false,
             isLogin: true,
             form: {
-                correo: '',
-                contrasena: '',
+                correo: 'jhuler1615@gmail.com',
+                contrasena: 'a',
                 contrasena_confirmar: '',
             },
             errors: {},
@@ -226,7 +178,9 @@ export default {
                 const res = await post(`${urls.auth}/login`, this.form);
                 this.isLoading = false;
 
-                if (res.code != 0) {
+                if (res.code < 0) {
+                    this.errors.general = 'Algo salió mal';
+                } else if (res.code > 0) {
                     this.errors.general = res.msg;
                 } else if (res.code == 0) {
                     this.user = { correo: this.form.correo };

@@ -97,7 +97,7 @@ textarea {
 }
 
 .modal {
-    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm;
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50;
 }
 
 .modal .center {

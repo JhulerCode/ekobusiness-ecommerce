@@ -70,19 +70,19 @@ export async function get(endpoint, params = {}, user_token) {
         return { code: -2 }
     }
 
+    const res = await response.json()
+
     if (response.status == 401) {
-        jmsg('error', 'Acceso denegado: autenticación incorrecta')
         localStorage.removeItem('token')
-        return { code: 401 }
+        jmsg('error', res.msg)
+        return { code: 401, msg: res.msg }
     }
 
-    const data = await response.json()
+    if (res.code == -1) jmsg('error', 'Algo salió mal')
 
-    if (data.code == -1) jmsg('error', 'Algo salió mal')
+    if (res.code > 0) jmsg('error', res.msg)
 
-    if (data.code > 0) jmsg('error', data.msg)
-
-    return data
+    return res
 }
 
 export async function post(endpoint, item, ms) {
@@ -92,7 +92,7 @@ export async function post(endpoint, item, ms) {
     try {
         response = await fetch(link, {
             method: 'POST',
-            headers: setHeaders(item),
+            headers: setHeaders(item, item.user_token),
             body: item.is_form_data ? setFormData(item) : JSON.stringify(item),
         })
     } catch (error) {
@@ -101,6 +101,12 @@ export async function post(endpoint, item, ms) {
     }
 
     const res = await response.json()
+
+    if (response.status == 401) {
+        localStorage.removeItem('token')
+        jmsg('error', res.msg)
+        return { code: 401, msg: res.msg }
+    }
 
     if (res.code == -1) jmsg('error', 'Algo salió mal')
 
@@ -130,18 +136,13 @@ export async function patch(endpoint, item, ms) {
         return { code: -2 }
     }
 
-    if (response.status == 401) {
-        jmsg('error', 'Acceso denegado: autenticación incorrecta')
-        localStorage.removeItem('token')
-        return { code: 401 }
-    }
-
-    if (response.status == 403) {
-        jmsg('error', 'Acceso denegado: permisos insuficientes')
-        return { code: 403 }
-    }
-
     const res = await response.json()
+
+    if (response.status == 401) {
+        localStorage.removeItem('token')
+        jmsg('error', res.msg)
+        return { code: 401, msg: res.msg }
+    }
 
     if (res.code == -1) jmsg('error', 'Algo salió mal')
 

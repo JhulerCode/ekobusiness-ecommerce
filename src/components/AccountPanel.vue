@@ -51,12 +51,11 @@
                     :headText="menuText"
                 />
 
-                <div
+                <AccountPanelAutenticacion
                     v-else-if="active === 'autenticacion'"
+                    :user="user"
                     :headText="menuText"
-                >
-                    <p>Último acceso: {{ user.ultimo_acceso || '—' }}</p>
-                </div>
+                />
 
                 <div v-else-if="active === 'pedidos'" :headText="menuText">
                     <p>No hay pedidos disponibles.</p>
@@ -82,17 +81,19 @@ import { urls, get } from '../lib/api.js';
 import AccountPanelPerfil from './AccountPanelPerfil.vue';
 import AccountPanelDirecciones from './AccountPanelDirecciones.vue';
 import AccountPanelPagoMetodos from './AccountPanelPagoMetodos.vue';
+import AccountPanelAutenticacion from './AccountPanelAutenticacion.vue';
 
 export default {
     components: {
         AccountPanelPerfil,
         AccountPanelDirecciones,
         AccountPanelPagoMetodos,
+        AccountPanelAutenticacion,
     },
     data() {
         return {
             user: null,
-            active: 'pago_metodos',
+            active: 'autenticacion',
             menu: [
                 { key: 'perfil', label: 'Perfil' },
                 { key: 'direcciones', label: 'Direcciones' },

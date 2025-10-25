@@ -1,7 +1,7 @@
 <template>
     <div
         :class="[
-            'flex items-center justify-center backdrop-blur-sm',
+            'flex items-center justify-center',
             { 'fixed inset-0 z-50': rellenar },
             { 'bg-black/30': shadowBack },
         ]"
