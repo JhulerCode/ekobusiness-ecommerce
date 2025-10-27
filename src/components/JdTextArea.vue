@@ -7,7 +7,6 @@
 
         <textarea
             v-if="!disabled"
-            rows="1"
             :placeholder="placeholder"
             v-model="inputModel"
             class="input resize-none"

@@ -179,7 +179,6 @@
 <script>
 import JdInput from '../components/JdInput.vue';
 import JdInputPassword from '../components/JdInputPassword.vue';
-import JdSelect from '../components/JdSelect.vue';
 import JdLoading from '../components/LoadingSpin.vue';
 import JdButton from '../components/JdButton.vue';
 import { urls, post, delet } from '../lib/api.js';
@@ -189,7 +188,6 @@ export default {
     components: {
         JdInput,
         JdInputPassword,
-        JdSelect,
         JdLoading,
         JdButton,
     },

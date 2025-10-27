@@ -1,5 +1,6 @@
 ---
 import logo from '../assets/logo-sunka-white.webp';
+import imgLibroReclamaciones from '../assets/libro-reclamaciones.webp';
 import BrandFacebookIcon from '../assets/icons/brand-facebook.astro';
 import BrandInstagramIcon from '../assets/icons/brand-instagram.astro';
 import NewsLetterForm from '../components/NewsLetterForm.vue';
@@ -21,6 +22,7 @@ import {
             <!-- Logo & descripción -->
             <div>
                 <img src={logo.src} alt="logo-sunka-white" class="h-10 mb-6" />
+
                 <p class="text-sm leading-relaxed">
                     Té natural seleccionado con cuidado, directo del origen a tu
                     taza.
@@ -44,6 +46,16 @@ import {
                         class="hover:text-white transition"
                     >
                         <BrandInstagramIcon class="w-7 h-7 text-inherit" />
+                    </a>
+                </div>
+
+                <div class="mt-6">
+                    <a href="/libro-de-reclamaciones">
+                        <img
+                            src={imgLibroReclamaciones.src}
+                            alt="libro-de-reclamaciones"
+                            class="h-15"
+                        />
                     </a>
                 </div>
             </div>

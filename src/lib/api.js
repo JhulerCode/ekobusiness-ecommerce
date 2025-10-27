@@ -5,6 +5,7 @@ export const urls = {
     productos: `${host}/store/productos`,
     newsletter: `${host}/store/newsletter`,
     arco: `${host}/store/arco`,
+    libro_reclamos: `${host}/store/libro-reclamos`,
     auth: `${host}/store/auth`,
     account: `${host}/store/account`,
     ubigeos: `${host}/store/account/ubigeos`,

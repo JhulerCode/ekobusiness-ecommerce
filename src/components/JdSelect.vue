@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <template v-if="!disabled">
+        <div v-if="!disabled" class="relative">
             <div
                 ref="right"
                 class="relative input overflow-x-auto whitespace-nowrap no-scrollbar cursor-pointer"
@@ -113,7 +113,7 @@
                     </li>
                 </ul>
             </div>
-        </template>
+        </div>
 
         <div
             v-else
@@ -217,13 +217,13 @@ export default {
             this.isVisible = !this.isVisible;
 
             if (this.isVisible) {
-                this.$nextTick(() => {
-                    const rect = this.$refs.right.getBoundingClientRect();
-                    const el = this.$refs['lista-box'];
-                    el.style.top = `${rect.bottom + window.scrollY}px`;
-                    el.style.left = `${rect.left + window.scrollX}px`;
-                    el.style.width = `${rect.width}px`;
-                });
+                // this.$nextTick(() => {
+                //     const rect = this.$refs.right.getBoundingClientRect();
+                //     const el = this.$refs['lista-box'];
+                //     el.style.top = `${rect.bottom + window.scrollY}px`;
+                //     el.style.left = `${rect.left + window.scrollX}px`;
+                //     el.style.width = `${rect.width}px`;
+                // });
 
                 setTimeout(() => {
                     document.addEventListener('click', this.handleClickOutside);
