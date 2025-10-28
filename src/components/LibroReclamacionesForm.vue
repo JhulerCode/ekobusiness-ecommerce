@@ -90,7 +90,7 @@
                     :error="errors.monto"
                 />
 
-                <JdTextarea
+                <JdTextArea
                     label="Descripción del producto"
                     :nec="true"
                     v-model="form.producto_descripcion"
@@ -116,14 +116,14 @@
                     :with-border="true"
                 />
 
-                <JdTextarea
+                <JdTextArea
                     label="Resumen de tu reclamo"
                     :nec="true"
                     v-model="form.resumen"
                     :error="errors.resumen"
                 />
 
-                <JdTextarea
+                <JdTextArea
                     label="Detalle de tu solicitud"
                     :nec="true"
                     v-model="form.detalle"
@@ -164,7 +164,7 @@
 <script>
 import { post } from '../lib/api.js';
 import JdInput from './JdInput.vue';
-import JdTextarea from './JdTextarea.vue';
+import JdTextArea from './JdTextArea.vue';
 import JdSelect from './JdSelect.vue';
 import JdCheckBox from './JdCheckBox.vue';
 import JdRadio from './JdRadio.vue';
@@ -173,7 +173,7 @@ import JdButton from './JdButton.vue';
 export default {
     components: {
         JdInput,
-        JdTextarea,
+        JdTextArea,
         JdSelect,
         JdCheckBox,
         JdRadio,
