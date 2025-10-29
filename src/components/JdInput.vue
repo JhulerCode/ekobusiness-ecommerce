@@ -13,6 +13,8 @@
             class="input"
             :class="{ 'to-right': toRight }"
             :maxlength="maxlength"
+            :number_min="number_min"
+            :number_max="number_max"
         />
 
         <div
@@ -57,6 +59,9 @@ export default {
         toRight: { type: Boolean, default: false },
         error: { type: String, default: null },
         maxlength: { type: [String, Number], default: null },
+
+        number_min: { type: [String, Number], default: null },
+        number_max: { type: [String, Number], default: null },
     },
     computed: {
         inputModel: {

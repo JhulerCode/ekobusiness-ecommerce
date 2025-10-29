@@ -1,12 +1,17 @@
 <template>
     <div class="flex items-center gap-4 mb-6">
         <label for="cantidad" class="text-sm text-gray-600">Cantidad:</label>
-        <input
+        <!-- <input
             id="cantidad"
             type="number"
             min="1"
             class="w-20 border border-gray-300 rounded-lg p-2 text-center focus:outline-none focus:ring-2 focus:ring-black"
             v-model="cantidad"
+        /> -->
+        <JdInput
+            type="number"
+            v-model="cantidad"
+            min="1"
         />
     </div>
 
@@ -30,11 +35,14 @@
 
 <script>
 import ShoppingCartPlus from '../assets/icons/shopping-cart-plus.vue';
+import JdInput from '../components/JdInput.vue';
+
 import { Cart } from '../../src/lib/cart.js';
 
 export default {
     components: {
         ShoppingCartPlus,
+        JdInput,
     },
     props: {
         producto: { type: Object, default: () => ({}) },

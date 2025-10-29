@@ -7,7 +7,6 @@
             </h2>
 
             <div class="grid md:grid-cols-2 gap-4">
-                <!-- Nombres -->
                 <JdInput
                     label="Nombres"
                     :nec="true"
@@ -15,7 +14,6 @@
                     :error="errors.nombres"
                 />
 
-                <!-- Apellidos -->
                 <JdInput
                     label="Apellidos"
                     :nec="true"
@@ -23,16 +21,14 @@
                     :error="errors.apellidos"
                 />
 
-                <!-- Tipo de documento -->
                 <JdSelect
-                    label="Tipo"
+                    label="Tipo de documento"
                     :nec="true"
                     :lista="doc_tipos"
                     v-model="form.doc_tipo"
                     :error="errors.doc_tipo"
                 />
 
-                <!-- N° documento -->
                 <JdInput
                     label="Nro de documento"
                     :nec="true"
@@ -40,7 +36,6 @@
                     :error="errors.doc_numero"
                 />
 
-                <!-- Email -->
                 <JdInput
                     label="Correo"
                     :nec="true"
@@ -48,7 +43,6 @@
                     :error="errors.correo"
                 />
 
-                <!-- Domicilio -->
                 <JdInput
                     label="Dirección"
                     :nec="true"
@@ -110,7 +104,7 @@
                 <JdRadio
                     label="Tipo"
                     :nec="true"
-                    :lista="tiposSolicitud"
+                    :lista="solicitud_tipos"
                     v-model="form.tipo"
                     :error="errors.tipo"
                     :with-border="true"
@@ -188,7 +182,7 @@ export default {
             form: {},
             errors: {},
 
-            tiposSolicitud: [
+            solicitud_tipos: [
                 {
                     id: 'reclamo',
                     nombre: 'Reclamo',

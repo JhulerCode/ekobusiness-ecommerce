@@ -1,5 +1,5 @@
 <template>
-    <form class="space-y-8" @submit.prevent="submitForm" v-if="!enviado">
+    <div class="space-y-8" v-if="!enviado">
         <!-- Datos del titular -->
         <div>
             <h2 class="text-lg font-medium mb-4 text-neutral-900">
@@ -7,69 +7,34 @@
             </h2>
 
             <div class="grid md:grid-cols-2 gap-4">
-                <!-- Nombres -->
-                <div>
-                    <label class="label">Nombres*</label>
-                    <input
-                        v-model.trim="form.nombres"
-                        type="text"
-                        class="input"
-                    />
-                    <p
-                        v-if="errors.nombres"
-                        class="text-left text-red-500 text-xs mt-1 ml-2"
-                    >
-                        {{ errors.nombres }}
-                    </p>
-                </div>
+                <JdInput
+                    label="Nombres"
+                    :nec="true"
+                    v-model="form.nombres"
+                    :error="errors.nombres"
+                />
 
-                <!-- Apellidos -->
-                <div>
-                    <label class="label">Apellidos*</label>
-                    <input
-                        v-model.trim="form.apellidos"
-                        type="text"
-                        class="input"
-                    />
-                    <p
-                        v-if="errors.apellidos"
-                        class="text-left text-red-500 text-xs mt-1 ml-2"
-                    >
-                        {{ errors.apellidos }}
-                    </p>
-                </div>
+                <JdInput
+                    label="Apellidos"
+                    :nec="true"
+                    v-model="form.apellidos"
+                    :error="errors.apellidos"
+                />
 
-                <!-- Tipo de documento -->
-                <div>
-                    <label class="label">Tipo de documento*</label>
-                    <select v-model="form.doc_tipo" class="input">
-                        <option>DNI</option>
-                        <option>Carnet de Extranjería</option>
-                        <option>Pasaporte</option>
-                    </select>
-                    <p
-                        v-if="errors.doc_tipo"
-                        class="text-left text-red-500 text-xs mt-1 ml-2"
-                    >
-                        {{ errors.doc_tipo }}
-                    </p>
-                </div>
+                <JdSelect
+                    label="Tipo de documento"
+                    :nec="true"
+                    :lista="doc_tipos"
+                    v-model="form.doc_tipo"
+                    :error="errors.doc_tipo"
+                />
 
-                <!-- N° documento -->
-                <div>
-                    <label class="label">N° de documento*</label>
-                    <input
-                        v-model.trim="form.doc_numero"
-                        type="text"
-                        class="input"
-                    />
-                    <p
-                        v-if="errors.doc_numero"
-                        class="text-left text-red-500 text-xs mt-1 ml-2"
-                    >
-                        {{ errors.doc_numero }}
-                    </p>
-                </div>
+                <JdInput
+                    label="Nro de documento"
+                    :nec="true"
+                    v-model="form.doc_numero"
+                    :error="errors.doc_numero"
+                />
 
                 <!-- Adjuntar documento -->
                 <div>
@@ -91,37 +56,19 @@
                     </p>
                 </div>
 
-                <!-- Email -->
-                <div>
-                    <label class="label">Email*</label>
-                    <input
-                        v-model.trim="form.email"
-                        type="email"
-                        class="input"
-                    />
-                    <p
-                        v-if="errors.email"
-                        class="text-left text-red-500 text-xs mt-1 ml-2"
-                    >
-                        {{ errors.email }}
-                    </p>
-                </div>
+                <JdInput
+                    label="Correo"
+                    :nec="true"
+                    v-model="form.email"
+                    :error="errors.email"
+                />
 
-                <!-- Domicilio -->
-                <div class="md:col-span-2">
-                    <label class="label">Domicilio*</label>
-                    <input
-                        v-model.trim="form.domicilio"
-                        type="text"
-                        class="input"
-                    />
-                    <p
-                        v-if="errors.domicilio"
-                        class="text-left text-red-500 text-xs mt-1 ml-2"
-                    >
-                        {{ errors.domicilio }}
-                    </p>
-                </div>
+                <JdInput
+                    label="Dirección"
+                    :nec="true"
+                    v-model="form.domicilio"
+                    :error="errors.domicilio"
+                />
             </div>
         </div>
 
@@ -130,44 +77,49 @@
             <h2 class="text-lg font-medium mb-4 text-neutral-900">
                 Datos del representante del titular (si aplica)
             </h2>
+
             <p class="text-sm text-gray-600 mb-4">
                 Este formulario deberá ser completado únicamente si el
                 solicitante actúa como representante legal del titular.
             </p>
 
             <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                    <label class="label">Nombres</label>
-                    <input
-                        v-model.trim="form.repNombres"
-                        type="text"
-                        class="input"
-                    />
-                </div>
-                <div>
-                    <label class="label">Apellidos</label>
-                    <input
-                        v-model.trim="form.repApellidos"
-                        type="text"
-                        class="input"
-                    />
-                </div>
-                <div>
-                    <label class="label">Tipo de documento</label>
-                    <select v-model="form.repTipoDocumento" class="input">
-                        <option>DNI</option>
-                        <option>Carnet de Extranjería</option>
-                        <option>Pasaporte</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="label">N° de documento</label>
-                    <input
-                        v-model.trim="form.repNumeroDocumento"
-                        type="text"
-                        class="input"
-                    />
-                </div>
+                <JdInput
+                    label="Nombres"
+                    :nec="true"
+                    v-model="form.rep_nombres"
+                    :error="errors.rep_nombres"
+                />
+
+                <JdInput
+                    label="Nombres"
+                    :nec="true"
+                    v-model="form.rep_apellidos"
+                    :error="errors.rep_apellidos"
+                />
+
+                <JdInput
+                    label="Nombres"
+                    :nec="true"
+                    v-model="form.rep_apellidos"
+                    :error="errors.rep_apellidos"
+                />
+
+                <JdSelect
+                    label="Tipo de documento"
+                    :nec="true"
+                    :lista="doc_tipos"
+                    v-model="form.rep_dot_tipo"
+                    :error="errors.rep_dot_tipo"
+                />
+
+                <JdInput
+                    label="Nro de documento"
+                    :nec="true"
+                    v-model="form.rep_doc_numero"
+                    :error="errors.rep_doc_numero"
+                />
+
                 <div>
                     <label class="label"
                         >Documento que acredita la representación</label
@@ -191,9 +143,18 @@
                 Tipo de solicitud
             </h2>
 
-            <div class="flex flex-col gap-2 mt-3">
+            <JdRadio
+                label="Tipo"
+                :nec="true"
+                :lista="solicitud_tipos"
+                v-model="form.tipo"
+                :error="errors.tipo"
+                :with-border="true"
+            />
+
+            <!-- <div class="flex flex-col gap-2 mt-3">
                 <label
-                    v-for="(desc, tipo) in tiposSolicitud"
+                    v-for="(desc, tipo) in solicitud_tipos"
                     :key="tipo"
                     class="radio"
                 >
@@ -210,7 +171,7 @@
                 class="text-left text-red-500 text-xs mt-1 ml-2"
             >
                 {{ errors.tipo }}
-            </p>
+            </p> -->
         </div>
 
         <!-- Detalle -->
@@ -275,7 +236,7 @@
                 <span v-else>Enviar</span>
             </button>
         </div>
-    </form>
+    </div>
 
     <div
         v-else
@@ -292,75 +253,91 @@
 
 <script>
 import { post } from '../lib/api.js';
+import JdInput from '../components/JdInput.vue';
+import JdSelect from './JdSelect.vue';
 
 export default {
     name: 'ArcoForm',
-
+    components: {
+        JdInput,
+        JdSelect,
+    },
     data() {
         return {
             siteKey: import.meta.env.RECAPTCHA_SITE_KEY,
             recaptchaContainer: null,
-            loading: false,
-            resMsg: '',
-            enviado: false,
             widgetId: null,
-            form: {
-                nombres: '',
-                apellidos: '',
-                doc_tipo: '',
-                doc_numero: '',
-                doc_file: null,
-                email: '',
-                domicilio: '',
-                rep_nombres: '',
-                rep_apellidos: '',
-                rep_doc_tipo: '',
-                rep_doc_numero: '',
-                rep_doc_file: null,
-                tipo: '',
-                detalle: '',
-                extras_doc: null,
-                captcha: '',
-            },
+
+            loading: false,
+            enviado: false,
+            resMsg: '',
+
+            form: {},
             errors: {},
-            tiposSolicitud: {
-                acceso: {
+            
+            solicitud_tipos: [
+                {
+                    id: 'acceso',
                     titulo: 'Acceso',
                     descripcion:
                         'Obtener información personal almacenada y condiciones de tratamiento.',
                 },
-                rectificacion: {
+                {
+                    id: 'rectificacion',
                     titulo: 'Rectificación',
                     descripcion: 'Corregir o actualizar información inexacta.',
                 },
-                cancelacion: {
+                {
+                    id: 'cancelacion',
                     titulo: 'Cancelación',
                     descripcion: 'Suprimir información personal no necesaria.',
                 },
-                oposicion: {
+                {
+                    id: 'oposicion',
                     titulo: 'Oposición',
                     descripcion:
                         'Impedir o cesar el tratamiento de datos personales.',
                 },
-                informacion: {
+                {
+                    id: 'informacion',
                     titulo: 'Información',
                     descripcion:
                         'Conocer la finalidad, destinatarios y tratamiento de los datos.',
                 },
-                revocacion: {
+                {
+                    id: 'revocacion',
                     titulo: 'Revocación',
                     descripcion:
                         'Retirar el consentimiento para el tratamiento de datos.',
                 },
-                portabilidad: {
+                {
+                    id: 'portabilidad',
                     titulo: 'Portabilidad',
                     descripcion:
                         'Trasladar los datos personales a otro responsable.',
                 },
-            },
+            ],
+            doc_tipos: [
+                {
+                    id: 'DNI',
+                    nombre: 'DNI',
+                },
+                {
+                    id: 'CE',
+                    nombre: 'Carné de Extranjería',
+                },
+                {
+                    id: 'PAS',
+                    nombre: 'Pasaporte',
+                },
+            ],
         };
     },
-
+    mounted() {
+        // guardar referencia del contenedor
+        this.recaptchaContainer = this.$refs.recaptchaContainer;
+        this.tryRender();
+    },
     methods: {
         handleFile(event, field) {
             const file = event.target.files[0];
@@ -542,12 +519,6 @@ export default {
                 setTimeout(this.tryRender, 300);
             }
         },
-    },
-
-    mounted() {
-        // guardar referencia del contenedor
-        this.recaptchaContainer = this.$refs.recaptchaContainer;
-        this.tryRender();
     },
 };
 </script>
