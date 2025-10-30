@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CheckoutPage from '../components/CheckoutPage.vue';
+import CheckoutForm from '../components/CheckoutForm.vue';
 
 const pago_metodos = [
     { id: 'tarjeta', nombre: 'Tarjeta de crédito o débito' },
@@ -21,6 +21,7 @@ const doc_tipos = [
         nombre: 'Pasaporte',
     },
 ];
+
 const entrega_tipos = [
     {
         id: 'envio',
@@ -39,7 +40,7 @@ const comprobante_tipos = [
 ---
 
 <BaseLayout title="Checkout">
-    <CheckoutPage
+    <CheckoutForm
         client:load
         pago_metodos={pago_metodos}
         doc_tipos={doc_tipos}

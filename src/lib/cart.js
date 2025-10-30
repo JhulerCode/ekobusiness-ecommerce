@@ -13,19 +13,33 @@ export const Cart = {
 
     add(producto) {
         const cart = this.get();
-        const existing = cart.find(p => p.id === producto.id);
+        const existing = cart.find(p => p.articulo === producto.articulo);
 
         if (existing) {
             existing.cantidad += Number(producto.cantidad);
         } else {
-            cart.push(producto);
+            cart.push({
+                articulo: producto.id,
+                nombre: producto.nombre,
+                unidad: producto.unidad,
+                has_fv: producto.has_fv,
+
+                cantidad: producto.cantidad,
+
+                pu: producto.precio,
+                igv_afectacion: producto.igv_afectacion,
+                igv_porcentaje: 18,
+
+                foto: producto.foto,
+                fotos: producto.fotos,
+            });
         }
 
         this.save(cart);
     },
 
-    remove(id) {
-        const cart = this.get().filter(p => p.id !== id);
+    remove(articulo) {
+        const cart = this.get().filter(p => p.articulo !== articulo);
         this.save(cart);
     },
 

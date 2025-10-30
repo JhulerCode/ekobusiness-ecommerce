@@ -12,6 +12,7 @@
             type="number"
             v-model="cantidad"
             min="1"
+            class="w-20"
         />
     </div>
 

@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CartPage from '../components/CartPage.vue';
+import CartForm from '../components/CartForm.vue';
 import Beneficios from '../components/Beneficios.astro';
 ---
 
 <BaseLayout title="Tu carrito">
-    <CartPage client:load />
+    <CartForm client:load />
 
     <Beneficios />
 </BaseLayout>

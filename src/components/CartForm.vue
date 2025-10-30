@@ -55,7 +55,7 @@
 
                             <p class="text-sm text-gray-500 mt-1">
                                 <span class="font-medium"
-                                    >S/ {{ item.precio }} c/u</span
+                                    >S/ {{ item.pu }} c/u</span
                                 >
                             </p>
 
@@ -74,7 +74,7 @@
                         <div class="flex items-center justify-between">
                             <p class="text-lg font-semibold text-gray-900">
                                 S/
-                                {{ (item.precio * item.cantidad).toFixed(2) }}
+                                {{ (item.pu * item.cantidad).toFixed(2) }}
                             </p>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
 import { Cart } from '../lib/cart.js';
 
 export default {
-    name: 'CartPage',
+    name: 'CartForm',
     data() {
         return {
             items: [],
@@ -140,7 +140,7 @@ export default {
         },
         total() {
             return this.items.reduce(
-                (s, i) => s + Number(i.precio) * Number(i.cantidad),
+                (s, i) => s + Number(i.pu) * Number(i.cantidad),
                 0
             );
         },
@@ -152,7 +152,7 @@ export default {
         updateQuantity(item) {
             // guarda cambios
             const list = this.items.map((i) =>
-                i.id === item.id ? { ...i, cantidad: Number(item.cantidad) } : i
+                i.articulo === item.articulo ? { ...i, cantidad: Number(item.cantidad) } : i
             );
             Cart.save(list);
             this.load(); // recargar (simple)

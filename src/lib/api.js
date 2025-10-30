@@ -229,7 +229,7 @@ export async function getProductos(fltr, incl, cols) {
             marca: { op: "Es", val: "SUNKA" },
             is_combo: { op: "Es", val: false },
         },
-        cols: ['nombre', 'produccion_tipo', 'categoria', 'precio', 'fotos'],
+        cols: ['produccion_tipo', 'categoria', 'nombre', 'unidad', 'has_fv', 'precio', 'igv_afectacion', 'fotos'],
         incl: []
     }
 

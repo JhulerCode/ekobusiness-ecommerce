@@ -1,13 +1,51 @@
 <template>
     <section
+        class="max-w-6xl mx-auto px-4 py-12 gap-10"
+        v-if="paymentSuccess == true"
+    >
+        <div
+            class="flex flex-col items-center justify-center text-center p-8 bg-white rounded-2xl shadow-md border border-gray-100 animate-fade-in"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-20 h-20 text-green-500 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2l4 -4m6 2a9 9 0 1 1 -18 0a9 9 0 0 1 18 0z"
+                />
+            </svg>
+
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+                ¡Pago confirmado!
+            </h2>
+
+            <p class="text-gray-600 mb-6">
+                Tu pago ha sido procesado exitosamente. En unos momentos
+                recibirás un correo con los detalles de tu compra.
+            </p>
+
+            <div class="flex gap-4">
+                <JdButton text="Ir al inicio" tipo="2" @click="irInicio" />
+                <JdButton text="Ver mi pedido" @click="irPedido" />
+            </div>
+        </div>
+    </section>
+
+    <section
         class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-10"
-        v-if="paymentSuccess == false"
+        v-else
     >
         <!-- Columna izquierda: pasos -->
         <div class="md:col-span-2 flex md:flex-row flex-col gap-10">
             <!-- Encabezado -->
             <div
-                class="md:sticky md:top-20 md:h-fit flex md:flex-col"
+                class="md:sticky md:top-20 md:h-fit flex gap-2 justify-between md:flex-col"
             >
                 <!-- Paso 1 -->
                 <div class="flex flex-col md:flex-row gap-2 items-center">
@@ -34,7 +72,7 @@
 
                 <!-- Línea entre pasos -->
                 <div
-                    class="w-[2px] h-20 mx-5 my-2"
+                    class="h-[2px] w-20 my-5 md:w-[2px] md:h-20 md:mx-5 md:my-0"
                     :class="step > 1 ? 'bg-black' : 'bg-gray-300'"
                 ></div>
 
@@ -63,7 +101,7 @@
 
                 <!-- Línea entre pasos -->
                 <div
-                    class="w-[2px] h-20 mx-5 my-2"
+                    class="h-[2px] w-20 my-5 md:w-[2px] md:h-20 md:mx-5 md:my-0"
                     :class="step > 2 ? 'bg-black' : 'bg-gray-300'"
                 ></div>
 
@@ -183,7 +221,6 @@
                             <JdButton
                                 text="Ir a la Entrega"
                                 @click="continuarEntrega"
-                                :loading="loading"
                             >
                                 <template v-slot:iRight>
                                     <ArrowRight />
@@ -370,9 +407,7 @@
                                 </p>
                                 <p v-if="form.entrega_ubigeo1">
                                     <span class="font-medium">Distrito:</span>
-                                    {{ form.entrega_ubigeo1.distrito }},
-                                    {{ form.entrega_ubigeo1.provincia }},
-                                    {{ form.entrega_ubigeo1.departamento }}
+                                    {{ form.entrega_ubigeo1.nombre }}
                                 </p>
                                 <p>
                                     <span class="font-medium">Referencia:</span>
@@ -449,7 +484,7 @@
                             />
 
                             <JdInput
-                                label="RUC"
+                                label="Razon social"
                                 :nec="true"
                                 v-model="form.comprobante_razon_social"
                                 :error="errors.comprobante_razon_social"
@@ -475,11 +510,17 @@
                                 </template>
                             </JdButton>
 
-                            <JdButton
-                                text="Ir a pagar"
-                                @click="pagar"
-                                :loading="loading"
-                            />
+                            <div>
+                                <JdButton
+                                    text="Ir a pagar"
+                                    @click="pagar"
+                                    :loading="loading"
+                                />
+
+                                <p v-if="errors.general" class="input-error">
+                                    {{ errors.general }}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -522,7 +563,7 @@
 
                             <p class="text-sm font-semibold text-gray-700 mt-1">
                                 S/
-                                {{ (item.precio * item.cantidad).toFixed(2) }}
+                                {{ (item.pu * item.cantidad).toFixed(2) }}
                             </p>
                         </div>
                     </div>
@@ -553,7 +594,9 @@
                 </div>
             </div>
 
-            <div class="container"></div>
+            <div>
+                {{ loading }}
+            </div>
         </div>
     </section>
 
@@ -566,44 +609,6 @@
             <button class="kr-payment-button"></button>
         </div>
     </div>
-
-    <section
-        class="max-w-6xl mx-auto px-4 py-12 gap-10"
-        v-if="paymentSuccess == true"
-    >
-        <div
-            class="flex flex-col items-center justify-center text-center p-8 bg-white rounded-2xl shadow-md border border-gray-100 animate-fade-in"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-20 h-20 text-green-500 mb-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2l4 -4m6 2a9 9 0 1 1 -18 0a9 9 0 0 1 18 0z"
-                />
-            </svg>
-
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-                ¡Pago confirmado!
-            </h2>
-
-            <p class="text-gray-600 mb-6">
-                Tu pago ha sido procesado exitosamente. En unos momentos
-                recibirás un correo con los detalles de tu compra.
-            </p>
-
-            <div class="flex gap-4">
-                <JdButton text="Ir al inicio" tipo="2" @click="irInicio" />
-                <JdButton text="Ver mi pedido" @click="irPedido" />
-            </div>
-        </div>
-    </section>
 </template>
 
 <script>
@@ -643,11 +648,23 @@ export default {
     },
     data() {
         return {
-            step: 3,
+            step: 1,
             paymentSuccess: false,
             loading: false,
 
-            form: {},
+            form: {
+                socio_datos: {
+                    correo: 'jhuler1615@gmail.com',
+                    doc_tipo: 'DNI',
+                },
+
+                entrega_tipo: 'envio',
+                entrega_direccion_datos: {},
+
+                comprobante_tipo: '03',
+
+                pago_metodo: 'tarjeta',
+            },
             errors: {},
             items: [],
 
@@ -658,12 +675,11 @@ export default {
     computed: {
         subtotal() {
             return this.items.reduce(
-                (acc, item) => acc + item.precio * item.cantidad,
+                (acc, item) => acc + item.pu * item.cantidad,
                 0
             );
         },
         costoEnvio() {
-            // Puedes ajustarlo según tu lógica
             return this.form.entrega_tipo === 'envio' ? 10 : 0;
         },
         total() {
@@ -672,42 +688,13 @@ export default {
     },
     mounted() {
         this.items = Cart.get();
-        this.initForm();
+
+        if (this.items.length == 0) {
+            window.location.href = '/cart';
+            return;
+        }
     },
     methods: {
-        initForm() {
-            this.form = {
-                tipo: 2,
-                fecha: new Date(),
-                codigo: genId(),
-
-                socio: null,
-                socio_datos: {
-                    nombres: '',
-                    apellidos: '',
-                    doc_tipo: 'DNI',
-                    doc_numero: '',
-                    correo: 'jhuler1615@gmail.com',
-                    telefono: '',
-                    privacidad: false,
-                },
-
-                entrega_tipo: 'envio',
-                fecha_entrega: '',
-                entrega_ubigeo: '',
-                direccion_entrega: '',
-                entrega_direccion_datos: {},
-
-                comprobante_tipo: '03',
-                comprobante_ruc: '',
-                comprobante_razon_social: '',
-
-                pago_metodo: 'tarjeta',
-                monto: 100,
-                socio_pedido_items: this.items,
-            };
-        },
-
         validateForm1() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
@@ -770,58 +757,92 @@ export default {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
             if (this.form.comprobante_tipo === '01') {
-                if (!this.form.ruc || !/^\d{11}$/.test(this.form.ruc))
-                    this.errors.ruc = 'El RUC debe tener 11 dígitos numéricos.';
-                if (!this.form.razon_social)
-                    this.errors.razon_social = 'Describa su solicitud.';
+                if (
+                    !this.form.comprobante_ruc ||
+                    !/^\d{11}$/.test(this.form.comprobante_ruc)
+                )
+                    this.errors.comprobante_ruc =
+                        'El RUC debe tener 11 dígitos numéricos.';
+                if (!this.form.comprobante_razon_social)
+                    this.errors.comprobante_razon_social =
+                        'Este campo es obligatorio.';
             }
 
             return Object.values(this.errors).every((e) => !e);
         },
+        shapeDatos() {
+            this.form.tipo = 2;
+            this.form.origin = 'ecommerce';
+            this.form.fecha = new Date().toISOString().split('T')[0];
+            this.form.codigo = genId();
+            this.form.pagado = true;
+
+            this.form.pago_condicion = '1';
+            this.form.moneda = '1';
+            this.form.monto = this.total.toFixed(2);
+
+            this.form.socio_pedido_items = this.items;
+        },
         async pagar() {
-            // if (!this.validarForm3()) return;
+            if (!this.validarForm3()) return;
 
-            // this.loading = true;
-            // const res = await post(`${urls.izipay}/create-payment`, this.form);
-            // this.loading = false;
-
-            // if (res.code == 0) {
-            //     const endpoint = 'https://api.micuentaweb.pe';
-            //     const publicKey = import.meta.env.IZIPAY_PUBLIC_KEY;
-
-            //     const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
-
-            //     await KR.setFormConfig({
-            //         formToken: res.data.formToken,
-            //         'kr-language': 'es-PE',
-            //     });
-
-            //     await KR.onSubmit(async (paymentData) => {
-            //         const res1 = await post(
-            //             `${urls.izipay}/validate-payment`,
-            //             paymentData
-            //         );
-
-            //         if (res1.code == 0) {
-            //             KR.closePopin();
-
-            //             this.paymentSuccess = true;
+            const send = {
+                monto: this.total.toFixed(2),
+                correo: this.form.socio_datos.correo,
+            };
 
             this.loading = true;
-            // await post('socio_pedidos', this.form);
-            console.log(this.form);
+            const res = await post(`${urls.izipay}/create-payment`, send);
             this.loading = false;
 
-            //             Cart.clear();
-            //         }
+            if (res.code == 1) {
+                this.errors.general = res.msg;
+            } else if (res.code == 0) {
+                this.loading = true;
+                const endpoint = 'https://api.micuentaweb.pe';
+                const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY;
 
-            //         return false;
-            //     });
+                const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
 
-            //     await KR.renderElements('#myPaymentForm');
+                await KR.setFormConfig({
+                    formToken: res.data.formToken,
+                    'kr-language': 'es-PE',
+                });
 
-            //     await KR.openPopin();
-            // }
+                await KR.onFormCreated(() => {
+                    this.loading = false;
+                });
+
+                await KR.onSubmit(async (paymentData) => {
+                    const res1 = await post(
+                        `${urls.izipay}/validate-payment`,
+                        paymentData
+                    );
+
+                    if (res1.code == 0) {
+                        KR.closePopin();
+
+                        this.shapeDatos();
+                        this.loading = true;
+                        await post('socio_pedidos', this.form);
+                        this.loading = false;
+
+                        this.paymentSuccess = true;
+                        Cart.clear();
+
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth',
+                        });
+                    }
+
+                    return false;
+                });
+
+                await KR.renderElements('#myPaymentForm');
+
+                await KR.openPopin();
+            }
         },
 
         prevStep() {
