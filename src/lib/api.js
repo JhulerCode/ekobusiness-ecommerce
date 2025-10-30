@@ -6,9 +6,11 @@ export const urls = {
     newsletter: `${host}/store/newsletter`,
     arco: `${host}/store/arco`,
     libro_reclamos: `${host}/store/libro-reclamos`,
+    ubigeos: `${host}/store/ubigeos`,
     auth: `${host}/store/auth`,
     account: `${host}/store/account`,
-    ubigeos: `${host}/store/account/ubigeos`,
+    izipay: `${host}/store/izipay`,
+    socio_pedidos: `${host}/store/socio-pedidos`,
 }
 
 function jmsg(type, msg) {

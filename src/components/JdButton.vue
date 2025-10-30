@@ -10,7 +10,9 @@
     >
         <LoadingSpin scale="0.7" v-if="loading" />
 
+        <slot name="iLeft"></slot>
         <span v-if="text">{{ text }}</span>
+        <slot name="iRight"></slot>
     </div>
 </template>
 

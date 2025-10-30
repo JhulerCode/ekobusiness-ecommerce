@@ -5,7 +5,7 @@
             <span v-if="nec" class="nec"> *</span>
         </label>
 
-        <div class="flex flex-col gap-2">
+        <div :class="['flex', row ? 'gap-4' : 'flex-col gap-2']">
             <label
                 v-for="a in lista"
                 :key="a.id"
@@ -45,6 +45,7 @@ export default {
         disabled: { type: Boolean, default: false },
         error: { type: String },
         withBorder: { type: Boolean, default: false },
+        row: { type: Boolean, default: false },
     },
     computed: {
         inputModel: {

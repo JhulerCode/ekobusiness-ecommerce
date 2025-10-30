@@ -1,14 +1,16 @@
 <template>
-    <section class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-10">
+    <section
+        class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-10"
+        v-if="paymentSuccess == false"
+    >
         <!-- Columna izquierda: pasos -->
-        <div class="md:col-span-2 space-y-8">
+        <div class="md:col-span-2 flex md:flex-row flex-col gap-10">
             <!-- Encabezado -->
             <div
-                class="flex items-center justify-between mb-10 relative"
-                ref="seccionForm1"
+                class="md:sticky md:top-20 md:h-fit flex md:flex-col"
             >
                 <!-- Paso 1 -->
-                <div class="flex flex-col items-center flex-1">
+                <div class="flex flex-col md:flex-row gap-2 items-center">
                     <div
                         class="w-10 h-10 flex items-center justify-center rounded-full border-2 transition-all duration-300"
                         :class="{
@@ -18,8 +20,9 @@
                     >
                         1
                     </div>
+
                     <span
-                        class="mt-2 text-sm transition-colors duration-300"
+                        class="text-sm transition-colors duration-300"
                         :class="{
                             'text-black font-medium': step >= 1,
                             'text-gray-400': step < 1,
@@ -31,12 +34,12 @@
 
                 <!-- Línea entre pasos -->
                 <div
-                    class="flex-1 h-[2px] mx-2 md:mx-4"
+                    class="w-[2px] h-20 mx-5 my-2"
                     :class="step > 1 ? 'bg-black' : 'bg-gray-300'"
                 ></div>
 
                 <!-- Paso 2 -->
-                <div class="flex flex-col items-center flex-1">
+                <div class="flex flex-col md:flex-row gap-2 items-center">
                     <div
                         class="w-10 h-10 flex items-center justify-center rounded-full border-2 transition-all duration-300"
                         :class="{
@@ -46,8 +49,9 @@
                     >
                         2
                     </div>
+
                     <span
-                        class="mt-2 text-sm transition-colors duration-300"
+                        class="text-sm transition-colors duration-300"
                         :class="{
                             'text-black font-medium': step >= 2,
                             'text-gray-400': step < 2,
@@ -59,12 +63,12 @@
 
                 <!-- Línea entre pasos -->
                 <div
-                    class="flex-1 h-[2px] mx-2 md:mx-4"
+                    class="w-[2px] h-20 mx-5 my-2"
                     :class="step > 2 ? 'bg-black' : 'bg-gray-300'"
                 ></div>
 
                 <!-- Paso 3 -->
-                <div class="flex flex-col items-center flex-1">
+                <div class="flex flex-col md:flex-row gap-2 items-center">
                     <div
                         class="w-10 h-10 flex items-center justify-center rounded-full border-2 transition-all duration-300"
                         :class="{
@@ -74,8 +78,9 @@
                     >
                         3
                     </div>
+
                     <span
-                        class="mt-2 text-sm transition-colors duration-300"
+                        class="text-sm transition-colors duration-300"
                         :class="{
                             'text-black font-medium': step >= 3,
                             'text-gray-400': step < 3,
@@ -86,104 +91,78 @@
                 </div>
             </div>
 
-            <!-- Paso 1: Identificación -->
-            <div
-                class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
-            >
-                <h2 class="text-xl font-semibold">1. Identificación</h2>
+            <div class="flex-1 space-y-8">
+                <!-- Paso 1: Identificación -->
+                <div
+                    class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
+                    ref="seccionForm1"
+                >
+                    <h2 class="text-xl font-semibold">1. Identificación</h2>
 
-                <!-- Formulario activo -->
-                <div v-if="step === 1" class="space-y-6">
-                    <p class="text-gray-600">
-                        Por favor completa con tu información personal para
-                        poder finalizar la compra.
-                    </p>
+                    <!-- Formulario activo -->
+                    <div v-if="step === 1" class="space-y-6">
+                        <p class="text-gray-600">
+                            Por favor completa con tu información personal para
+                            poder finalizar la compra.
+                        </p>
 
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <!-- Correo -->
-                        <div>
-                            <label class="label">Correo*</label>
-                            <input
-                                v-model="form.email"
+                        <div
+                            class="grid md:grid-cols-2 gap-4"
+                            v-if="form.socio_datos"
+                        >
+                            <JdInput
+                                label="Correo"
+                                :nec="true"
                                 type="email"
-                                class="input"
+                                v-model="form.socio_datos.correo"
+                                :error="errors.correo"
                             />
-                            <p v-if="errors1.email" class="input-error">
-                                {{ errors1.email }}
-                            </p>
-                        </div>
 
-                        <!-- Teléfono -->
-                        <div>
-                            <label class="label">Teléfono*</label>
-                            <input
-                                v-model="form.telefono"
-                                type="text"
-                                class="input"
-                            />
-                            <p v-if="errors1.telefono" class="input-error">
-                                {{ errors1.telefono }}
-                            </p>
-                        </div>
-
-                        <!-- Nombre -->
-                        <div>
-                            <label class="label">Nombres*</label>
-                            <input
-                                v-model="form.nombres"
-                                type="text"
-                                class="input"
-                            />
-                            <p v-if="errors1.nombres" class="input-error">
-                                {{ errors1.nombres }}
-                            </p>
-                        </div>
-
-                        <!-- Apellidos -->
-                        <div>
-                            <label class="label">Apellidos*</label>
-                            <input
-                                v-model="form.apellidos"
-                                type="text"
-                                class="input"
-                            />
-                            <p v-if="errors1.apellidos" class="input-error">
-                                {{ errors1.apellidos }}
-                            </p>
-                        </div>
-
-                        <!-- Tipo de documento -->
-                        <div>
-                            <label class="label">Tipo de documento*</label>
-                            <select v-model="form.doc_tipo" class="input">
-                                <option value="DNI">DNI</option>
-                                <option value="CE">Carné de Extranjería</option>
-                                <option value="PAS">Pasaporte</option>
-                            </select>
-                            <p v-if="errors1.doc_tipo" class="input-error">
-                                {{ errors1.doc_tipo }}
-                            </p>
-                        </div>
-
-                        <!-- Número de documento -->
-                        <div>
-                            <label class="label">Número de documento*</label>
-                            <input
-                                v-model="form.doc_numero"
-                                type="text"
-                                class="input"
-                            />
-                            <p v-if="errors1.doc_numero" class="input-error">
-                                {{ errors1.doc_numero }}
-                            </p>
-                        </div>
-
-                        <div class="col-span-2">
-                            <label class="checkbox">
-                                <input
-                                    v-model="form.privacidad"
-                                    type="checkbox"
+                            <div>
+                                <JdInput
+                                    label="Teléfono"
+                                    :nec="true"
+                                    type="tel"
+                                    v-model="form.socio_datos.telefono"
+                                    :error="errors.telefono"
                                 />
+                            </div>
+
+                            <JdInput
+                                label="Nombres"
+                                :nec="true"
+                                v-model="form.socio_datos.nombres"
+                                :error="errors.nombres"
+                            />
+
+                            <JdInput
+                                label="Apellidos"
+                                :nec="true"
+                                v-model="form.socio_datos.apellidos"
+                                :error="errors.apellidos"
+                            />
+
+                            <JdSelect
+                                label="Tipo de documento"
+                                :nec="true"
+                                :lista="doc_tipos"
+                                v-model="form.socio_datos.doc_tipo"
+                                :error="errors.doc_tipo"
+                            />
+
+                            <JdInput
+                                label="Nro de documento"
+                                :nec="true"
+                                v-model="form.socio_datos.doc_numero"
+                                :error="errors.doc_numero"
+                            />
+
+                            <JdCheckBox
+                                :nec="true"
+                                v-model="form.socio_datos.privacidad"
+                                :error="errors.privacidad"
+                                class="col-span-2"
+                            >
                                 <span>
                                     He leído la
                                     <a
@@ -196,345 +175,312 @@
                                     y declaro haber sido informado sobre el
                                     tratamiento de mis datos personales.
                                 </span>
-                            </label>
+                            </JdCheckBox>
+                        </div>
 
-                            <p v-if="errors1.privacidad" class="input-error">
-                                {{ errors1.privacidad }}
-                            </p>
+                        <!-- Botones -->
+                        <div class="flex justify-end">
+                            <JdButton
+                                text="Ir a la Entrega"
+                                @click="continuarEntrega"
+                                :loading="loading"
+                            >
+                                <template v-slot:iRight>
+                                    <ArrowRight />
+                                </template>
+                            </JdButton>
                         </div>
                     </div>
 
-                    <!-- Botones -->
-                    <div class="flex justify-end">
-                        <button @click="continuarEntrega" class="button">
-                            Ir a la Entrega <ArrowRight />
+                    <!-- Resumen cuando ya se completó -->
+                    <div
+                        v-else
+                        class="bg-gray-50 p-4 rounded-xl text-sm text-gray-700 shadow-inner flex justify-between items-start"
+                    >
+                        <div v-if="form.socio_datos">
+                            <p>
+                                <span class="font-medium">Correo:</span>
+                                {{ form.socio_datos.correo }}
+                            </p>
+                            <p>
+                                <span class="font-medium">Teléfono:</span>
+                                {{ form.socio_datos.telefono }}
+                            </p>
+                            <p>
+                                <span class="font-medium">Nombre:</span>
+                                {{ form.socio_datos.nombres }}
+                                {{ form.socio_datos.apellidos }}
+                            </p>
+                        </div>
+
+                        <button
+                            @click="step = 1"
+                            class="text-xs text-blue-600 hover:underline cursor-pointer"
+                        >
+                            Editar
                         </button>
                     </div>
                 </div>
 
-                <!-- Resumen cuando ya se completó -->
+                <!-- Paso 2: Entrega -->
                 <div
-                    v-else
-                    class="bg-gray-50 p-4 rounded-xl text-sm text-gray-700 shadow-inner flex justify-between items-start"
+                    class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
+                    v-if="step >= 2"
+                    ref="seccionForm2"
                 >
-                    <div>
-                        <p>
-                            <span class="font-medium">Correo:</span>
-                            {{ form.email }}
-                        </p>
-                        <p>
-                            <span class="font-medium">Nombre:</span>
-                            {{ form.nombres }} {{ form.apellidos }}
-                        </p>
-                        <p>
-                            <span class="font-medium">Teléfono:</span>
-                            {{ form.telefono }}
-                        </p>
-                    </div>
+                    <h2 class="text-xl font-semibold">2. Entrega</h2>
 
-                    <button
-                        @click="step = 1"
-                        class="text-xs text-blue-600 hover:underline cursor-pointer"
-                    >
-                        Editar
-                    </button>
-                </div>
-            </div>
+                    <!-- Formulario activo -->
+                    <div v-if="step === 2" class="space-y-6">
+                        <JdRadio
+                            :nec="true"
+                            :lista="entrega_tipos"
+                            v-model="form.entrega_tipo"
+                            :error="errors.entrega_tipo"
+                            :row="true"
+                            @change="errors = {}"
+                        />
 
-            <!-- Paso 2: Entrega -->
-            <div
-                class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
-                v-if="step >= 2"
-                ref="seccionForm2"
-            >
-                <h2 class="text-xl font-semibold">2. Entrega</h2>
-
-                <!-- Formulario activo -->
-                <div v-if="step === 2" class="space-y-6">
-                    <!-- Opciones principales -->
-                    <div class="flex gap-4">
-                        <label class="radio">
-                            <input
-                                v-model="form.entrega_tipo"
-                                type="radio"
-                                value="domicilio"
+                        <!-- Envío a domicilio -->
+                        <div
+                            v-if="form.entrega_tipo === 'envio'"
+                            class="mt-6 grid md:grid-cols-2 gap-4"
+                        >
+                            <JdSelectQuery
+                                label="Distrito"
+                                :nec="true"
+                                v-model="form.entrega_ubigeo"
+                                :spin="ubigeosLoading"
+                                :lista="ubigeos"
+                                @search="loadUbigeos"
+                                @elegir="setUbigeo"
+                                :error="errors.entrega_ubigeo"
+                                class="col-span-2"
                             />
-                            <span>Envío a domicilio</span>
-                        </label>
 
-                        <label class="radio">
-                            <input
-                                v-model="form.entrega_tipo"
-                                type="radio"
-                                value="retiro"
+                            <JdInput
+                                label="Dirección"
+                                :nec="true"
+                                v-model="form.direccion_entrega"
+                                :error="errors.direccion_entrega"
+                                class="col-span-2"
                             />
-                            <span>Retira tu producto</span>
-                        </label>
-                    </div>
 
-                    <!-- Envío a domicilio -->
-                    <div
-                        v-if="form.entrega_tipo === 'domicilio'"
-                        class="space-y-5 mt-6"
-                    >
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="label">Dirección*</label>
-                                <input
-                                    v-model="form.direccion"
-                                    type="text"
-                                    class="input"
-                                />
-                                <p v-if="errors2.direccion" class="input-error">
-                                    {{ errors2.direccion }}
-                                </p>
-                            </div>
+                            <JdInput
+                                label="Número"
+                                v-model="form.entrega_direccion_datos.numero"
+                                :error="errors.entrega_direccion_datos_numero"
+                            />
 
-                            <div>
-                                <label class="label">Distrito*</label>
-                                <input
-                                    v-model="form.distrito"
-                                    type="text"
-                                    class="input"
-                                />
-                                <p v-if="errors2.distrito" class="input-error">
-                                    {{ errors2.distrito }}
-                                </p>
-                            </div>
+                            <JdInput
+                                label="Piso / Dpto"
+                                v-model="form.entrega_direccion_datos.piso"
+                                :error="errors.entrega_direccion_datos_piso"
+                            />
 
-                            <div>
-                                <label class="label">Número</label>
-                                <input
-                                    v-model="form.direccion_numero"
-                                    type="text"
-                                    class="input"
-                                />
-                            </div>
-
-                            <div>
-                                <label class="label">Piso / Dpto</label>
-                                <input
-                                    v-model="form.direccion_piso"
-                                    type="text"
-                                    class="input"
-                                />
-                            </div>
+                            <JdTextArea
+                                label="Referencia"
+                                :nec="true"
+                                v-model="
+                                    form.entrega_direccion_datos.referencia
+                                "
+                                :error="
+                                    errors.entrega_direccion_datos_referencia
+                                "
+                                class="col-span-2"
+                            />
                         </div>
 
-                        <div>
-                            <label class="label">Referencia*</label>
-                            <textarea
-                                v-model="form.referencia"
-                                class="input resize-none"
-                                rows="1"
-                            ></textarea>
-                            <p v-if="errors2.referencia" class="input-error">
-                                {{ errors2.referencia }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Retiro en tienda -->
-                    <div
-                        v-if="form.entrega_tipo === 'retiro'"
-                        class="space-y-5 mt-6"
-                    >
-                        <div>
-                            <label class="label">Punto de retiro</label>
-                            <div
-                                class="border border-gray-200 rounded-xl p-4 bg-white"
-                            >
-                                <p class="font-medium">Oficina EkoBusiness</p>
-                                <p class="text-sm text-gray-600">
-                                    Av. Mariscal La Mar 638, Miraflores
-                                </p>
+                        <!-- Retiro en tienda -->
+                        <div
+                            v-if="form.entrega_tipo === 'retiro'"
+                            class="space-y-5 mt-6"
+                        >
+                            <div>
+                                <label class="label">Punto de retiro</label>
+                                <div
+                                    class="border border-gray-200 rounded-xl p-4 bg-white"
+                                >
+                                    <p class="font-medium">
+                                        Oficina EkoBusiness
+                                    </p>
+                                    <p class="text-sm text-gray-600">
+                                        Av. Mariscal La Mar 638, Miraflores
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label class="label">Fecha de retiro*</label>
-                            <input
-                                v-model="form.fecha_retiro"
+                            <JdInput
+                                label="Fecha de retiro"
+                                :nec="true"
                                 type="date"
-                                class="input"
+                                v-model="form.fecha_entrega"
+                                :error="errors.fecha_entrega"
                             />
-                            <p v-if="errors2.fecha_retiro" class="input-error">
-                                {{ errors2.fecha_retiro }}
-                            </p>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="flex justify-between">
+                            <JdButton text="Volver" tipo="2" @click="prevStep">
+                                <template v-slot:iLeft>
+                                    <ArrowLeft />
+                                </template>
+                            </JdButton>
+
+                            <JdButton text="Ir al Pago" @click="continuarPago">
+                                <template v-slot:iRight>
+                                    <ArrowRight />
+                                </template>
+                            </JdButton>
                         </div>
                     </div>
 
-                    <!-- Botones -->
-                    <div class="flex justify-between">
-                        <button @click="prevStep" class="button2">
-                            <ArrowLeft /> Volver
-                        </button>
-
-                        <button @click="continuarPago" class="button">
-                            Ir al Pago <ArrowRight />
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Resumen cuando ya se completó -->
-                <div
-                    v-else-if="step > 2"
-                    class="bg-gray-50 p-4 rounded-xl text-sm text-gray-700 shadow-inner flex justify-between items-start"
-                >
-                    <div>
-                        <template v-if="form.entrega_tipo === 'domicilio'">
-                            <p>
-                                <span class="font-medium"
-                                    >Tipo de entrega:</span
-                                >
-                                Envío a domicilio
-                            </p>
-                            <p>
-                                <span class="font-medium">Dirección:</span>
-                                {{ form.direccion }}
-                                <template v-if="form.direccion_numero">
-                                    Nro: {{ form.direccion_numero }}
-                                </template>
-                                <template v-if="form.direccion_piso">
-                                    Piso: {{ form.direccion_piso }}
-                                </template>
-                            </p>
-                            <p>
-                                <span class="font-medium">Distrito:</span>
-                                {{ form.distrito }}
-                            </p>
-                            <p>
-                                <span class="font-medium">Referencia:</span>
-                                {{ form.referencia }}
-                            </p>
-                        </template>
-
-                        <template v-else-if="form.entrega_tipo === 'retiro'">
-                            <p>
-                                <span class="font-medium"
-                                    >Tipo de entrega:</span
-                                >
-                                Retiro en tienda
-                            </p>
-                            <p>
-                                <span class="font-medium"
-                                    >Punto de retiro:</span
-                                >
-                                Oficina EkoBusiness
-                            </p>
-                            <p>
-                                <span class="font-medium"
-                                    >Fecha de retiro:</span
-                                >
-                                {{ form.fecha_retiro }}
-                            </p>
-                        </template>
-                    </div>
-
-                    <button
-                        @click="step = 2"
-                        class="text-xs text-blue-600 hover:underline cursor-pointer"
-                    >
-                        Editar
-                    </button>
-                </div>
-            </div>
-
-            <!-- Paso 3: Pago -->
-            <div
-                class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
-                v-if="step >= 3"
-                ref="seccionForm3"
-            >
-                <h2 class="text-xl font-semibold">3. Pago</h2>
-
-                <!-- Formulario activo -->
-                <div v-if="step === 3" class="space-y-6">
-                    <!-- Tipo de comprobante -->
-                    <div>
-                        <label class="label">Tipo de comprobante*</label>
-
-                        <div class="flex gap-6">
-                            <label class="radio">
-                                <input
-                                    v-model="form.comprobante_tipo"
-                                    type="radio"
-                                    value="boleta"
-                                />
-                                <span>Boleta</span>
-                            </label>
-
-                            <label class="radio">
-                                <input
-                                    v-model="form.comprobante_tipo"
-                                    type="radio"
-                                    value="factura"
-                                />
-                                <span>Factura</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Campos adicionales si es Factura -->
+                    <!-- Resumen cuando ya se completó -->
                     <div
-                        v-if="form.comprobante_tipo === 'factura'"
-                        class="grid md:grid-cols-2 gap-4"
+                        v-else-if="step > 2"
+                        class="bg-gray-50 p-4 rounded-xl text-sm text-gray-700 shadow-inner flex justify-between items-start"
                     >
                         <div>
-                            <label class="label">RUC*</label>
-                            <input
-                                type="text"
-                                v-model="form.ruc"
-                                maxlength="11"
-                                class="input"
-                            />
-                            <p v-if="errors3.ruc" class="input-error">
-                                {{ errors3.ruc }}
-                            </p>
-                        </div>
+                            <template v-if="form.entrega_tipo === 'envio'">
+                                <p>
+                                    <span class="font-medium"
+                                        >Tipo de entrega:</span
+                                    >
+                                    Envío a domicilio
+                                </p>
+                                <p>
+                                    <span class="font-medium">Dirección:</span>
+                                    {{ form.direccion_entrega }}
+                                    <template
+                                        v-if="
+                                            form.entrega_direccion_datos.numero
+                                        "
+                                    >
+                                        Nro:
+                                        {{
+                                            form.entrega_direccion_datos.numero
+                                        }}
+                                    </template>
+                                    <template
+                                        v-if="form.entrega_direccion_datos.piso"
+                                    >
+                                        Piso:
+                                        {{ form.entrega_direccion_datos.piso }}
+                                    </template>
+                                </p>
+                                <p v-if="form.entrega_ubigeo1">
+                                    <span class="font-medium">Distrito:</span>
+                                    {{ form.entrega_ubigeo1.distrito }},
+                                    {{ form.entrega_ubigeo1.provincia }},
+                                    {{ form.entrega_ubigeo1.departamento }}
+                                </p>
+                                <p>
+                                    <span class="font-medium">Referencia:</span>
+                                    {{
+                                        form.entrega_direccion_datos.referencia
+                                    }}
+                                </p>
+                            </template>
 
-                        <div>
-                            <label class="label">Razón Social*</label>
-                            <input
-                                type="text"
-                                v-model="form.razon_social"
-                                class="input"
-                            />
-                            <p v-if="errors3.razon_social" class="input-error">
-                                {{ errors3.razon_social }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Método de pago -->
-                    <div>
-                        <label class="label">Método de pago*</label>
-
-                        <div class="space-y-2">
-                            <label
-                                v-for="a in pago_metodos"
-                                :key="a.id"
-                                class="radio border border-gray-300 rounded-xl p-4"
+                            <template
+                                v-else-if="form.entrega_tipo === 'retiro'"
                             >
-                                <input
-                                    type="radio"
-                                    v-model="form.pago_metodo"
-                                    :value="a.id"
-                                />
-                                <span>{{ a.nombre }}</span>
-                            </label>
+                                <p>
+                                    <span class="font-medium"
+                                        >Tipo de entrega:</span
+                                    >
+                                    Retiro en tienda
+                                </p>
+                                <p>
+                                    <span class="font-medium"
+                                        >Punto de retiro:</span
+                                    >
+                                    Oficina EkoBusiness
+                                </p>
+                                <p>
+                                    <span class="font-medium"
+                                        >Fecha de retiro:</span
+                                    >
+                                    {{ form.fecha_entrega }}
+                                </p>
+                            </template>
                         </div>
+
+                        <button
+                            @click="step = 2"
+                            class="text-xs text-blue-600 hover:underline cursor-pointer"
+                        >
+                            Editar
+                        </button>
                     </div>
+                </div>
 
-                    <!-- Botones -->
-                    <div class="flex justify-between">
-                        <button @click="prevStep" class="button2">
-                            <ArrowLeft /> Volver
-                        </button>
+                <!-- Paso 3: Pago -->
+                <div
+                    class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
+                    v-if="step >= 3"
+                    ref="seccionForm3"
+                >
+                    <h2 class="text-xl font-semibold">3. Pago</h2>
 
-                        <button @click="pagar" class="button">
-                            Ir a pagar <ArrowRight />
-                        </button>
+                    <!-- Formulario activo -->
+                    <div v-if="step === 3" class="space-y-4">
+                        <!-- Tipo de comprobante -->
+                        <JdRadio
+                            label="Tipo de comprobante"
+                            :nec="true"
+                            :lista="comprobante_tipos"
+                            v-model="form.comprobante_tipo"
+                            :error="errors.comprobante_tipo"
+                            :row="true"
+                            @change="errors = {}"
+                        />
+
+                        <!-- Campos adicionales si es Factura -->
+                        <div
+                            v-if="form.comprobante_tipo === '01'"
+                            class="grid md:grid-cols-2 gap-4"
+                        >
+                            <JdInput
+                                label="RUC"
+                                :nec="true"
+                                v-model="form.comprobante_ruc"
+                                :error="errors.comprobante_ruc"
+                            />
+
+                            <JdInput
+                                label="RUC"
+                                :nec="true"
+                                v-model="form.comprobante_razon_social"
+                                :error="errors.comprobante_razon_social"
+                            />
+                        </div>
+
+                        <!-- Método de pago -->
+                        <JdRadio
+                            label="Método de pago"
+                            :nec="true"
+                            :lista="pago_metodos"
+                            v-model="form.pago_metodo"
+                            :error="errors.pago_metodo"
+                            :withBorder="true"
+                            @change="errors = {}"
+                        />
+
+                        <!-- Botones -->
+                        <div class="flex justify-between">
+                            <JdButton text="Volver" tipo="2" @click="prevStep">
+                                <template v-slot:iLeft>
+                                    <ArrowLeft />
+                                </template>
+                            </JdButton>
+
+                            <JdButton
+                                text="Ir a pagar"
+                                @click="pagar"
+                                :loading="loading"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -542,7 +488,7 @@
 
         <!-- Columna derecha: Resumen -->
         <div
-            class="border border-gray-200 rounded-2xl p-6 h-fit bg-gray-50 sticky top-20 shadow-sm"
+            class="border border-gray-200 rounded-2xl p-6 h-fit sticky top-20 shadow-sm"
         >
             <h2
                 class="text-xl font-semibold mb-6 text-gray-900 border-b border-gray-200 pb-3"
@@ -606,54 +552,107 @@
                     <span>S/ {{ total.toFixed(2) }}</span>
                 </div>
             </div>
+
+            <div class="container"></div>
+        </div>
+    </section>
+
+    <div id="myPaymentForm">
+        <div class="kr-embedded" kr-popin>
+            <div class="kr-pan"></div>
+            <div class="kr-expiry"></div>
+            <div class="kr-security-code"></div>
+            <div class="kr-form-error"></div>
+            <button class="kr-payment-button"></button>
+        </div>
+    </div>
+
+    <section
+        class="max-w-6xl mx-auto px-4 py-12 gap-10"
+        v-if="paymentSuccess == true"
+    >
+        <div
+            class="flex flex-col items-center justify-center text-center p-8 bg-white rounded-2xl shadow-md border border-gray-100 animate-fade-in"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-20 h-20 text-green-500 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2l4 -4m6 2a9 9 0 1 1 -18 0a9 9 0 0 1 18 0z"
+                />
+            </svg>
+
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+                ¡Pago confirmado!
+            </h2>
+
+            <p class="text-gray-600 mb-6">
+                Tu pago ha sido procesado exitosamente. En unos momentos
+                recibirás un correo con los detalles de tu compra.
+            </p>
+
+            <div class="flex gap-4">
+                <JdButton text="Ir al inicio" tipo="2" @click="irInicio" />
+                <JdButton text="Ver mi pedido" @click="irPedido" />
+            </div>
         </div>
     </section>
 </template>
 
 <script>
-import { Cart } from '../../src/lib/cart.js';
 import ArrowLeft from '../assets/icons/arrow-left.vue';
 import ArrowRight from '../assets/icons/arrow-right.vue';
+import JdButton from '../components/JdButton.vue';
+import JdInput from '../components/JdInput.vue';
+import JdSelect from '../components/JdSelect.vue';
+import JdCheckBox from '../components/JdCheckBox.vue';
+import JdRadio from '../components/JdRadio.vue';
+import JdTextArea from '../components/JdTextArea.vue';
+import JdSelectQuery from '../components/JdSelectQuery.vue';
+
+import { Cart } from '../lib/cart.js';
+import { urls, get, post } from '../lib/api.js';
+import { genId } from '../lib/mine.js';
+
+import KRGlue from '@lyracom/embedded-form-glue';
 
 export default {
     components: {
         ArrowLeft,
         ArrowRight,
+        JdButton,
+        JdInput,
+        JdSelect,
+        JdCheckBox,
+        JdRadio,
+        JdTextArea,
+        JdSelectQuery,
     },
     props: {
-        pago_metodos: {
-            type: Array,
-            default: () => [],
-        },
+        pago_metodos: { type: Array, default: () => [] },
+        doc_tipos: { type: Array, default: () => [] },
+        entrega_tipos: { type: Array, default: () => [] },
+        comprobante_tipos: { type: Array, default: () => [] },
     },
     data() {
         return {
-            theme: 'light',
-            step: 1,
-            form: {
-                email: '',
-                telefono: '',
-                nombres: '',
-                apellidos: '',
-                doc_tipo: 'DNI',
-                doc_numero: '',
-                privacidad: false,
+            step: 3,
+            paymentSuccess: false,
+            loading: false,
 
-                entrega_tipo: 'domicilio',
-                direccion: '',
-                distrito: '',
-                referencia: '',
-                fecha_retiro: '',
-
-                comprobante_tipo: 'boleta',
-                ruc: '',
-                razon_social: '',
-                pago_metodo: 'tarjeta',
-            },
-            errors1: {},
-            errors2: {},
-            errors3: {},
+            form: {},
+            errors: {},
             items: [],
+
+            ubigeos: [],
+            ubigeosLoading: false,
         };
     },
     computed: {
@@ -665,7 +664,7 @@ export default {
         },
         costoEnvio() {
             // Puedes ajustarlo según tu lógica
-            return this.form.entrega_tipo === 'domicilio' ? 10 : 0;
+            return this.form.entrega_tipo === 'envio' ? 10 : 0;
         },
         total() {
             return this.subtotal + this.costoEnvio;
@@ -673,30 +672,64 @@ export default {
     },
     mounted() {
         this.items = Cart.get();
+        this.initForm();
     },
     methods: {
+        initForm() {
+            this.form = {
+                tipo: 2,
+                fecha: new Date(),
+                codigo: genId(),
+
+                socio: null,
+                socio_datos: {
+                    nombres: '',
+                    apellidos: '',
+                    doc_tipo: 'DNI',
+                    doc_numero: '',
+                    correo: 'jhuler1615@gmail.com',
+                    telefono: '',
+                    privacidad: false,
+                },
+
+                entrega_tipo: 'envio',
+                fecha_entrega: '',
+                entrega_ubigeo: '',
+                direccion_entrega: '',
+                entrega_direccion_datos: {},
+
+                comprobante_tipo: '03',
+                comprobante_ruc: '',
+                comprobante_razon_social: '',
+
+                pago_metodo: 'tarjeta',
+                monto: 100,
+                socio_pedido_items: this.items,
+            };
+        },
+
         validateForm1() {
-            Object.keys(this.errors1).forEach((k) => (this.errors1[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
             if (
-                !this.form.email ||
-                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)
+                !this.form.socio_datos.correo ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.socio_datos.correo)
             )
-                this.errors1.email = 'Ingrese un email válido.';
-            if (!this.form.telefono)
-                this.errors1.telefono = 'Este campo es obligatorio.';
-            if (!this.form.nombres)
-                this.errors1.nombres = 'Este campo es obligatorio.';
-            if (!this.form.apellidos)
-                this.errors1.apellidos = 'Describa su solicitud.';
-            if (!this.form.doc_tipo)
-                this.errors1.doc_tipo = 'Seleccione un tipo de documento.';
-            if (!this.form.doc_numero)
-                this.errors1.doc_numero = 'Este campo es obligatorio.';
-            if (!this.form.privacidad)
-                this.errors1.privacidad = 'Este campo es obligatorio.';
+                this.errors.correo = 'Ingrese un correo válido.';
+            if (!this.form.socio_datos.telefono)
+                this.errors.telefono = 'Este campo es obligatorio.';
+            if (!this.form.socio_datos.nombres)
+                this.errors.nombres = 'Este campo es obligatorio.';
+            if (!this.form.socio_datos.apellidos)
+                this.errors.apellidos = 'Describa su solicitud.';
+            if (!this.form.socio_datos.doc_tipo)
+                this.errors.doc_tipo = 'Seleccione un tipo de documento.';
+            if (!this.form.socio_datos.doc_numero)
+                this.errors.doc_numero = 'Este campo es obligatorio.';
+            if (!this.form.socio_datos.privacidad)
+                this.errors.privacidad = 'Este campo es obligatorio.';
 
-            return Object.values(this.errors1).every((e) => !e);
+            return Object.values(this.errors).every((e) => !e);
         },
         continuarEntrega() {
             if (!this.validateForm1()) return;
@@ -706,24 +739,25 @@ export default {
         },
 
         validateForm2() {
-            Object.keys(this.errors2).forEach((k) => (this.errors2[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
-            if (this.form.entrega_tipo === 'domicilio') {
-                if (!this.form.direccion)
-                    this.errors2.direccion = 'Este campo es obligatorio.';
-                if (!this.form.distrito)
-                    this.errors2.distrito = 'Este campo es obligatorio.';
-                if (!this.form.referencia)
-                    this.errors2.referencia = 'Describa su solicitud.';
+            if (this.form.entrega_tipo === 'envio') {
+                if (!this.form.entrega_ubigeo)
+                    this.errors.entrega_ubigeo = 'Este campo es obligatorio.';
+                if (!this.form.direccion_entrega)
+                    this.errors.direccion_entrega =
+                        'Este campo es obligatorio.';
+                if (!this.form.entrega_direccion_datos.referencia)
+                    this.errors.entrega_direccion_datos_referencia =
+                        'Este campo es obligatorio.';
             }
 
             if (this.form.entrega_tipo === 'retiro') {
-                if (!this.form.fecha_retiro)
-                    this.errors2.fecha_retiro =
-                        'Seleccione un tipo de documento.';
+                if (!this.form.fecha_entrega)
+                    this.errors.fecha_entrega = 'Este campo es obligatorio.';
             }
 
-            return Object.values(this.errors2).every((e) => !e);
+            return Object.values(this.errors).every((e) => !e);
         },
         continuarPago() {
             if (!this.validateForm2()) return;
@@ -733,36 +767,74 @@ export default {
         },
 
         validarForm3() {
-            Object.keys(this.errors3).forEach((k) => (this.errors3[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
-            if (this.form.comprobante_tipo === 'factura') {
+            if (this.form.comprobante_tipo === '01') {
                 if (!this.form.ruc || !/^\d{11}$/.test(this.form.ruc))
-                    this.errors3.ruc =
-                        'El RUC debe tener 11 dígitos numéricos.';
+                    this.errors.ruc = 'El RUC debe tener 11 dígitos numéricos.';
                 if (!this.form.razon_social)
-                    this.errors3.razon_social = 'Describa su solicitud.';
+                    this.errors.razon_social = 'Describa su solicitud.';
             }
 
-            return Object.values(this.errors3).every((e) => !e);
+            return Object.values(this.errors).every((e) => !e);
         },
-        pagar() {
-            if (!this.validarForm3()) return;
-            alert('Pagar');
+        async pagar() {
+            // if (!this.validarForm3()) return;
+
+            // this.loading = true;
+            // const res = await post(`${urls.izipay}/create-payment`, this.form);
+            // this.loading = false;
+
+            // if (res.code == 0) {
+            //     const endpoint = 'https://api.micuentaweb.pe';
+            //     const publicKey = import.meta.env.IZIPAY_PUBLIC_KEY;
+
+            //     const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
+
+            //     await KR.setFormConfig({
+            //         formToken: res.data.formToken,
+            //         'kr-language': 'es-PE',
+            //     });
+
+            //     await KR.onSubmit(async (paymentData) => {
+            //         const res1 = await post(
+            //             `${urls.izipay}/validate-payment`,
+            //             paymentData
+            //         );
+
+            //         if (res1.code == 0) {
+            //             KR.closePopin();
+
+            //             this.paymentSuccess = true;
+
+            this.loading = true;
+            // await post('socio_pedidos', this.form);
+            console.log(this.form);
+            this.loading = false;
+
+            //             Cart.clear();
+            //         }
+
+            //         return false;
+            //     });
+
+            //     await KR.renderElements('#myPaymentForm');
+
+            //     await KR.openPopin();
+            // }
         },
 
         prevStep() {
             if (this.step > 1) this.step--;
+            this.errors = {};
 
             if (this.step === 1) {
-                this.errors1 = {};
                 this.scrollToForm('seccionForm1');
             }
             if (this.step === 2) {
-                this.errors2 = {};
                 this.scrollToForm('seccionForm2');
             }
             if (this.step === 3) {
-                this.errors3 = {};
                 this.scrollToForm('seccionForm3');
             }
         },
@@ -774,6 +846,42 @@ export default {
                     // top: 0,
                 });
             }, 100);
+        },
+
+        async loadUbigeos(txtBuscar) {
+            if (!txtBuscar) {
+                this.ubigeos.length = 0;
+                return;
+            }
+
+            const qry = {
+                fltr: {
+                    distrito: { op: 'Contiene', val: txtBuscar },
+                },
+                cols: ['departamento', 'provincia', 'distrito', 'nombre'],
+            };
+
+            this.ubigeosLoading = true;
+            const res = await get(
+                'ubigeos',
+                { qry },
+                localStorage.getItem('token')
+            );
+            this.ubigeosLoading = false;
+
+            if (res.code !== 0) return;
+
+            this.ubigeos = res.data;
+        },
+        setUbigeo(item) {
+            this.form.entrega_ubigeo1 = item;
+        },
+
+        irPedido() {
+            window.location.href = '/account';
+        },
+        irInicio() {
+            window.location.href = '/';
         },
     },
 };

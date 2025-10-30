@@ -6,8 +6,44 @@ const pago_metodos = [
     { id: 'tarjeta', nombre: 'Tarjeta de crédito o débito' },
     { id: 'yape', nombre: 'Yape' },
 ];
+
+const doc_tipos = [
+    {
+        id: 'DNI',
+        nombre: 'DNI',
+    },
+    {
+        id: 'CE',
+        nombre: 'Carné de Extranjería',
+    },
+    {
+        id: 'PAS',
+        nombre: 'Pasaporte',
+    },
+];
+const entrega_tipos = [
+    {
+        id: 'envio',
+        nombre: 'Envío a domicilio',
+    },
+    {
+        id: 'retiro',
+        nombre: 'Retira tu producto',
+    },
+];
+
+const comprobante_tipos = [
+    { id: '03', nombre: 'Boleta', codigo: 'BOLETA' },
+    { id: '01', nombre: 'Factura', codigo: 'FACTURA' },
+];
 ---
 
 <BaseLayout title="Checkout">
-    <CheckoutPage client:load pago_metodos={pago_metodos} />
+    <CheckoutPage
+        client:load
+        pago_metodos={pago_metodos}
+        doc_tipos={doc_tipos}
+        entrega_tipos={entrega_tipos}
+        comprobante_tipos={comprobante_tipos}
+    />
 </BaseLayout>

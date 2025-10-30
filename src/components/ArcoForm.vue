@@ -151,27 +151,6 @@
                 :error="errors.tipo"
                 :with-border="true"
             />
-
-            <!-- <div class="flex flex-col gap-2 mt-3">
-                <label
-                    v-for="(desc, tipo) in solicitud_tipos"
-                    :key="tipo"
-                    class="radio"
-                >
-                    <input v-model="form.tipo" type="radio" :value="tipo" />
-                    <span class="text-left">
-                        <strong>{{ desc.titulo }}:</strong>
-                        {{ desc.descripcion }}
-                    </span>
-                </label>
-            </div>
-
-            <p
-                v-if="errors.tipo"
-                class="text-left text-red-500 text-xs mt-1 ml-2"
-            >
-                {{ errors.tipo }}
-            </p> -->
         </div>
 
         <!-- Detalle -->
@@ -255,12 +234,14 @@
 import { post } from '../lib/api.js';
 import JdInput from '../components/JdInput.vue';
 import JdSelect from './JdSelect.vue';
+import JdRadio from '../components/JdRadio.vue';
 
 export default {
     name: 'ArcoForm',
     components: {
         JdInput,
         JdSelect,
+        JdRadio,
     },
     data() {
         return {
@@ -274,45 +255,45 @@ export default {
 
             form: {},
             errors: {},
-            
+
             solicitud_tipos: [
                 {
                     id: 'acceso',
-                    titulo: 'Acceso',
+                    nombre: 'Acceso',
                     descripcion:
                         'Obtener información personal almacenada y condiciones de tratamiento.',
                 },
                 {
                     id: 'rectificacion',
-                    titulo: 'Rectificación',
+                    nombre: 'Rectificación',
                     descripcion: 'Corregir o actualizar información inexacta.',
                 },
                 {
                     id: 'cancelacion',
-                    titulo: 'Cancelación',
+                    nombre: 'Cancelación',
                     descripcion: 'Suprimir información personal no necesaria.',
                 },
                 {
                     id: 'oposicion',
-                    titulo: 'Oposición',
+                    nombre: 'Oposición',
                     descripcion:
                         'Impedir o cesar el tratamiento de datos personales.',
                 },
                 {
                     id: 'informacion',
-                    titulo: 'Información',
+                    nombre: 'Información',
                     descripcion:
                         'Conocer la finalidad, destinatarios y tratamiento de los datos.',
                 },
                 {
                     id: 'revocacion',
-                    titulo: 'Revocación',
+                    nombre: 'Revocación',
                     descripcion:
                         'Retirar el consentimiento para el tratamiento de datos.',
                 },
                 {
                     id: 'portabilidad',
-                    titulo: 'Portabilidad',
+                    nombre: 'Portabilidad',
                     descripcion:
                         'Trasladar los datos personales a otro responsable.',
                 },
