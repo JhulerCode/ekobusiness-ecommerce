@@ -654,7 +654,6 @@ export default {
 
             form: {
                 socio_datos: {
-                    correo: 'jhuler1615@gmail.com',
                     doc_tipo: 'DNI',
                 },
 
@@ -687,6 +686,8 @@ export default {
         },
     },
     mounted() {
+        this.injectarJsIzipay();
+
         this.items = Cart.get();
 
         if (this.items.length == 0) {
@@ -695,6 +696,13 @@ export default {
         }
     },
     methods: {
+        injectarJsIzipay() {
+            const script = document.createElement('script');
+            script.src =
+                'https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/neon.js';
+            document.head.appendChild(script);
+        },
+
         validateForm1() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
