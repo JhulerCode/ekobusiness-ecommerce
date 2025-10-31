@@ -1132,12 +1132,8 @@ export default {
                         KR.closePopin();
                         this.errors.general = res1.msg;
                     } else if (res1.code == 0) {
-                        // this.shapeDatos();
-                        // this.loadingPagar = true;
-                        // await post('socio_pedidos', this.form);
-                        // this.loadingPagar = false;
-
                         this.paymentSuccess = true;
+                        this.form.id = res.data.id;
                         Cart.clear();
                         KR.closePopin();
 
@@ -1211,7 +1207,7 @@ export default {
         },
 
         irPedido() {
-            window.location.href = '/account';
+            window.location.href = `/pedidos/${this.form.id}`;
         },
         irInicio() {
             window.location.href = '/';

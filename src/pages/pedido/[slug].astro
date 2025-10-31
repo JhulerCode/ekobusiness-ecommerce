@@ -1,0 +1,194 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { urls, get } from '../../lib/api.js';
+
+const { slug } = Astro.params;
+const res = await get(`${urls.socio_pedidos}/uno/${slug}`);
+
+let pedido = null;
+if (res.code === 0) {
+    pedido = res.data;
+}
+
+// Etapas simuladas
+const etapas = [
+    { nombre: 'Pedido recibido', fecha: '2025-10-31T21:22:13.000Z' },
+    { nombre: 'Pago confirmado', fecha: '2025-10-31T21:22:43.000Z' },
+    { nombre: 'Preparando pedido', fecha: null },
+    { nombre: 'Listo para entrega', fecha: null },
+    { nombre: 'Pedido completado', fecha: null },
+];
+---
+
+<BaseLayout title={`Pedido: ${pedido?.codigo || ''}`}>
+    <main class="w-full bg-gray-50 py-12 sm:py-16">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16">
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Datos del pedido -->
+                <section
+                    class="md:col-span-2 bg-white p-8 rounded-2xl shadow-md"
+                >
+                    <div class="mb-6 flex justify-between">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800">
+                                Pedido #{pedido.codigo}
+                            </h2>
+                            <p class="text-gray-500 text-sm">
+                                {
+                                    new Date(pedido.fecha).toLocaleDateString(
+                                        'es-PE'
+                                    )
+                                }
+                            </p>
+                        </div>
+
+                        <div>
+                            <span
+                                class="px-3 py-1 text-sm font-medium rounded-full"
+                                class:list={[
+                                    pedido.estado1.nombre === 'ABIERTO'
+                                        ? 'bg-yellow-100 text-yellow-800'
+                                        : pedido.estado1.nombre === 'CERRADO'
+                                          ? 'bg-green-100 text-green-800'
+                                          : 'bg-gray-100 text-gray-800',
+                                ]}
+                            >
+                                {pedido.estado1.nombre}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-4 text-gray-700">
+                        <div>
+                            <p>
+                                <span class="font-medium">Tipo de entrega:</span
+                                >
+                                {pedido.entrega_tipo}
+                            </p>
+                            <p>
+                                <span class="font-medium">Fecha entrega:</span>
+                                {pedido.fecha_entrega}
+                            </p>
+                            <p>
+                                <span class="font-medium">Monto Total:</span>
+                                {pedido.moneda1?.simbolo}{pedido.monto}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p>
+                                <span class="font-medium">Cliente:</span>
+                                {pedido.socio_datos?.nombres}
+                                {pedido.socio_datos?.apellidos}
+                            </p>
+                            <p>
+                                <span class="font-medium">Documento:</span>
+                                {pedido.socio_datos?.doc_tipo}
+                                {pedido.socio_datos?.doc_numero}
+                            </p>
+                            <p>
+                                <span class="font-medium">Correo:</span>
+                                {pedido.socio_datos?.correo}
+                            </p>
+                            <p>
+                                <span class="font-medium">Teléfono:</span>
+                                {pedido.socio_datos?.telefono}
+                            </p>
+                            <p>
+                                <span class="font-medium"
+                                    >Condición de pago:</span
+                                >
+                                {pedido.pago_condicion1?.nombre}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr class="my-6" />
+
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                        Artículos del Pedido
+                    </h3>
+
+                    <div class="overflow-x-auto">
+                        <table
+                            class="w-full border border-gray-200 text-sm text-left text-gray-600"
+                        >
+                            <thead class="bg-gray-100 text-gray-800">
+                                <tr>
+                                    <th class="p-3 border-b">Artículo</th>
+                                    <th class="p-3 border-b text-right"
+                                        >Cantidad</th
+                                    >
+                                    <th class="p-3 border-b text-right"
+                                        >Precio Unitario</th
+                                    >
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    pedido.socio_pedido_items.map((item) => (
+                                        <tr class="border-b last:border-none">
+                                            <td class="p-3">
+                                                {item.articulo1?.nombre}
+                                            </td>
+                                            <td class="p-3 text-right">
+                                                {item.cantidad}
+                                            </td>
+                                            <td class="p-3 text-right">
+                                                {pedido.moneda1?.simbolo}
+                                                {item.pu}
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Etapas -->
+                <aside class="bg-white p-8 rounded-2xl shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6">
+                        Etapas del Pedido
+                    </h2>
+
+                    <ol class="space-y-4">
+                        {
+                            etapas.map((etapa) => {
+                                const activa = etapa.fecha !== null;
+                                return (
+                                    <li class="flex items-start gap-3">
+                                        <div
+                                            class={`w-4 h-4 rounded-full mt-1 ${
+                                                activa
+                                                    ? 'bg-green-500'
+                                                    : 'bg-gray-300'
+                                            }`}
+                                        />
+                                        <div>
+                                            <p
+                                                class={`font-medium ${activa ? 'text-green-700' : 'text-gray-500'}`}
+                                            >
+                                                {etapa.nombre}
+                                            </p>
+                                            {activa && (
+                                                <p class="text-xs text-gray-500">
+                                                    {new Date(
+                                                        etapa.fecha
+                                                    ).toLocaleString('es-PE', {
+                                                        dateStyle: 'short',
+                                                        timeStyle: 'short',
+                                                    })}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </li>
+                                );
+                            })
+                        }
+                    </ol>
+                </aside>
+            </div>
+        </div>
+    </main>
+</BaseLayout>

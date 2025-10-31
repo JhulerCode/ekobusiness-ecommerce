@@ -38,7 +38,7 @@
                                 />
 
                                 <JdInputPassword
-                                    label="Nueva contraseña"
+                                    :label="isLogin ? 'Contraseña' : 'Nueva contraseña'"
                                     :nec="true"
                                     v-model="form.contrasena"
                                 />
