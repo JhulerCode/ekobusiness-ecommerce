@@ -1121,21 +1121,25 @@ export default {
                 });
 
                 await KR.onSubmit(async (paymentData) => {
-                    const res1 = await post(
-                        `${urls.izipay}/validate-payment`,
-                        paymentData
-                    );
+                    this.shapeDatos();
 
-                    if (res1.code == 0) {
+                    const res1 = await post(`${urls.izipay}/validate-payment`, {
+                        paymentData,
+                        socio_pedido: this.form,
+                    });
+
+                    if (res1.code > 0) {
                         KR.closePopin();
-
-                        this.shapeDatos();
-                        this.loadingPagar = true;
-                        await post('socio_pedidos', this.form);
-                        this.loadingPagar = false;
+                        this.errors.general = res1.msg;
+                    } else if (res1.code == 0) {
+                        // this.shapeDatos();
+                        // this.loadingPagar = true;
+                        // await post('socio_pedidos', this.form);
+                        // this.loadingPagar = false;
 
                         this.paymentSuccess = true;
                         Cart.clear();
+                        KR.closePopin();
 
                         window.scrollTo({
                             top: 0,
@@ -1238,7 +1242,7 @@ export default {
         async getCustomerWallet() {
             this.loading = true;
             const res = await get(
-                `${urls.account}/customer-wallet/180aa6a7-520e-486b-802b-73c29c59f759`,
+                `${urls.account}/customer-wallet/${this.user.id}`,
                 null,
                 localStorage.getItem('token')
             );
@@ -1247,94 +1251,6 @@ export default {
             if (res.code == 0) {
                 this.user.wallet = res.data.tokens;
             }
-
-            // this.user.wallet = [
-            //     {
-            //         status: 'ACTIVE',
-            //         paymentMethodToken: 'a462638ad4814559bcb12bb24543ad82',
-            //         paymentMethodType: 'CARD',
-            //         creationDate: '2025-10-31T00:18:26+00:00',
-            //         cancellationDate: null,
-            //         customer: {
-            //             billingDetails: {
-            //                 address: null,
-            //                 category: null,
-            //                 cellPhoneNumber: null,
-            //                 city: null,
-            //                 country: null,
-            //                 district: null,
-            //                 firstName: null,
-            //                 identityCode: null,
-            //                 identityType: null,
-            //                 language: 'ES',
-            //                 lastName: null,
-            //                 phoneNumber: null,
-            //                 state: null,
-            //                 streetNumber: null,
-            //                 title: null,
-            //                 zipCode: null,
-            //                 legalName: null,
-            //                 _type: 'V4/Customer/BillingDetails',
-            //             },
-            //             email: 'jhuler1615@gmail.com',
-            //             reference: '180aa6a7-520e-486b-802b-73c29c59f759',
-            //             shippingDetails: {
-            //                 address: null,
-            //                 address2: null,
-            //                 category: null,
-            //                 city: null,
-            //                 country: null,
-            //                 deliveryCompanyName: null,
-            //                 district: null,
-            //                 firstName: null,
-            //                 identityCode: null,
-            //                 lastName: null,
-            //                 legalName: null,
-            //                 phoneNumber: null,
-            //                 shippingMethod: null,
-            //                 shippingSpeed: null,
-            //                 state: null,
-            //                 streetNumber: null,
-            //                 zipCode: null,
-            //                 _type: 'V4/Customer/ShippingDetails',
-            //             },
-            //             extraDetails: {
-            //                 browserAccept: null,
-            //                 fingerPrintId: null,
-            //                 ipAddress: '190.40.209.3',
-            //                 browserUserAgent: null,
-            //                 _type: 'V4/Customer/ExtraDetails',
-            //             },
-            //             shoppingCart: null,
-            //             _type: 'V4/Customer/Customer',
-            //         },
-            //         tokenDetails: {
-            //             authorizationResponse: {
-            //                 amount: null,
-            //                 currency: null,
-            //                 authorizationDate: '2025-10-31T00:18:26+00:00',
-            //                 authorizationNumber: '3f9c72',
-            //                 authorizationResult: null,
-            //                 authorizationMode: null,
-            //                 _type: 'V4/PaymentMethod/Details/Cards/CardAuthorizationResponse',
-            //             },
-            //             paymentSource: 'EC',
-            //             pan: '497011XXXXXX1003',
-            //             expiryMonth: 12,
-            //             expiryYear: 2025,
-            //             effectiveBrand: 'VISA',
-            //             issuerCode: null,
-            //             issuerName: null,
-            //             effectiveProductCode: null,
-            //             country: null,
-            //             mid: null,
-            //             authenticationResponse: null,
-            //             initialIssuerTransactionIdentifier: null,
-            //             _type: 'V4/PaymentMethod/Details/TokenDetails',
-            //         },
-            //         _type: 'V4/Token',
-            //     },
-            // ];
         },
 
         getCardBrandIcon(brand) {
