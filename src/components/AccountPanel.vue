@@ -38,8 +38,9 @@
             </aside>
 
             <!-- 🧾 Contenido dinámico -->
-            <main class="w-full lg:flex-1 bg-white rounded-2xl shadow-md p-6 sm:p-8 min-h-[400px]">
-
+            <main
+                class="w-full lg:flex-1 bg-white rounded-2xl shadow-md p-6 sm:p-8 min-h-[400px]"
+            >
                 <AccountPanelPerfil
                     v-if="active === 'perfil'"
                     :user="user"
@@ -58,18 +59,17 @@
                     :headText="menuText"
                 />
 
+                <AccountPanelPedidos
+                    v-else-if="active === 'pedidos'"
+                    :user="user"
+                    :headText="menuText"
+                />
+
                 <AccountPanelAutenticacion
                     v-else-if="active === 'autenticacion'"
                     :user="user"
                     :headText="menuText"
                 />
-
-                <div
-                    v-else-if="active === 'pedidos'"
-                    class="text-gray-600 text-center py-12"
-                >
-                    <p>No hay pedidos disponibles.</p>
-                </div>
             </main>
         </div>
     </div>
@@ -84,6 +84,7 @@ import { urls, get } from '../lib/api.js';
 import AccountPanelPerfil from './AccountPanelPerfil.vue';
 import AccountPanelDirecciones from './AccountPanelDirecciones.vue';
 import AccountPanelPagoMetodos from './AccountPanelPagoMetodos.vue';
+import AccountPanelPedidos from './AccountPanelPedidos.vue';
 import AccountPanelAutenticacion from './AccountPanelAutenticacion.vue';
 
 export default {
@@ -91,6 +92,7 @@ export default {
         AccountPanelPerfil,
         AccountPanelDirecciones,
         AccountPanelPagoMetodos,
+        AccountPanelPedidos,
         AccountPanelAutenticacion,
     },
     data() {
@@ -101,8 +103,8 @@ export default {
                 { key: 'perfil', label: 'Perfil' },
                 { key: 'direcciones', label: 'Direcciones' },
                 { key: 'pago_metodos', label: 'Medios de pago' },
-                { key: 'autenticacion', label: 'Autenticación' },
                 { key: 'pedidos', label: 'Pedidos' },
+                { key: 'autenticacion', label: 'Autenticación' },
             ],
             errors: {},
         };

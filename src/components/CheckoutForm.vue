@@ -221,6 +221,7 @@
                             <JdButton
                                 text="Ir a la Entrega"
                                 @click="continuarEntrega"
+                                :loading="loadingContinuarEntrega"
                             >
                                 <template v-slot:iRight>
                                     <ArrowRight />
@@ -283,6 +284,33 @@
                             v-if="form.entrega_tipo === 'envio'"
                             class="mt-6 grid md:grid-cols-2 gap-4"
                         >
+                            <template v-if="user.id">
+                                <JdInput
+                                    label="Nombre"
+                                    placeholder="Ej. Casa, Trabajo"
+                                    :nec="true"
+                                    v-model="form.direccion_nombre"
+                                    :error="errors.direccion_nombre"
+                                    v-if="form.new_direccion"
+                                />
+
+                                <JdSelect
+                                    label="Dirección guardada"
+                                    :lista="user.direcciones || []"
+                                    v-model="form.entrega_direccion_id"
+                                    :error="errors.doc_tipo"
+                                    @elegir="setDireccion"
+                                    v-else
+                                />
+
+                                <JdCheckBox
+                                    label="Nueva dirección"
+                                    :nec="true"
+                                    v-model="form.new_direccion"
+                                    @change="cleanDireccion"
+                                />
+                            </template>
+
                             <JdSelectQuery
                                 label="Distrito"
                                 :nec="true"
@@ -364,7 +392,11 @@
                                 </template>
                             </JdButton>
 
-                            <JdButton text="Ir al Pago" @click="continuarPago">
+                            <JdButton
+                                text="Ir al Pago"
+                                @click="continuarPago"
+                                :loading="loadingContinuarPago"
+                            >
                                 <template v-slot:iRight>
                                     <ArrowRight />
                                 </template>
@@ -502,6 +534,167 @@
                             @change="errors = {}"
                         />
 
+                        <div class="space-y-4 bg-gray-50 p-4 rounded-xl">
+                            <!-- Si el método es TARJETA -->
+                            <template v-if="form.pago_metodo === 'tarjeta'">
+                                <!-- <JdButton
+                                    text="Recargar wallet"
+                                    @click="getCustomerWallet"
+                                    :loading="loading"
+                                /> -->
+
+                                <p class="text-gray-500 text-sm">
+                                    Elige una tarjeta guardada o ingresa una
+                                    nueva.
+                                </p>
+
+                                <div class="grid gap-3">
+                                    <!-- Tarjetas guardadas -->
+                                    <div
+                                        v-for="(card, i) in user.wallet"
+                                        :key="i"
+                                        class="radio justify-between p-4 rounded-xl border border-gray-200"
+                                        :class="{
+                                            'bg-gray-50':
+                                                form.paymentMethodToken ===
+                                                card.paymentMethodToken,
+                                        }"
+                                        @click="
+                                            form.paymentMethodToken =
+                                                card.paymentMethodToken
+                                        "
+                                    >
+                                        <div class="flex items-center gap-3">
+                                            <img
+                                                :src="
+                                                    getCardBrandIcon(
+                                                        card.tokenDetails
+                                                            .effectiveBrand
+                                                    )
+                                                "
+                                                class="w-8 h-8"
+                                                alt="card brand"
+                                            />
+                                            <div>
+                                                <p
+                                                    class="font-medium text-gray-800"
+                                                >
+                                                    {{ card.tokenDetails.pan }}
+                                                </p>
+                                                <p
+                                                    class="text-sm text-gray-500"
+                                                >
+                                                    Expira el
+                                                    {{
+                                                        card.tokenDetails
+                                                            .expiryMonth
+                                                    }}/{{
+                                                        card.tokenDetails
+                                                            .expiryYear
+                                                    }}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <input
+                                            type="radio"
+                                            :checked="
+                                                form.paymentMethodToken ===
+                                                card.paymentMethodToken
+                                            "
+                                        />
+                                    </div>
+
+                                    <!-- Nueva tarjeta -->
+                                    <div
+                                        class="radio justify-between p-4 rounded-xl border border-gray-200"
+                                        :class="{
+                                            'bg-gray-50':
+                                                form.paymentMethodToken ===
+                                                'nueva',
+                                        }"
+                                        @click="
+                                            form.paymentMethodToken = 'nueva'
+                                        "
+                                    >
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center"
+                                            >
+                                                <iPlus
+                                                    class="w-4 h-4 text-gray-600"
+                                                />
+                                            </div>
+                                            <p
+                                                class="font-medium text-gray-800"
+                                            >
+                                                Usar nueva tarjeta
+                                            </p>
+                                        </div>
+                                        <input
+                                            type="radio"
+                                            :checked="
+                                                form.paymentMethodToken ===
+                                                'nueva'
+                                            "
+                                        />
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Si el método es YAPE -->
+                            <template v-else-if="form.pago_metodo === 'yape'">
+                                <p class="text-gray-500 text-sm">
+                                    Escanea nuestro QR con tu app Yape y luego
+                                    ingresa el código de verificación.
+                                </p>
+
+                                <div
+                                    class="flex flex-col items-center gap-4 md:flex-row md:justify-between bg-[#742284] rounded-md p-4"
+                                >
+                                    <img
+                                        :src="qrYapeUrl"
+                                        alt="QR de Yape"
+                                        class="w-48 h-48 rounded-xl"
+                                    />
+
+                                    <div
+                                        class="text-white text-sm flex flex-col justify-center items-center text-center space-y-4"
+                                    >
+                                        <img
+                                            :src="yapeLogo"
+                                            alt="Yape logo"
+                                            class="w-20 h-20 rounded-xl"
+                                        />
+
+                                        <div>
+                                            <b>Empresa:</b> {{ companyName
+                                            }}<br />
+                                            <b>RUC:</b> {{ companyRUC }}<br />
+                                            <b>Celular Yape:</b> {{ yapeNumber
+                                            }}<br />
+                                        </div>
+
+                                        <a
+                                            class="p-2 rounded-md bg-[#10cbb4] w-full"
+                                            :href="`tel:+51${yapeNumber}`"
+                                        >
+                                            Añadir a contacto
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Código de verificación -->
+                                <JdInput
+                                    label="Código de verificación"
+                                    :nec="true"
+                                    v-model="form.yape_codigo"
+                                    :error="errors.yape_codigo"
+                                    placeholder="Ejemplo: 123456"
+                                />
+                            </template>
+                        </div>
+
                         <!-- Botones -->
                         <div class="flex justify-between">
                             <JdButton text="Volver" tipo="2" @click="prevStep">
@@ -514,7 +707,7 @@
                                 <JdButton
                                     text="Ir a pagar"
                                     @click="pagar"
-                                    :loading="loading"
+                                    :loading="loadingPagar"
                                 />
 
                                 <p v-if="errors.general" class="input-error">
@@ -593,10 +786,6 @@
                     <span>S/ {{ total.toFixed(2) }}</span>
                 </div>
             </div>
-
-            <div>
-                {{ loading }}
-            </div>
         </div>
     </section>
 
@@ -609,6 +798,8 @@
             <button class="kr-payment-button"></button>
         </div>
     </div>
+
+    <LoadingSpin v-if="loading" />
 </template>
 
 <script>
@@ -621,9 +812,20 @@ import JdCheckBox from '../components/JdCheckBox.vue';
 import JdRadio from '../components/JdRadio.vue';
 import JdTextArea from '../components/JdTextArea.vue';
 import JdSelectQuery from '../components/JdSelectQuery.vue';
+import LoadingSpin from './LoadingSpin.vue';
+import iPlus from '../assets/icons/plus.vue';
 
+import visaUrl from '../assets/icons/visa.svg?url';
+import mcUrl from '../assets/icons/mastercard.svg?url';
+import dinersUrl from '../assets/icons/diners-club.svg?url';
+import amexUrl from '../assets/icons/american-express.svg?url';
+import genericUrl from '../assets/icons/card-generic.svg?url';
+import qrYapeUrl from '../assets/qr-yape-eko-business.jpg?url';
+import yapeLogo from '../assets/icons/yape-logo.svg?url';
+
+import { yapeNumber, companyName, companyRUC } from '../lib/empresa.js';
 import { Cart } from '../lib/cart.js';
-import { urls, get, post } from '../lib/api.js';
+import { urls, get, post, patch } from '../lib/api.js';
 import { genId } from '../lib/mine.js';
 
 import KRGlue from '@lyracom/embedded-form-glue';
@@ -639,6 +841,8 @@ export default {
         JdRadio,
         JdTextArea,
         JdSelectQuery,
+        LoadingSpin,
+        iPlus,
     },
     props: {
         pago_metodos: { type: Array, default: () => [] },
@@ -648,8 +852,18 @@ export default {
     },
     data() {
         return {
+            yapeNumber,
+            companyName,
+            companyRUC,
+            qrYapeUrl,
+            yapeLogo,
+
+            user: {},
             step: 1,
             paymentSuccess: false,
+            loadingContinuarEntrega: false,
+            loadingContinuarPago: false,
+            loadingPagar: false,
             loading: false,
 
             form: {
@@ -687,6 +901,7 @@ export default {
     },
     mounted() {
         this.injectarJsIzipay();
+        this.validateSession();
 
         this.items = Cart.get();
 
@@ -701,6 +916,24 @@ export default {
             script.src =
                 'https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/neon.js';
             document.head.appendChild(script);
+        },
+        async validateSession() {
+            const user_token = localStorage.getItem('token');
+            if (!user_token) return;
+
+            this.loading = true;
+            const res = await get(`${urls.account}/verify`, null, user_token);
+            this.loading = false;
+
+            if (res.code != 0) return;
+
+            this.user = res.data;
+            this.form.socio_datos.nombres = this.user.nombres;
+            this.form.socio_datos.apellidos = this.user.apellidos;
+            this.form.socio_datos.doc_tipo = this.user.doc_tipo;
+            this.form.socio_datos.doc_numero = this.user.doc_numero;
+            this.form.socio_datos.correo = this.user.correo;
+            this.form.socio_datos.telefono = this.user.telefono1;
         },
 
         validateForm1() {
@@ -726,8 +959,27 @@ export default {
 
             return Object.values(this.errors).every((e) => !e);
         },
-        continuarEntrega() {
+        async continuarEntrega() {
             if (!this.validateForm1()) return;
+
+            if (this.user.id) {
+                const send = {
+                    id: this.user.id,
+                    tipo: 2,
+                    comes_from: 'ecommerce',
+                    user_token: localStorage.getItem('token'),
+                    nombres: this.form.socio_datos.nombres,
+                    apellidos: this.form.socio_datos.apellidos,
+                    doc_tipo: this.form.socio_datos.doc_tipo,
+                    doc_numero: this.form.socio_datos.doc_numero,
+                    correo: this.form.socio_datos.correo,
+                    telefono1: this.form.socio_datos.telefono,
+                };
+
+                this.loadingContinuarEntrega = true;
+                await patch('account', send);
+                this.loadingContinuarEntrega = false;
+            }
 
             this.step = 2;
             this.scrollToForm('seccionForm2');
@@ -737,6 +989,14 @@ export default {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
             if (this.form.entrega_tipo === 'envio') {
+                if (this.user.id) {
+                    if (this.form.new_direccion) {
+                        if (!this.form.direccion_nombre)
+                            this.errors.direccion_nombre =
+                                'Este campo es obligatorio.';
+                    }
+                }
+
                 if (!this.form.entrega_ubigeo)
                     this.errors.entrega_ubigeo = 'Este campo es obligatorio.';
                 if (!this.form.direccion_entrega)
@@ -754,8 +1014,46 @@ export default {
 
             return Object.values(this.errors).every((e) => !e);
         },
-        continuarPago() {
+        async continuarPago() {
             if (!this.validateForm2()) return;
+
+            if (this.user.id) {
+                if (this.form.new_direccion) {
+                    const direcciones = JSON.parse(
+                        JSON.stringify(this.user.direcciones)
+                    );
+                    const newDireccionId = genId();
+                    direcciones.push({
+                        id: newDireccionId,
+                        nombre: this.form.direccion_nombre,
+                        ubigeo: this.form.entrega_ubigeo,
+                        ubigeo1: this.form.entrega_ubigeo1,
+                        direccion: this.form.direccion_entrega,
+                        numero: this.form.entrega_direccion_datos.numero,
+                        piso: this.form.entrega_direccion_datos.piso,
+                        referencia:
+                            this.form.entrega_direccion_datos.referencia,
+                    });
+                    const send = {
+                        id: this.user.id,
+                        tipo: 2,
+                        comes_from: 'ecommerce',
+                        user_token: localStorage.getItem('token'),
+                        direcciones,
+                    };
+                    this.loadingContinuarPago = true;
+                    const res = await patch('account', send);
+                    this.loadingContinuarPago = false;
+                    if (res.code == 0) {
+                        this.user.direcciones = res.data.direcciones;
+                        this.form.new_direccion = false;
+                        this.form.entrega_direccion_id = newDireccionId;
+                    }
+                }
+                if (!this.user.wallet) {
+                    await this.getCustomerWallet();
+                }
+            }
 
             this.step = 3;
             this.scrollToForm('seccionForm3');
@@ -782,7 +1080,6 @@ export default {
             this.form.tipo = 2;
             this.form.origin = 'ecommerce';
             this.form.fecha = new Date().toISOString().split('T')[0];
-            this.form.codigo = genId();
             this.form.pagado = true;
 
             this.form.pago_condicion = '1';
@@ -797,16 +1094,19 @@ export default {
             const send = {
                 monto: this.total.toFixed(2),
                 correo: this.form.socio_datos.correo,
+                user_id: this.user.id,
+                paymentMethodToken: this.form.paymentMethodToken,
             };
 
-            this.loading = true;
+            this.loadingPagar = true;
             const res = await post(`${urls.izipay}/create-payment`, send);
-            this.loading = false;
+            this.loadingPagar = false;
 
             if (res.code == 1) {
                 this.errors.general = res.msg;
             } else if (res.code == 0) {
-                this.loading = true;
+                this.form.codigo = res.orderId;
+                this.loadingPagar = true;
                 const endpoint = 'https://api.micuentaweb.pe';
                 const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY;
 
@@ -818,7 +1118,7 @@ export default {
                 });
 
                 await KR.onFormCreated(() => {
-                    this.loading = false;
+                    this.loadingPagar = false;
                 });
 
                 await KR.onSubmit(async (paymentData) => {
@@ -831,9 +1131,9 @@ export default {
                         KR.closePopin();
 
                         this.shapeDatos();
-                        this.loading = true;
+                        this.loadingPagar = true;
                         await post('socio_pedidos', this.form);
-                        this.loading = false;
+                        this.loadingPagar = false;
 
                         this.paymentSuccess = true;
                         Cart.clear();
@@ -869,11 +1169,12 @@ export default {
         },
         scrollToForm(id) {
             setTimeout(() => {
-                this.$refs[id].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'end',
-                    // top: 0,
-                });
+                const el = this.$refs[id];
+                if (el) {
+                    const offset =
+                        el.getBoundingClientRect().top + window.scrollY - 80;
+                    window.scrollTo({ top: offset, behavior: 'smooth' });
+                }
             }, 100);
         },
 
@@ -911,6 +1212,144 @@ export default {
         },
         irInicio() {
             window.location.href = '/';
+        },
+
+        setDireccion(item) {
+            this.ubigeos = [{ ...item.ubigeo1 }];
+
+            this.form.entrega_ubigeo = item.ubigeo1.id;
+            this.form.direccion_entrega = item.direccion;
+            this.form.entrega_direccion_datos.numero = item.numero;
+            this.form.entrega_direccion_datos.piso = item.piso;
+            this.form.entrega_direccion_datos.referencia = item.referencia;
+        },
+        cleanDireccion() {
+            this.ubigeos = [];
+
+            this.form.direccion_nombre = null;
+            this.form.entrega_direccion_id = null;
+
+            this.form.entrega_ubigeo = '';
+            this.form.direccion_entrega = '';
+            this.form.entrega_direccion_datos.numero = '';
+            this.form.entrega_direccion_datos.piso = '';
+            this.form.entrega_direccion_datos.referencia = '';
+        },
+
+        async getCustomerWallet() {
+            this.loading = true;
+            const res = await get(
+                `${urls.account}/customer-wallet/180aa6a7-520e-486b-802b-73c29c59f759`,
+                null,
+                localStorage.getItem('token')
+            );
+            this.loading = false;
+
+            if (res.code == 0) {
+                this.user.wallet = res.data.tokens;
+            }
+
+            // this.user.wallet = [
+            //     {
+            //         status: 'ACTIVE',
+            //         paymentMethodToken: 'a462638ad4814559bcb12bb24543ad82',
+            //         paymentMethodType: 'CARD',
+            //         creationDate: '2025-10-31T00:18:26+00:00',
+            //         cancellationDate: null,
+            //         customer: {
+            //             billingDetails: {
+            //                 address: null,
+            //                 category: null,
+            //                 cellPhoneNumber: null,
+            //                 city: null,
+            //                 country: null,
+            //                 district: null,
+            //                 firstName: null,
+            //                 identityCode: null,
+            //                 identityType: null,
+            //                 language: 'ES',
+            //                 lastName: null,
+            //                 phoneNumber: null,
+            //                 state: null,
+            //                 streetNumber: null,
+            //                 title: null,
+            //                 zipCode: null,
+            //                 legalName: null,
+            //                 _type: 'V4/Customer/BillingDetails',
+            //             },
+            //             email: 'jhuler1615@gmail.com',
+            //             reference: '180aa6a7-520e-486b-802b-73c29c59f759',
+            //             shippingDetails: {
+            //                 address: null,
+            //                 address2: null,
+            //                 category: null,
+            //                 city: null,
+            //                 country: null,
+            //                 deliveryCompanyName: null,
+            //                 district: null,
+            //                 firstName: null,
+            //                 identityCode: null,
+            //                 lastName: null,
+            //                 legalName: null,
+            //                 phoneNumber: null,
+            //                 shippingMethod: null,
+            //                 shippingSpeed: null,
+            //                 state: null,
+            //                 streetNumber: null,
+            //                 zipCode: null,
+            //                 _type: 'V4/Customer/ShippingDetails',
+            //             },
+            //             extraDetails: {
+            //                 browserAccept: null,
+            //                 fingerPrintId: null,
+            //                 ipAddress: '190.40.209.3',
+            //                 browserUserAgent: null,
+            //                 _type: 'V4/Customer/ExtraDetails',
+            //             },
+            //             shoppingCart: null,
+            //             _type: 'V4/Customer/Customer',
+            //         },
+            //         tokenDetails: {
+            //             authorizationResponse: {
+            //                 amount: null,
+            //                 currency: null,
+            //                 authorizationDate: '2025-10-31T00:18:26+00:00',
+            //                 authorizationNumber: '3f9c72',
+            //                 authorizationResult: null,
+            //                 authorizationMode: null,
+            //                 _type: 'V4/PaymentMethod/Details/Cards/CardAuthorizationResponse',
+            //             },
+            //             paymentSource: 'EC',
+            //             pan: '497011XXXXXX1003',
+            //             expiryMonth: 12,
+            //             expiryYear: 2025,
+            //             effectiveBrand: 'VISA',
+            //             issuerCode: null,
+            //             issuerName: null,
+            //             effectiveProductCode: null,
+            //             country: null,
+            //             mid: null,
+            //             authenticationResponse: null,
+            //             initialIssuerTransactionIdentifier: null,
+            //             _type: 'V4/PaymentMethod/Details/TokenDetails',
+            //         },
+            //         _type: 'V4/Token',
+            //     },
+            // ];
+        },
+
+        getCardBrandIcon(brand) {
+            if (!brand) return genericUrl;
+            const b = brand.toUpperCase().trim();
+            const map = {
+                VISA: visaUrl,
+                MASTERCARD: mcUrl,
+                'DINERS CLUB': dinersUrl,
+                DINERS: dinersUrl,
+                'AMERICAN EXPRESS': amexUrl,
+                AMEX: amexUrl,
+            };
+            return map[b] || genericUrl;
         },
     },
 };

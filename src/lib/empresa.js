@@ -12,6 +12,7 @@ const whatsappNumber = '+51 999 888 777'
 const whatsappUrl = 'https://wa.me/51999888777'
 const emailSoporte = 'soporte@sunkatea.com'
 const companyGerente = 'Jaime Pinedo Zafra'
+const yapeNumber = '913621456'
 
 export {
     companyName,
@@ -26,4 +27,5 @@ export {
     whatsappNumber,
     whatsappUrl,
     emailSoporte,
+    yapeNumber,
 }

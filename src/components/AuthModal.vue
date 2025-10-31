@@ -1,18 +1,18 @@
 <template>
     <div>
         <div>
-            <UserIcon
-                v-if="!user"
-                @click="openModal('login')"
-                class="cursor-pointer"
-            />
-
-            <a v-else href="/account" class="flex items-center">
+            <a v-if="user.id" href="/account" class="flex items-center">
                 <UserIcon />
                 <div>
                     <span class="text-xs"> Hola, {{ userName }} </span>
                 </div>
             </a>
+
+            <UserIcon
+                v-else
+                @click="openModal('login')"
+                class="cursor-pointer"
+            />
         </div>
 
         <transition name="fade">
@@ -123,7 +123,7 @@ export default {
             showPassword: false,
             showConfirm: false,
             isLoading: false,
-            user: null,
+            user: {},
         };
     },
     methods: {
@@ -185,9 +185,11 @@ export default {
                     this.errors.general = res.msg;
                 } else if (res.code == 0) {
                     this.user = { correo: this.form.correo };
+                    localStorage.setItem('login-correo', this.form.correo);
                     localStorage.setItem('token', res.token);
                     this.closeModal();
-                    window.location.href = '/account';
+                    window.location.reload();
+                    // window.location.href = '/account';
                 }
             } else {
                 const res = await post(`${urls.auth}/register`, this.form);
@@ -220,11 +222,13 @@ export default {
         },
     },
     mounted() {
+        const correoStored = localStorage.getItem('login-correo');
+        if (correoStored) this.form.correo = correoStored;
         this.validateSession();
     },
     computed: {
         userName() {
-            return this.user ? this.user.correo.split('@')[0] : '';
+            return this.user.correo ? this.user.correo.split('@')[0] : '';
         },
     },
 };

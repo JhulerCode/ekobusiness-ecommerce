@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <div v-if="!disabled" class="relative">
+        <div v-if="!disabled" class="relative z-40">
             <div
                 ref="right"
                 class="relative input overflow-x-auto whitespace-nowrap no-scrollbar cursor-pointer"

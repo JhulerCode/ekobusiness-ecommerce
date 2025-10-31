@@ -122,3 +122,7 @@ textarea {
 .modal main {
     @apply overflow-y-auto flex-1 p-6;
 }
+
+.kr-popin-button {
+    visibility: hidden !important;
+}

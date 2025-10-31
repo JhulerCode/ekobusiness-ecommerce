@@ -188,7 +188,6 @@ import Star from '../assets/icons/star.vue';
 import LoadingSpin from './LoadingSpin.vue';
 
 import { urls, get, patch } from '../lib/api.js';
-import { genId } from '../lib/mine.js';
 
 export default {
     components: {
@@ -220,6 +219,23 @@ export default {
         };
     },
     methods: {
+        async loadPedidos() {
+            this.loading = true;
+
+            const qry = {
+                fecha,
+                codigo,
+                monto,
+                estado,
+            };
+
+            const res = await get(
+                'socio_pedidos',
+                { qry },
+                localStorage.getItem('token')
+            );
+        },
+
         openModal() {
             this.showAddModal = true;
             document.body.style.overflow = 'hidden'; // evita scroll en fondo
@@ -301,7 +317,7 @@ export default {
             if (this.form.principal == true) {
                 direcciones.forEach((d) => (d.principal = false));
             }
-            direcciones.push({ ...this.form, id: genId() });
+            direcciones.push({ ...this.form });
 
             const send = this.shapeDatos(direcciones);
 
