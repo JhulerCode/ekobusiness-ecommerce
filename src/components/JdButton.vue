@@ -2,10 +2,10 @@
     <div
         :title="title"
         :class="[
-            'px-4 py-1.5 rounded-lg cursor-pointer flex justify-center items-center gap-2 border h-fit w-fit',
+            'button',
             tipo == 1
-                ? 'border-black bg-black text-white hover:bg-gray-800'
-                : 'border-gray-300 hover:text-blac',
+                ? 'button1'
+                : 'button2',
         ]"
     >
         <LoadingSpin scale="0.7" v-if="loading" />

@@ -1,8 +1,5 @@
 <template>
-    <section
-        class="max-w-6xl mx-auto px-4 py-12 gap-10"
-        v-if="paymentSuccess == true"
-    >
+    <section class="max-w-6xl mx-auto px-4 py-12 gap-10" v-if="paymentSuccess == true">
         <div
             class="flex flex-col items-center justify-center text-center p-8 bg-white rounded-2xl shadow-md border border-gray-100 animate-fade-in"
         >
@@ -21,32 +18,25 @@
                 />
             </svg>
 
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-                ¡Pago confirmado!
-            </h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">¡Pago confirmado!</h2>
 
             <p class="text-gray-600 mb-6">
-                Tu pago ha sido procesado exitosamente. En unos momentos
-                recibirás un correo con los detalles de tu compra.
+                Tu pago ha sido procesado exitosamente. En unos momentos recibirás un correo con los
+                detalles de tu compra.
             </p>
 
             <div class="flex gap-4">
-                <JdButton text="Ir al inicio" tipo="2" @click="irInicio" />
-                <JdButton text="Ver mi pedido" @click="irPedido" />
+                <a href="/" class="button button2"> Ir al inicio </a>
+                <a :href="`/pedido/${form.id}a`" class="button button1"> Ver productos </a>
             </div>
         </div>
     </section>
 
-    <section
-        class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-10"
-        v-else
-    >
+    <section class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-10" v-else>
         <!-- Columna izquierda: pasos -->
         <div class="md:col-span-2 flex md:flex-row flex-col gap-10">
             <!-- Encabezado -->
-            <div
-                class="md:sticky md:top-20 md:h-fit flex gap-2 justify-between md:flex-col"
-            >
+            <div class="md:sticky md:top-20 md:h-fit flex gap-2 justify-between md:flex-col">
                 <!-- Paso 1 -->
                 <div class="flex flex-col md:flex-row gap-2 items-center">
                     <div
@@ -140,14 +130,11 @@
                     <!-- Formulario activo -->
                     <div v-if="step === 1" class="space-y-6">
                         <p class="text-gray-600">
-                            Por favor completa con tu información personal para
-                            poder finalizar la compra.
+                            Por favor completa con tu información personal para poder finalizar la
+                            compra.
                         </p>
 
-                        <div
-                            class="grid md:grid-cols-2 gap-4"
-                            v-if="form.socio_datos"
-                        >
+                        <div class="grid md:grid-cols-2 gap-4" v-if="form.socio_datos">
                             <JdInput
                                 label="Correo"
                                 :nec="true"
@@ -210,8 +197,8 @@
                                     >
                                         Política de Privacidad de SUNKA
                                     </a>
-                                    y declaro haber sido informado sobre el
-                                    tratamiento de mis datos personales.
+                                    y declaro haber sido informado sobre el tratamiento de mis datos
+                                    personales.
                                 </span>
                             </JdCheckBox>
                         </div>
@@ -298,7 +285,7 @@
                                     label="Dirección guardada"
                                     :lista="user.direcciones || []"
                                     v-model="form.entrega_direccion_id"
-                                    :error="errors.doc_tipo"
+                                    :error="errors.entrega_direccion_id"
                                     @elegir="setDireccion"
                                     v-else
                                 />
@@ -346,29 +333,18 @@
                             <JdTextArea
                                 label="Referencia"
                                 :nec="true"
-                                v-model="
-                                    form.entrega_direccion_datos.referencia
-                                "
-                                :error="
-                                    errors.entrega_direccion_datos_referencia
-                                "
+                                v-model="form.entrega_direccion_datos.referencia"
+                                :error="errors.entrega_direccion_datos_referencia"
                                 class="col-span-2"
                             />
                         </div>
 
                         <!-- Retiro en tienda -->
-                        <div
-                            v-if="form.entrega_tipo === 'retiro'"
-                            class="space-y-5 mt-6"
-                        >
+                        <div v-if="form.entrega_tipo === 'retiro'" class="space-y-5 mt-6">
                             <div>
                                 <label class="label">Punto de retiro</label>
-                                <div
-                                    class="border border-gray-200 rounded-xl p-4 bg-white"
-                                >
-                                    <p class="font-medium">
-                                        Oficina EkoBusiness
-                                    </p>
+                                <div class="border border-gray-200 rounded-xl p-4 bg-white">
+                                    <p class="font-medium">Oficina EkoBusiness</p>
                                     <p class="text-sm text-gray-600">
                                         Av. Mariscal La Mar 638, Miraflores
                                     </p>
@@ -412,62 +388,42 @@
                         <div>
                             <template v-if="form.entrega_tipo === 'envio'">
                                 <p>
-                                    <span class="font-medium"
-                                        >Tipo de entrega:</span
-                                    >
+                                    <span class="font-medium">Tipo de entrega:</span>
                                     Envío a domicilio
                                 </p>
                                 <p>
                                     <span class="font-medium">Dirección:</span>
                                     {{ form.direccion_entrega }}
-                                    <template
-                                        v-if="
-                                            form.entrega_direccion_datos.numero
-                                        "
-                                    >
+                                    <template v-if="form.entrega_direccion_datos.numero">
                                         Nro:
-                                        {{
-                                            form.entrega_direccion_datos.numero
-                                        }}
+                                        {{ form.entrega_direccion_datos.numero }}
                                     </template>
-                                    <template
-                                        v-if="form.entrega_direccion_datos.piso"
-                                    >
+                                    <template v-if="form.entrega_direccion_datos.piso">
                                         Piso:
                                         {{ form.entrega_direccion_datos.piso }}
                                     </template>
                                 </p>
-                                <p v-if="form.entrega_ubigeo1">
+                                <p v-if="form.entrega_direccion_datos.entrega_ubigeo1">
                                     <span class="font-medium">Distrito:</span>
-                                    {{ form.entrega_ubigeo1.nombre }}
+                                    {{ form.entrega_direccion_datos.entrega_ubigeo1.nombre }}
                                 </p>
                                 <p>
                                     <span class="font-medium">Referencia:</span>
-                                    {{
-                                        form.entrega_direccion_datos.referencia
-                                    }}
+                                    {{ form.entrega_direccion_datos.referencia }}
                                 </p>
                             </template>
 
-                            <template
-                                v-else-if="form.entrega_tipo === 'retiro'"
-                            >
+                            <template v-else-if="form.entrega_tipo === 'retiro'">
                                 <p>
-                                    <span class="font-medium"
-                                        >Tipo de entrega:</span
-                                    >
+                                    <span class="font-medium">Tipo de entrega:</span>
                                     Retiro en tienda
                                 </p>
                                 <p>
-                                    <span class="font-medium"
-                                        >Punto de retiro:</span
-                                    >
+                                    <span class="font-medium">Punto de retiro:</span>
                                     Oficina EkoBusiness
                                 </p>
                                 <p>
-                                    <span class="font-medium"
-                                        >Fecha de retiro:</span
-                                    >
+                                    <span class="font-medium">Fecha de retiro:</span>
                                     {{ form.fecha_entrega }}
                                 </p>
                             </template>
@@ -544,8 +500,7 @@
                                 /> -->
 
                                 <p class="text-gray-500 text-sm">
-                                    Elige una tarjeta guardada o ingresa una
-                                    nueva.
+                                    Elige una tarjeta guardada o ingresa una nueva.
                                 </p>
 
                                 <div class="grid gap-3">
@@ -556,41 +511,28 @@
                                         class="radio justify-between p-4 rounded-xl border border-gray-200"
                                         :class="{
                                             'bg-gray-50':
-                                                form.paymentMethodToken ===
-                                                card.paymentMethodToken,
+                                                form.paymentMethodToken === card.paymentMethodToken,
                                         }"
-                                        @click="
-                                            form.paymentMethodToken =
-                                                card.paymentMethodToken
-                                        "
+                                        @click="form.paymentMethodToken = card.paymentMethodToken"
                                     >
                                         <div class="flex items-center gap-3">
                                             <img
                                                 :src="
                                                     getCardBrandIcon(
-                                                        card.tokenDetails
-                                                            .effectiveBrand
+                                                        card.tokenDetails.effectiveBrand
                                                     )
                                                 "
                                                 class="w-8 h-8"
                                                 alt="card brand"
                                             />
                                             <div>
-                                                <p
-                                                    class="font-medium text-gray-800"
-                                                >
+                                                <p class="font-medium text-gray-800">
                                                     {{ card.tokenDetails.pan }}
                                                 </p>
-                                                <p
-                                                    class="text-sm text-gray-500"
-                                                >
+                                                <p class="text-sm text-gray-500">
                                                     Expira el
-                                                    {{
-                                                        card.tokenDetails
-                                                            .expiryMonth
-                                                    }}/{{
-                                                        card.tokenDetails
-                                                            .expiryYear
+                                                    {{ card.tokenDetails.expiryMonth }}/{{
+                                                        card.tokenDetails.expiryYear
                                                     }}
                                                 </p>
                                             </div>
@@ -599,8 +541,7 @@
                                         <input
                                             type="radio"
                                             :checked="
-                                                form.paymentMethodToken ===
-                                                card.paymentMethodToken
+                                                form.paymentMethodToken === card.paymentMethodToken
                                             "
                                         />
                                     </div>
@@ -609,34 +550,23 @@
                                     <div
                                         class="radio justify-between p-4 rounded-xl border border-gray-200"
                                         :class="{
-                                            'bg-gray-50':
-                                                form.paymentMethodToken ===
-                                                'nueva',
+                                            'bg-gray-50': form.paymentMethodToken === 'nueva',
                                         }"
-                                        @click="
-                                            form.paymentMethodToken = 'nueva'
-                                        "
+                                        @click="form.paymentMethodToken = 'nueva'"
                                     >
                                         <div class="flex items-center gap-3">
                                             <div
                                                 class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center"
                                             >
-                                                <iPlus
-                                                    class="w-4 h-4 text-gray-600"
-                                                />
+                                                <iPlus class="w-4 h-4 text-gray-600" />
                                             </div>
-                                            <p
-                                                class="font-medium text-gray-800"
-                                            >
+                                            <p class="font-medium text-gray-800">
                                                 Usar nueva tarjeta
                                             </p>
                                         </div>
                                         <input
                                             type="radio"
-                                            :checked="
-                                                form.paymentMethodToken ===
-                                                'nueva'
-                                            "
+                                            :checked="form.paymentMethodToken === 'nueva'"
                                         />
                                     </div>
                                 </div>
@@ -645,8 +575,8 @@
                             <!-- Si el método es YAPE -->
                             <template v-else-if="form.pago_metodo === 'yape'">
                                 <p class="text-gray-500 text-sm">
-                                    Escanea nuestro QR con tu app Yape y luego
-                                    ingresa el código de verificación.
+                                    Escanea nuestro QR con tu app Yape y luego ingresa el código de
+                                    verificación.
                                 </p>
 
                                 <div
@@ -668,11 +598,9 @@
                                         />
 
                                         <div>
-                                            <b>Empresa:</b> {{ companyName
-                                            }}<br />
+                                            <b>Empresa:</b> {{ companyName }}<br />
                                             <b>RUC:</b> {{ companyRUC }}<br />
-                                            <b>Celular Yape:</b> {{ yapeNumber
-                                            }}<br />
+                                            <b>Celular Yape:</b> {{ yapeNumber }}<br />
                                         </div>
 
                                         <a
@@ -721,12 +649,8 @@
         </div>
 
         <!-- Columna derecha: Resumen -->
-        <div
-            class="border border-gray-200 rounded-2xl p-6 h-fit sticky top-20 shadow-sm"
-        >
-            <h2
-                class="text-xl font-semibold mb-6 text-gray-900 border-b border-gray-200 pb-3"
-            >
+        <div class="border border-gray-200 rounded-2xl p-6 h-fit sticky top-20 shadow-sm">
+            <h2 class="text-xl font-semibold mb-6 text-gray-900 border-b border-gray-200 pb-3">
                 Resumen del pedido
             </h2>
 
@@ -743,16 +667,12 @@
                         class="w-16 h-16 object-cover rounded-lg border border-gray-200"
                     />
                     <div class="flex-1">
-                        <p
-                            class="text-sm font-medium text-gray-800 leading-tight"
-                        >
+                        <p class="text-sm font-medium text-gray-800 leading-tight">
                             {{ item.nombre }}
                         </p>
 
                         <div class="flex justify-between">
-                            <p class="text-xs text-gray-500">
-                                Cantidad: {{ item.cantidad }}
-                            </p>
+                            <p class="text-xs text-gray-500">Cantidad: {{ item.cantidad }}</p>
 
                             <p class="text-sm font-semibold text-gray-700 mt-1">
                                 S/
@@ -772,9 +692,7 @@
                 <div class="flex justify-between">
                     <span>Costo de envío</span>
                     <span>
-                        <span v-if="costoEnvio > 0"
-                            >S/ {{ costoEnvio.toFixed(2) }}</span
-                        >
+                        <span v-if="costoEnvio > 0">S/ {{ costoEnvio.toFixed(2) }}</span>
                         <span v-else>Gratis</span>
                     </span>
                 </div>
@@ -803,32 +721,32 @@
 </template>
 
 <script>
-import ArrowLeft from '../assets/icons/arrow-left.vue';
-import ArrowRight from '../assets/icons/arrow-right.vue';
-import JdButton from '../components/JdButton.vue';
-import JdInput from '../components/JdInput.vue';
-import JdSelect from '../components/JdSelect.vue';
-import JdCheckBox from '../components/JdCheckBox.vue';
-import JdRadio from '../components/JdRadio.vue';
-import JdTextArea from '../components/JdTextArea.vue';
-import JdSelectQuery from '../components/JdSelectQuery.vue';
-import LoadingSpin from './LoadingSpin.vue';
-import iPlus from '../assets/icons/plus.vue';
+import ArrowLeft from "../assets/icons/arrow-left.vue";
+import ArrowRight from "../assets/icons/arrow-right.vue";
+import JdButton from "../components/JdButton.vue";
+import JdInput from "../components/JdInput.vue";
+import JdSelect from "../components/JdSelect.vue";
+import JdCheckBox from "../components/JdCheckBox.vue";
+import JdRadio from "../components/JdRadio.vue";
+import JdTextArea from "../components/JdTextArea.vue";
+import JdSelectQuery from "../components/JdSelectQuery.vue";
+import LoadingSpin from "./LoadingSpin.vue";
+import iPlus from "../assets/icons/plus.vue";
 
-import visaUrl from '../assets/icons/visa.svg?url';
-import mcUrl from '../assets/icons/mastercard.svg?url';
-import dinersUrl from '../assets/icons/diners-club.svg?url';
-import amexUrl from '../assets/icons/american-express.svg?url';
-import genericUrl from '../assets/icons/card-generic.svg?url';
-import qrYapeUrl from '../assets/qr-yape-eko-business.jpg?url';
-import yapeLogo from '../assets/icons/yape-logo.svg?url';
+import visaUrl from "../assets/icons/visa.svg?url";
+import mcUrl from "../assets/icons/mastercard.svg?url";
+import dinersUrl from "../assets/icons/diners-club.svg?url";
+import amexUrl from "../assets/icons/american-express.svg?url";
+import genericUrl from "../assets/icons/card-generic.svg?url";
+import qrYapeUrl from "../assets/qr-yape-eko-business.jpg?url";
+import yapeLogo from "../assets/icons/yape-logo.svg?url";
 
-import { yapeNumber, companyName, companyRUC } from '../lib/empresa.js';
-import { Cart } from '../lib/cart.js';
-import { urls, get, post, patch } from '../lib/api.js';
-import { genId } from '../lib/mine.js';
+import { yapeNumber, companyName, companyRUC } from "../lib/empresa.js";
+import { Cart } from "../lib/cart.js";
+import { urls, get, post, patch } from "../lib/api.js";
+import { genId } from "../lib/mine.js";
 
-import KRGlue from '@lyracom/embedded-form-glue';
+import KRGlue from "@lyracom/embedded-form-glue";
 
 export default {
     components: {
@@ -868,15 +786,15 @@ export default {
 
             form: {
                 socio_datos: {
-                    doc_tipo: 'DNI',
+                    doc_tipo: "DNI",
                 },
 
-                entrega_tipo: 'envio',
+                entrega_tipo: "envio",
                 entrega_direccion_datos: {},
 
-                comprobante_tipo: '03',
+                comprobante_tipo: "03",
 
-                pago_metodo: 'tarjeta',
+                pago_metodo: "tarjeta",
             },
             errors: {},
             items: [],
@@ -887,13 +805,10 @@ export default {
     },
     computed: {
         subtotal() {
-            return this.items.reduce(
-                (acc, item) => acc + item.pu * item.cantidad,
-                0
-            );
+            return this.items.reduce((acc, item) => acc + item.pu * item.cantidad, 0);
         },
         costoEnvio() {
-            return this.form.entrega_tipo === 'envio' ? 10 : 0;
+            return this.form.entrega_tipo === "envio" ? 10 : 0;
         },
         total() {
             return this.subtotal + this.costoEnvio;
@@ -906,19 +821,18 @@ export default {
         this.items = Cart.get();
 
         if (this.items.length == 0) {
-            window.location.href = '/cart';
+            window.location.href = "/cart";
             return;
         }
     },
     methods: {
         injectarJsIzipay() {
-            const script = document.createElement('script');
-            script.src =
-                'https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/neon.js';
+            const script = document.createElement("script");
+            script.src = "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/neon.js";
             document.head.appendChild(script);
         },
         async validateSession() {
-            const user_token = localStorage.getItem('token');
+            const user_token = localStorage.getItem("token");
             if (!user_token) return;
 
             this.loading = true;
@@ -937,25 +851,23 @@ export default {
         },
 
         validateForm1() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
             if (
                 !this.form.socio_datos.correo ||
                 !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.socio_datos.correo)
             )
-                this.errors.correo = 'Ingrese un correo válido.';
+                this.errors.correo = "Ingrese un correo válido.";
             if (!this.form.socio_datos.telefono)
-                this.errors.telefono = 'Este campo es obligatorio.';
-            if (!this.form.socio_datos.nombres)
-                this.errors.nombres = 'Este campo es obligatorio.';
-            if (!this.form.socio_datos.apellidos)
-                this.errors.apellidos = 'Describa su solicitud.';
+                this.errors.telefono = "Este campo es obligatorio.";
+            if (!this.form.socio_datos.nombres) this.errors.nombres = "Este campo es obligatorio.";
+            if (!this.form.socio_datos.apellidos) this.errors.apellidos = "Describa su solicitud.";
             if (!this.form.socio_datos.doc_tipo)
-                this.errors.doc_tipo = 'Seleccione un tipo de documento.';
+                this.errors.doc_tipo = "Seleccione un tipo de documento.";
             if (!this.form.socio_datos.doc_numero)
-                this.errors.doc_numero = 'Este campo es obligatorio.';
+                this.errors.doc_numero = "Este campo es obligatorio.";
             if (!this.form.socio_datos.privacidad)
-                this.errors.privacidad = 'Este campo es obligatorio.';
+                this.errors.privacidad = "Este campo es obligatorio.";
 
             return Object.values(this.errors).every((e) => !e);
         },
@@ -966,8 +878,8 @@ export default {
                 const send = {
                     id: this.user.id,
                     tipo: 2,
-                    comes_from: 'ecommerce',
-                    user_token: localStorage.getItem('token'),
+                    comes_from: "ecommerce",
+                    user_token: localStorage.getItem("token"),
                     nombres: this.form.socio_datos.nombres,
                     apellidos: this.form.socio_datos.apellidos,
                     doc_tipo: this.form.socio_datos.doc_tipo,
@@ -976,40 +888,40 @@ export default {
                     telefono1: this.form.socio_datos.telefono,
                 };
 
-                this.loadingContinuarEntrega = true;
-                await patch('account', send);
-                this.loadingContinuarEntrega = false;
+                // this.loadingContinuarEntrega = true;
+                // await patch('account', send);
+                // this.loadingContinuarEntrega = false;
             }
 
             this.step = 2;
-            this.scrollToForm('seccionForm2');
+            this.scrollToForm("seccionForm2");
         },
 
         validateForm2() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
-            if (this.form.entrega_tipo === 'envio') {
+            if (this.form.entrega_tipo === "envio") {
                 if (this.user.id) {
                     if (this.form.new_direccion) {
                         if (!this.form.direccion_nombre)
-                            this.errors.direccion_nombre =
-                                'Este campo es obligatorio.';
+                            this.errors.direccion_nombre = "Este campo es obligatorio.";
+                    } else {
+                        if (!this.form.entrega_direccion_id)
+                            this.errors.entrega_direccion_id = "Seleccione una dirección guardada.";
                     }
                 }
 
                 if (!this.form.entrega_ubigeo)
-                    this.errors.entrega_ubigeo = 'Este campo es obligatorio.';
+                    this.errors.entrega_ubigeo = "Este campo es obligatorio.";
                 if (!this.form.direccion_entrega)
-                    this.errors.direccion_entrega =
-                        'Este campo es obligatorio.';
+                    this.errors.direccion_entrega = "Este campo es obligatorio.";
                 if (!this.form.entrega_direccion_datos.referencia)
-                    this.errors.entrega_direccion_datos_referencia =
-                        'Este campo es obligatorio.';
+                    this.errors.entrega_direccion_datos_referencia = "Este campo es obligatorio.";
             }
 
-            if (this.form.entrega_tipo === 'retiro') {
+            if (this.form.entrega_tipo === "retiro") {
                 if (!this.form.fecha_entrega)
-                    this.errors.fecha_entrega = 'Este campo es obligatorio.';
+                    this.errors.fecha_entrega = "Este campo es obligatorio.";
             }
 
             return Object.values(this.errors).every((e) => !e);
@@ -1019,30 +931,27 @@ export default {
 
             if (this.user.id) {
                 if (this.form.new_direccion) {
-                    const direcciones = JSON.parse(
-                        JSON.stringify(this.user.direcciones)
-                    );
+                    const direcciones = JSON.parse(JSON.stringify(this.user.direcciones));
                     const newDireccionId = genId();
                     direcciones.push({
                         id: newDireccionId,
                         nombre: this.form.direccion_nombre,
                         ubigeo: this.form.entrega_ubigeo,
-                        ubigeo1: this.form.entrega_ubigeo1,
+                        ubigeo1: this.form.entrega_direccion_datos.entrega_ubigeo1,
                         direccion: this.form.direccion_entrega,
                         numero: this.form.entrega_direccion_datos.numero,
                         piso: this.form.entrega_direccion_datos.piso,
-                        referencia:
-                            this.form.entrega_direccion_datos.referencia,
+                        referencia: this.form.entrega_direccion_datos.referencia,
                     });
                     const send = {
                         id: this.user.id,
                         tipo: 2,
-                        comes_from: 'ecommerce',
-                        user_token: localStorage.getItem('token'),
+                        comes_from: "ecommerce",
+                        user_token: localStorage.getItem("token"),
                         direcciones,
                     };
                     this.loadingContinuarPago = true;
-                    const res = await patch('account', send);
+                    const res = await patch("account", send);
                     this.loadingContinuarPago = false;
                     if (res.code == 0) {
                         this.user.direcciones = res.data.direcciones;
@@ -1056,33 +965,28 @@ export default {
             }
 
             this.step = 3;
-            this.scrollToForm('seccionForm3');
+            this.scrollToForm("seccionForm3");
         },
 
         validarForm3() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
-            if (this.form.comprobante_tipo === '01') {
-                if (
-                    !this.form.comprobante_ruc ||
-                    !/^\d{11}$/.test(this.form.comprobante_ruc)
-                )
-                    this.errors.comprobante_ruc =
-                        'El RUC debe tener 11 dígitos numéricos.';
+            if (this.form.comprobante_tipo === "01") {
+                if (!this.form.comprobante_ruc || !/^\d{11}$/.test(this.form.comprobante_ruc))
+                    this.errors.comprobante_ruc = "El RUC debe tener 11 dígitos numéricos.";
                 if (!this.form.comprobante_razon_social)
-                    this.errors.comprobante_razon_social =
-                        'Este campo es obligatorio.';
+                    this.errors.comprobante_razon_social = "Este campo es obligatorio.";
             }
 
             return Object.values(this.errors).every((e) => !e);
         },
         shapeDatos() {
             this.form.tipo = 2;
-            this.form.origin = 'ecommerce';
-            this.form.fecha = new Date().toISOString().split('T')[0];
+            this.form.origin = "ecommerce";
+            this.form.fecha = new Date().toISOString().split("T")[0];
 
-            this.form.pago_condicion = '1';
-            this.form.moneda = '1';
+            this.form.pago_condicion = "1";
+            this.form.moneda = "1";
             this.form.monto = this.total.toFixed(2);
 
             this.form.socio_pedido_items = this.items;
@@ -1106,14 +1010,14 @@ export default {
             } else if (res.code == 0) {
                 this.form.codigo = res.orderId;
                 this.loadingPagar = true;
-                const endpoint = 'https://api.micuentaweb.pe';
+                const endpoint = "https://api.micuentaweb.pe";
                 const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY;
 
                 const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
 
                 await KR.setFormConfig({
                     formToken: res.data.formToken,
-                    'kr-language': 'es-PE',
+                    "kr-language": "es-PE",
                 });
 
                 await KR.onFormCreated(() => {
@@ -1139,14 +1043,14 @@ export default {
 
                         window.scrollTo({
                             top: 0,
-                            behavior: 'smooth',
+                            behavior: "smooth",
                         });
                     }
 
                     return false;
                 });
 
-                await KR.renderElements('#myPaymentForm');
+                await KR.renderElements("#myPaymentForm");
 
                 await KR.openPopin();
             }
@@ -1157,22 +1061,21 @@ export default {
             this.errors = {};
 
             if (this.step === 1) {
-                this.scrollToForm('seccionForm1');
+                this.scrollToForm("seccionForm1");
             }
             if (this.step === 2) {
-                this.scrollToForm('seccionForm2');
+                this.scrollToForm("seccionForm2");
             }
             if (this.step === 3) {
-                this.scrollToForm('seccionForm3');
+                this.scrollToForm("seccionForm3");
             }
         },
         scrollToForm(id) {
             setTimeout(() => {
                 const el = this.$refs[id];
                 if (el) {
-                    const offset =
-                        el.getBoundingClientRect().top + window.scrollY - 80;
-                    window.scrollTo({ top: offset, behavior: 'smooth' });
+                    const offset = el.getBoundingClientRect().top + window.scrollY - 80;
+                    window.scrollTo({ top: offset, behavior: "smooth" });
                 }
             }, 100);
         },
@@ -1185,17 +1088,13 @@ export default {
 
             const qry = {
                 fltr: {
-                    distrito: { op: 'Contiene', val: txtBuscar },
+                    distrito: { op: "Contiene", val: txtBuscar },
                 },
-                cols: ['departamento', 'provincia', 'distrito', 'nombre'],
+                cols: ["departamento", "provincia", "distrito", "nombre"],
             };
 
             this.ubigeosLoading = true;
-            const res = await get(
-                'ubigeos',
-                { qry },
-                localStorage.getItem('token')
-            );
+            const res = await get("ubigeos", { qry }, localStorage.getItem("token"));
             this.ubigeosLoading = false;
 
             if (res.code !== 0) return;
@@ -1203,17 +1102,15 @@ export default {
             this.ubigeos = res.data;
         },
         setUbigeo(item) {
-            this.form.entrega_ubigeo1 = item;
-        },
-
-        irPedido() {
-            window.location.href = `/pedidos/${this.form.id}`;
-        },
-        irInicio() {
-            window.location.href = '/';
+            this.form.entrega_direccion_datos.entrega_ubigeo1 = item;
         },
 
         setDireccion(item) {
+            if (!item) {
+                this.cleanDireccion();
+                return;
+            }
+
             this.ubigeos = [{ ...item.ubigeo1 }];
 
             this.form.entrega_ubigeo = item.ubigeo1.id;
@@ -1221,6 +1118,7 @@ export default {
             this.form.entrega_direccion_datos.numero = item.numero;
             this.form.entrega_direccion_datos.piso = item.piso;
             this.form.entrega_direccion_datos.referencia = item.referencia;
+            this.form.entrega_direccion_datos.entrega_ubigeo1 = item.ubigeo1;
         },
         cleanDireccion() {
             this.ubigeos = [];
@@ -1228,11 +1126,12 @@ export default {
             this.form.direccion_nombre = null;
             this.form.entrega_direccion_id = null;
 
-            this.form.entrega_ubigeo = '';
-            this.form.direccion_entrega = '';
-            this.form.entrega_direccion_datos.numero = '';
-            this.form.entrega_direccion_datos.piso = '';
-            this.form.entrega_direccion_datos.referencia = '';
+            this.form.entrega_ubigeo = "";
+            this.form.direccion_entrega = "";
+            this.form.entrega_direccion_datos.numero = "";
+            this.form.entrega_direccion_datos.piso = "";
+            this.form.entrega_direccion_datos.referencia = "";
+            this.form.entrega_direccion_datos.entrega_ubigeo1 = null;
         },
 
         async getCustomerWallet() {
@@ -1240,7 +1139,7 @@ export default {
             const res = await get(
                 `${urls.account}/customer-wallet/${this.user.id}`,
                 null,
-                localStorage.getItem('token')
+                localStorage.getItem("token")
             );
             this.loading = false;
 
@@ -1255,9 +1154,9 @@ export default {
             const map = {
                 VISA: visaUrl,
                 MASTERCARD: mcUrl,
-                'DINERS CLUB': dinersUrl,
+                "DINERS CLUB": dinersUrl,
                 DINERS: dinersUrl,
-                'AMERICAN EXPRESS': amexUrl,
+                "AMERICAN EXPRESS": amexUrl,
                 AMEX: amexUrl,
             };
             return map[b] || genericUrl;

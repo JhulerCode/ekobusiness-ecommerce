@@ -4,7 +4,7 @@
             {{ headText }}
         </h2>
 
-        <button @click="openModal" class="button">Agregar</button>
+        <button @click="openModal" class="button button1">Agregar</button>
     </div>
 
     <div
