@@ -5,7 +5,6 @@ import { urls, get } from "../../lib/api.js";
 
 const params = Astro.url.searchParams
 const is_account = params.get('account')
-console.log(is_account)
 
 const { slug } = Astro.params;
 const res = await get(`${urls.socio_pedidos}/uno/${slug}`);

@@ -105,6 +105,9 @@ export default {
             // ],
         };
     },
+    mounted() {
+        this.getCustomerWallet();
+    },
     methods: {
         async getCustomerWallet() {
             this.loading = true;
