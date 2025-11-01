@@ -734,7 +734,7 @@ import LoadingSpin from "./LoadingSpin.vue";
 import iPlus from "../assets/icons/plus.vue";
 
 import visaUrl from "../assets/icons/visa.svg?url";
-import mcUrl from "../assets/icons/mastercard.svg?url";
+import mastercardUrl from "../assets/icons/mastercard.svg?url";
 import dinersUrl from "../assets/icons/diners-club.svg?url";
 import amexUrl from "../assets/icons/american-express.svg?url";
 import genericUrl from "../assets/icons/card-generic.svg?url";
@@ -1154,7 +1154,7 @@ export default {
             const b = brand.toUpperCase().trim();
             const map = {
                 VISA: visaUrl,
-                MASTERCARD: mcUrl,
+                MASTERCARD: mastercardUrl,
                 "DINERS CLUB": dinersUrl,
                 DINERS: dinersUrl,
                 "AMERICAN EXPRESS": amexUrl,
