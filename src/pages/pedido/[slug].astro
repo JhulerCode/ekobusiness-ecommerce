@@ -3,6 +3,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Beneficios from "../../components/Beneficios.astro";
 import { urls, get } from "../../lib/api.js";
 
+const params = Astro.url.searchParams
+const is_account = params.get('account')
+console.log(is_account)
+
 const { slug } = Astro.params;
 const res = await get(`${urls.socio_pedidos}/uno/${slug}`);
 
@@ -248,9 +252,18 @@ const etapas = [
                     </aside>
 
                     <div class="flex justify-center gap-4 mt-4">
-                        <a href="/consultar-pedido" class="button button2">
-                            Consultar otro pedido
-                        </a>
+                        {
+                            is_account == 'true' ? (
+                                <a href="/account#pedidos" class="button button2">
+                                    Ver mis pedidos
+                                </a>
+                            ) : (
+                                <a href="/consultar-pedido" class="button button2">
+                                    Consultar otro pedido
+                                </a>
+                            )
+                        }
+
                         <a href="/linea/filtrante" class="button button1">
                             Ver productos
                         </a>
@@ -259,6 +272,5 @@ const etapas = [
             </div>
         </div>
     </main>
-
     <Beneficios/>
 </BaseLayout>

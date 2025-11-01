@@ -1,16 +1,12 @@
 <template>
     <div v-if="user" class="text-gray-800">
         <!-- Encabezado -->
-        <div class="mb-8 text-2xl font-semibold text-center md:text-left">
-            Hola, {{ userName }}
-        </div>
+        <div class="mb-8 text-2xl font-semibold text-center md:text-left">Hola, {{ userName }}</div>
 
         <!-- Layout principal -->
         <div class="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start">
             <!-- 📂 Menú lateral -->
-            <aside
-                class="w-full lg:w-1/4 bg-white rounded-2xl shadow-md p-6 sm:p-8"
-            >
+            <aside class="w-full lg:w-1/4 bg-white rounded-2xl shadow-md p-6 sm:p-8">
                 <nav class="space-y-2 sm:space-y-3">
                     <button
                         v-for="item in menu"
@@ -38,14 +34,8 @@
             </aside>
 
             <!-- 🧾 Contenido dinámico -->
-            <main
-                class="w-full lg:flex-1 bg-white rounded-2xl shadow-md p-6 sm:p-8 min-h-[400px]"
-            >
-                <AccountPanelPerfil
-                    v-if="active === 'perfil'"
-                    :user="user"
-                    :headText="menuText"
-                />
+            <main class="w-full lg:flex-1 bg-white rounded-2xl shadow-md p-6 sm:p-8 min-h-[400px]">
+                <AccountPanelPerfil v-if="active === 'perfil'" :user="user" :headText="menuText" />
 
                 <AccountPanelDirecciones
                     v-else-if="active === 'direcciones'"
@@ -80,12 +70,12 @@
 </template>
 
 <script>
-import { urls, get } from '../lib/api.js';
-import AccountPanelPerfil from './AccountPanelPerfil.vue';
-import AccountPanelDirecciones from './AccountPanelDirecciones.vue';
-import AccountPanelPagoMetodos from './AccountPanelPagoMetodos.vue';
-import AccountPanelPedidos from './AccountPanelPedidos.vue';
-import AccountPanelAutenticacion from './AccountPanelAutenticacion.vue';
+import { urls, get } from "../lib/api.js";
+import AccountPanelPerfil from "./AccountPanelPerfil.vue";
+import AccountPanelDirecciones from "./AccountPanelDirecciones.vue";
+import AccountPanelPagoMetodos from "./AccountPanelPagoMetodos.vue";
+import AccountPanelPedidos from "./AccountPanelPedidos.vue";
+import AccountPanelAutenticacion from "./AccountPanelAutenticacion.vue";
 
 export default {
     components: {
@@ -98,32 +88,46 @@ export default {
     data() {
         return {
             user: null,
-            active: 'autenticacion',
+            active: "perfil",
             menu: [
-                { key: 'perfil', label: 'Perfil' },
-                { key: 'direcciones', label: 'Direcciones' },
-                { key: 'pago_metodos', label: 'Medios de pago' },
-                { key: 'pedidos', label: 'Pedidos' },
-                { key: 'autenticacion', label: 'Autenticación' },
+                { key: "perfil", label: "Perfil" },
+                { key: "direcciones", label: "Direcciones" },
+                { key: "pago_metodos", label: "Medios de pago" },
+                { key: "pedidos", label: "Pedidos" },
+                { key: "autenticacion", label: "Autenticación" },
             ],
             errors: {},
         };
     },
+    computed: {
+        userName() {
+            if (!this.user) return "";
+
+            return this.user.nombres ? this.user.nombres : this.user.correo.split("@")[0];
+        },
+        menuText() {
+            return this.menu.find((m) => m.key === this.active)?.label;
+        },
+    },
+    mounted() {
+        this.validateSession();
+
+        const hash = window.location.hash.replace("#", "");
+        if (hash === "pedidos") {
+            this.active = "pedidos";
+        }
+    },
     methods: {
         async validateSession() {
-            const user_token = localStorage.getItem('token');
+            const user_token = localStorage.getItem("token");
             if (user_token) {
-                const res = await get(
-                    `${urls.account}/verify`,
-                    null,
-                    user_token
-                );
+                const res = await get(`${urls.account}/verify`, null, user_token);
                 if (res.code == 0) this.user = res.data;
             }
         },
         logout() {
-            localStorage.removeItem('token');
-            window.location.href = '/';
+            localStorage.removeItem("token");
+            window.location.href = "/";
             this.user = null;
         },
 
@@ -136,11 +140,8 @@ export default {
         },
         direccionEditar(index) {
             const dir = this.user.direcciones[index];
-            const nuevoNombre = prompt(
-                'Editar nombre de dirección:',
-                dir.nombre
-            );
-            if (nuevoNombre !== null && nuevoNombre.trim() !== '') {
+            const nuevoNombre = prompt("Editar nombre de dirección:", dir.nombre);
+            if (nuevoNombre !== null && nuevoNombre.trim() !== "") {
                 this.user.direcciones[index].nombre = nuevoNombre.trim();
             }
         },
@@ -148,24 +149,6 @@ export default {
             this.user.direcciones.forEach((d) => (d.principal = false));
             this.user.direcciones[index].principal = true;
         },
-    },
-    mounted() {
-        this.validateSession();
-    },
-    computed: {
-        userName() {
-            if (!this.user) return '';
-
-            return this.user.nombres
-                ? this.user.nombres
-                : this.user.correo.split('@')[0];
-        },
-        menuText() {
-            return this.menu.find((m) => m.key === this.active)?.label;
-        },
-        // updateUser(item) {
-        //     Object.assign(this.user, item);
-        // },
     },
 };
 </script>

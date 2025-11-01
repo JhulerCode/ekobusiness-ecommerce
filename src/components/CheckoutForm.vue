@@ -984,6 +984,7 @@ export default {
             this.form.tipo = 2;
             this.form.origin = "ecommerce";
             this.form.fecha = new Date().toISOString().split("T")[0];
+            this.form.socio = this.user.id;
 
             this.form.pago_condicion = "1";
             this.form.moneda = "1";
