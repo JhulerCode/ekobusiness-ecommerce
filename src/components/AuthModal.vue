@@ -54,7 +54,7 @@
                                     :text="isLogin ? 'Ingresar' : 'Registrarme'"
                                     @click="submitForm"
                                     :loading="isLoading"
-                                    class="w-full"
+                                    class="!w-full"
                                 />
 
                                 <p v-if="errors.general" class="input-error">

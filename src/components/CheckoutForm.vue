@@ -438,9 +438,9 @@
                                         {{ form.entrega_direccion_datos.piso }}
                                     </template>
                                 </p>
-                                <p v-if="form.entrega_direccion_datos.entrega_ubigeo1">
+                                <p v-if="form.entrega_direccion_datos.ubigeo1">
                                     <span class="font-medium">Distrito:</span>
-                                    {{ form.entrega_direccion_datos.entrega_ubigeo1.nombre }}
+                                    {{ form.entrega_direccion_datos.ubigeo1.nombre }}
                                 </p>
                                 <p>
                                     <span class="font-medium">Referencia:</span>
@@ -976,7 +976,7 @@ export default {
                         id: newDireccionId,
                         nombre: this.form.direccion_nombre,
                         ubigeo: this.form.entrega_ubigeo,
-                        ubigeo1: this.form.entrega_direccion_datos.entrega_ubigeo1,
+                        ubigeo1: this.form.entrega_direccion_datos.ubigeo1,
                         direccion: this.form.direccion_entrega,
                         numero: this.form.entrega_direccion_datos.numero,
                         piso: this.form.entrega_direccion_datos.piso,
@@ -1183,7 +1183,7 @@ export default {
             this.ubigeos = res.data;
         },
         setUbigeo(item) {
-            this.form.entrega_direccion_datos.entrega_ubigeo1 = item;
+            this.form.entrega_direccion_datos.ubigeo1 = item;
         },
 
         setDireccion(item) {
@@ -1199,7 +1199,7 @@ export default {
             this.form.entrega_direccion_datos.numero = item.numero;
             this.form.entrega_direccion_datos.piso = item.piso;
             this.form.entrega_direccion_datos.referencia = item.referencia;
-            this.form.entrega_direccion_datos.entrega_ubigeo1 = item.ubigeo1;
+            this.form.entrega_direccion_datos.ubigeo1 = item.ubigeo1;
         },
         cleanDireccion() {
             this.ubigeos = [];
@@ -1212,7 +1212,7 @@ export default {
             this.form.entrega_direccion_datos.numero = "";
             this.form.entrega_direccion_datos.piso = "";
             this.form.entrega_direccion_datos.referencia = "";
-            this.form.entrega_direccion_datos.entrega_ubigeo1 = null;
+            this.form.entrega_direccion_datos.ubigeo1 = null;
         },
 
         async getCustomerWallet() {

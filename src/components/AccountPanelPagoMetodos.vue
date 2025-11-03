@@ -32,7 +32,7 @@
 
             <div class="flex flex-col space-y-2">
                 <button
-                    @click="openQuestion(i)"
+                    @click="openQuestion(a.paymentMethodToken)"
                     title="Eliminar"
                     class="text-sm text-red-500 cursor-pointer"
                 >
@@ -55,11 +55,7 @@
 
                 <footer>
                     <JdButton text="NO" tipo="2" @click="closeQuestion" />
-                    <JdButton
-                        text="SI"
-                        :loading="loadingDelete"
-                        @click="eliminar"
-                    />
+                    <JdButton text="SI" :loading="loadingDelete" @click="eliminar" />
                 </footer>
             </div>
         </div>
@@ -75,7 +71,7 @@ import mastercardUrl from "../assets/icons/mastercard.svg?url";
 import dinersUrl from "../assets/icons/diners-club.svg?url";
 import amexUrl from "../assets/icons/american-express.svg?url";
 
-import { urls, get, patch } from "../lib/api.js";
+import { urls, get, delet } from "../lib/api.js";
 
 export default {
     components: {
@@ -136,32 +132,30 @@ export default {
             return map[b] || genericUrl;
         },
 
-        openQuestion(i) {
+        openQuestion(id) {
             this.showQuestion = true;
-            document.body.style.overflow = 'hidden'; // evita scroll en fondo
-            this.toDelete = i;
+            document.body.style.overflow = "hidden"; // evita scroll en fondo
+            this.toDelete = id;
         },
         closeQuestion() {
             this.showQuestion = false;
-            document.body.style.overflow = '';
+            document.body.style.overflow = "";
         },
         async eliminar() {
-            console.log("Eliminar metodo de pago - pendiente de implementar");
-            // const direcciones = JSON.parse(
-            //     JSON.stringify(this.user.direcciones)
-            // );
-            // direcciones.splice(this.toDelete, 1);
+            const send = {
+                id: this.toDelete,
+                token: localStorage.getItem("token"),
+            };
 
-            // const send = this.shapeDatos(direcciones);
+            this.loadingDelete = true;
+            const res = await delet(`${urls.izipay}/tarjeta`, send);
+            this.loadingDelete = false;
 
-            // this.loadingDelete = true;
-            // const res = await patch('account', send);
-            // this.loadingDelete = false;
-
-            // if (res.code == 0) {
-            //     this.user.direcciones = res.data.direcciones;
-            //     this.closeQuestion();
-            // }
+            if (res.code == 0) {
+                const i = this.user.wallet.findIndex((a) => a.id == this.toDelete);
+                this.user.wallet.splice(i, 1);
+                this.closeQuestion();
+            }
         },
     },
 };
