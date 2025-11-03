@@ -24,7 +24,7 @@
                 <JdSelect
                     label="Tipo de documento"
                     :nec="true"
-                    :lista="doc_tipos"
+                    :lista="documentos_identidad"
                     v-model="form.doc_tipo"
                     :error="errors.doc_tipo"
                 />
@@ -108,7 +108,7 @@
                 <JdSelect
                     label="Tipo de documento"
                     :nec="true"
-                    :lista="doc_tipos"
+                    :lista="documentos_identidad"
                     v-model="form.rep_dot_tipo"
                     :error="errors.rep_dot_tipo"
                 />
@@ -243,6 +243,9 @@ export default {
         JdSelect,
         JdRadio,
     },
+    props: {
+        documentos_identidad: { type: Array, default: () => [] },
+    },
     data() {
         return {
             siteKey: import.meta.env.RECAPTCHA_SITE_KEY,
@@ -296,20 +299,6 @@ export default {
                     nombre: 'Portabilidad',
                     descripcion:
                         'Trasladar los datos personales a otro responsable.',
-                },
-            ],
-            doc_tipos: [
-                {
-                    id: 'DNI',
-                    nombre: 'DNI',
-                },
-                {
-                    id: 'CE',
-                    nombre: 'Carné de Extranjería',
-                },
-                {
-                    id: 'PAS',
-                    nombre: 'Pasaporte',
                 },
             ],
         };

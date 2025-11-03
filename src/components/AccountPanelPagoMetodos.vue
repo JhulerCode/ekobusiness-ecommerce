@@ -24,7 +24,7 @@
                     <p class="font-medium text-gray-800">{{ a.tokenDetails.pan }}</p>
 
                     <p class="text-sm text-gray-600">
-                        <!-- {{ doc_tipos.find((t) => t.id == a.doc_tipo).nombre }} | Expira el -->
+                        <!-- {{ tarjeta_tipos.find((t) => t.id == a.doc_tipo).nombre }} | Expira el -->
                         Expira el {{ a.tokenDetails.expiryMonth }}/{{ a.tokenDetails.expiryYear }}
                     </p>
                 </div>
@@ -89,7 +89,7 @@ export default {
             showQuestion: false,
             loadingDelete: false,
 
-            // doc_tipos: [
+            // tarjeta_tipos: [
             //     {
             //         id: "credito",
             //         nombre: "CRÉDITO",

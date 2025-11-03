@@ -9,22 +9,17 @@
         </div>
 
         <div>
-            <div
-                class="flex justify-between items-end mt-8 mb-3 border-b border-gray-300 pb-1"
-            >
+            <div class="flex justify-between items-end mt-8 mb-3 border-b border-gray-300 pb-1">
                 <h3 class="text-md font-semibold text-gray-700">Contraseña</h3>
 
-                <p class="text-gray-500 text-xs">
-                    Actualizada el: {{ contrasena_updated_at }}
-                </p>
+                <p class="text-gray-500 text-xs">Actualizada el: {{ contrasena_updated_at }}</p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-4">
                 <div v-if="pestana == 0">
                     <p class="text-gray-800">No puede cambiar su contraseña</p>
                     <p class="text-gray-400 text-sm">
-                        Tiene que pasar un periodo de 30 días desde la última
-                        modificación.
+                        Tiene que pasar un periodo de 30 días desde la última modificación.
                     </p>
                 </div>
 
@@ -39,11 +34,7 @@
 
                     <div class="flex gap-2 justify-end mt-2">
                         <JdButton
-                            :text="
-                                codigo_enviado
-                                    ? 'Pedir codigo otra vez'
-                                    : 'Pedir codigo'
-                            "
+                            :text="codigo_enviado ? 'Pedir codigo otra vez' : 'Pedir codigo'"
                             :loading="loading"
                             tipo="2"
                             @click="sendCodigoVerificacion"
@@ -90,10 +81,7 @@
                 </template>
 
                 <div>
-                    <p
-                        v-if="errors.success"
-                        class="text-sm mt-1 text-green-600"
-                    >
+                    <p v-if="errors.success" class="text-sm mt-1 text-green-600">
                         ¡Contraseña actualizada con éxito!
                     </p>
 
@@ -109,16 +97,12 @@
         </div>
 
         <div class="mt-30">
-            <h3
-                class="text-md font-semibold text-gray-700 mt-8 mb-3 border-b border-gray-300 pb-1"
-            >
+            <h3 class="text-md font-semibold text-gray-700 mt-8 mb-3 border-b border-gray-300 pb-1">
                 Eliminar cuenta
             </h3>
 
             <p class="text-gray-600 mb-6 leading-relaxed">
-                Al eliminar tu cuenta de
-                <span class="font-semibold">{{ companySite }}</span
-                >, perderás el acceso permanente a tu información e historial.
+                Al eliminar tu cuenta, perderás el acceso permanente a tu información e historial.
                 Ya no podrás:
             </p>
 
@@ -132,9 +116,8 @@
             <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-6">
                 <p class="text-sm text-gray-500">
                     Esta acción es
-                    <span class="text-red-600 font-medium">irreversible</span>.
-                    Si eliminas tu cuenta, todos tus datos personales asociados
-                    serán eliminados definitivamente.
+                    <span class="text-red-600 font-medium">irreversible</span>. Si eliminas tu
+                    cuenta, todos tus datos personales asociados serán eliminados definitivamente.
                 </p>
             </div>
 
@@ -153,10 +136,7 @@
             <div class="center">
                 <main>
                     <p>¡Esta acción no se puede deshacer!</p>
-                    <p>
-                        Tu cuenta y todos tus datos serán eliminados
-                        permanentemente.
-                    </p>
+                    <p>Tu cuenta y todos tus datos serán eliminados permanentemente.</p>
 
                     <p v-if="errors.eliminar" class="input-error">
                         {{ errors.eliminar }}
@@ -177,12 +157,11 @@
 </template>
 
 <script>
-import JdInput from '../components/JdInput.vue';
-import JdInputPassword from '../components/JdInputPassword.vue';
-import JdLoading from '../components/LoadingSpin.vue';
-import JdButton from '../components/JdButton.vue';
-import { urls, post, delet } from '../lib/api.js';
-import { companySite } from '../lib/empresa.js';
+import JdInput from "../components/JdInput.vue";
+import JdInputPassword from "../components/JdInputPassword.vue";
+import JdLoading from "../components/LoadingSpin.vue";
+import JdButton from "../components/JdButton.vue";
+import { urls, post, delet } from "../lib/api.js";
 
 export default {
     components: {
@@ -192,12 +171,12 @@ export default {
         JdButton,
     },
     props: {
-        headText: { type: String, default: '' },
+        headText: { type: String, default: "" },
         user: { type: Object, default: () => ({}) },
     },
     data() {
         return {
-            pestana: 1,
+            pestana: 0,
             loading: false,
             form: {},
             errors: {},
@@ -209,24 +188,19 @@ export default {
 
             showQuestion: false,
             loadingDelete: false,
-
-            companySite,
         };
     },
     computed: {
         contrasena_updated_at() {
-            return new Date(this.user.contrasena_updated_at).toLocaleDateString(
-                'es-ES',
-                {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                }
-            );
+            return new Date(this.user.contrasena_updated_at).toLocaleDateString("es-ES", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            });
         },
     },
     created() {
-        // this.validateLastUpdated();
+        this.validateLastUpdated();
     },
     methods: {
         validateLastUpdated() {
@@ -247,7 +221,7 @@ export default {
 
         async sendCodigoVerificacion() {
             const send = {
-                user_token: localStorage.getItem('token'),
+                user_token: localStorage.getItem("token"),
                 correo: this.user.correo,
             };
 
@@ -256,7 +230,7 @@ export default {
             this.loading = false;
 
             if (res.code < 0) {
-                this.errors.general = 'Algo salió mal';
+                this.errors.general = "Algo salió mal";
             } else if (res.code > 0) {
                 this.errors.general = res.msg;
             } else if (res.code == 0) {
@@ -266,7 +240,7 @@ export default {
                 clearTimeout(this.timeOutShowEnviarCodigo);
 
                 this.errors.codigo_pedido =
-                    'Esperando 1 minuto para volver a pedir un código nuevo.';
+                    "Esperando 1 minuto para volver a pedir un código nuevo.";
 
                 this.timeOutShowEnviarCodigo = setTimeout(() => {
                     this.showEnviarCodigo = true;
@@ -276,10 +250,10 @@ export default {
         },
 
         validateForm1() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
             if (!this.form.codigo_verificacion)
-                this.errors.codigo_verificacion = 'Este campo es obligatorio.';
+                this.errors.codigo_verificacion = "Este campo es obligatorio.";
 
             return Object.values(this.errors).every((e) => !e);
         },
@@ -287,7 +261,7 @@ export default {
             if (!this.validateForm1()) return;
 
             const send = {
-                user_token: localStorage.getItem('token'),
+                user_token: localStorage.getItem("token"),
                 correo: this.user.correo,
                 codigo_verificacion: this.form.codigo_verificacion,
             };
@@ -297,7 +271,7 @@ export default {
             this.loading = false;
 
             if (res.code < 0) {
-                this.errors.general = 'Algo salió mal';
+                this.errors.general = "Algo salió mal";
             } else if (res.code > 0) {
                 this.errors.general = res.msg;
             } else if (res.code == 0) {
@@ -306,17 +280,15 @@ export default {
         },
 
         validateForm2() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
-            if (!this.form.contrasena)
-                this.errors.contrasena = 'Este campo es obligatorio.';
+            if (!this.form.contrasena) this.errors.contrasena = "Este campo es obligatorio.";
 
             if (!this.form.contrasena_confirmar)
-                this.errors.contrasena_confirmar = 'Este campo es obligatorio.';
+                this.errors.contrasena_confirmar = "Este campo es obligatorio.";
 
             if (this.form.contrasena !== this.form.contrasena_confirmar) {
-                this.errors.contrasena_confirmar =
-                    'Las contraseñas no coinciden.';
+                this.errors.contrasena_confirmar = "Las contraseñas no coinciden.";
                 return;
             }
 
@@ -326,7 +298,7 @@ export default {
             return {
                 id: this.user.id,
                 contrasena: this.form.contrasena,
-                user_token: localStorage.getItem('token'),
+                user_token: localStorage.getItem("token"),
             };
         },
         async actualizarContrasena() {
@@ -339,13 +311,12 @@ export default {
             this.loading = false;
 
             if (res.code < 0) {
-                this.errors.general = 'Algo salió mal';
+                this.errors.general = "Algo salió mal";
             } else if (res.code == 0) {
                 this.editing = false;
                 this.form = {};
                 this.errors = {};
-                this.user.contrasena_updated_at =
-                    res.data.contrasena_updated_at;
+                this.user.contrasena_updated_at = res.data.contrasena_updated_at;
 
                 this.validateLastUpdated();
                 this.errors.success = true;
@@ -360,32 +331,32 @@ export default {
 
         openQuestion(i) {
             this.showQuestion = true;
-            document.body.style.overflow = 'hidden'; // evita scroll en fondo
+            document.body.style.overflow = "hidden"; // evita scroll en fondo
             this.toDelete = i;
         },
         closeQuestion() {
             this.showQuestion = false;
-            document.body.style.overflow = '';
+            document.body.style.overflow = "";
         },
         async eliminar() {
             const send = {
-                user_token: localStorage.getItem('token'),
+                user_token: localStorage.getItem("token"),
                 id: this.user.id,
             };
 
             this.loadingDelete = true;
-            const res = await delet('account', send);
+            const res = await delet("account", send);
             this.loadingDelete = false;
 
             if (res.code < 0) {
-                this.errors.eliminar = 'Algo salió mal';
+                this.errors.eliminar = "Algo salió mal";
             } else if (res.code > 0) {
                 this.errors.eliminar = res.data;
             } else if (res.code == 0) {
                 this.closeQuestion();
 
-                localStorage.removeItem('token');
-                window.location.href = '/';
+                localStorage.removeItem("token");
+                window.location.href = "/";
                 this.user = null;
             }
         },

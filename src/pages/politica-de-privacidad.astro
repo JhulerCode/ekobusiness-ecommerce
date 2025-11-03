@@ -1,17 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const title = '';
+import { get } from '../lib/api.js';
+
+const res = await get('sistema', {
+    qry: ['empresa'],
+});
+
+if (res.code == 0) {
+    var { empresa } = res.data;
+}
+
 const lastUpdated = '20 de octubre de 2025';
-import {
-    companyName,
-    companySite,
-    contactEmail,
-    companyRUC,
-    companyAddress,
-    whatsappNumber,
-    emailSoporte,
-} from '../lib/empresa.js';
 
 const secciones = [
     { id: 'responsable', texto: '¿Quién es el responsable del tratamiento?' },
@@ -60,11 +60,11 @@ const secciones = [
         <section class="space-y-4 leading-relaxed mt-4">
             <p>
                 Bienvenido al e-commerce (<a
-                    href={companySite}
+                    href={empresa.ecommerce_url}
                     class="underline text-blue-600 hover:text-blue-800"
-                    target="_blank">{companySite}</a
+                    target="_blank">{empresa.ecommerce_url}</a
                 >) y demás canales digitales de
-                <strong>{companyName}</strong> (en adelante, “SUNKA”).
+                <strong>{empresa.nombre}</strong> (en adelante, “SUNKA”).
             </p>
 
             <p>
@@ -127,13 +127,17 @@ const secciones = [
             </p>
 
             <div class="mt-2">
-                <p><strong>Razón social:</strong> {companyName}</p>
-                <p><strong>RUC:</strong> {companyRUC}</p>
-                <p><strong>Dirección:</strong> {companyAddress}</p>
+                <p><strong>Razón social:</strong> {empresa.nombre}</p>
+                <p><strong>RUC:</strong> {empresa.ruc}</p>
+                <p>
+                    <strong>Dirección:</strong>
+                    {empresa.direcciones[0].direccion},
+                    {empresa.direcciones[0].distrito}
+                </p>
                 <p>
                     <strong>Correo de contacto:</strong>
-                    <a href={`mailto:${contactEmail}`} class="underline"
-                        >{contactEmail}</a
+                    <a href={`mailto:${empresa.email_ventas}`} class="underline"
+                        >{empresa.email_ventas}</a
                     >
                 </p>
             </div>
@@ -405,10 +409,10 @@ const secciones = [
                 </li>
                 <li>
                     Visita nuestro sitio web <a
-                        href={companySite}
+                        href={empresa.ecommerce_url}
                         target="_blank"
                         class="underline text-blue-600 hover:text-blue-800"
-                        >{companySite}</a
+                        >{empresa.ecommerce_url}</a
                     >.
                 </li>
                 <li>
@@ -1330,7 +1334,7 @@ const secciones = [
                 </tr>
                 <tr>
                     <td>WhatsApp</td>
-                    <td>{whatsappNumber}</td>
+                    <td>{empresa.whatsapp_ventas}</td>
                 </tr>
             </table>
 
@@ -1734,10 +1738,10 @@ const secciones = [
                 Para ejercer tus derechos sobre tu información personal, puedes
                 acceder al formulario correspondiente o escribirnos a
                 <a
-                    href={`mailto:${emailSoporte}`}
+                    href={`mailto:${empresa.email_soporte}`}
                     class="underline text-blue-600 hover:text-blue-800"
                 >
-                    {emailSoporte}
+                    {empresa.email_soporte}
                 </a>.
             </p>
             <br />

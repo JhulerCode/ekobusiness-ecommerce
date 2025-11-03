@@ -205,7 +205,7 @@
                             <JdSelect
                                 label="Tipo de documento"
                                 :nec="true"
-                                :lista="doc_tipos"
+                                :lista="documentos_identidad"
                                 v-model="form.socio_datos.doc_tipo"
                                 :error="errors.doc_tipo"
                             />
@@ -637,14 +637,14 @@
                                         />
 
                                         <div>
-                                            <b>Empresa:</b> {{ companyName }}<br />
-                                            <b>RUC:</b> {{ companyRUC }}<br />
-                                            <b>Celular Yape:</b> {{ yapeNumber }}<br />
+                                            <b>Empresa:</b> {{ empresa.nombre }}<br />
+                                            <b>RUC:</b> {{ empresa.ruc }}<br />
+                                            <b>Celular Yape:</b> {{ empresa.yape_number }}<br />
                                         </div>
 
                                         <a
                                             class="p-2 rounded-md bg-[#10cbb4] w-full"
-                                            :href="`tel:+51${yapeNumber}`"
+                                            :href="`tel:+51${empresa.yape_number}`"
                                         >
                                             Añadir a contacto
                                         </a>
@@ -780,7 +780,6 @@ import genericUrl from "../assets/icons/card-generic.svg?url";
 import qrYapeUrl from "../assets/qr-yape-eko-business.jpg?url";
 import yapeLogo from "../assets/icons/yape-logo.svg?url";
 
-import { yapeNumber, companyName, companyRUC } from "../lib/empresa.js";
 import { Cart } from "../lib/cart.js";
 import { urls, get, post, patch } from "../lib/api.js";
 import { genId } from "../lib/mine.js";
@@ -802,16 +801,14 @@ export default {
         iPlus,
     },
     props: {
+        empresa: { type: Object, default: () => ({}) },
         pago_metodos: { type: Array, default: () => [] },
-        doc_tipos: { type: Array, default: () => [] },
+        documentos_identidad: { type: Array, default: () => [] },
         entrega_tipos: { type: Array, default: () => [] },
         comprobante_tipos: { type: Array, default: () => [] },
     },
     data() {
         return {
-            yapeNumber,
-            companyName,
-            companyRUC,
             qrYapeUrl,
             yapeLogo,
 
@@ -927,9 +924,9 @@ export default {
                     telefono1: this.form.socio_datos.telefono,
                 };
 
-                // this.loadingContinuarEntrega = true;
-                // await patch('account', send);
-                // this.loadingContinuarEntrega = false;
+                this.loadingContinuarEntrega = true;
+                await patch("account", send);
+                this.loadingContinuarEntrega = false;
             }
 
             this.step = 2;

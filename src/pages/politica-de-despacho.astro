@@ -1,50 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { get } from '../lib/api.js';
+
+const res = await get('sistema', {
+    qry: ['empresa'],
+});
+
+if (res.code == 0) {
+    var { empresa } = res.data;
+}
 
 const lastUpdated = '20 de octubre de 2025';
-import {
-    companyName,
-    companyNameComercial,
-    companySite,
-    contactEmail,
-    companyRUC,
-    companyAddress,
-    whatsappNumber,
-    emailSoporte,
-    companyPhone,
-} from '../lib/empresa.js';
-
-const secciones = [
-    {
-        id: 'empresa',
-        texto: 'Identificación de la empresa con quien contratas',
-    },
-    { id: 'productos', texto: 'Productos ofrecidos' },
-    { id: 'pasos-para-uso', texto: 'Pasos para usar el tienda virtual' },
-    {
-        id: 'consideraciones',
-        texto: 'Aspectos a considerar al usar el tienda virtual',
-    },
-    { id: 'medios-de-pago', texto: 'Medios de pago aceptados' },
-    {
-        id: 'comprobantes',
-        texto: 'Comprobantes de pago',
-    },
-    { id: 'consentimiento', texto: 'Formación del consentimiento' },
-    { id: 'menores', texto: 'Stock' },
-    {
-        id: 'productos-sustitutos',
-        texto: 'Productos sustitutos',
-    },
-    {
-        id: 'devolucion-cambios',
-        texto: 'Politica de devolucion o cambio de producto',
-    },
-    { id: 'despacho', texto: 'Política de despacho' },
-    { id: 'precio-promociones', texto: 'Precio y promociones' },
-    { id: 'propiedad-intelectual', texto: 'Propiedad intelectual' },
-    { id: 'ley-aplicable', texto: 'Ley aplicable' },
-];
 ---
 
 <BaseLayout
@@ -74,14 +40,19 @@ const secciones = [
 
             <p>
                 Realiza tu compra a través de nuestra tienda online y acércate a
-                recoger personalmente en la dirección de {companyAddress}. Este
-                servicio es completamente gratuito.
+                recoger personalmente en la dirección de {
+                    empresa.direcciones[0].direccion
+                },
+                {empresa.direcciones[0].distrito}. Este servicio es
+                completamente gratuito.
             </p>
             <br />
             <p>
                 Previamente debe comunicarse a nuestro canal de whatsapp
-                {whatsappNumber} o a nuestra línea telefónica {companyPhone} indicando
-                su número de pedido (enviado a su correo una vez finalizado la compra).
+                {empresa.whatsapp_ventas} o a nuestra línea telefónica {
+                    empresa.telefono
+                } indicando su número de pedido (enviado a su correo una vez finalizado
+                la compra).
             </p>
             <br />
             <p>
@@ -177,8 +148,9 @@ const secciones = [
                 costo original expresada en la página del checkout de la tienda
                 online, finalmente de no tener éxito en la entrega por ausencia
                 o dirección errónea, el cliente tendrá la opción de recoger en
-                la dirección de {companyAddress} comunicándose previamente para tal
-                efecto con el área de atención al cliente de la empresa.
+                la dirección de {empresa.direcciones[0].direccion},
+                {empresa.direcciones[0].distrito} comunicándose previamente para
+                tal efecto con el área de atención al cliente de la empresa.
             </p>
         </section>
     </main>

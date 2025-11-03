@@ -12,57 +12,32 @@
                     @click="editing = !editing"
                 />
 
-                <JdButton
-                    text="Actualizar"
-                    :loading="loading"
-                    @click="actualizar"
-                    v-if="editing"
-                />
+                <JdButton text="Actualizar" :loading="loading" @click="actualizar" v-if="editing" />
             </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4">
-            <JdInput
-                label="Nombres"
-                v-model="user.nombres"
-                :disabled="!editing"
-            />
+            <JdInput label="Nombres" v-model="user.nombres" :disabled="!editing" />
 
-            <JdInput
-                label="Apellidos"
-                v-model="user.apellidos"
-                :disabled="!editing"
-            />
+            <JdInput label="Apellidos" v-model="user.apellidos" :disabled="!editing" />
 
             <JdSelect
                 label="Tipo de documento"
-                :lista="doc_tipos"
+                :lista="documentos_identidad"
                 v-model="user.doc_tipo"
                 :disabled="!editing"
             />
 
-            <JdInput
-                label="Número de documento"
-                v-model="user.doc_numero"
-                :disabled="!editing"
-            />
+            <JdInput label="Número de documento" v-model="user.doc_numero" :disabled="!editing" />
 
-            <JdInput
-                label="Teléfono"
-                v-model="user.telefono1"
-                :disabled="!editing"
-            />
+            <JdInput label="Teléfono" v-model="user.telefono1" :disabled="!editing" />
 
             <div>
-                <JdInput
-                    label="Correo"
-                    v-model="user.correo"
-                    :disabled="true"
-                />
+                <JdInput label="Correo" v-model="user.correo" :disabled="true" />
 
                 <p class="text-xs text-gray-400 mt-2" v-if="editing">
-                    Por tu seguridad, no es posible cambiar tu correo. Si
-                    quieres usar otro, crea una nueva cuenta.
+                    Por tu seguridad, no es posible cambiar tu correo. Si quieres usar otro, crea
+                    una nueva cuenta.
                 </p>
             </div>
         </div>
@@ -70,11 +45,11 @@
 </template>
 
 <script>
-import JdInput from '../components/JdInput.vue';
-import JdSelect from '../components/JdSelect.vue';
-import JdLoading from '../components/LoadingSpin.vue';
-import JdButton from '../components/JdButton.vue';
-import { urls, get, patch } from '../lib/api.js';
+import JdInput from "../components/JdInput.vue";
+import JdSelect from "../components/JdSelect.vue";
+import JdLoading from "../components/LoadingSpin.vue";
+import JdButton from "../components/JdButton.vue";
+import { urls, get, patch } from "../lib/api.js";
 
 export default {
     components: {
@@ -84,28 +59,15 @@ export default {
         JdButton,
     },
     props: {
-        headText: { type: String, default: '' },
+        headText: { type: String, default: "" },
         user: { type: Object, default: () => ({}) },
+        documentos_identidad: { type: Array, default: () => [] },
     },
     data() {
         return {
             editing: false,
             loading: false,
             errors: {},
-            doc_tipos: [
-                {
-                    id: 'DNI',
-                    nombre: 'DNI',
-                },
-                {
-                    id: 'CE',
-                    nombre: 'Carné de Extranjería',
-                },
-                {
-                    id: 'PAS',
-                    nombre: 'Pasaporte',
-                },
-            ],
         };
     },
     methods: {
@@ -118,8 +80,7 @@ export default {
         //     return Object.values(this.errors).every((e) => !e);
         // },
         shapeDatos() {
-            const { id, nombres, apellidos, doc_tipo, doc_numero, telefono1 } =
-                this.user;
+            const { id, nombres, apellidos, doc_tipo, doc_numero, telefono1 } = this.user;
 
             return {
                 id,
@@ -129,8 +90,8 @@ export default {
                 doc_numero,
                 telefono1,
                 tipo: 2,
-                comes_from: 'ecommerce',
-                user_token: localStorage.getItem('token'),
+                comes_from: "ecommerce",
+                user_token: localStorage.getItem("token"),
             };
         },
         async actualizar() {
@@ -140,7 +101,7 @@ export default {
             const send = this.shapeDatos();
 
             this.loading = true;
-            const res = await patch('account', send);
+            const res = await patch("account", send);
             this.loading = false;
 
             if (res.code == 0) {

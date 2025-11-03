@@ -1,6 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LibroReclamacionesForm from '../components/LibroReclamacionesForm.vue';
+import { get } from '../lib/api.js';
+
+const res = await get('sistema', {
+    qry: ['documentos_identidad'],
+});
+
+if (res.code == 0) {
+    var { documentos_identidad } = res.data;
+}
 ---
 
 <BaseLayout title="Libro de reclamaciones">
@@ -22,6 +31,9 @@ import LibroReclamacionesForm from '../components/LibroReclamacionesForm.vue';
             para registrar una queja o un reclamo.
         </p>
 
-        <LibroReclamacionesForm client:load />
+        <LibroReclamacionesForm
+            client:load
+            documentos_identidad={documentos_identidad}
+        />
     </main>
 </BaseLayout>

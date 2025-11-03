@@ -1,6 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccountPanel from '../components/AccountPanel.vue';
+import { get } from '../lib/api.js';
+
+const res = await get('sistema', {
+    qry: ['documentos_identidad'],
+});
+
+if (res.code == 0) {
+    var { documentos_identidad } = res.data;
+}
 ---
 
 <BaseLayout title="Mi cuenta">
@@ -9,7 +18,10 @@ import AccountPanel from '../components/AccountPanel.vue';
     </section> -->
     <main class="w-full bg-gray-50 py-12 sm:py-16 lg:py-20">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16">
-            <AccountPanel client:load />
+            <AccountPanel
+                client:load
+                documentos_identidad={documentos_identidad}
+            />
         </div>
     </main>
 </BaseLayout>

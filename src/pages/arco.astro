@@ -1,7 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArcoForm from '../components/ArcoForm.vue';
-import { companyRUC, companyAddress, companyName } from '../lib/empresa.js';
+import { get } from '../lib/api.js';
+
+const res = await get('sistema', {
+    qry: ['empresa', 'documentos_identidad'],
+});
+
+if (res.code == 0) {
+    var { empresa, documentos_identidad } = res.data;
+}
 ---
 
 <BaseLayout title="Derechos ARCO">
@@ -21,17 +29,19 @@ import { companyRUC, companyAddress, companyName } from '../lib/empresa.js';
             Derechos de Acceso, Rectificación, Cancelación, Oposición,
             Información, Revocación y Portabilidad.
             <br /><br />
-            <strong>{companyName}</strong>, con RUC N° <strong
-                >{companyRUC}</strong
+            <strong>{empresa.nombre}</strong>, con RUC N° <strong
+                >{empresa.ruc}</strong
             >, domiciliado en
-            <strong>{companyAddress}</strong>, en cumplimiento de lo dispuesto
-            por la Ley Nº 29733, Ley de Protección de Datos Personales, y su
-            Reglamento aprobado por el Decreto Supremo Nº 016-2024-JUS, pone a
-            su disposición el presente procedimiento para ejercer sus derechos
-            ARCO respecto a sus datos personales contenidos en nuestros bancos
-            de datos.
+            <strong
+                >{empresa.direcciones[0].direccion},
+                {empresa.direcciones[0].distrito}</strong
+            >, en cumplimiento de lo dispuesto por la Ley Nº 29733, Ley de
+            Protección de Datos Personales, y su Reglamento aprobado por el
+            Decreto Supremo Nº 016-2024-JUS, pone a su disposición el presente
+            procedimiento para ejercer sus derechos ARCO respecto a sus datos
+            personales contenidos en nuestros bancos de datos.
         </p>
 
-        <ArcoForm client:load />
+        <ArcoForm client:load documentos_identidad={documentos_identidad} />
     </main>
 </BaseLayout>

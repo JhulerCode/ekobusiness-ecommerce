@@ -1,6 +1,7 @@
 export const host = import.meta.env.PUBLIC_API_URL
 
 export const urls = {
+    sistema: `${host}/store/sistema`,
     categorias: `${host}/store/categorias`,
     productos: `${host}/store/productos`,
     newsletter: `${host}/store/newsletter`,

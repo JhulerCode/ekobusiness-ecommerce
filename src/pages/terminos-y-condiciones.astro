@@ -1,18 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { get } from '../lib/api.js';
+
+const res = await get('sistema', {
+    qry: ['empresa'],
+});
+
+if (res.code == 0) {
+    var { empresa } = res.data;
+}
 
 const lastUpdated = '20 de octubre de 2025';
-import {
-    companyName,
-    companyNameComercial,
-    companySite,
-    contactEmail,
-    companyRUC,
-    companyAddress,
-    whatsappNumber,
-    emailSoporte,
-    companyPhone,
-} from '../lib/empresa.js';
 
 const secciones = [
     {
@@ -75,12 +73,12 @@ const secciones = [
                 disposición los siguientes Términos y Condiciones, cláusulas
                 contractuales que regirán la relación comercial y/o de consumo
                 entre ustedes, nuestros clientes/consumidores, y nosotros
-                <strong>{companyName}</strong> (en adelante, “SUNKA”), a través del
-                uso de la tienda virtual
+                <strong>{empresa.nombre}</strong> (en adelante, “SUNKA”), a través
+                del uso de la tienda virtual
                 <a
-                    href={companySite}
+                    href={empresa.ecommerce_url}
                     class="underline text-blue-600 hover:text-blue-800"
-                    target="_blank">{companySite}</a
+                    target="_blank">{empresa.ecommerce_url}</a
                 >
                 .
             </p>
@@ -106,17 +104,19 @@ const secciones = [
             <h2>Identificación de la empresa con quien contratas</h2>
 
             <p class="mt-2">
-                <strong>{companyNameComercial}</strong> es una empresa debidamente
+                <strong>{empresa.nombre_comercial}</strong> es una empresa debidamente
                 constituida en el Perú e inscrita en el Registro de Personas Jurídicas
                 de la Superintendencia Nacional de los Registros Públicos (SUNARP)
                 con Partida Registral No. 13194945 y con Registro Único de Contribuyentes
-                (RUC) No. {companyRUC}.
+                (RUC) No. {empresa.ruc}.
             </p>
             <br />
             <p>
-                El Gerente General de <strong>{companyNameComercial}</strong> es
-                el Señor Jaime Pinedo Zafra y tiene como domicilio fiscal la dirección
-                {companyAddress},
+                El Gerente General de <strong>{empresa.nombre_comercial}</strong
+                > es el Señor Jaime Pinedo Zafra y tiene como domicilio fiscal la
+                dirección
+                {empresa.direcciones[0].direccion},
+                {empresa.direcciones[0].distrito}.
             </p>
             <br />
             <p>
@@ -138,9 +138,9 @@ const secciones = [
 
             <p>
                 A través de la tienda virtual <a
-                    href={companySite}
+                    href={empresa.ecommerce_url}
                     class="underline text-blue-600 hover:text-blue-800"
-                    target="_blank">{companySite}</a
+                    target="_blank">{empresa.ecommerce_url}</a
                 >, distinguida por la marca SUNKA TEA, ofrecemos una línea de
                 productos de té e infusiones, lo cuales se adquieren a través de
                 la referida tienda virtual sujetándose a las cláusulas del
@@ -205,18 +205,22 @@ const secciones = [
                 con datos válidos y verdaderos. Asimismo, se responsabiliza por
                 la exactitud, veracidad, vigencia y autenticidad de los Datos
                 Personales ingresados; no obstante, <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > podrá aplicar los controles de validación que considere conveniente,
                 lo cual podría implicar, sin limitarse, a solicitar información complementaria
                 para verificar los Datos Personales ingresados por el usuario. Ante
-                la negativa del usuario, <strong>{companyNameComercial}</strong>
+                la negativa del usuario, <strong
+                    >{empresa.nombre_comercial}</strong
+                >
                 podrá suspender o eliminar la cuenta del usuario.
             </p>
 
             <h3>Cuenta asignada por usuario registrado</h3>
             <p>
                 Cada usuario registrado tendrá únicamente una cuenta en la
-                tienda virtual. En caso <strong>{companyNameComercial}</strong>
+                tienda virtual. En caso <strong
+                    >{empresa.nombre_comercial}</strong
+                >
                 detecte que el usuario tenga más de una cuenta, podrá agrupar todas
                 sus cuentas en una sola, eliminando las demás. Esta acción será comunicada
                 al usuario al último correo electrónico registrado.
@@ -227,7 +231,7 @@ const secciones = [
                 y Condiciones
             </h3>
             <p>
-                En caso <strong>{companyNameComercial}</strong> verifique o sospeche
+                En caso <strong>{empresa.nombre_comercial}</strong> verifique o sospeche
                 un uso fraudulento o contrario a los Términos y Condiciones que rigen
                 la tienda virtual, tendrá derecho de dar de baja las cuentas.
             </p>
@@ -237,7 +241,7 @@ const secciones = [
                 El usuario se responsabiliza de mantener en estricta
                 confidencialidad su clave de acceso. Dicha clave es de uso
                 personal, y no es de responsabilidad de <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > un uso incorrecto, indebido y/o negligente.
             </p>
 
@@ -256,15 +260,17 @@ const secciones = [
                 Términos y Condiciones. En tal sentido, cualquier usuario que
                 realice una transacción en la tienda virtual, ya sea como
                 visitante o usuario registrado, conoce y acepta los presentes
-                Términos y Condiciones. <strong>{companyNameComercial}</strong> se
-                reserva el derecho de modificar y/o actualizar los presentes Términos
-                y Condiciones en cualquier momento y sin previo aviso. Por tanto,
-                se recomienda al usuario revisar constantemente la presente sección.
+                Términos y Condiciones. <strong
+                    >{empresa.nombre_comercial}</strong
+                > se reserva el derecho de modificar y/o actualizar los presentes
+                Términos y Condiciones en cualquier momento y sin previo aviso. Por
+                tanto, se recomienda al usuario revisar constantemente la presente
+                sección.
             </p>
 
             <h3>Disponibilidad de la tienda virtual</h3>
             <p>
-                <strong>{companyNameComercial}</strong> se compromete a realizar
+                <strong>{empresa.nombre_comercial}</strong> se compromete a realizar
                 los mejores esfuerzos para asegurar la disponibilidad, sin interrupciones,
                 de los servicios de la tienda virtual, y disminuir los errores en
                 cualquier transmisión de información que pudiera tener lugar. No
@@ -277,7 +283,7 @@ const secciones = [
                 empresa; en tales casos se procurará tomar las acciones pertinentes
                 para solucionar los inconvenientes en el menor tiempo posible, sin
                 que por ello pueda imputársele algún tipo de responsabilidad a
-                <strong>{companyNameComercial}</strong>
+                <strong>{empresa.nombre_comercial}</strong>
             </p>
 
             <h3>Disponibilidad de la tienda virtual</h3>
@@ -291,23 +297,24 @@ const secciones = [
             <h2>Medios de pago aceptados</h2>
 
             <p>
-                <strong>{companyNameComercial}</strong> acepta transferencias bancarias
-                a sus cuentas corrientes, pago con billetera electrónica (Yape, Plin)
-                y tarjetas bancarias Visa, MasterCard, American Express y Diners
-                Club tanto crédito como débito. Por ningún motivo, una compra puede
-                ser combinado con dos medios de pagos expuestos anteriormente.
+                <strong>{empresa.nombre_comercial}</strong> acepta transferencias
+                bancarias a sus cuentas corrientes, pago con billetera electrónica
+                (Yape, Plin) y tarjetas bancarias Visa, MasterCard, American Express
+                y Diners Club tanto crédito como débito. Por ningún motivo, una compra
+                puede ser combinado con dos medios de pagos expuestos anteriormente.
             </p>
 
             <h3>Transferencia bancaria a las cuentas corrientes</h3>
             <p>
                 El usuario podrá realizar una transferencia bancaria a las
-                cuentas corrientes de <strong>{companyNameComercial}</strong> debidamente
-                indicadas al momento de realizar la compra en la tienda virtual.
-                Una vez realizado el depósito el cliente debe contactarse al correo
-                {contactEmail}
+                cuentas corrientes de <strong>{empresa.nombre_comercial}</strong
+                > debidamente indicadas al momento de realizar la compra en la tienda
+                virtual. Una vez realizado el depósito el cliente debe contactarse
+                al correo
+                {empresa.email_ventas}
                 adjuntando la constancia del depósito. El despacho de los productos
                 adquiridos estará sujeto a la conformidad de <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 >
             </p>
 
@@ -318,10 +325,9 @@ const secciones = [
                 compra en la tienda virtual, por el cual se realizará un cargo a
                 la tarjeta afiliada a la billetera móvil. Una vez realizado el
                 depósito el cliente debe contactarse al correo
-                {contactEmail} adjuntando la constancia del depósito. El despacho
-                de los productos adquiridos estará sujeto a la conformidad de <strong
-                    >{companyNameComercial}</strong
-                >
+                {empresa.email_ventas} adjuntando la constancia del depósito. El
+                despacho de los productos adquiridos estará sujeto a la conformidad
+                de <strong>{empresa.nombre_comercial}</strong>
             </p>
 
             <h3>
@@ -346,15 +352,15 @@ const secciones = [
                 otros, se regirán por el respectivo Contrato de Apertura y
                 Reglamento de Uso firmado entre el usuario y la entidad
                 financiera correspondiente. <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > no tendrá responsabilidad en cualquiera de los puntos antes señalados.
             </p>
             <br />
             <p>
-                <strong>{companyNameComercial}</strong> garantiza al 100% la seguridad
-                de los pagos. Al momento de pagar con tarjeta de crédito o débito,
-                toda la información es cifrada mediante el mejor sistema de protección
-                Secure Sockets Layer (SSL).
+                <strong>{empresa.nombre_comercial}</strong> garantiza al 100% la
+                seguridad de los pagos. Al momento de pagar con tarjeta de crédito
+                o débito, toda la información es cifrada mediante el mejor sistema
+                de protección Secure Sockets Layer (SSL).
             </p>
             <br />
             <p>
@@ -407,7 +413,7 @@ const secciones = [
 
             <p>
                 A través de la tienda virtual <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > realiza ofertas de productos que podrán ser aceptadas vía electrónica,
                 utilizando los mecanismos que la tienda virtual pone a disposición
                 de los usuarios.
@@ -415,16 +421,16 @@ const secciones = [
             <br />
             <p>
                 Toda aceptación de oferta quedará supeditada, como condición
-                suspensiva, a que <strong>{companyNameComercial}</strong> valide
+                suspensiva, a que <strong>{empresa.nombre_comercial}</strong> valide
                 la transacción. Por tanto, para que la transacción se efectúe en
                 la tienda virtual, la confirmación y/o validación, y/o verificación
                 por parte de
-                <strong>{companyNameComercial}</strong> será esencial para la formación
-                del consentimiento, y por tanto, el contrato quede perfeccionado.
+                <strong>{empresa.nombre_comercial}</strong> será esencial para la
+                formación del consentimiento, y por tanto, el contrato quede perfeccionado.
             </p>
             <br />
             <p>
-                Como consecuencia, <strong>{companyNameComercial}</strong> deberá
+                Como consecuencia, <strong>{empresa.nombre_comercial}</strong> deberá
                 confirmar y/o validar, y/o verificar lo siguiente:
             </p>
             <ol>
@@ -442,7 +448,7 @@ const secciones = [
                 <li>
                     Confirmación del pago o depósito informada por los
                     operadores de las pasarelas de pago o de la oficina de
-                    tesorería de <strong>{companyNameComercial}</strong>.
+                    tesorería de <strong>{empresa.nombre_comercial}</strong>.
                 </li>
                 <li>
                     Los datos registrados por el usuario en la tienda virtual
@@ -454,24 +460,24 @@ const secciones = [
 
             <p>
                 Concluida la confirmación, validación y/o verificación, <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > contactará al usuario vía email o a través de cualquier medio de
                 comunicación que garantice el debido y oportuno conocimiento del
                 consumidor. El consentimiento se entenderá formado, y por tanto,
                 el contrato queda perfeccionado, desde el momento en que <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > concluya con éxito la validación e informe de esta al usuario,
                 emitiendo el correspondiente comprobante de venta.
             </p>
             <br />
             <p>
                 En atención a lo señalado en los párrafos anteriores, <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > podrá dejar sin efecto/anular los pedidos cuando verifique que
                 no se cumple con una o más de las condiciones precedentes, para lo
                 cual contactará al usuario vía email o a través de cualquier medio
                 de comunicación autorizado por el usuario. Asimismo, <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 >, y en tanto corresponda, comunicará este hecho a la entidad
                 financiera emisora de la tarjeta utilizada por el usuario en su
                 solicitud de compra. Dicha entidad financiera será la única
@@ -482,7 +488,7 @@ const secciones = [
             <br />
             <p>
                 Los pagos realizados mediante depósito directo a las cuentas de
-                <strong>{companyNameComercial}</strong> se reembolsarán a través
+                <strong>{empresa.nombre_comercial}</strong> se reembolsarán a través
                 de depósito en cuenta bancaria del titular del pedido, nunca a terceros
                 ni por medio de giros o cheques.
             </p>
@@ -499,20 +505,20 @@ const secciones = [
             <h2>Stock</h2>
 
             <p>
-                <strong>{companyNameComercial}</strong> se encarga de la actualización
+                <strong>{empresa.nombre_comercial}</strong> se encarga de la actualización
                 de la tienda virtual y la revisión constante de los productos que
                 se exhiben en el mismo. Del mismo modo, <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > puede modificar y/o descontinuar los productos en cualquier momento
                 sin contraer ninguna responsabilidad frente al usuario.
             </p>
             <br />
 
             <p>
-                <strong>{companyNameComercial}</strong> no garantiza un stock mayor
-                al stock mínimo de 1 (una) unidad de sus productos durante el proceso
-                de despacho de los productos. Al respecto, <strong
-                    >{companyNameComercial}</strong
+                <strong>{empresa.nombre_comercial}</strong> no garantiza un stock
+                mayor al stock mínimo de 1 (una) unidad de sus productos durante
+                el proceso de despacho de los productos. Al respecto, <strong
+                    >{empresa.nombre_comercial}</strong
                 > se reserva el derecho de no aprobar la solicitud de compra y en
                 consecuencia de no despachar un producto si este no cuenta con el
                 stock solicitado. Toda solicitud de compra que se realice a través
@@ -528,12 +534,12 @@ const secciones = [
             <h2>Productos sustitutos</h2>
 
             <p>
-                <strong>{companyNameComercial}</strong> pese a realizar sus mejores
+                <strong>{empresa.nombre_comercial}</strong> pese a realizar sus mejores
                 esfuerzos, es posible que no disponga de alguno de los productos.
-                Sin perjuicio de que <strong>{companyNameComercial}</strong> pueda
-                dejar sin efecto o anular el pedido por falta de stock conforme a
-                lo señalado en la sección de “Formación del consentimiento”, <strong
-                    >{companyNameComercial}</strong
+                Sin perjuicio de que <strong>{empresa.nombre_comercial}</strong>
+                pueda dejar sin efecto o anular el pedido por falta de stock conforme
+                a lo señalado en la sección de “Formación del consentimiento”, <strong
+                    >{empresa.nombre_comercial}</strong
                 > podrá brindar al usuario la opción de elegir entre alguno de los
                 criterios de sustitución durante el proceso de compra:
             </p>
@@ -555,20 +561,21 @@ const secciones = [
             <h2>Politica de devolucion o cambio de producto</h2>
 
             <p>
-                <strong>{companyNameComercial}</strong> aceptará la devolución o
-                cambio de los productos únicamente en casos de que el producto enviado
-                se encuentre vencido o tenga alguna falla de calidad, por lo cual
-                el usuario deberá presentar el comprobante de compra. En tal sentido,
-                <strong>{companyNameComercial}</strong>
+                <strong>{empresa.nombre_comercial}</strong> aceptará la devolución
+                o cambio de los productos únicamente en casos de que el producto
+                enviado se encuentre vencido o tenga alguna falla de calidad, por
+                lo cual el usuario deberá presentar el comprobante de compra. En
+                tal sentido,
+                <strong>{empresa.nombre_comercial}</strong>
                 asumirá el costo de envío.
             </p>
             <br />
 
             <p>
-                <strong>{companyNameComercial}</strong> ofrece al usuario la posibilidad
-                de cambiar el producto o la devolución del dinero a través de una
-                nota de crédito o un extorno de dinero a la tarjeta usada en la compra.
-                Todo cambio o devolución estará sujeto a evaluación.
+                <strong>{empresa.nombre_comercial}</strong> ofrece al usuario la
+                posibilidad de cambiar el producto o la devolución del dinero a través
+                de una nota de crédito o un extorno de dinero a la tarjeta usada
+                en la compra. Todo cambio o devolución estará sujeto a evaluación.
             </p>
             <br />
 
@@ -583,14 +590,14 @@ const secciones = [
             <p>
                 Los cambios del producto estarán sujetos a stock. En caso no
                 exista stock del producto, <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > hará entrega de una nota de crédito al usuario, para que pueda
                 optar por otro producto de su preferencia en la tienda virtual conforme
                 a los criterios señalados en la Sección de “Productos Sustitutos”.
                 En caso de que el usuario opte por un producto de mayor valor al
                 de su nota de crédito, deberá asumir la diferencia. En caso de que
                 el usuario opte por un producto de menor valor, <strong
-                    >{companyNameComercial}</strong
+                    >{empresa.nombre_comercial}</strong
                 > no devolverá la diferencia.
             </p>
             <br />
@@ -611,11 +618,12 @@ const secciones = [
 
             <h3>¿Cómo puedo realizar cambios o devoluciones?</h3>
             <p>
-                El usuario se deberá comunicar al correo {contactEmail}
-                o llamando al {whatsappNumber}. Mediante esta comunicación
-                deberá indicar sus nombres, apellidos, número de pedido y fecha
-                en que realizó la compra, el motivo del cambio o devolución y
-                fotográficas del artículo que sustente su disconformidad.
+                El usuario se deberá comunicar al correo {empresa.email_ventas}
+                o llamando al {empresa.whatsapp_ventas}. Mediante esta
+                comunicación deberá indicar sus nombres, apellidos, número de
+                pedido y fecha en que realizó la compra, el motivo del cambio o
+                devolución y fotográficas del artículo que sustente su
+                disconformidad.
             </p>
             <br />
             <p>
@@ -636,14 +644,19 @@ const secciones = [
             <h3>Recojo en tienda</h3>
             <p>
                 Realiza tu compra a través de nuestra tienda online y acércate a
-                recoger personalmente en la dirección de {companyAddress}. Este
-                servicio es completamente gratuito.
+                recoger personalmente en la dirección de {
+                    empresa.direcciones[0].direccion
+                },
+                {empresa.direcciones[0].distrito}. Este servicio es
+                completamente gratuito.
             </p>
             <br />
             <p>
                 Previamente debe comunicarse a nuestro canal de whatsapp
-                {whatsappNumber} o a nuestra línea telefónica {companyPhone} indicando
-                su número de pedido (enviado a su correo una vez finalizado la compra).
+                {empresa.whatsapp_ventas} o a nuestra línea telefónica {
+                    empresa.telefono
+                } indicando su número de pedido (enviado a su correo una vez finalizado
+                la compra).
             </p>
             <br />
             <p>
@@ -733,8 +746,9 @@ const secciones = [
                 costo original expresada en la página del checkout de la tienda
                 online, finalmente de no tener éxito en la entrega por ausencia
                 o dirección errónea, el cliente tendrá la opción de recoger en
-                la dirección de {companyAddress} comunicándose previamente para tal
-                efecto con el área de atención al cliente de la empresa.
+                la dirección de {empresa.direcciones[0].direccion},
+                {empresa.direcciones[0].distrito} comunicándose previamente para
+                tal efecto con el área de atención al cliente de la empresa.
             </p>
         </section>
 
@@ -745,7 +759,7 @@ const secciones = [
                 Los precios de los productos de la tienda virtual, mientras
                 aparezcan como disponibles, solo tendrán vigencia y aplicación
                 en éste y no serán aplicables a otros canales de venta
-                utilizados por <strong>{companyNameComercial}</strong>
+                utilizados por <strong>{empresa.nombre_comercial}</strong>
             </p>
             <br />
             <p>
@@ -760,7 +774,8 @@ const secciones = [
             <p>
                 Los precios y/o promociones de los productos y servicios
                 publicados en este sitio, se encuentran vigentes únicamente
-                mientras aparezcan en él. <strong>{companyNameComercial}</strong
+                mientras aparezcan en él. <strong
+                    >{empresa.nombre_comercial}</strong
                 > podrá modificar cualquier información contenida en este sitio.
                 No aplica para ventas al por mayor ni corporativas.
             </p>
@@ -794,7 +809,7 @@ const secciones = [
                     publicadas en banners y en el presente documento.
                 </li>
                 <li>
-                    <strong>{companyNameComercial}</strong> se reserva el derecho
+                    <strong>{empresa.nombre_comercial}</strong> se reserva el derecho
                     de cancelar órdenes o pedidos de compra que no cumplan con las
                     condiciones de cada código promocional.
                 </li>
@@ -842,10 +857,12 @@ const secciones = [
                 Todo el contenido incluido o puesto a disposición del usuario en
                 la tienda virtual textos, gráficos, logos, íconos, imágenes,
                 videos, archivos de audio, descargas digitales y cualquier otra
-                información es de propiedad de {companyNameComercial} En tal sentido,
-                el usuario debe abstenerse de extraer y/o reutilizar total o parcialmente
-                dicho contenido y queda prohibido de utilizarlo sin el consentimiento
-                previo y por escrito de <strong>{companyNameComercial}</strong>
+                información es de propiedad de {empresa.nombre_comercial} En tal
+                sentido, el usuario debe abstenerse de extraer y/o reutilizar total
+                o parcialmente dicho contenido y queda prohibido de utilizarlo sin
+                el consentimiento previo y por escrito de <strong
+                    >{empresa.nombre_comercial}</strong
+                >
             </p>
         </section>
 

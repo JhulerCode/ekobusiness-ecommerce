@@ -2,9 +2,7 @@
     <div class="space-y-8" v-if="!enviado">
         <!-- Datos personales -->
         <div>
-            <h2 class="text-lg font-medium mb-4 text-neutral-900">
-                Datos personales
-            </h2>
+            <h2 class="text-lg font-medium mb-4 text-neutral-900">Datos personales</h2>
 
             <div class="grid md:grid-cols-2 gap-4">
                 <JdInput
@@ -24,7 +22,7 @@
                 <JdSelect
                     label="Tipo de documento"
                     :nec="true"
-                    :lista="doc_tipos"
+                    :lista="documentos_identidad"
                     v-model="form.doc_tipo"
                     :error="errors.doc_tipo"
                 />
@@ -36,12 +34,7 @@
                     :error="errors.doc_numero"
                 />
 
-                <JdInput
-                    label="Correo"
-                    :nec="true"
-                    v-model="form.correo"
-                    :error="errors.correo"
-                />
+                <JdInput label="Correo" :nec="true" v-model="form.correo" :error="errors.correo" />
 
                 <JdInput
                     label="Dirección"
@@ -50,10 +43,7 @@
                     :error="errors.direccion"
                 />
 
-                <JdCheckBox
-                    label="Soy menor de edad"
-                    v-model="form.menor_edad"
-                />
+                <JdCheckBox label="Soy menor de edad" v-model="form.menor_edad" />
             </div>
         </div>
 
@@ -64,8 +54,7 @@
             </h2>
 
             <p class="text-sm text-gray-600 mb-4">
-                Estos datos nos ayudarán a resolver tu reclamo de manera más
-                rápida.
+                Estos datos nos ayudarán a resolver tu reclamo de manera más rápida.
             </p>
 
             <div class="grid md:grid-cols-2 gap-4">
@@ -96,9 +85,7 @@
 
         <!-- Detalles -->
         <div>
-            <h2 class="text-lg font-medium mb-4 text-neutral-900">
-                Detalles de la solicitud
-            </h2>
+            <h2 class="text-lg font-medium mb-4 text-neutral-900">Detalles de la solicitud</h2>
 
             <div class="grid gap-4">
                 <JdRadio
@@ -127,12 +114,7 @@
         </div>
 
         <div class="flex flex-col items-center">
-            <JdButton
-                text="Enviar"
-                @click="enviar"
-                :loading="loading"
-                class="!w-60"
-            />
+            <JdButton text="Enviar" @click="enviar" :loading="loading" class="!w-60" />
 
             <p v-if="errors.general" class="input-error">
                 {{ errors.general }}
@@ -149,20 +131,19 @@
         </h2>
 
         <p class="text-gray-700">
-            Te daremos una respuesta al reclamo en una plazo no mayor a 15 días
-            calendarios.
+            Te daremos una respuesta al reclamo en una plazo no mayor a 15 días calendarios.
         </p>
     </div>
 </template>
 
 <script>
-import { post } from '../lib/api.js';
-import JdInput from './JdInput.vue';
-import JdTextArea from './JdTextArea.vue';
-import JdSelect from './JdSelect.vue';
-import JdCheckBox from './JdCheckBox.vue';
-import JdRadio from './JdRadio.vue';
-import JdButton from './JdButton.vue';
+import { post } from "../lib/api.js";
+import JdInput from "./JdInput.vue";
+import JdTextArea from "./JdTextArea.vue";
+import JdSelect from "./JdSelect.vue";
+import JdCheckBox from "./JdCheckBox.vue";
+import JdRadio from "./JdRadio.vue";
+import JdButton from "./JdButton.vue";
 
 export default {
     components: {
@@ -173,75 +154,54 @@ export default {
         JdRadio,
         JdButton,
     },
+    props: {
+        documentos_identidad: { type: Array, default: () => [] },
+    },
     data() {
         return {
             loading: false,
             enviado: false,
-            resMsg: '',
+            resMsg: "",
 
             form: {},
             errors: {},
 
             solicitud_tipos: [
                 {
-                    id: 'reclamo',
-                    nombre: 'Reclamo',
+                    id: "reclamo",
+                    nombre: "Reclamo",
                     descripcion:
-                        'Es la expresión de disconformidad del consumidor referida a los bienes expendidos o suministrados o a los servicios prestados.',
+                        "Es la expresión de disconformidad del consumidor referida a los bienes expendidos o suministrados o a los servicios prestados.",
                 },
                 {
-                    id: 'queja',
-                    nombre: 'Queja',
+                    id: "queja",
+                    nombre: "Queja",
                     descripcion:
-                        'Es aquella disconformidad que no se encuentra relacionada a los bienes que comercializa el proveedor o a los servicios que presta. Puede expresar el malestar o descontento del consumidor respecto a la atención al público.',
-                },
-            ],
-            doc_tipos: [
-                {
-                    id: 'DNI',
-                    nombre: 'DNI',
-                },
-                {
-                    id: 'CE',
-                    nombre: 'Carné de Extranjería',
-                },
-                {
-                    id: 'PAS',
-                    nombre: 'Pasaporte',
+                        "Es aquella disconformidad que no se encuentra relacionada a los bienes que comercializa el proveedor o a los servicios que presta. Puede expresar el malestar o descontento del consumidor respecto a la atención al público.",
                 },
             ],
         };
     },
     methods: {
         validateForm() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
-            if (!this.form.nombres) this.errors.nombres = 'Campo obligatorio.';
-            if (!this.form.apellidos)
-                this.errors.apellidos = 'Campo obligatorio.';
-            if (!this.form.doc_tipo)
-                this.errors.doc_tipo = 'Seleccione un tipo de documento.';
-            if (!this.form.doc_numero)
-                this.errors.doc_numero = 'Campo obligatorio.';
-            if (
-                !this.form.correo ||
-                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.correo)
-            )
-                this.errors.correo = 'Ingrese un correo válido.';
-            if (!this.form.direccion)
-                this.errors.direccion = 'Campo obligatorio.';
+            if (!this.form.nombres) this.errors.nombres = "Campo obligatorio.";
+            if (!this.form.apellidos) this.errors.apellidos = "Campo obligatorio.";
+            if (!this.form.doc_tipo) this.errors.doc_tipo = "Seleccione un tipo de documento.";
+            if (!this.form.doc_numero) this.errors.doc_numero = "Campo obligatorio.";
+            if (!this.form.correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.correo))
+                this.errors.correo = "Ingrese un correo válido.";
+            if (!this.form.direccion) this.errors.direccion = "Campo obligatorio.";
 
-            if (!this.form.pedido_codigo)
-                this.errors.pedido_codigo = 'Campo obligatorio.';
-            if (!this.form.monto) this.errors.monto = 'Campo obligatorio.';
+            if (!this.form.pedido_codigo) this.errors.pedido_codigo = "Campo obligatorio.";
+            if (!this.form.monto) this.errors.monto = "Campo obligatorio.";
             if (!this.form.producto_descripcion)
-                this.errors.producto_descripcion = 'Campo obligatorio.';
+                this.errors.producto_descripcion = "Campo obligatorio.";
 
-            if (!this.form.tipo)
-                this.errors.tipo = 'Seleccione un tipo de solicitud.';
-            if (!this.form.resumen) this.errors.resumen = 'Resuma su reclamo.';
-            if (!this.form.detalle)
-                this.errors.detalle = 'Describa su solicitud.';
+            if (!this.form.tipo) this.errors.tipo = "Seleccione un tipo de solicitud.";
+            if (!this.form.resumen) this.errors.resumen = "Resuma su reclamo.";
+            if (!this.form.detalle) this.errors.detalle = "Describa su solicitud.";
 
             return Object.values(this.errors).every((e) => !e);
         },
@@ -254,11 +214,11 @@ export default {
             this.shapeDatos();
 
             this.loading = true;
-            const res = await post('libro_reclamos', this.form);
+            const res = await post("libro_reclamos", this.form);
             this.loading = false;
 
             if (res.code < 0) {
-                this.errors.general = 'Algo salió mal';
+                this.errors.general = "Algo salió mal";
             } else if (res.code > 0) {
                 this.errors.general = res.msg;
             }
@@ -267,7 +227,7 @@ export default {
 
                 window.scrollTo({
                     top: 0,
-                    behavior: 'smooth',
+                    behavior: "smooth",
                 });
             }
         },

@@ -1,7 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { get } from '../lib/api.js';
 
-import { contactEmail } from '../lib/empresa.js';
+const res = await get('sistema', {
+    qry: ['empresa'],
+});
+
+if (res.code == 0) {
+    var { empresa } = res.data;
+}
 
 const faqs = [
     {
@@ -34,7 +41,7 @@ const faqs = [
     },
     {
         question: '¿Cómo puedo comunicarme con el equipo de Sunka?',
-        answer: `Puedes escribirnos a ${contactEmail} o llenar el formulario en nuestra página de contacto. Nuestro equipo responderá a la brevedad.`,
+        answer: `Puedes escribirnos a ${empresa.email_ventas} o llenar el formulario en nuestra página de contacto. Nuestro equipo responderá a la brevedad.`,
     },
 ];
 ---

@@ -35,7 +35,12 @@
 
             <!-- 🧾 Contenido dinámico -->
             <main class="w-full lg:flex-1 bg-white rounded-2xl shadow-md p-6 sm:p-8 min-h-[400px]">
-                <AccountPanelPerfil v-if="active === 'perfil'" :user="user" :headText="menuText" />
+                <AccountPanelPerfil
+                    v-if="active === 'perfil'"
+                    :user="user"
+                    :headText="menuText"
+                    :documentos_identidad="documentos_identidad"
+                />
 
                 <AccountPanelDirecciones
                     v-else-if="active === 'direcciones'"
@@ -84,6 +89,9 @@ export default {
         AccountPanelPagoMetodos,
         AccountPanelPedidos,
         AccountPanelAutenticacion,
+    },
+    props: {
+        documentos_identidad: { type: Array, default: () => [] },
     },
     data() {
         return {

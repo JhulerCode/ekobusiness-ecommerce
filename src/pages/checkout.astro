@@ -1,49 +1,36 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CheckoutForm from '../components/CheckoutForm.vue';
+import { get } from '../lib/api.js';
 
-const pago_metodos = [
-    { id: 'tarjeta', nombre: 'Tarjeta de crédito o débito' },
-    { id: 'yape', nombre: 'Yape' },
-];
+const res = await get('sistema', {
+    qry: [
+        'empresa',
+        'documentos_identidad',
+        'entrega_tipos',
+        'comprobante_tipos',
+        'pago_metodos',
+    ],
+});
 
-const doc_tipos = [
-    {
-        id: 'DNI',
-        nombre: 'DNI',
-    },
-    {
-        id: 'CE',
-        nombre: 'Carné de Extranjería',
-    },
-    {
-        id: 'PAS',
-        nombre: 'Pasaporte',
-    },
-];
-
-const entrega_tipos = [
-    {
-        id: 'envio',
-        nombre: 'Envío a domicilio',
-    },
-    {
-        id: 'retiro',
-        nombre: 'Retira tu producto',
-    },
-];
-
-const comprobante_tipos = [
-    { id: '03', nombre: 'Boleta', codigo: 'BOLETA' },
-    { id: '01', nombre: 'Factura', codigo: 'FACTURA' },
-];
+if (res.code == 0) {
+    var {
+        empresa,
+        documentos_identidad,
+        entrega_tipos,
+        comprobante_tipos,
+        pago_metodos,
+    } = res.data;
+}
+// console.log(res.data);
 ---
 
 <BaseLayout title="Checkout">
     <CheckoutForm
         client:load
+        empresa={empresa}
         pago_metodos={pago_metodos}
-        doc_tipos={doc_tipos}
+        documentos_identidad={documentos_identidad}
         entrega_tipos={entrega_tipos}
         comprobante_tipos={comprobante_tipos}
     />
