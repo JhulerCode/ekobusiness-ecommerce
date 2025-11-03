@@ -36,7 +36,7 @@ export default {
                 return this.modelValue;
             },
             set(newValue) {
-                this.$emit('update:modelValue', newValue);
+                this.$emit("update:modelValue", newValue);
             },
         },
     },

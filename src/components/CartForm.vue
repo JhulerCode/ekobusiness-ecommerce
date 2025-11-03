@@ -60,12 +60,12 @@
                             </p>
 
                             <div class="flex items-center gap-3 mt-3">
-                                <input
+                                <JdInput
                                     type="number"
                                     min="1"
-                                    v-model.number="item.cantidad"
+                                    v-model="item.cantidad"
                                     @change="updateQuantity(item)"
-                                    class="w-20 border border-gray-300 rounded-lg p-2 text-center focus:outline-none focus:ring-2 focus:ring-black"
+                                    class="w-20"
                                 />
                             </div>
                         </div>
@@ -116,6 +116,10 @@
                 >
                     Proceder compra
                 </button>
+
+                <p v-if="error" class="input-error">
+                    {{ error }}
+                </p>
             </div>
         </div>
     </section>
@@ -123,12 +127,17 @@
 
 <script>
 import { Cart } from '../lib/cart.js';
+import JdInput from '../components/JdInput.vue';
 
 export default {
     name: 'CartForm',
+    components: {
+        JdInput
+    },
     data() {
         return {
             items: [],
+            error: null,
         };
     },
     computed: {
@@ -162,17 +171,13 @@ export default {
             this.load();
         },
         checkout() {
-            // const cart = Cart.get();
-            // if (cart.length === 0) {
-            //     // aquí puedes usar un toast bonito en lugar de alert
-            //     alert('Tu carrito está vacío 🛒');
-            //     return;
-            // }
-            // const user = localStorage.getItem('user');
-            // if (!user) {
-            //     window.location.href = '/login?redirect=/checkout';
-            //     return;
-            // }
+            const cart = Cart.get();
+
+            if (this.total < 0) {
+                this.error = 'Datos incorrectos'
+                return;
+            }
+
             window.location.href = '/checkout';
         },
     },
