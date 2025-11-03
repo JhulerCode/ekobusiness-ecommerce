@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Beneficios from "../../components/Beneficios.astro";
 import { urls, get } from "../../lib/api.js";
+import {redondear, formatDate, formatDateTime} from '../../lib/mine.js'
 
 const params = Astro.url.searchParams
 const is_account = params.get('account')
@@ -39,9 +40,7 @@ const etapas = [
                             </h2>
                             <p class="text-gray-500 text-sm">
                                 {
-                                    new Date(pedido.fecha).toLocaleDateString(
-                                        "es-PE",
-                                    )
+                                    formatDate(pedido.fecha)
                                 }
                             </p>
                         </div>
@@ -89,50 +88,59 @@ const etapas = [
                             {pedido.entrega_tipo}
                         </p>
 
-                        <p>
-                            <span class="font-medium">Dirección:</span>
-                            {pedido.direccion_entrega}
-                            {
-                                pedido.entrega_direccion_datos && (
-                                    <>
-                                        {pedido.entrega_direccion_datos
-                                            .numero && (
-                                            <>
-                                                {" "}
-                                                Nro:{" "}
-                                                {
-                                                    pedido
-                                                        .entrega_direccion_datos
-                                                        .numero
-                                                }
-                                            </>
-                                        )}
-                                        {pedido.entrega_direccion_datos
-                                            .piso && (
-                                            <>
-                                                {" "}
-                                                Piso:{" "}
-                                                {
-                                                    pedido
-                                                        .entrega_direccion_datos
-                                                        .piso
-                                                }
-                                            </>
-                                        )}
-                                    </>
-                                )
-                            }
-                        </p>
-
-                        <p>
-                            <span class="font-medium">Distrito:</span>
-                            {pedido.entrega_direccion_datos.ubigeo1.nombre}
-                        </p>
-
-                        <p>
-                            <span class="font-medium">Referencia:</span>
-                            {pedido.entrega_direccion_datos.referencia}
-                        </p>
+                        {
+                            pedido.entrega_tipo == 'envio' ? (
+                            <p>
+                                <span class="font-medium">Dirección:</span>
+                                {pedido.direccion_entrega}
+                                {
+                                    pedido.entrega_direccion_datos && (
+                                        <>
+                                            {pedido.entrega_direccion_datos
+                                                .numero && (
+                                                <>
+                                                    {" "}
+                                                    Nro:{" "}
+                                                    {
+                                                        pedido
+                                                            .entrega_direccion_datos
+                                                            .numero
+                                                    }
+                                                </>
+                                            )}
+                                            {pedido.entrega_direccion_datos
+                                                .piso && (
+                                                <>
+                                                    {" "}
+                                                    Piso:{" "}
+                                                    {
+                                                        pedido
+                                                            .entrega_direccion_datos
+                                                            .piso
+                                                    }
+                                                </>
+                                            )}
+                                        </>
+                                    )
+                                }
+                            </p>
+    
+                            <p>
+                                <span class="font-medium">Distrito:</span>
+                                {pedido.entrega_direccion_datos.ubigeo1.nombre}
+                            </p>
+    
+                            <p>
+                                <span class="font-medium">Referencia:</span>
+                                {pedido.entrega_direccion_datos.referencia}
+                            </p>
+                            ) : (
+                                <p>
+                                <span class="font-medium">Fecha de retiro:</span>
+                                {formatDate(pedido.fecha_entrega)}
+                            </p>
+                            )
+                        }
                     </div>
 
                     <div class="text-gray-700">
@@ -163,7 +171,7 @@ const etapas = [
 
                         <p>
                             <span class="font-medium">Monto total:</span>
-                            {pedido.moneda1?.simbolo}{pedido.monto}
+                            {pedido.moneda1?.simbolo}{redondear(pedido.monto)}
                         </p>
                     </div>
 
@@ -234,12 +242,7 @@ const etapas = [
                                                 </p>
                                                 {activa && (
                                                     <p class="text-xs text-gray-500">
-                                                        {new Date(
-                                                            etapa.fecha,
-                                                        ).toLocaleString("es-PE", {
-                                                            dateStyle: "short",
-                                                            timeStyle: "short",
-                                                        })}
+                                                        {formatDateTime(etapa.fecha)}
                                                     </p>
                                                 )}
                                             </div>

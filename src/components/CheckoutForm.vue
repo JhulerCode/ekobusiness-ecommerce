@@ -2,6 +2,7 @@
     <section class="max-w-6xl mx-auto px-4 py-12 gap-10" v-if="paymentSuccess == true">
         <div
             class="flex flex-col items-center justify-center text-center p-8 bg-white rounded-2xl shadow-md border border-gray-100 animate-fade-in"
+            v-if="form.pago_metodo == 'tarjeta'"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -20,14 +21,48 @@
 
             <h2 class="text-2xl font-semibold text-gray-800 mb-2">¡Pago confirmado!</h2>
 
-            <p class="text-gray-600 mb-6">
+            <p class="text-gray-600 mb-6 max-w-md">
                 Tu pago ha sido procesado exitosamente. En unos momentos recibirás un correo con los
                 detalles de tu compra.
             </p>
 
             <div class="flex gap-4">
                 <a href="/" class="button button2"> Ir al inicio </a>
-                <a :href="`/pedido/${form.id}a`" class="button button1"> Ver productos </a>
+                <a :href="`/pedido/${form.id}`" class="button button1"> Ver mi pedido </a>
+            </div>
+        </div>
+
+        <div
+            class="flex flex-col items-center justify-center text-center p-8 bg-white rounded-2xl shadow-md border border-gray-100 animate-fade-in"
+            v-if="form.pago_metodo == 'yape'"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-20 h-20 text-green-500 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2l4 -4m6 2a9 9 0 1 1 -18 0a9 9 0 0 1 18 0z"
+                />
+            </svg>
+
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">¡Pedido recibido!</h2>
+
+            <p class="text-gray-600 mb-6 max-w-md">
+                Hemos recibido tu pedido exitosamente. En unos momentos recibirás un correo con los
+                detalles de tu pedido. <br /><br />
+                Está pendiente de confirmar el pago realizado por Yape, nuestro equipo validará la
+                operación en breve.
+            </p>
+
+            <div class="flex gap-4">
+                <a href="/" class="button button2"> Ir al inicio </a>
+                <a :href="`/pedido/${form.id}`" class="button button1"> Ver estado del pedido </a>
             </div>
         </div>
     </section>
@@ -504,6 +539,9 @@
                                 </p>
 
                                 <div class="grid gap-3">
+                                    <p v-if="errors.paymentMethodToken" class="input-error">
+                                        {{ errors.paymentMethodToken }}
+                                    </p>
                                     <!-- Tarjetas guardadas -->
                                     <div
                                         v-for="(card, i) in user.wallet"
@@ -575,8 +613,9 @@
                             <!-- Si el método es YAPE -->
                             <template v-else-if="form.pago_metodo === 'yape'">
                                 <p class="text-gray-500 text-sm">
-                                    Escanea nuestro QR con tu app Yape y luego ingresa el código de
-                                    verificación.
+                                    Escanea el QR con tu app Yape, realiza el pago y luego ingresa
+                                    el código de operación. Nuestro equipo verificará la transacción
+                                    y confirmará tu pago para continuar con el proceso de compra.
                                 </p>
 
                                 <div
@@ -614,10 +653,10 @@
 
                                 <!-- Código de verificación -->
                                 <JdInput
-                                    label="Código de verificación"
+                                    label="Código de operación"
                                     :nec="true"
-                                    v-model="form.yape_codigo"
-                                    :error="errors.yape_codigo"
+                                    v-model="form.pago_id"
+                                    :error="errors.pago_id"
                                     placeholder="Ejemplo: 123456"
                                 />
                             </template>
@@ -978,6 +1017,13 @@ export default {
                     this.errors.comprobante_razon_social = "Este campo es obligatorio.";
             }
 
+            if (this.form.pago_metodo == "tarjeta") {
+                if (!this.form.paymentMethodToken)
+                    this.errors.paymentMethodToken = "Seleccione una tarjeta.";
+            } else if (this.form.pago_metodo == "yape") {
+                if (!this.form.pago_id) this.errors.pago_id = "Este campo es obligatorio.";
+            }
+
             return Object.values(this.errors).every((e) => !e);
         },
         shapeDatos() {
@@ -991,10 +1037,21 @@ export default {
             this.form.monto = this.total.toFixed(2);
 
             this.form.socio_pedido_items = this.items;
+
+            if (this.form.pago_metodo == "yape") {
+                this.form.codigo = genId();
+            }
         },
         async pagar() {
             if (!this.validarForm3()) return;
 
+            if (this.form.pago_metodo == "tarjeta") {
+                this.pagarConTarjeta();
+            } else if (this.form.pago_metodo == "yape") {
+                this.pagarConYape();
+            }
+        },
+        async pagarConTarjeta() {
             const send = {
                 monto: this.total.toFixed(2),
                 correo: this.form.socio_datos.correo,
@@ -1054,6 +1111,29 @@ export default {
                 await KR.renderElements("#myPaymentForm");
 
                 await KR.openPopin();
+            }
+        },
+        async pagarConYape() {
+            this.shapeDatos();
+
+            this.loadingPagar = true;
+            const res = await post("socio_pedidos", this.form);
+            this.loadingPagar = false;
+
+            if (res.code < 0) {
+                this.errors.general = "Algo salió mal";
+            }
+            if (res.code > 0) {
+                this.errors.general = res.msg;
+            } else if (res.code == 0) {
+                this.paymentSuccess = true;
+                this.form.id = res.data.id;
+                Cart.clear();
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                });
             }
         },
 
