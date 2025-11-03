@@ -11,7 +11,7 @@
             <JdInput
                 label="Número de pedido"
                 v-model="codigo"
-                placeholder="Ejemplo: 456789123"
+                placeholder="Ejemplo: 1762018452516211"
                 :error="error"
             />
 
@@ -23,8 +23,13 @@
             />
         </div>
 
-        <div class="text-center text-xs text-gray-400 pt-4 border-t">
-            © {{ new Date().getFullYear() }} EkoBusiness. Todos los derechos reservados.
+        <div class="text-center text-xs text-gray-400 pt-4 border-t space-y-1">
+            <p>
+                Si tienes algún inconveniente con tu pedido, puedes escribirnos a
+                <a :href="`mailto:${contactEmail}`" class="text-blue-500 hover:underline">
+                    {{ contactEmail }}
+                </a>
+            </p>
         </div>
     </div>
 </template>
@@ -32,6 +37,8 @@
 <script>
 import JdInput from "./JdInput.vue";
 import JdButton from "./JdButton.vue";
+import { get } from "../lib/api.js";
+import { contactEmail } from "../lib/empresa.js";
 
 export default {
     components: {
@@ -43,6 +50,7 @@ export default {
             codigo: "",
             error: "",
             loading: false,
+            contactEmail,
         };
     },
     methods: {
@@ -53,25 +61,26 @@ export default {
                 return;
             }
 
+            const qry = {
+                fltr: { codigo: { op: "Es", val: this.codigo } },
+                cols: ["codigo"],
+            };
+
             this.loading = true;
-            try {
-                const res = await fetch(
-                    `${import.meta.env.PUBLIC_API_URL}/store/pedidos/uno/${this.codigo}`
-                );
-                if (!res.ok) throw new Error("No se pudo conectar con el servidor.");
+            const res = await get("socio_pedidos", { qry });
+            this.loading = false;
 
-                const data = await res.json();
-
-                if (data && data.code === 200) {
-                    // Pedido encontrado → redirigir
-                    window.location.href = `/pedido/${this.codigo}`;
+            if (res.code < 0) {
+                this.error = "Algo salió mal.";
+            }
+            if (res.code > 0) {
+                this.error = res.msg;
+            } else if (res.code == 0) {
+                if (res.data.length > 0) {
+                    window.location.href = `/pedido/${res.data[0].id}`;
                 } else {
-                    this.error = "No se encontró ningún pedido con ese número.";
+                    this.error = "El pedido no existe.";
                 }
-            } catch (err) {
-                this.error = "Ocurrió un error al consultar el pedido.";
-            } finally {
-                this.loading = false;
             }
         },
     },
