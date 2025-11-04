@@ -3,22 +3,46 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Beneficios from '../../components/Beneficios.astro';
 import CategoriaProductos from '../../components/CategoriaProductos.vue';
-import { getCategorias, getProductos } from '../../lib/api.js';
+import { get, formatCategorias, formatProductos } from '../../lib/api.js';
 import { lineas } from '../../lib/lineas.js';
 
 const { slug } = Astro.params;
 
-const categoriasFltr = {
-    nombre: { op: 'Es', val: slug.replaceAll('-', ' ') },
+//--- Load categoria ---//
+const qry = {
+    fltr: {
+        tipo: { op: 'Es', val: '2' },
+        nombre: { op: 'Es', val: slug.replaceAll('-', ' ') },
+    },
+    cols: ['descripcion']
 };
-const categorias = await getCategorias(categoriasFltr);
+const res = await get('categorias', { qry });
+const categorias = formatCategorias(res.data);
 const categoria = categorias[0];
 
-const productosFltr = {
-    categoria: { op: 'Es', val: categoria.id },
+//--- Load productos ---//
+const qry2 = {
+    fltr: {
+        activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
+        categoria: { op: 'Es', val: categoria.id },
+    },
+    cols: [
+        'produccion_tipo',
+        'categoria',
+        'nombre',
+        'unidad',
+        'has_fv',
+        'precio',
+        'precio_anterior',
+        'igv_afectacion',
+        'fotos',
+    ],
 };
-const productos = await getProductos(productosFltr);
+const res2 = await get('productos', { qry: qry2 });
+const productos = formatProductos(res2.data);
 
+//--- Set líneas ---//
 const produccionTipos = new Set(
     productos.map((p) => String(p.produccion_tipo))
 );

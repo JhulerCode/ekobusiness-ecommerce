@@ -1,10 +1,15 @@
 ---
-import { getCategorias } from '../lib/api';
+import { get, formatCategorias } from '../lib/api';
 
-const categoriasFltr = {
-    is_destacado: { op: 'Es', val: true },
+const qry = {
+    fltr: {
+        tipo: { op: 'Es', val: '2' },
+        is_destacado: { op: 'Es', val: true },
+    },
+    cols: ['descripcion', 'fotos'],
 };
-const categorias = await getCategorias(categoriasFltr);
+const res = await get('categorias', { qry });
+const categorias = formatCategorias(res.data);
 ---
 
 <section class="py-16 bg-gray-50">

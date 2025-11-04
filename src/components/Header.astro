@@ -4,12 +4,15 @@ import Menu from '../assets/icons/menu.astro';
 import XmakIcon from '../assets/icons/xmark.astro';
 import CartIcon from '../components/CartIcon.vue';
 import AuthModal from '../components/AuthModal.vue';
+import { get } from '../lib/api.js';
 
-const navLinks = [
-    { name: 'Filtrante', href: '/linea/filtrante' },
-    { name: 'Granel', href: '/linea/granel' },
-    { name: 'Luxury', href: '/linea/luxury' },
-];
+const res = await get('lineas');
+const lineas = res.data;
+
+const navLinks = lineas.map((a) => ({
+    nombre: a.nombre,
+    href: `/linea/${a.nombre.toLowerCase().replace(/\s+/g, '-')}`,
+}));
 ---
 
 <header class="w-full bg-white shadow-sm sticky top-0 z-50">
@@ -29,7 +32,7 @@ const navLinks = [
                         href={link.href}
                         class="relative text-black text-md after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[2px] after:bg-black after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
                     >
-                        {link.name}
+                        {link.nombre}
                     </a>
                 ))
             }
@@ -66,7 +69,7 @@ const navLinks = [
                 href={link.href}
                 class="text-lg font-medium text-gray-900 hover:underline"
             >
-                {link.name}
+                {link.nombre}
             </a>
         ))
     }

@@ -9,24 +9,56 @@ import BrandPinterestIcon from '../../assets/icons/brand-pinterest.astro';
 import BrandWhatsappIcon from '../../assets/icons/brand-whatsapp.astro';
 import MailIcon from '../../assets/icons/mail.astro';
 import AddToCart from '../../components/AddToCart.vue';
-import { getProductos } from '../../lib/api.js';
+import { get, formatProductos } from '../../lib/api.js';
 
 const { slug } = Astro.params;
-const productos = await getProductos({ id: { op: 'Es', val: slug } }, null, [
-    'contenido_neto',
-    'descripcion',
-    'ingredientes',
-    'beneficios',
-    'dimenciones',
-    'envase_tipo',
-]);
+
+const qry = {
+    fltr: { id: { op: 'Es', val: slug } },
+    cols: [
+        'produccion_tipo',
+        'categoria',
+        'nombre',
+        'unidad',
+        'has_fv',
+        'precio',
+        'precio_anterior',
+        'igv_afectacion',
+        'fotos',
+
+        'contenido_neto',
+        'descripcion',
+        'ingredientes',
+        'beneficios',
+        'dimenciones',
+        'envase_tipo',
+    ],
+};
+const res = await get('productos', { qry });
+const productos = formatProductos(res.data);
 const producto = productos[0];
-
-const productosRelacionados = await getProductos({
-    categoria: { op: 'Es', val: producto.categoria },
-});
-
 const producto_nombre = producto.nombre;
+
+const qry2 = {
+    fltr: {
+        activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
+        categoria: { op: 'Es', val: producto.categoria },
+    },
+    cols: [
+        'produccion_tipo',
+        'categoria',
+        'nombre',
+        'unidad',
+        'has_fv',
+        'precio',
+        'precio_anterior',
+        'igv_afectacion',
+        'fotos',
+    ],
+};
+const res2 = await get('productos', { qry: qry2 });
+const productos_relacionados = formatProductos(res2.data);
 ---
 
 <BaseLayout title={`Producto: ${producto_nombre}`}>
@@ -68,9 +100,9 @@ const producto_nombre = producto.nombre;
                             S/ {producto.precio}
                         </span>
                         {
-                            producto.precio_antes && (
+                            producto.precio_anterior && (
                                 <span class="text-gray-400 line-through text-lg">
-                                    S/ {producto.precio_antes}
+                                    S/ {producto.precio_anterior}
                                 </span>
                             )
                         }
@@ -196,8 +228,8 @@ const producto_nombre = producto.nombre;
                             class="list-disc list-inside space-y-1 text-base leading-relaxed"
                         >
                             {
-                                producto.ingredientes.map((item) => (
-                                    <li>{item}</li>
+                                producto.ingredientes.map((a) => (
+                                    <li>{a.nombre}</li>
                                 ))
                             }
                         </ul>
@@ -212,7 +244,11 @@ const producto_nombre = producto.nombre;
                         <ul
                             class="list-disc list-inside space-y-1 text-base leading-relaxed"
                         >
-                            {producto.beneficios.map((item) => <li>{item}</li>)}
+                            {
+                                producto.beneficios.map((a) => (
+                                    <li>{a.nombre}</li>
+                                ))
+                            }
                         </ul>
                     </div>
                 </div>
@@ -232,7 +268,7 @@ const producto_nombre = producto.nombre;
             </p>
         </div>
 
-        <ProductosCarrusel productos={productosRelacionados} client:load />
+        <ProductosCarrusel productos={productos_relacionados} client:load />
     </section>
 
     <Beneficios />

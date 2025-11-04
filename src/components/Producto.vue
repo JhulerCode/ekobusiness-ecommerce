@@ -17,12 +17,12 @@
                 </p>
 
                 <div
-                    v-if="producto.precio_antes"
+                    v-if="producto.precio_anterior"
                     class="flex justify-between text-gray-400 text-sm"
                 >
                     <span>Antes</span>
                     <span class="line-through">
-                        S/ {{ producto.precio_antes }}
+                        S/ {{ producto.precio_anterior }}
                     </span>
                 </div>
 

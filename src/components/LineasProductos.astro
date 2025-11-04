@@ -1,57 +1,50 @@
 ---
-import { lineas } from '../lib/lineas.js';
+import { get, formatLineas } from '../lib/api.js';
+import LineaVideo from './LineaVideo.vue';
+
+const qry = { cols: ['fotos'] };
+const res = await get('lineas', { qry });
+const lineas = formatLineas(res.data);
 ---
 
 <section class="py-16 bg-white">
-    <div class="w-full px-4 md:px-6">
-        <div class="text-center mb-12">
-            <h2
-                class="text-3xl md:text-4xl font-heading font-bold text-gray-900"
-            >
-                Nuestras líneas de productos
-            </h2>
-
-            <p class="mt-2 text-gray-600">
-                Conoce nuestras líneas diseñadas para cada ocación
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {
-                lineas.map((linea) => (
-                    <div
-                        class="group relative rounded-2xl overflow-hidden h-[32rem] shadow-sm transition block"
-                        onmouseenter="const v=this.querySelector('video'); if(v){v.currentTime=0; v.play();}"
-                        onmouseleave="const v=this.querySelector('video'); if(v){v.pause(); v.currentTime=0;}"
-                    >
-                        <img
-                            src={linea.imagen}
-                            alt={linea.nombre}
-                            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-0 brightness-90"
-                        />
-
-                        <video
-                            src={linea.video}
-                            muted
-                            playsinline
-                            loop
-                            class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-200 group-hover:opacity-100 brightness-90"
-                        />
-
-                        <div class="relative z-10 h-full flex flex-col justify-end items-center p-6 text-center">
-                            <h3 class="text-2xl md:text-3xl font-semibold text-white mb-2">
-                                {linea.nombre}
-                            </h3>
-                            <a
-                                href={`/linea/${linea.slug}`}
-                                class="relative text-white after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
-                            >
-                                Ver más
-                            </a>
-                        </div>
-                    </div>
-                ))
-            }
-        </div>
+  <div class="w-full px-4 md:px-6">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-gray-900">
+            Nuestras líneas de productos
+        </h2>
+        <p class="mt-2 text-gray-600">
+            Conoce nuestras líneas diseñadas para cada ocasión
+        </p>
     </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {lineas.map((linea) => (
+            <div
+            class="rounded-2xl overflow-hidden h-[32rem] shadow-sm relative"
+            >
+            <!-- Componente de video -->
+            <LineaVideo
+                client:load
+                poster={linea.foto}
+                videoUrl={linea.video}
+            />
+
+            <!-- Texto -->
+            <div class="flex flex-col justify-end items-center p-6 text-center absolute bottom-0 w-full">
+                <h3 class="text-2xl md:text-3xl font-semibold text-white mb-2 drop-shadow-lg">
+                {linea.nombre}
+                </h3>
+
+                <a
+                href={`/linea/${linea.slug}`}
+                class="relative text-white after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
+                >
+                Ver más
+                </a>
+            </div>
+            </div>
+        ))}
+    </div>
+  </div>
 </section>

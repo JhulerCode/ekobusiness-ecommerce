@@ -2,6 +2,7 @@ export const host = import.meta.env.PUBLIC_API_URL
 
 export const urls = {
     sistema: `${host}/store/sistema`,
+    lineas: `${host}/store/lineas`,
     categorias: `${host}/store/categorias`,
     productos: `${host}/store/productos`,
     newsletter: `${host}/store/newsletter`,
@@ -197,63 +198,31 @@ export async function delet(endpoint, item, ms) {
     return res
 }
 
-export async function getCategorias(filtros_extra) {
-    const qry = {
-        fltr: {
-            activo: { op: "Es", val: true },
-            tipo: { op: "Es", val: 2 },
-        },
-        cols: ['id', 'nombre', 'fotos', 'descripcion'],
-    }
 
-    if (filtros_extra) {
-        qry.fltr = { ...qry.fltr, ...filtros_extra }
-    }
 
-    const res = await get("categorias", { qry })
-
-    if (res.code != 0) return []
-
-    return res.data.map((cat) => ({
-        ...cat,
-        foto: cat.fotos[0].url,
-        foto2: cat.fotos[1].url,
-        slug: cat.nombre.toLowerCase().replace(/\s+/g, "-"),
+export function formatLineas(datos) {
+    return datos.map((a) => ({
+        ...a,
+        foto: a.fotos && a.fotos.length > 0 ? a.fotos[0].url : null,
+        video: a.fotos && a.fotos.length > 0 ? a.fotos[1].url : null,
+        slug: a.nombre.toLowerCase().replace(/\s+/g, "-"),
     }))
 }
 
-export async function getProductos(fltr, incl, cols) {
-    const qry = {
-        fltr: {
-            activo: { op: "Es", val: true },
-            tipo: { op: "Es", val: 2 },
-            marca: { op: "Es", val: "SUNKA" },
-            is_combo: { op: "Es", val: false },
-        },
-        cols: ['produccion_tipo', 'categoria', 'nombre', 'unidad', 'has_fv', 'precio', 'igv_afectacion', 'fotos'],
-        incl: []
-    }
+export function formatCategorias(datos) {
+    return datos.map((a) => ({
+        ...a,
+        foto: a.fotos && a.fotos.length > 0 ? a.fotos[0].url : null,
+        foto2: a.fotos && a.fotos.length > 0 ? a.fotos[1].url : null,
+        slug: a.nombre.toLowerCase().replace(/\s+/g, "-"),
+    }))
+}
 
-    if (fltr) {
-        qry.fltr = { ...qry.fltr, ...fltr }
-    }
-
-    if (incl) {
-        qry.incl = incl
-    }
-
-    if (cols) {
-        qry.cols.push(...cols)
-    }
-    // console.log(qry)
-    const res = await get("productos", { qry })
-    // console.log(data)
-    if (res.code != 0) return []
-
-    return res.data.map((prod) => ({
+export function formatProductos(datos) {
+    return datos.map((prod) => ({
         ...prod,
         precio: Number(prod.precio).toFixed(2),
-        precio_antes: (10).toFixed(2),
+        precio_anterior: Number(prod.precio_anterior).toFixed(2),
         foto: prod.fotos[0].url,
         slug: prod.id,
     }))

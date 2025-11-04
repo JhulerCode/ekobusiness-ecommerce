@@ -2,21 +2,48 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Beneficios from '../../components/Beneficios.astro';
 import LineaProductos from '../../components/LineaProductos.vue';
-import { getProductos } from '../../lib/api.js';
-import { lineas } from '../../lib/lineas.js';
+import { get, formatProductos } from '../../lib/api.js';
 
 const { slug } = Astro.params;
 
-const linea = lineas.find((a) => a.slug == slug);
-
-const productosFltr = {
-    produccion_tipo: { op: 'Es', val: linea?.id },
+//--- Load linea ---//
+const qry = {
+    fltr: {
+        nombre: { op: 'Es', val: slug.replaceAll('-', ' ') },
+    },
+    cols: ['descripcion'],
 };
-const productos = await getProductos(productosFltr, ['categoria1']);
+const res = await get('lineas', { qry });
+const lineas = res.data;
+const linea = lineas[0];
 
+//--- Load productos ---//
+const qry2 = {
+    fltr: {
+        activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
+        produccion_tipo: { op: 'Es', val: linea?.id },
+    },
+    cols: [
+        'produccion_tipo',
+        'categoria',
+        'nombre',
+        'unidad',
+        'has_fv',
+        'precio',
+        'precio_anterior',
+        'igv_afectacion',
+        'fotos',
+    ],
+};
+const res2 = await get('productos', { qry: qry2 });
+const productos = formatProductos(res2.data);
+
+//--- Set categorias ---//
 const categorias = [];
 for (const a of productos) {
     const i = categorias.findIndex((b) => b.id == a.categoria);
+
     if (i === -1) {
         categorias.push(a.categoria1);
     }

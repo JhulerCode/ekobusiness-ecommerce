@@ -1,9 +1,27 @@
 ---
 import ProductosCarrusel from './ProductosCarrusel.vue';
-import { getProductos } from '../lib/api';
+import { get, formatProductos } from '../lib/api.js';
 
-const productosFltr = { nombre: { op: 'Contiene', val: 'coca' } };
-const productos = await getProductos(productosFltr);
+const qry2 = {
+    fltr: {
+        activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
+        nombre: { op: 'Contiene', val: 'coca' },
+    },
+    cols: [
+        'produccion_tipo',
+        'categoria',
+        'nombre',
+        'unidad',
+        'has_fv',
+        'precio',
+        'precio_anterior',
+        'igv_afectacion',
+        'fotos',
+    ],
+};
+const res2 = await get('productos', { qry: qry2 });
+const productos = formatProductos(res2.data);
 ---
 
 <section class="py-16 bg-white">
