@@ -222,7 +222,7 @@ export function formatProductos(datos) {
     return datos.map((prod) => ({
         ...prod,
         precio: Number(prod.precio).toFixed(2),
-        precio_anterior: Number(prod.precio_anterior).toFixed(2),
+        precio_anterior: prod.precio_anterior ? Number(prod.precio_anterior).toFixed(2) : null,
         foto: prod.fotos[0].url,
         slug: prod.id,
     }))

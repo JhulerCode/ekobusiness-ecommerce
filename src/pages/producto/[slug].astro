@@ -33,8 +33,10 @@ const qry = {
         'dimenciones',
         'envase_tipo',
     ],
+    incl: ['produccion_tipo1'],
 };
 const res = await get('productos', { qry });
+console.log(res);
 const productos = formatProductos(res.data);
 const producto = productos[0];
 const producto_nombre = producto.nombre;

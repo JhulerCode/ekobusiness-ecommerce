@@ -9,9 +9,10 @@ const { slug } = Astro.params;
 //--- Load linea ---//
 const qry = {
     fltr: {
+        activo: { op: 'Es', val: true },
         nombre: { op: 'Es', val: slug.replaceAll('-', ' ') },
     },
-    cols: ['descripcion'],
+    cols: ['nombre', 'descripcion'],
 };
 const res = await get('lineas', { qry });
 const lineas = res.data;

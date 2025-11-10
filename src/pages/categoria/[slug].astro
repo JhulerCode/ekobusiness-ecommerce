@@ -4,7 +4,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Beneficios from '../../components/Beneficios.astro';
 import CategoriaProductos from '../../components/CategoriaProductos.vue';
 import { get, formatCategorias, formatProductos } from '../../lib/api.js';
-import { lineas } from '../../lib/lineas.js';
 
 const { slug } = Astro.params;
 
@@ -14,7 +13,7 @@ const qry = {
         tipo: { op: 'Es', val: '2' },
         nombre: { op: 'Es', val: slug.replaceAll('-', ' ') },
     },
-    cols: ['descripcion']
+    cols: ['nombre', 'descripcion']
 };
 const res = await get('categorias', { qry });
 const categorias = formatCategorias(res.data);
@@ -38,15 +37,19 @@ const qry2 = {
         'igv_afectacion',
         'fotos',
     ],
+    incl: ['produccion_tipo1']
 };
 const res2 = await get('productos', { qry: qry2 });
 const productos = formatProductos(res2.data);
-
 //--- Set líneas ---//
-const produccionTipos = new Set(
-    productos.map((p) => String(p.produccion_tipo))
-);
-const lineas2 = lineas.filter((l) => produccionTipos.has(String(l.id)));
+const lineas = []
+for (const a of productos) {
+    const i = lineas.findIndex((b) => b.id == a.produccion_tipo);
+
+    if (i === -1) {
+        lineas.push(a.produccion_tipo1);
+    }
+}
 ---
 
 <BaseLayout title={`${categoria?.nombre}`}>
@@ -59,7 +62,7 @@ const lineas2 = lineas.filter((l) => produccionTipos.has(String(l.id)));
         <p class="max-w-xl">{categoria.descripcion}</p>
     </div>
 
-    <CategoriaProductos client:load productos={productos} lineas={lineas2} />
+    <CategoriaProductos client:load productos={productos} lineas={lineas} />
 
     <Beneficios />
 </BaseLayout>

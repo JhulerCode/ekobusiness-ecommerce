@@ -6,7 +6,12 @@ import CartIcon from '../components/CartIcon.vue';
 import AuthModal from '../components/AuthModal.vue';
 import { get } from '../lib/api.js';
 
-const res = await get('lineas');
+const qry = {
+    fltr: {
+        activo: { op: 'Es', val: true },
+    },
+};
+const res = await get('lineas', { qry });
 const lineas = res.data;
 
 const navLinks = lineas.map((a) => ({
