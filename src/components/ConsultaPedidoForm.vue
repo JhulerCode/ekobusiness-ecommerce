@@ -26,8 +26,8 @@
         <div class="text-center text-xs text-gray-400 pt-4 border-t space-y-1">
             <p>
                 Si tienes algún inconveniente con tu pedido, puedes escribirnos a
-                <a :href="`mailto:${contactEmail}`" class="text-blue-500 hover:underline">
-                    {{ contactEmail }}
+                <a :href="`mailto:${empresa.email_ventas}`" class="text-blue-500 hover:underline">
+                    {{ empresa.email_ventas }}
                 </a>
             </p>
         </div>
@@ -38,19 +38,20 @@
 import JdInput from "./JdInput.vue";
 import JdButton from "./JdButton.vue";
 import { get } from "../lib/api.js";
-import { contactEmail } from "../lib/empresa.js";
 
 export default {
     components: {
         JdButton,
         JdInput,
     },
+    props: {
+        empresa: { type: Object, default: () => ({}) },
+    },
     data() {
         return {
             codigo: "",
             error: "",
             loading: false,
-            contactEmail,
         };
     },
     methods: {

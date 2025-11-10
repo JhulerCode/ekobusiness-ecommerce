@@ -1,12 +1,21 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ConsultaPedidoForm from "../components/ConsultaPedidoForm.vue";
+import { get } from '../lib/api.js';
+
+const res = await get('sistema', {
+    qry: ['empresa'],
+});
+
+if (res.code == 0) {
+    var { empresa } = res.data;
+}
 ---
 
 <BaseLayout title="Consulta de pedido">
     <section
         class="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4"
     >
-        <ConsultaPedidoForm client:load/>
+        <ConsultaPedidoForm client:load empresa={empresa}/>
     </section>
 </BaseLayout>
