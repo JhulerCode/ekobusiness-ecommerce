@@ -18,6 +18,11 @@ const navLinks = lineas.map((a) => ({
     nombre: a.nombre,
     href: `/linea/${a.nombre.toLowerCase().replace(/\s+/g, '-')}`,
 }));
+
+navLinks.push({
+    nombre: 'BLENDS',
+    href: 'crea-tu-blend',
+});
 ---
 
 <header class="w-full bg-white shadow-sm sticky top-0 z-50">

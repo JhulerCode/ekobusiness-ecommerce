@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlendForm from '../components/BlendForm.vue';
+import Beneficios from '../components/Beneficios.astro';
+import { get } from '../lib/api.js';
+
+const empaques = [
+    { id: 1, nombre: 'CAJA', precio: 0.5 },
+    { id: 2, nombre: 'LATA', precio: 1 },
+    { id: 3, nombre: 'BOLSA', precio: 0.7 },
+];
+const formatos = [
+    { id: 1, nombre: '50g', precio: 0.5 },
+    { id: 2, nombre: '100g', precio: 1 },
+    { id: 3, nombre: '200g', precio: 0.7 },
+];
+
+const qry = {
+    fltr: {
+        categoria: { op: 'Es', val: 'f000be66-e4b1-4334-b57a-0e356eb8c7a6' },
+        is_ecommerce: { op: 'Es', val: true },
+    },
+    cols: ['id', 'nombre', 'precio', 'unidad', 'mp_tipo'],
+};
+const res = await get('insumos', { qry });
+if (res.code != 0) return;
+// console.log(res.data);
+const hierbasBase = [];
+const hierbasComplemento = [];
+const frutas = [];
+const especias = [];
+
+for (const a of res.data) {
+    switch (a.mp_tipo) {
+        case '1':
+            hierbasBase.push(a);
+            break;
+        case '2':
+            hierbasComplemento.push(a);
+            break;
+        case '3':
+            frutas.push(a);
+            break;
+        case '4':
+            especias.push(a);
+            break;
+    }
+}
+---
+
+<BaseLayout title="Crear tu Blend">
+    <div class="bg-gray-50">
+        <div class="max-w-6xl mx-auto px-6 py-20 text-gray-80">
+            <h1
+                class="text-4xl font-semibold text-gray-900 tracking-tight mb-2"
+            >
+                Crea tu Blend
+            </h1>
+
+            <p class="text-gray-600 mb-10">
+                Personaliza tu infusión Sunka a tu gusto
+            </p>
+
+            <BlendForm
+                client:load
+                empaques={empaques}
+                formatos={formatos}
+                hierbasBase={hierbasBase}
+                hierbasComplemento={hierbasComplemento}
+                frutas={frutas}
+                especias={especias}
+            />
+        </div>
+    </div>
+
+    <Beneficios />
+</BaseLayout>

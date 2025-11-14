@@ -1,18 +1,19 @@
 export const host = import.meta.env.PUBLIC_API_URL
 
 export const urls = {
-    sistema: `${host}/store/sistema`,
-    lineas: `${host}/store/lineas`,
-    categorias: `${host}/store/categorias`,
-    productos: `${host}/store/productos`,
-    newsletter: `${host}/store/newsletter`,
-    arco: `${host}/store/arco`,
-    libro_reclamos: `${host}/store/libro-reclamos`,
-    ubigeos: `${host}/store/ubigeos`,
-    auth: `${host}/store/auth`,
     account: `${host}/store/account`,
+    arco: `${host}/store/arco`,
+    auth: `${host}/store/auth`,
+    categorias: `${host}/store/categorias`,
+    insumos: `${host}/store/insumos`,
     izipay: `${host}/store/izipay`,
+    libro_reclamos: `${host}/store/libro-reclamos`,
+    lineas: `${host}/store/lineas`,
+    newsletter: `${host}/store/newsletter`,
+    productos: `${host}/store/productos`,
+    sistema: `${host}/store/sistema`,
     socio_pedidos: `${host}/store/socio-pedidos`,
+    ubigeos: `${host}/store/ubigeos`,
 }
 
 function jmsg(type, msg) {
