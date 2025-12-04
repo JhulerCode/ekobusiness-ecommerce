@@ -937,7 +937,7 @@ export default {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
             if (this.form.entrega_tipo === "envio") {
-                this.form.fecha_entrega = null
+                this.form.fecha_entrega = null;
 
                 if (this.user.id) {
                     if (this.form.new_direccion) {
@@ -960,14 +960,14 @@ export default {
             if (this.form.entrega_tipo === "retiro") {
                 this.form.new_direccion = false;
 
-                this.form.entrega_direccion_id = null
-                this.form.direccion_nombre = null
+                this.form.entrega_direccion_id = null;
+                this.form.direccion_nombre = null;
 
-                this.form.entrega_ubigeo = null
-                this.form.direccion_entrega = null
-                this.form.entrega_direccion_datos.numero = null
-                this.form.entrega_direccion_datos.piso = null
-                this.form.entrega_direccion_datos.referencia = null
+                this.form.entrega_ubigeo = null;
+                this.form.direccion_entrega = null;
+                this.form.entrega_direccion_datos.numero = null;
+                this.form.entrega_direccion_datos.piso = null;
+                this.form.entrega_direccion_datos.referencia = null;
 
                 if (!this.form.fecha_entrega)
                     this.errors.fecha_entrega = "Este campo es obligatorio.";
@@ -1106,7 +1106,7 @@ export default {
                         this.errors.general = res1.msg;
                     } else if (res1.code == 0) {
                         this.paymentSuccess = true;
-                        this.form.id = res.data.id;
+                        this.form.id = res1.data.id;
                         Cart.clear();
                         KR.closePopin();
 
