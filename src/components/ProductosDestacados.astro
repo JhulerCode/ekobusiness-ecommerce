@@ -6,7 +6,8 @@ const qry2 = {
     fltr: {
         activo: { op: 'Es', val: true },
         is_ecommerce: { op: 'Es', val: true },
-        nombre: { op: 'Contiene', val: 'coca' },
+        is_destacado
+        : { op: 'Es', val: true },
     },
     cols: [
         'produccion_tipo',

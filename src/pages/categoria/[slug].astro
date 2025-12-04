@@ -13,7 +13,7 @@ const qry = {
         tipo: { op: 'Es', val: '2' },
         nombre: { op: 'Es', val: slug.replaceAll('-', ' ') },
     },
-    cols: ['nombre', 'descripcion']
+    cols: ['nombre', 'descripcion'],
 };
 const res = await get('categorias', { qry });
 const categorias = formatCategorias(res.data);
@@ -37,12 +37,12 @@ const qry2 = {
         'igv_afectacion',
         'fotos',
     ],
-    incl: ['produccion_tipo1']
+    incl: ['produccion_tipo1'],
 };
 const res2 = await get('productos', { qry: qry2 });
 const productos = formatProductos(res2.data);
 //--- Set líneas ---//
-const lineas = []
+const lineas = [];
 for (const a of productos) {
     const i = lineas.findIndex((b) => b.id == a.produccion_tipo);
 

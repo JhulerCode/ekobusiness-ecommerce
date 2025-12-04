@@ -1034,6 +1034,7 @@ export default {
             this.form.monto = this.total.toFixed(2);
 
             this.form.socio_pedido_items = this.items;
+            this.form.entrega_costo = this.costoEnvio;
 
             if (this.form.pago_metodo == "yape") {
                 this.form.codigo = genId();

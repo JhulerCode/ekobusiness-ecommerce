@@ -2,18 +2,26 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BlendForm from '../components/BlendForm.vue';
 import Beneficios from '../components/Beneficios.astro';
-import { get } from '../lib/api.js';
+import { get, formatProductos } from '../lib/api.js';
 
 const empaques = [
-    { id: 1, nombre: 'CAJA', precio: 0.5 },
-    { id: 2, nombre: 'LATA', precio: 1 },
-    { id: 3, nombre: 'BOLSA', precio: 0.7 },
+    { id: '1', nombre: 'CAJA', precio: 0.5 },
+    { id: '2', nombre: 'LATA', precio: 1 },
+    { id: '3', nombre: 'BOLSA', precio: 0.7 },
 ];
-const formatos = [
-    { id: 1, nombre: '50g', precio: 0.5 },
-    { id: 2, nombre: '100g', precio: 1 },
-    { id: 3, nombre: '200g', precio: 0.7 },
-];
+
+const qry1 = {
+    fltr: {
+        nombre: { op: 'Contiene', val: 'BLEND' },
+    },
+    cols: ['id', 'nombre', 'contenido_neto', 'fotos', 'unidad', 'has_fv', 'igv_afectacion'],
+};
+
+const res1 = await get('insumos', { qry: qry1 });
+if (res1.code != 0) return;
+const formatos = formatProductos(res1.data).sort(
+    (a, b) => a.contenido_neto - b.contenido_neto
+);
 
 const qry = {
     fltr: {
@@ -24,9 +32,9 @@ const qry = {
 };
 const res = await get('insumos', { qry });
 if (res.code != 0) return;
-// console.log(res.data);
+
 const hierbasBase = [];
-const hierbasComplemento = [];
+const complementos = [];
 const frutas = [];
 const especias = [];
 
@@ -36,7 +44,7 @@ for (const a of res.data) {
             hierbasBase.push(a);
             break;
         case '2':
-            hierbasComplemento.push(a);
+            complementos.push(a);
             break;
         case '3':
             frutas.push(a);
@@ -63,10 +71,10 @@ for (const a of res.data) {
 
             <BlendForm
                 client:load
-                empaques={empaques}
                 formatos={formatos}
+                empaques={empaques}
                 hierbasBase={hierbasBase}
-                hierbasComplemento={hierbasComplemento}
+                complementos={complementos}
                 frutas={frutas}
                 especias={especias}
             />

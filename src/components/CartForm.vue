@@ -5,7 +5,7 @@
             <h2 class="text-2xl font-semibold">Carrito de compras</h2>
             <span class="text-gray-500 text-sm">
                 {{ items.length }}
-                {{ items.length === 1 ? 'producto' : 'productos' }}
+                {{ items.length === 1 ? "producto" : "productos" }}
             </span>
         </div>
 
@@ -14,12 +14,10 @@
             v-if="items.length === 0"
             class="text-gray-700 text-center py-20 border border-gray-200 rounded-2xl bg-gray-50"
         >
-            <h3 class="text-xl font-semibold mb-3">
-                ¡Tu carrito de compras está vacío!
-            </h3>
+            <h3 class="text-xl font-semibold mb-3">¡Tu carrito de compras está vacío!</h3>
             <p class="text-gray-500 max-w-md mx-auto mb-8">
-                Aún no has agregado productos a tu carrito de compras. Visita
-                nuestra página principal y descubre todo lo que tenemos para ti.
+                Aún no has agregado productos a tu carrito de compras. Visita nuestra página
+                principal y descubre todo lo que tenemos para ti.
             </p>
 
             <a
@@ -54,9 +52,7 @@
                             </h3>
 
                             <p class="text-sm text-gray-500 mt-1">
-                                <span class="font-medium"
-                                    >S/ {{ item.pu }} c/u</span
-                                >
+                                <span class="font-medium">S/ {{ item.pu }} c/u</span>
                             </p>
 
                             <div class="flex items-center gap-3 mt-3">
@@ -81,7 +77,7 @@
 
                     <!-- Botón eliminar -->
                     <button
-                        @click="remove(item.id)"
+                        @click="remove(item.articulo)"
                         class="absolute bottom-4 right-5 text-sm text-gray-600 hover:text-red-600 transition cursor-pointer"
                     >
                         Eliminar
@@ -90,9 +86,7 @@
             </div>
 
             <!-- Resumen del pedido -->
-            <div
-                class="border border-gray-200 rounded-2xl p-6 h-fit bg-gray-50"
-            >
+            <div class="border border-gray-200 rounded-2xl p-6 h-fit bg-gray-50">
                 <h2 class="text-xl font-semibold mb-6">Resumen del pedido</h2>
 
                 <div class="flex justify-between text-gray-700 mb-2">
@@ -126,13 +120,13 @@
 </template>
 
 <script>
-import { Cart } from '../lib/cart.js';
-import JdInput from '../components/JdInput.vue';
+import { Cart } from "../lib/cart.js";
+import JdInput from "../components/JdInput.vue";
 
 export default {
-    name: 'CartForm',
+    name: "CartForm",
     components: {
-        JdInput
+        JdInput,
     },
     data() {
         return {
@@ -148,10 +142,7 @@ export default {
             return this.subtotal * 0.18;
         },
         total() {
-            return this.items.reduce(
-                (s, i) => s + Number(i.pu) * Number(i.cantidad),
-                0
-            );
+            return this.items.reduce((s, i) => s + Number(i.pu) * Number(i.cantidad), 0);
         },
     },
     methods: {
@@ -174,11 +165,11 @@ export default {
             const cart = Cart.get();
 
             if (this.total < 0) {
-                this.error = 'Datos incorrectos'
+                this.error = "Datos incorrectos";
                 return;
             }
 
-            window.location.href = '/checkout';
+            window.location.href = "/checkout";
         },
     },
     mounted() {
@@ -188,10 +179,10 @@ export default {
         this._onUpdate = (e) => {
             this.items = e.detail || Cart.get();
         };
-        window.addEventListener('cart-updated', this._onUpdate);
+        window.addEventListener("cart-updated", this._onUpdate);
     },
     beforeUnmount() {
-        window.removeEventListener('cart-updated', this._onUpdate);
+        window.removeEventListener("cart-updated", this._onUpdate);
     },
 };
 </script>

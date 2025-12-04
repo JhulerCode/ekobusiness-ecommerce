@@ -6,7 +6,7 @@ const qry = {
         tipo: { op: 'Es', val: '2' },
         is_destacado: { op: 'Es', val: true },
     },
-    cols: ['descripcion', 'fotos'],
+    cols: ['nombre', 'descripcion', 'fotos'],
 };
 const res = await get('categorias', { qry });
 const categorias = formatCategorias(res.data);

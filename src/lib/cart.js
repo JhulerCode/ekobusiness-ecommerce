@@ -32,6 +32,8 @@ export const Cart = {
 
                 foto: producto.foto,
                 fotos: producto.fotos,
+
+                blend_datos: producto.blend_datos,
             });
         }
 

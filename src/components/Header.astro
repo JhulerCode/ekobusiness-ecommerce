@@ -7,6 +7,7 @@ import AuthModal from '../components/AuthModal.vue';
 import { get } from '../lib/api.js';
 
 const qry = {
+    cols: ['nombre'],
     fltr: {
         activo: { op: 'Es', val: true },
     },
@@ -21,7 +22,7 @@ const navLinks = lineas.map((a) => ({
 
 navLinks.push({
     nombre: 'BLENDS',
-    href: 'crea-tu-blend',
+    href: '../crea-tu-blend',
 });
 ---
 
