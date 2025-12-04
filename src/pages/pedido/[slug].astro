@@ -76,20 +76,20 @@ if (pedido) {
                             </div>
                         </div>
 
-                        <div class="text-gray-700">
+                        <div class="text-gray-700 grid grid-cols-2">
                             <p>
                                 <span class="font-medium">Cliente:</span>
                                 {pedido.socio_datos?.nombres}
                                 {pedido.socio_datos?.apellidos}
                             </p>
                             <p>
+                                <span class="font-medium">Correo:</span>
+                                {pedido.socio_datos?.correo}
+                            </p>
+                            <p>
                                 <span class="font-medium">Documento:</span>
                                 {pedido.socio_datos?.doc_tipo1.nombre}
                                 {pedido.socio_datos?.doc_numero}
-                            </p>
-                            <p>
-                                <span class="font-medium">Correo:</span>
-                                {pedido.socio_datos?.correo}
                             </p>
                             <p>
                                 <span class="font-medium">Teléfono:</span>
@@ -196,7 +196,7 @@ if (pedido) {
                         </div>
 
                         <div>
-                            <div class="mb-2">
+                            <div class="mb-2 text-gray-700">
                                 <span class="font-medium">Productos:</span>
                             </div>
 

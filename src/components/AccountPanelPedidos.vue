@@ -18,7 +18,8 @@
                     <p class="font-medium text-gray-800">#{{ a.codigo }}</p>
 
                     <p class="text-sm text-gray-600">
-                        {{ new Date(a.fecha).toLocaleDateString("es-PE") }} | {{ a.entrega_tipo }} | {{ a.pago_metodo }}
+                        {{ new Date(a.fecha).toLocaleDateString("es-PE") }} |
+                        {{ a.entrega_tipo1.nombre }} | {{ a.pago_metodo1.nombre }}
                     </p>
 
                     <a
