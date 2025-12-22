@@ -23,10 +23,10 @@ const qry2 = {
     fltr: {
         activo: { op: 'Es', val: true },
         is_ecommerce: { op: 'Es', val: true },
-        produccion_tipo: { op: 'Es', val: linea?.id },
+        linea: { op: 'Es', val: linea?.id },
     },
     cols: [
-        'produccion_tipo',
+        'linea',
         'categoria',
         'nombre',
         'unidad',
@@ -36,6 +36,8 @@ const qry2 = {
         'igv_afectacion',
         'fotos',
     ],
+    incl: ['categoria1'],
+    ordr: [['nombre', 'ASC']],
 };
 const res2 = await get('productos', { qry: qry2 });
 const productos = formatProductos(res2.data);
@@ -43,6 +45,7 @@ const productos = formatProductos(res2.data);
 //--- Set categorias ---//
 const categorias = [];
 for (const a of productos) {
+    console.log(a);
     const i = categorias.findIndex((b) => b.id == a.categoria);
 
     if (i === -1) {

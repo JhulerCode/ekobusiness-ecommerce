@@ -27,7 +27,7 @@ const qry2 = {
         categoria: { op: 'Es', val: categoria.id },
     },
     cols: [
-        'produccion_tipo',
+        'linea',
         'categoria',
         'nombre',
         'unidad',
@@ -37,17 +37,18 @@ const qry2 = {
         'igv_afectacion',
         'fotos',
     ],
-    incl: ['produccion_tipo1'],
+    incl: ['linea1'],
+    ordr: [['nombre', 'ASC']],
 };
 const res2 = await get('productos', { qry: qry2 });
 const productos = formatProductos(res2.data);
 //--- Set líneas ---//
 const lineas = [];
 for (const a of productos) {
-    const i = lineas.findIndex((b) => b.id == a.produccion_tipo);
+    const i = lineas.findIndex((b) => b.id == a.linea);
 
     if (i === -1) {
-        lineas.push(a.produccion_tipo1);
+        lineas.push(a.linea1);
     }
 }
 ---

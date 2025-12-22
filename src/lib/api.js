@@ -1,19 +1,19 @@
 export const host = import.meta.env.PUBLIC_API_URL
 
 export const urls = {
-    account: `${host}/store/account`,
-    arco: `${host}/store/arco`,
-    auth: `${host}/store/auth`,
-    categorias: `${host}/store/categorias`,
-    insumos: `${host}/store/insumos`,
-    izipay: `${host}/store/izipay`,
-    libro_reclamos: `${host}/store/libro-reclamos`,
-    lineas: `${host}/store/lineas`,
-    newsletter: `${host}/store/newsletter`,
-    productos: `${host}/store/productos`,
-    sistema: `${host}/store/sistema`,
-    socio_pedidos: `${host}/store/socio-pedidos`,
-    ubigeos: `${host}/store/ubigeos`,
+    account: `${host}/ecommerce/account`,
+    arco: `${host}/ecommerce/arco`,
+    auth: `${host}/ecommerce/auth`,
+    categorias: `${host}/ecommerce/categorias`,
+    insumos: `${host}/ecommerce/insumos`,
+    izipay: `${host}/ecommerce/izipay`,
+    libro_reclamos: `${host}/ecommerce/libro-reclamos`,
+    lineas: `${host}/ecommerce/lineas`,
+    newsletter: `${host}/ecommerce/newsletter`,
+    productos: `${host}/ecommerce/productos`,
+    sistema: `${host}/ecommerce/sistema`,
+    socio_pedidos: `${host}/ecommerce/pedidos`,
+    ubigeos: `${host}/ecommerce/ubigeos`,
 }
 
 function jmsg(type, msg) {
@@ -30,6 +30,8 @@ function setHeaders(item, user_token) {
     if (item != null && !item.is_form_data) {
         headers['Content-Type'] = 'application/json'
     }
+
+    headers['x-empresa'] = '1'
 
     return headers
 }

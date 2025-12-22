@@ -2,7 +2,13 @@
 import { get, formatLineas } from '../lib/api.js';
 import LineaVideo from './LineaVideo.vue';
 
-const qry = { cols: ['fotos'] };
+const qry = {
+    cols: ['nombre', 'fotos'],
+    fltr: {
+        activo: { op: 'Es', val: true },
+    },
+    ordr: [['nombre', 'ASC']],
+};
 const res = await get('lineas', { qry });
 const lineas = formatLineas(res.data);
 ---

@@ -7,6 +7,7 @@
                 <img
                     :src="producto.foto"
                     :alt="producto.nombre"
+                    loading="lazy"
                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
             </div>

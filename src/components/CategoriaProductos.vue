@@ -72,7 +72,7 @@ export default {
             if (this.filtro === 'todos') return this.productos;
 
             return this.productos.filter(
-                (p) => p.produccion_tipo == this.filtro
+                (p) => p.linea == this.filtro
             );
         },
     },

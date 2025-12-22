@@ -129,7 +129,7 @@ export default {
         async validateSession() {
             const user_token = localStorage.getItem("token");
             if (user_token) {
-                const res = await get(`${urls.account}/verify`, null, user_token);
+                const res = await get(`${urls.account}/login`, null, user_token);
                 if (res.code == 0) this.user = res.data;
             }
         },

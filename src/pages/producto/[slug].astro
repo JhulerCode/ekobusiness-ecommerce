@@ -16,7 +16,7 @@ const { slug } = Astro.params;
 const qry = {
     fltr: { id: { op: 'Es', val: slug } },
     cols: [
-        'produccion_tipo',
+        'linea',
         'categoria',
         'nombre',
         'unidad',
@@ -33,10 +33,9 @@ const qry = {
         'dimenciones',
         'envase_tipo',
     ],
-    incl: ['produccion_tipo1'],
+    incl: ['linea1', 'categoria1'],
 };
 const res = await get('productos', { qry });
-console.log(res);
 const productos = formatProductos(res.data);
 const producto = productos[0];
 const producto_nombre = producto.nombre;
@@ -48,7 +47,7 @@ const qry2 = {
         categoria: { op: 'Es', val: producto.categoria },
     },
     cols: [
-        'produccion_tipo',
+        'linea',
         'categoria',
         'nombre',
         'unidad',
@@ -77,7 +76,7 @@ const productos_relacionados = formatProductos(res2.data);
             <div>
                 <!-- Línea / categoría -->
                 <p class="text-sm uppercase text-gray-500 tracking-wider mb-2">
-                    {producto.produccion_tipo1.nombre} | {
+                    {producto.linea1.nombre} | {
                         producto.categoria1.nombre
                     }
                 </p>

@@ -872,7 +872,7 @@ export default {
             if (!user_token) return;
 
             this.loading = true;
-            const res = await get(`${urls.account}/verify`, null, user_token);
+            const res = await get(`${urls.account}/login`, null, user_token);
             this.loading = false;
 
             if (res.code != 0) return;

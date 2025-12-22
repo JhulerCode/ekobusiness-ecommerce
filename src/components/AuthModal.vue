@@ -157,7 +157,7 @@ export default {
 
             this.isLoading = true;
             if (this.isLogin) {
-                const res = await post(`${urls.auth}/login`, this.form);
+                const res = await post(`${urls.auth}/signin`, this.form);
                 this.isLoading = false;
 
                 if (res.code < 0) {
@@ -190,7 +190,7 @@ export default {
             const user_token = localStorage.getItem("token");
 
             if (user_token) {
-                const res = await get(`${urls.account}/verify`, null, user_token);
+                const res = await get(`${urls.account}/login`, null, user_token);
 
                 if (res.code == 0) {
                     this.user = res.data;

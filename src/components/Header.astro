@@ -11,8 +11,10 @@ const qry = {
     fltr: {
         activo: { op: 'Es', val: true },
     },
+    ordr: [['nombre', 'ASC']],
 };
 const res = await get('lineas', { qry });
+
 const lineas = res.data;
 
 const navLinks = lineas.map((a) => ({
