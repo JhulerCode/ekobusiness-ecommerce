@@ -216,7 +216,6 @@ export function formatCategorias(datos) {
     return datos.map((a) => ({
         ...a,
         foto: a.fotos && a.fotos.length > 0 ? a.fotos[0].url : null,
-        foto2: a.fotos && a.fotos.length > 0 ? a.fotos[1].url : null,
         slug: a.nombre.toLowerCase().replace(/\s+/g, "-"),
     }))
 }
