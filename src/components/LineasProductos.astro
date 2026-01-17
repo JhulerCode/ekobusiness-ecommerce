@@ -6,6 +6,7 @@ const qry = {
     cols: ['nombre', 'fotos'],
     fltr: {
         activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
     },
     ordr: [['nombre', 'ASC']],
 };
