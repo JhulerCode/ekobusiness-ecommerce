@@ -1,6 +1,6 @@
 ---
 import { get, formatLineas } from '../lib/api.js';
-import LineaVideo from './LineaVideo.vue';
+// import LineaVideo from './LineaVideo.vue';
 
 const qry = {
     cols: ['nombre', 'fotos'],
@@ -28,13 +28,13 @@ const lineas = formatLineas(res.data);
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         {lineas.map((linea) => (
             <div
-            class="rounded-2xl overflow-hidden h-[32rem] shadow-sm relative"
+                class="rounded-2xl overflow-hidden h-[32rem] shadow-sm relative group"
             >
-            <!-- Componente de video -->
-            <LineaVideo
-                client:load
-                poster={linea.foto}
-                videoUrl={linea.video}
+
+            <img
+                src={linea.foto}
+                alt={linea.slug}
+                class="w-full h-full object-cover transition-all duration-300 brightness-50 group-hover:brightness-100"
             />
 
             <!-- Texto -->
