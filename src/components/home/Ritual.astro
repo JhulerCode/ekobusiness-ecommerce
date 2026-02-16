@@ -1,0 +1,69 @@
+---
+import ritual1 from '@/assets/home/ingredientes.webp'
+import ritual2 from '@/assets/home/preparacion.webp'
+import ritual3 from '@/assets/home/momento-personal.webp'
+---
+
+<section class="bg-neutral-50 py-24 md:py-32">
+    <div class="max-w-6xl mx-auto px-6">
+        <!-- Encabezado -->
+        <div class="text-center mb-20">
+            <h2 class="text-3xl md:text-5xl font-heading font-semibold text-gray-900">
+                Tu momento SUNKA
+            </h2>
+            <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Más que una bebida, un ritual. Un espacio para reconectar, respirar y elevar tu día.
+            </p>
+        </div>
+
+        <!-- Bloque 1 -->
+        <div class="grid md:grid-cols-2 gap-12 items-center mb-24 fade-up">
+            <img
+                src={ritual1.src}
+                alt="Ingredientes seleccionados"
+                class="rounded-2xl object-cover w-full h-[400px] md:h-[500px]"
+            />
+            <div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+                    Ingredientes seleccionados
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Mezclas botánicas cuidadosamente elegidas por su pureza y equilibrio. Cada
+                    ingrediente cumple una intención.
+                </p>
+            </div>
+        </div>
+
+        <!-- Bloque 2 -->
+        <div class="grid md:grid-cols-2 gap-12 items-center mb-24 md:flex-row-reverse fade-up">
+            <div class="order-2 md:order-1">
+                <h3 class="text-2xl font-semibold text-gray-900 mb-4">Preparación consciente</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    El tiempo se detiene mientras el aroma se libera. Preparar tu infusión es parte
+                    del ritual.
+                </p>
+            </div>
+            <img
+                src={ritual2.src}
+                alt="Preparación consciente"
+                class="rounded-2xl object-cover w-full h-[400px] md:h-[500px] order-1 md:order-2"
+            />
+        </div>
+
+        <!-- Bloque 3 -->
+        <div class="grid md:grid-cols-2 gap-12 items-center fade-up">
+            <img
+                src={ritual3.src}
+                alt="Momento personal"
+                class="rounded-2xl object-cover w-full h-[400px] md:h-[500px]"
+            />
+            <div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-4">Un momento personal</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Claridad, calma y equilibrio. Un espacio que te pertenece, lejos del ruido y
+                    cerca de lo esencial.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

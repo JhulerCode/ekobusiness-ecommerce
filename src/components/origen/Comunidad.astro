@@ -1,0 +1,75 @@
+---
+import comunidadImg from '@/assets/origen/comunidad.webp'
+---
+
+<!-- COMUNIDAD -->
+<section class="relative py-28 md:py-36 bg-neutral-50 overflow-hidden">
+    <!-- Fondo decorativo sutil -->
+    <div class="absolute inset-0 opacity-[0.1] pointer-events-none">
+        <img src={comunidadImg.src} alt="" class="w-full h-full object-cover" />
+    </div>
+
+    <div class="relative max-w-6xl mx-auto px-6">
+        <!-- Encabezado -->
+        <div class="text-center max-w-3xl mx-auto mb-24 fade-up">
+            <p class="text-sm tracking-[0.4em] uppercase text-neutral-500 mb-6">Comunidad</p>
+
+            <h2 class="text-4xl md:text-5xl font-heading font-semibold leading-tight">
+                El respeto y la unión
+            </h2>
+        </div>
+
+        <!-- Contenido en columnas -->
+        <div class="grid md:grid-cols-2 gap-20 items-center">
+            <!-- Imagen -->
+            <div class="relative overflow-hidden rounded-2xl fade-up">
+                <img
+                    src={comunidadImg.src}
+                    alt="Comunidades andinas Nor Yauyos"
+                    class="w-full h-[500px] object-cover animate-breath"
+                />
+            </div>
+
+            <!-- Texto -->
+            <div class="space-y-8 fade-up delay-1">
+                <p class="text-neutral-700 leading-relaxed text-lg">
+                    Trabajamos junto a comunidades campesinas de distintas regiones del Perú,
+                    acompañando procesos de cultivo responsables y sostenibles que honran la tierra.
+                </p>
+
+                <p class="text-neutral-700 leading-relaxed text-lg">
+                    Cada cosecha es fruto de colaboración, conocimiento ancestral y compromiso
+                    mutuo. No es solo producción: es vínculo.
+                </p>
+
+                <!-- Declaración -->
+                <div class="pt-10 border-t border-neutral-200">
+                    <p class="text-xl md:text-2xl font-heading font-medium leading-relaxed">
+                        La comunidad es sabiduría.
+                    </p>
+                    <p class="text-xl md:text-2xl font-heading font-medium leading-relaxed">
+                        La sabiduría está en el té.
+                    </p>
+                    <p class="text-xl md:text-2xl font-heading font-semibold leading-relaxed mt-2">
+                        Y el té es SUNKA.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    @keyframes breathZoom {
+        0% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(1.08);
+        }
+    }
+
+    .animate-breath {
+        animation: breathZoom 10s ease-in-out infinite alternate;
+    }
+</style>

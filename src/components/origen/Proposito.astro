@@ -1,0 +1,53 @@
+---
+import propositoVideo from '@/assets/origen/proposito.mp4'
+---
+
+<section class="relative py-28 md:py-36 bg-white overflow-hidden">
+    <div class="max-w-6xl mx-auto px-6">
+        <!-- Encabezado -->
+        <div class="text-center max-w-3xl mx-auto mb-24 fade-up">
+            <p class="text-sm tracking-widest uppercase text-neutral-500 mb-6">Propósito</p>
+
+            <h2 class="text-4xl md:text-5xl font-heading font-semibold leading-tight">
+                ¿A qué nos dedicamos?
+            </h2>
+        </div>
+
+        <!-- Layout principal -->
+        <div class="grid md:grid-cols-2 gap-20 items-center">
+            <!-- Video vertical -->
+            <div class="relative fade-up">
+                <div
+                    class="relative mx-auto w-[280px] md:w-[320px] rounded-[2rem] overflow-hidden shadow-xl"
+                >
+                    <video
+                        src={propositoVideo}
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        class="w-full h-full object-cover scale-[1.02]"></video>
+                </div>
+            </div>
+
+            <!-- Manifiesto -->
+            <div class="space-y-10 fade-up delay-1">
+                <p class="text-xl md:text-2xl font-heading font-medium leading-relaxed">
+                    Estar comprometidos con el entorno y el bienestar del campo.
+                </p>
+
+                <p class="text-xl md:text-2xl font-heading font-medium leading-relaxed">
+                    Hacer protagonistas a las comunidades campesinas.
+                </p>
+
+                <p class="text-xl md:text-2xl font-heading font-medium leading-relaxed">
+                    Hacer las cosas con amor y cariño.
+                </p>
+
+                <p class="text-xl md:text-2xl font-heading font-semibold leading-relaxed">
+                    Demostrar al mundo todo lo que tenemos para ofrecer.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

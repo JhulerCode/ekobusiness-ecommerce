@@ -1,0 +1,75 @@
+---
+import { get, formatLineas } from '@/lib/api.js';
+
+const qry = {
+  cols: ['nombre', 'fotos', 'slug'],
+  fltr: {
+    activo: { op: 'Es', val: true },
+    is_ecommerce: { op: 'Es', val: true },
+  },
+  ordr: [['nombre', 'ASC']],
+};
+
+const res = await get('lineas', { qry });
+const lineas = formatLineas(res.data);
+---
+
+<section class="bg-neutral-50 py-24 md:py-32">
+  <div class="max-w-6xl mx-auto px-6">
+
+    <!-- Encabezado -->
+    <div class="text-center mb-20 fade-up">
+      <h2 class="text-3xl md:text-5xl font-heading font-semibold text-gray-900">
+        Explora nuestras líneas
+      </h2>
+      <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        Cada colección está pensada para acompañar un momento distinto.
+        Descubre la que conecta contigo.
+      </p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      {lineas.map((linea, i) => (
+        <a
+          href={`/linea/${linea.slug}`}
+          class="relative group overflow-hidden rounded-2xl h-[28rem] md:h-[32rem] fade-up"
+          style={`transition-delay: ${i * 0.15}s`}
+        >
+
+          <!-- Imagen -->
+          <img
+            src={linea.foto}
+            alt={linea.nombre}
+            class="w-full h-full object-cover
+                   transition-transform duration-[4000ms] ease-out
+                   group-hover:scale-105"
+          />
+
+          <!-- Overlay elegante -->
+          <div class="absolute inset-0 bg-black/40 transition-opacity duration-500 group-hover:bg-black/20"></div>
+
+          <!-- Texto -->
+          <div class="absolute bottom-0 w-full p-8 text-white transition-all duration-500
+                      group-hover:translate-y-[-10px]">
+
+            <h3 class="text-2xl md:text-3xl font-semibold mb-3 tracking-wide">
+              {linea.nombre}
+            </h3>
+
+            <span class="text-sm tracking-widest uppercase opacity-80
+                         border-b border-white pb-1
+                         transition-opacity duration-300 group-hover:opacity-100">
+              Descubrir
+            </span>
+
+          </div>
+
+        </a>
+      ))}
+
+    </div>
+
+  </div>
+</section>

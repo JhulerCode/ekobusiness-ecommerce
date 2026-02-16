@@ -1,0 +1,59 @@
+---
+import leyendaImg from '@/assets/origen/leyenda.webp'
+---
+
+<section class="relative py-28 md:py-36 bg-white overflow-hidden">
+    <!-- Fondo decorativo sutil -->
+    <div class="absolute inset-0 opacity-5 pointer-events-none">
+        <div class="absolute -top-20 -left-20 w-96 h-96 bg-amber-400 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+        <!-- Imagen -->
+        <!-- Imagen -->
+        <div class="relative overflow-hidden rounded-2xl fade-up">
+            <img
+                src={leyendaImg.src}
+                alt="Comunidades andinas Nor Yauyos"
+                class="w-full h-[500px] object-cover animate-breath"
+            />
+        </div>
+
+        <!-- Texto -->
+        <div class="fade-up">
+            <p class="text-sm tracking-[0.4em] uppercase text-neutral-500 mb-6">
+                Cuenta la leyenda
+            </p>
+
+            <div class="w-16 h-[1px] bg-neutral-300 mb-8"></div>
+
+            <p class="text-lg md:text-xl leading-relaxed text-neutral-800 font-light mb-6">
+                Que en tiempos lejanos, en la región de <span class="font-medium">Nor Yauyos</span>,
+                en el antiguo Perú, las 14 comunidades andinas practicaban una medicina basada en el
+                conocimiento profundo de las plantas y los rituales.
+            </p>
+
+            <p class="text-lg md:text-xl leading-relaxed text-neutral-700 font-light">
+                No era solo curación.
+                <br class="hidden md:block" />
+                Era conexión con la Madre Tierra. Era energía compartida. Era la unión de un pueblo que
+                elevaba su espíritu hasta convertirse en una sola alma.
+            </p>
+        </div>
+    </div>
+</section>
+
+<style>
+    @keyframes breathZoom {
+        0% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(1.08);
+        }
+    }
+
+    .animate-breath {
+        animation: breathZoom 10s ease-in-out infinite alternate;
+    }
+</style>

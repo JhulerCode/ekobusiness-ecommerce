@@ -1,0 +1,71 @@
+---
+import life1 from '@/assets/banner1.webp'
+import life2 from '@/assets/banner2.webp'
+import life3 from '@/assets/banner3.webp'
+import life4 from '@/assets/banner1.webp'
+---
+
+<section class="bg-white py-24 md:py-32 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-6">
+        <!-- Encabezado -->
+        <div class="text-center mb-20 fade-up">
+            <h2 class="text-3xl md:text-5xl font-heading font-semibold text-gray-900">
+                Inspiración SUNKA
+            </h2>
+            <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Momentos reales. Rituales cotidianos. Un estilo de vida que respira equilibrio.
+            </p>
+        </div>
+
+        <!-- Grid lifestyle -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Imagen 1 -->
+            <div class="relative group overflow-hidden rounded-2xl fade-up">
+                <img
+                    src={life1.src}
+                    alt="Momento de calma con té"
+                    class="w-full h-[400px] md:h-[500px] object-cover transition-transform duration-[4000ms] ease-out group-hover:scale-105"
+                />
+                <div class="absolute bottom-6 left-6 text-white text-sm tracking-wide opacity-80">
+                    Mañanas conscientes
+                </div>
+            </div>
+
+            <!-- Imagen 2 -->
+            <div class="relative group overflow-hidden rounded-2xl fade-up delay-1">
+                <img
+                    src={life2.src}
+                    alt="Espacio minimalista con infusión"
+                    class="w-full h-[400px] md:h-[500px] object-cover transition-transform duration-[4000ms] ease-out group-hover:scale-105"
+                />
+                <div class="absolute bottom-6 left-6 text-white text-sm tracking-wide opacity-80">
+                    Espacios que inspiran
+                </div>
+            </div>
+
+            <!-- Imagen 3 -->
+            <div class="relative group overflow-hidden rounded-2xl fade-up delay-2">
+                <img
+                    src={life3.src}
+                    alt="Tiempo personal con infusión"
+                    class="w-full h-[400px] md:h-[500px] object-cover transition-transform duration-[4000ms] ease-out group-hover:scale-105"
+                />
+                <div class="absolute bottom-6 left-6 text-white text-sm tracking-wide opacity-80">
+                    Tu pausa diaria
+                </div>
+            </div>
+
+            <!-- Imagen 4 -->
+            <div class="relative group overflow-hidden rounded-2xl fade-up delay-3">
+                <img
+                    src={life4.src}
+                    alt="Ritual nocturno relajante"
+                    class="w-full h-[400px] md:h-[500px] object-cover transition-transform duration-[4000ms] ease-out group-hover:scale-105"
+                />
+                <div class="absolute bottom-6 left-6 text-white text-sm tracking-wide opacity-80">
+                    Rituales nocturnos
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

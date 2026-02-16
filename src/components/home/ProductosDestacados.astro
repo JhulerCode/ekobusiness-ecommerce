@@ -1,0 +1,59 @@
+---
+import ProductosCarrusel from '@/components/ProductosCarrusel.vue'
+import { get, formatProductos } from '@/lib/api.js'
+
+const qry2 = {
+    fltr: {
+        activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
+        is_destacado: { op: 'Es', val: true },
+    },
+    cols: [
+        'linea',
+        'categoria',
+        'nombre',
+        'unidad',
+        'has_fv',
+        'precio',
+        'precio_anterior',
+        'igv_afectacion',
+        'fotos',
+    ],
+}
+
+const res2 = await get('productos', { qry: qry2 })
+const productos = formatProductos(res2.data)
+---
+
+<section class="bg-white py-24 md:py-32">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Encabezado -->
+        <div class="text-center mb-20 fade-up">
+            <h2 class="text-3xl md:text-5xl font-heading font-semibold text-gray-900">
+                Selección SUNKA
+            </h2>
+
+            <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Una curaduría de mezclas diseñadas para acompañar tus momentos de claridad, pausa y
+                equilibrio.
+            </p>
+        </div>
+
+        <!-- Carrusel -->
+        <div class="fade-up delay-1">
+            <ProductosCarrusel productos={productos} client:load />
+        </div>
+
+        <!-- CTA sutil -->
+        <!-- <div class="text-center mt-16 fade-up delay-2">
+            <a
+                href="/tienda"
+                class="inline-block text-sm tracking-widest uppercase text-gray-900
+               border-b border-gray-900 pb-1
+               transition-opacity duration-300 hover:opacity-60"
+            >
+                Explorar toda la colección
+            </a>
+        </div> -->
+    </div>
+</section>

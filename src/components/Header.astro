@@ -1,50 +1,37 @@
 ---
-import logo from '../assets/logo-sunka-black.webp';
-import Menu from '../assets/icons/menu.astro';
-import XmakIcon from '../assets/icons/xmark.astro';
-import CartIcon from '../components/CartIcon.vue';
-import AuthModal from '../components/AuthModal.vue';
-import { get } from '../lib/api.js';
+import logo from '../assets/logo-sunka-black.webp'
+import Menu from '../assets/icons/menu.astro'
+import XmakIcon from '../assets/icons/xmark.astro'
+import CartIcon from '../components/CartIcon.vue'
+import AuthModal from '../components/AuthModal.vue'
 
-const qry = {
-    cols: ['nombre'],
-    fltr: {
-        activo: { op: 'Es', val: true },
-        is_ecommerce: { op: 'Es', val: true },
-    },
-    ordr: [['nombre', 'ASC']],
-};
-const res = await get('lineas', { qry });
-
-const lineas = res.data;
-
-const navLinks = lineas.map((a) => ({
-    nombre: a.nombre,
-    href: `/linea/${a.nombre.toLowerCase().replace(/\s+/g, '-')}`,
-}));
-
-navLinks.push({
-    nombre: 'BLENDS',
-    href: '../crea-tu-blend',
-});
+const navLinks = [
+    { nombre: 'Origen', href: '/origen' },
+    { nombre: 'Inspiración', href: '/inspiracion' },
+    { nombre: 'Tienda', href: '/tienda' },
+    { nombre: 'Blends', href: '/crea-tu-blend' },
+]
 ---
 
-<header class="w-full bg-white shadow-sm sticky top-0 z-50">
-    <div
-        class="relative max-w-7xl mx-auto px-6 flex items-center justify-between h-16"
-    >
-        <a href="/" class="flex items-center gap-2">
-            <img src={logo.src} alt="logo-sunka-dark" class="h-8 w-auto" />
+<header id="site-header" class="w-full sticky top-0 z-50 bg-white transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
+        <!-- Logo -->
+        <a href="/" class="flex items-center">
+            <img
+                src={logo.src}
+                alt="SUNKA"
+                class="h-8 w-auto transition-opacity duration-300 hover:opacity-70"
+            />
         </a>
 
-        <nav
-            class="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2"
-        >
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-12">
             {
                 navLinks.map((link) => (
                     <a
                         href={link.href}
-                        class="relative text-black text-md after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[2px] after:bg-black after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
+                        class="text-sm tracking-wide uppercase text-neutral-800
+                   transition-opacity duration-300 hover:opacity-50"
                     >
                         {link.nombre}
                     </a>
@@ -52,15 +39,12 @@ navLinks.push({
             }
         </nav>
 
-        <div class="flex items-center gap-4">
+        <!-- Right -->
+        <div class="flex items-center gap-6">
             <AuthModal client:load />
-
             <CartIcon client:load />
 
-            <button
-                id="menu-toggle"
-                class="md:hidden text-gray-900 hover:text-black"
-            >
+            <button id="menu-toggle" class="md:hidden text-neutral-900">
                 <div id="icon-menu">
                     <Menu />
                 </div>
@@ -72,41 +56,57 @@ navLinks.push({
     </div>
 </header>
 
-<!-- Menú móvil -->
+<!-- Mobile Menu -->
 <div
     id="mobile-menu"
-    class="fixed top-16 left-0 w-full h-[calc(100vh-4rem)] bg-white transform -translate-x-full transition-transform duration-300 ease-in-out z-40 flex flex-col p-6 gap-6 md:hidden"
+    class="fixed inset-0 bg-white flex flex-col justify-center items-center
+         transform translate-x-full transition-transform duration-500
+         z-40 md:hidden"
 >
-    {
-        navLinks.map((link) => (
-            <a
-                href={link.href}
-                class="text-lg font-medium text-gray-900 hover:underline"
-            >
-                {link.nombre}
-            </a>
-        ))
-    }
+    <div class="flex flex-col gap-10 text-center">
+        {
+            navLinks.map((link) => (
+                <a
+                    href={link.href}
+                    class="text-2xl font-heading tracking-wide text-neutral-900
+                 transition-opacity duration-300 hover:opacity-50"
+                >
+                    {link.nombre}
+                </a>
+            ))
+        }
+    </div>
 </div>
 
 <script>
-    const toggleBtn = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const iconMenu = document.getElementById('icon-menu');
-    const iconClose = document.getElementById('icon-close');
+    const header = document.getElementById('site-header')
+    const toggleBtn = document.getElementById('menu-toggle')
+    const mobileMenu = document.getElementById('mobile-menu')
+    const iconMenu = document.getElementById('icon-menu')
+    const iconClose = document.getElementById('icon-close')
+
+    // Solo efecto visual (NO cambio de posición)
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+            header.classList.add('bg-white/80', 'backdrop-blur-md', 'shadow-sm')
+        } else {
+            header.classList.remove('bg-white/80', 'backdrop-blur-md', 'shadow-sm')
+        }
+    })
 
     toggleBtn?.addEventListener('click', () => {
-        const isOpen = mobileMenu.classList.contains('translate-x-0');
+        const isOpen = mobileMenu.classList.contains('translate-x-0')
+
         if (isOpen) {
-            mobileMenu.classList.add('-translate-x-full');
-            mobileMenu.classList.remove('translate-x-0');
-            iconMenu.classList.remove('hidden');
-            iconClose.classList.add('hidden');
+            mobileMenu.classList.remove('translate-x-0')
+            mobileMenu.classList.add('translate-x-full')
+            iconMenu.classList.remove('hidden')
+            iconClose.classList.add('hidden')
         } else {
-            mobileMenu.classList.remove('-translate-x-full');
-            mobileMenu.classList.add('translate-x-0');
-            iconMenu.classList.add('hidden');
-            iconClose.classList.remove('hidden');
+            mobileMenu.classList.remove('translate-x-full')
+            mobileMenu.classList.add('translate-x-0')
+            iconMenu.classList.add('hidden')
+            iconClose.classList.remove('hidden')
         }
-    });
+    })
 </script>

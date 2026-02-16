@@ -1,23 +1,22 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Banner from '../components/Banner.astro';
-import LineasProductos from '../components/LineasProductos.astro';
-import CategoriasDestacadas from '../components/CategoriasDestacadas.astro';
-import ProductosDestacados from '../components/ProductosDestacados.astro';
-import Beneficios from '../components/Beneficios.astro';
-import NewsLetter from '../components/NewsLetter.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Banner from '@/components/home/Banner.astro'
+import Manifiesto from '@/components/home/Manifiesto.astro'
+import Ritual from '@/components/home/Ritual.astro'
+import CategoriasDestacadas from '@/components/home/CategoriasDestacadas.astro'
+import LifeStyle from '../components/home/LifeStyle.astro'
+import ProductosDestacados from '@/components/home/ProductosDestacados.astro'
+import Beneficios from '@/components/home/Beneficios.astro'
+import NewsLetter from '@/components/home/NewsLetter.astro'
 ---
 
 <BaseLayout title="Sunka Herbal Tea">
     <Banner />
-
-    <LineasProductos />
-
+    <Manifiesto />
+    <Ritual />
     <CategoriasDestacadas />
-
+    <LifeStyle />
     <ProductosDestacados />
-
     <Beneficios />
-
     <NewsLetter />
 </BaseLayout>

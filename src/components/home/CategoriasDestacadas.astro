@@ -1,0 +1,96 @@
+---
+import { get, formatCategorias } from '@/lib/api';
+
+const qry = {
+  fltr: {
+    tipo: { op: 'Es', val: '2' },
+    is_destacado: { op: 'Es', val: true },
+  },
+  cols: ['nombre', 'descripcion', 'fotos', 'slug'],
+  ordr: [['nombre', 'ASC']],
+};
+
+const res = await get('categorias', { qry });
+const categorias = formatCategorias(res.data);
+---
+
+<section class="bg-neutral-50 py-24 md:py-32">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <!-- Encabezado -->
+    <div class="text-center mb-20 fade-up">
+      <h2 class="text-3xl md:text-5xl font-heading font-semibold text-gray-900">
+        Descubre por intención
+      </h2>
+
+      <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        Cada momento tiene una energía distinta.
+        Encuentra la mezcla que acompaña tu estado.
+      </p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+
+      {categorias.map((cat, index) => (
+        <a
+          href={`/categoria/${cat.slug}`}
+          class={`group relative rounded-2xl overflow-hidden h-80 cursor-pointer fade-up
+          ${index < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}`}
+          style={`transition-delay: ${index * 0.12}s`}
+        >
+
+          <!-- Imagen -->
+          <img
+            src={cat.foto}
+            alt={cat.nombre}
+            class="absolute inset-0 w-full h-full object-cover object-top
+                   transition-transform duration-[4000ms] ease-out
+                   group-hover:scale-105"
+          />
+
+          <!-- Overlay elegante -->
+          <div
+            class="absolute inset-0 bg-black/40
+                   transition-colors duration-500
+                   group-hover:bg-black/25"
+          ></div>
+
+          <!-- Contenido -->
+          <div
+                class="relative z-10 h-full flex flex-col justify-end p-6"
+            >
+                <div
+                    class="transition-transform duration-300"
+                >
+                    <!-- Nombre -->
+                    <h3
+                        class="text-2xl font-semibold text-white
+                            drop-shadow-lg
+                            transition-transform duration-300
+                            group-hover:-translate-y-2"
+                    >
+                        {cat.nombre}
+                    </h3>
+
+                    <!-- Descripción -->
+                    <p
+                        class="text-white text-sm mt-2
+                            opacity-0 translate-y-4
+                            h-0
+                            group-hover:opacity-100 group-hover:translate-y-0 group-hover:h-auto
+                            transition-all duration-300
+                            line-clamp-2 drop-shadow-md"
+                    >
+                        {cat.descripcion}
+                    </p>
+                </div>
+            </div>
+
+        </a>
+      ))}
+
+    </div>
+
+  </div>
+</section>

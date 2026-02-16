@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Beneficios from '../../components/Beneficios.astro';
+import Beneficios from '@/components/home/Beneficios.astro';
 import { urls, get } from '../../lib/api.js';
 import { redondear, formatDate, formatDateTime } from '../../lib/mine.js';
 import GhostIcon from '../../assets/icons/ghost.vue';
@@ -139,12 +139,12 @@ if (pedido) {
                                         )
                                     }
                                 </p>
-        
+
                                 <p>
                                     <span class="font-medium">Distrito:</span>
                                     {pedido.entrega_direccion_datos.ubigeo1.nombre}
                                 </p>
-        
+
                                 <p>
                                     <span class="font-medium">Referencia:</span>
                                     {pedido.entrega_direccion_datos.referencia}
@@ -240,7 +240,7 @@ if (pedido) {
                             <h2 class="text-xl font-semibold text-gray-800 mb-6">
                                 Seguimiento
                             </h2>
-        
+
                             <ol class="space-y-4">
                                 {
                                     etapas.map((etapa) => {

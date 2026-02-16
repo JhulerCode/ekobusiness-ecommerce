@@ -1,0 +1,20 @@
+---
+import NewsLetterForm from '@/components/NewsLetterForm.vue'
+---
+
+<section class="bg-white py-24 md:py-32">
+    <div class="max-w-3xl mx-auto px-6 text-center fade-up">
+        <h2 class="text-3xl md:text-5xl font-heading font-semibold text-neutral-900">
+            Cartas de SUNKA
+        </h2>
+
+        <p class="mt-6 text-lg text-neutral-600 leading-relaxed max-w-2xl mx-auto">
+            Reflexiones, rituales e inspiración para acompañar tus momentos de pausa. Sin ruido. Sin
+            excesos. Solo lo esencial.
+        </p>
+
+        <div class="mt-12 fade-up delay-1">
+            <NewsLetterForm client:load />
+        </div>
+    </div>
+</section>

@@ -1,0 +1,78 @@
+---
+import origenHero from '@/assets/banner1.webp'
+---
+
+<section
+    class="relative h-[75vh] md:h-[90vh] flex items-center justify-center text-center overflow-hidden"
+>
+    <!-- Imagen con movimiento lento -->
+    <img
+        src={origenHero.src}
+        alt="Origen SUNKA"
+        class="absolute inset-0 w-full h-full object-cover hero-zoom"
+    />
+
+    <!-- Overlay degradado premium -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>
+
+    <!-- Contenido -->
+    <div class="relative z-10 px-6 max-w-4xl">
+        <p class="text-white/70 tracking-[0.3em] uppercase text-xs mb-6 fade-up">
+            Nuestra historia
+        </p>
+
+        <h1
+            class="text-white text-4xl md:text-6xl font-heading font-semibold leading-tight fade-up delay-1"
+        >
+            El espíritu de una
+            <br class="hidden md:block" />
+            infusión ancestral
+        </h1>
+
+        <p class="mt-8 text-white/90 max-w-2xl mx-auto text-lg leading-relaxed fade-up delay-2">
+            Donde la infusión deja de ser bebida y se convierte en ritual.
+        </p>
+    </div>
+
+    <!-- Indicador scroll -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 fade-up delay-3">
+        <div class="w-[1px] h-16 bg-white/40 relative overflow-hidden">
+            <div class="w-full h-6 bg-white animate-scrollLine"></div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Zoom lento cinematográfico */
+    .hero-zoom {
+        animation: heroZoom 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroZoom {
+        0% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(1.08);
+        }
+    }
+
+    /* Línea animada de scroll */
+    @keyframes scrollLine {
+        0% {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        40% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(120%);
+            opacity: 0;
+        }
+    }
+
+    .animate-scrollLine {
+        animation: scrollLine 2.5s ease-in-out infinite;
+    }
+</style>

@@ -1,0 +1,104 @@
+---
+import truckIcon from '@/assets/icons/truck.svg'
+import seedlingIcon from '@/assets/icons/seedling.svg'
+import creditCardIcon from '@/assets/icons/credit-card.svg'
+import awardIcon from '@/assets/icons/award.svg'
+---
+
+<section class="bg-neutral-50 py-24 md:py-32">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Encabezado -->
+        <div class="text-center mb-20 fade-up">
+            <h2 class="text-3xl md:text-5xl font-heading font-semibold text-gray-900">
+                La experiencia SUNKA
+            </h2>
+            <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Cuidamos cada detalle para que tu momento de pausa comience desde el primer clic.
+            </p>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- 1 -->
+            <div class="group text-center px-6 fade-up" style="transition-delay: 0.1s">
+                <div
+                    class="w-16 h-16 mx-auto flex items-center justify-center
+                    rounded-full bg-white shadow-sm
+                    transition-all duration-500
+                    group-hover:shadow-md group-hover:-translate-y-2"
+                >
+                    <img src={truckIcon.src} alt="Envío consciente" class="w-7 h-7 opacity-80" />
+                </div>
+
+                <h3 class="mt-6 font-heading text-lg font-semibold text-gray-900">
+                    Envío consciente
+                </h3>
+
+                <p class="mt-3 text-gray-600 leading-relaxed text-sm">
+                    Recibe tu pedido sin costo en compras mayores a
+                    <span class="font-semibold">S/30</span>, con empaques pensados para preservar
+                    cada aroma.
+                </p>
+            </div>
+
+            <!-- 2 -->
+            <div class="group text-center px-6 fade-up" style="transition-delay: 0.2s">
+                <div
+                    class="w-16 h-16 mx-auto flex items-center justify-center
+                    rounded-full bg-white shadow-sm
+                    transition-all duration-500
+                    group-hover:shadow-md group-hover:-translate-y-2"
+                >
+                    <img src={seedlingIcon.src} alt="Origen natural" class="w-7 h-7 opacity-80" />
+                </div>
+
+                <h3 class="mt-6 font-heading text-lg font-semibold text-gray-900">
+                    Origen natural
+                </h3>
+
+                <p class="mt-3 text-gray-600 leading-relaxed text-sm">
+                    Ingredientes seleccionados por su pureza, respetando su esencia y propiedades.
+                </p>
+            </div>
+
+            <!-- 3 -->
+            <div class="group text-center px-6 fade-up" style="transition-delay: 0.3s">
+                <div
+                    class="w-16 h-16 mx-auto flex items-center justify-center
+                    rounded-full bg-white shadow-sm
+                    transition-all duration-500
+                    group-hover:shadow-md group-hover:-translate-y-2"
+                >
+                    <img src={creditCardIcon.src} alt="Compra segura" class="w-7 h-7 opacity-80" />
+                </div>
+
+                <h3 class="mt-6 font-heading text-lg font-semibold text-gray-900">Compra segura</h3>
+
+                <p class="mt-3 text-gray-600 leading-relaxed text-sm">
+                    Transacciones protegidas y métodos confiables para una experiencia sin
+                    preocupaciones.
+                </p>
+            </div>
+
+            <!-- 4 -->
+            <div class="group text-center px-6 fade-up" style="transition-delay: 0.4s">
+                <div
+                    class="w-16 h-16 mx-auto flex items-center justify-center
+                    rounded-full bg-white shadow-sm
+                    transition-all duration-500
+                    group-hover:shadow-md group-hover:-translate-y-2"
+                >
+                    <img src={awardIcon.src} alt="Calidad garantizada" class="w-7 h-7 opacity-80" />
+                </div>
+
+                <h3 class="mt-6 font-heading text-lg font-semibold text-gray-900">
+                    Calidad ritual
+                </h3>
+
+                <p class="mt-3 text-gray-600 leading-relaxed text-sm">
+                    Cada mezcla es cuidadosamente evaluada para ofrecer equilibrio y consistencia.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
