@@ -19,8 +19,6 @@
         <div class="grid md:grid-cols-2 gap-4">
             <JdInput label="Nombres" v-model="user.nombres" :disabled="!editing" />
 
-            <JdInput label="Apellidos" v-model="user.apellidos" :disabled="!editing" />
-
             <JdSelect
                 label="Tipo de documento"
                 :lista="documentos_identidad"
@@ -45,11 +43,11 @@
 </template>
 
 <script>
-import JdInput from "../components/JdInput.vue";
-import JdSelect from "../components/JdSelect.vue";
-import JdLoading from "../components/LoadingSpin.vue";
-import JdButton from "../components/JdButton.vue";
-import { urls, get, patch } from "../lib/api.js";
+import JdInput from '../components/JdInput.vue'
+import JdSelect from '../components/JdSelect.vue'
+import JdLoading from '../components/LoadingSpin.vue'
+import JdButton from '../components/JdButton.vue'
+import { urls, get, patch } from '../lib/api.js'
 
 export default {
     components: {
@@ -59,7 +57,7 @@ export default {
         JdButton,
     },
     props: {
-        headText: { type: String, default: "" },
+        headText: { type: String, default: '' },
         user: { type: Object, default: () => ({}) },
         documentos_identidad: { type: Array, default: () => [] },
     },
@@ -68,7 +66,7 @@ export default {
             editing: false,
             loading: false,
             errors: {},
-        };
+        }
     },
     methods: {
         // validateForm() {
@@ -80,34 +78,33 @@ export default {
         //     return Object.values(this.errors).every((e) => !e);
         // },
         shapeDatos() {
-            const { id, nombres, apellidos, doc_tipo, doc_numero, telefono1 } = this.user;
+            const { id, nombres, doc_tipo, doc_numero, telefono1 } = this.user
 
             return {
                 id,
                 nombres,
-                apellidos,
                 doc_tipo,
                 doc_numero,
                 telefono1,
                 tipo: 2,
-                comes_from: "ecommerce",
-                user_token: localStorage.getItem("token"),
-            };
+                comes_from: 'ecommerce',
+                user_token: localStorage.getItem('token'),
+            }
         },
         async actualizar() {
-            if (this.loading) return;
+            if (this.loading) return
             // if (!this.validateForm()) return;
 
-            const send = this.shapeDatos();
+            const send = this.shapeDatos()
 
-            this.loading = true;
-            const res = await patch("account", send);
-            this.loading = false;
+            this.loading = true
+            const res = await patch('account', send)
+            this.loading = false
 
             if (res.code == 0) {
-                this.editing = false;
+                this.editing = false
             }
         },
     },
-};
+}
 </script>

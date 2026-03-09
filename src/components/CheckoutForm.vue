@@ -195,13 +195,6 @@
                                 :error="errors.nombres"
                             />
 
-                            <JdInput
-                                label="Apellidos"
-                                :nec="true"
-                                v-model="form.socio_datos.apellidos"
-                                :error="errors.apellidos"
-                            />
-
                             <JdSelect
                                 label="Tipo de documento"
                                 :nec="true"
@@ -269,7 +262,6 @@
                             <p>
                                 <span class="font-medium">Nombre:</span>
                                 {{ form.socio_datos.nombres }}
-                                {{ form.socio_datos.apellidos }}
                             </p>
                         </div>
 
@@ -557,7 +549,7 @@
                                             <img
                                                 :src="
                                                     getCardBrandIcon(
-                                                        card.tokenDetails.effectiveBrand
+                                                        card.tokenDetails.effectiveBrand,
                                                     )
                                                 "
                                                 class="w-8 h-8"
@@ -760,31 +752,31 @@
 </template>
 
 <script>
-import ArrowLeft from "../assets/icons/arrow-left.vue";
-import ArrowRight from "../assets/icons/arrow-right.vue";
-import JdButton from "../components/JdButton.vue";
-import JdInput from "../components/JdInput.vue";
-import JdSelect from "../components/JdSelect.vue";
-import JdCheckBox from "../components/JdCheckBox.vue";
-import JdRadio from "../components/JdRadio.vue";
-import JdTextArea from "../components/JdTextArea.vue";
-import JdSelectQuery from "../components/JdSelectQuery.vue";
-import LoadingSpin from "./LoadingSpin.vue";
-import iPlus from "../assets/icons/plus.vue";
+import ArrowLeft from '../assets/icons/arrow-left.vue'
+import ArrowRight from '../assets/icons/arrow-right.vue'
+import JdButton from '../components/JdButton.vue'
+import JdInput from '../components/JdInput.vue'
+import JdSelect from '../components/JdSelect.vue'
+import JdCheckBox from '../components/JdCheckBox.vue'
+import JdRadio from '../components/JdRadio.vue'
+import JdTextArea from '../components/JdTextArea.vue'
+import JdSelectQuery from '../components/JdSelectQuery.vue'
+import LoadingSpin from './LoadingSpin.vue'
+import iPlus from '../assets/icons/plus.vue'
 
-import visaUrl from "../assets/icons/visa.svg?url";
-import mastercardUrl from "../assets/icons/mastercard.svg?url";
-import dinersUrl from "../assets/icons/diners-club.svg?url";
-import amexUrl from "../assets/icons/american-express.svg?url";
-import genericUrl from "../assets/icons/card-generic.svg?url";
-import qrYapeUrl from "../assets/qr-yape-eko-business.jpg?url";
-import yapeLogo from "../assets/icons/yape-logo.svg?url";
+import visaUrl from '../assets/icons/visa.svg?url'
+import mastercardUrl from '../assets/icons/mastercard.svg?url'
+import dinersUrl from '../assets/icons/diners-club.svg?url'
+import amexUrl from '../assets/icons/american-express.svg?url'
+import genericUrl from '../assets/icons/card-generic.svg?url'
+import qrYapeUrl from '../assets/qr-yape-eko-business.jpg?url'
+import yapeLogo from '../assets/icons/yape-logo.svg?url'
 
-import { Cart } from "../lib/cart.js";
-import { urls, get, post, patch } from "../lib/api.js";
-import { genId } from "../lib/mine.js";
+import { Cart } from '../lib/cart.js'
+import { urls, get, post, patch } from '../lib/api.js'
+import { genId } from '../lib/mine.js'
 
-import KRGlue from "@lyracom/embedded-form-glue";
+import KRGlue from '@lyracom/embedded-form-glue'
 
 export default {
     components: {
@@ -822,166 +814,164 @@ export default {
 
             form: {
                 socio_datos: {
-                    doc_tipo: "DNI",
+                    doc_tipo: 'DNI',
                 },
 
-                entrega_tipo: "envio",
+                entrega_tipo: 'envio',
                 entrega_direccion_datos: {},
 
-                comprobante_tipo: "03",
+                comprobante_tipo: '03',
 
-                pago_metodo: "tarjeta",
+                pago_metodo: 'tarjeta',
             },
             errors: {},
             items: [],
 
             ubigeos: [],
             ubigeosLoading: false,
-        };
+        }
     },
     computed: {
         subtotal() {
-            return this.items.reduce((acc, item) => acc + item.pu * item.cantidad, 0);
+            return this.items.reduce((acc, item) => acc + item.pu * item.cantidad, 0)
         },
         costoEnvio() {
-            return this.form.entrega_tipo === "envio" ? 10 : 0;
+            return this.form.entrega_tipo === 'envio' ? 10 : 0
         },
         total() {
-            return this.subtotal + this.costoEnvio;
+            return this.subtotal + this.costoEnvio
         },
     },
     mounted() {
-        this.injectarJsIzipay();
-        this.validateSession();
+        this.injectarJsIzipay()
+        this.validateSession()
 
-        this.items = Cart.get();
+        this.items = Cart.get()
 
         if (this.items.length == 0) {
-            window.location.href = "/cart";
-            return;
+            window.location.href = '/cart'
+            return
         }
     },
     methods: {
         injectarJsIzipay() {
-            const script = document.createElement("script");
-            script.src = "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/neon.js";
-            document.head.appendChild(script);
+            const script = document.createElement('script')
+            script.src = 'https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/neon.js'
+            document.head.appendChild(script)
         },
         async validateSession() {
-            const user_token = localStorage.getItem("token");
-            if (!user_token) return;
+            const user_token = localStorage.getItem('token')
+            if (!user_token) return
 
-            this.loading = true;
-            const res = await get(`${urls.account}/login`, null, user_token);
-            this.loading = false;
+            this.loading = true
+            const res = await get(`${urls.account}/login`, null, user_token)
+            this.loading = false
 
-            if (res.code != 0) return;
+            if (res.code != 0) return
 
-            this.user = res.data;
-            this.form.socio_datos.nombres = this.user.nombres;
-            this.form.socio_datos.apellidos = this.user.apellidos;
-            this.form.socio_datos.doc_tipo = this.user.doc_tipo;
-            this.form.socio_datos.doc_numero = this.user.doc_numero;
-            this.form.socio_datos.correo = this.user.correo;
-            this.form.socio_datos.telefono = this.user.telefono1;
+            this.user = res.data
+            this.form.socio_datos.nombres = this.user.nombres
+            this.form.socio_datos.apellidos = this.user.apellidos
+            this.form.socio_datos.doc_tipo = this.user.doc_tipo
+            this.form.socio_datos.doc_numero = this.user.doc_numero
+            this.form.socio_datos.correo = this.user.correo
+            this.form.socio_datos.telefono = this.user.telefono1
         },
 
         validateForm1() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''))
 
             if (
                 !this.form.socio_datos.correo ||
                 !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.socio_datos.correo)
             )
-                this.errors.correo = "Ingrese un correo válido.";
-            if (!this.form.socio_datos.telefono)
-                this.errors.telefono = "Este campo es obligatorio.";
-            if (!this.form.socio_datos.nombres) this.errors.nombres = "Este campo es obligatorio.";
-            if (!this.form.socio_datos.apellidos) this.errors.apellidos = "Describa su solicitud.";
+                this.errors.correo = 'Ingrese un correo válido.'
+            if (!this.form.socio_datos.telefono) this.errors.telefono = 'Este campo es obligatorio.'
+            if (!this.form.socio_datos.nombres) this.errors.nombres = 'Este campo es obligatorio.'
+            if (!this.form.socio_datos.apellidos) this.errors.apellidos = 'Describa su solicitud.'
             if (!this.form.socio_datos.doc_tipo)
-                this.errors.doc_tipo = "Seleccione un tipo de documento.";
+                this.errors.doc_tipo = 'Seleccione un tipo de documento.'
             if (!this.form.socio_datos.doc_numero)
-                this.errors.doc_numero = "Este campo es obligatorio.";
+                this.errors.doc_numero = 'Este campo es obligatorio.'
             if (!this.form.socio_datos.privacidad)
-                this.errors.privacidad = "Este campo es obligatorio.";
+                this.errors.privacidad = 'Este campo es obligatorio.'
 
-            return Object.values(this.errors).every((e) => !e);
+            return Object.values(this.errors).every((e) => !e)
         },
         async continuarEntrega() {
-            if (!this.validateForm1()) return;
+            if (!this.validateForm1()) return
 
             if (this.user.id) {
                 const send = {
                     id: this.user.id,
                     tipo: 2,
-                    comes_from: "ecommerce",
-                    user_token: localStorage.getItem("token"),
+                    comes_from: 'ecommerce',
+                    user_token: localStorage.getItem('token'),
                     nombres: this.form.socio_datos.nombres,
-                    apellidos: this.form.socio_datos.apellidos,
                     doc_tipo: this.form.socio_datos.doc_tipo,
                     doc_numero: this.form.socio_datos.doc_numero,
                     correo: this.form.socio_datos.correo,
                     telefono1: this.form.socio_datos.telefono,
-                };
+                }
 
-                this.loadingContinuarEntrega = true;
-                await patch("account", send);
-                this.loadingContinuarEntrega = false;
+                this.loadingContinuarEntrega = true
+                await patch('account', send)
+                this.loadingContinuarEntrega = false
             }
 
-            this.step = 2;
-            this.scrollToForm("seccionForm2");
+            this.step = 2
+            this.scrollToForm('seccionForm2')
         },
 
         validateForm2() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''))
 
-            if (this.form.entrega_tipo === "envio") {
-                this.form.fecha_entrega = null;
+            if (this.form.entrega_tipo === 'envio') {
+                this.form.fecha_entrega = null
 
                 if (this.user.id) {
                     if (this.form.new_direccion) {
                         if (!this.form.direccion_nombre)
-                            this.errors.direccion_nombre = "Este campo es obligatorio.";
+                            this.errors.direccion_nombre = 'Este campo es obligatorio.'
                     } else {
                         if (!this.form.entrega_direccion_id)
-                            this.errors.entrega_direccion_id = "Seleccione una dirección guardada.";
+                            this.errors.entrega_direccion_id = 'Seleccione una dirección guardada.'
                     }
                 }
 
                 if (!this.form.entrega_ubigeo)
-                    this.errors.entrega_ubigeo = "Este campo es obligatorio.";
+                    this.errors.entrega_ubigeo = 'Este campo es obligatorio.'
                 if (!this.form.direccion_entrega)
-                    this.errors.direccion_entrega = "Este campo es obligatorio.";
+                    this.errors.direccion_entrega = 'Este campo es obligatorio.'
                 if (!this.form.entrega_direccion_datos.referencia)
-                    this.errors.entrega_direccion_datos_referencia = "Este campo es obligatorio.";
+                    this.errors.entrega_direccion_datos_referencia = 'Este campo es obligatorio.'
             }
 
-            if (this.form.entrega_tipo === "retiro") {
-                this.form.new_direccion = false;
+            if (this.form.entrega_tipo === 'retiro') {
+                this.form.new_direccion = false
 
-                this.form.entrega_direccion_id = null;
-                this.form.direccion_nombre = null;
+                this.form.entrega_direccion_id = null
+                this.form.direccion_nombre = null
 
-                this.form.entrega_ubigeo = null;
-                this.form.direccion_entrega = null;
-                this.form.entrega_direccion_datos.numero = null;
-                this.form.entrega_direccion_datos.piso = null;
-                this.form.entrega_direccion_datos.referencia = null;
+                this.form.entrega_ubigeo = null
+                this.form.direccion_entrega = null
+                this.form.entrega_direccion_datos.numero = null
+                this.form.entrega_direccion_datos.piso = null
+                this.form.entrega_direccion_datos.referencia = null
 
                 if (!this.form.fecha_entrega)
-                    this.errors.fecha_entrega = "Este campo es obligatorio.";
+                    this.errors.fecha_entrega = 'Este campo es obligatorio.'
             }
 
-            return Object.values(this.errors).every((e) => !e);
+            return Object.values(this.errors).every((e) => !e)
         },
         async continuarPago() {
-            if (!this.validateForm2()) return;
+            if (!this.validateForm2()) return
 
             if (this.user.id) {
                 if (this.form.new_direccion) {
-                    const direcciones = JSON.parse(JSON.stringify(this.user.direcciones));
-                    const newDireccionId = genId();
+                    const direcciones = JSON.parse(JSON.stringify(this.user.direcciones))
+                    const newDireccionId = genId()
                     direcciones.push({
                         id: newDireccionId,
                         nombre: this.form.direccion_nombre,
@@ -991,75 +981,75 @@ export default {
                         numero: this.form.entrega_direccion_datos.numero,
                         piso: this.form.entrega_direccion_datos.piso,
                         referencia: this.form.entrega_direccion_datos.referencia,
-                    });
+                    })
                     const send = {
                         id: this.user.id,
                         tipo: 2,
-                        comes_from: "ecommerce",
-                        user_token: localStorage.getItem("token"),
+                        comes_from: 'ecommerce',
+                        user_token: localStorage.getItem('token'),
                         direcciones,
-                    };
-                    this.loadingContinuarPago = true;
-                    const res = await patch("account", send);
-                    this.loadingContinuarPago = false;
+                    }
+                    this.loadingContinuarPago = true
+                    const res = await patch('account', send)
+                    this.loadingContinuarPago = false
                     if (res.code == 0) {
-                        this.user.direcciones = res.data.direcciones;
-                        this.form.new_direccion = false;
-                        this.form.entrega_direccion_id = newDireccionId;
+                        this.user.direcciones = res.data.direcciones
+                        this.form.new_direccion = false
+                        this.form.entrega_direccion_id = newDireccionId
                     }
                 }
                 if (!this.user.wallet) {
-                    await this.getCustomerWallet();
+                    await this.getCustomerWallet()
                 }
             }
 
-            this.step = 3;
-            this.scrollToForm("seccionForm3");
+            this.step = 3
+            this.scrollToForm('seccionForm3')
         },
 
         validarForm3() {
-            Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
+            Object.keys(this.errors).forEach((k) => (this.errors[k] = ''))
 
-            if (this.form.comprobante_tipo === "01") {
+            if (this.form.comprobante_tipo === '01') {
                 if (!this.form.comprobante_ruc || !/^\d{11}$/.test(this.form.comprobante_ruc))
-                    this.errors.comprobante_ruc = "El RUC debe tener 11 dígitos numéricos.";
+                    this.errors.comprobante_ruc = 'El RUC debe tener 11 dígitos numéricos.'
                 if (!this.form.comprobante_razon_social)
-                    this.errors.comprobante_razon_social = "Este campo es obligatorio.";
+                    this.errors.comprobante_razon_social = 'Este campo es obligatorio.'
             }
 
-            if (this.form.pago_metodo == "tarjeta") {
+            if (this.form.pago_metodo == 'tarjeta') {
                 if (!this.form.paymentMethodToken)
-                    this.errors.paymentMethodToken = "Seleccione una tarjeta.";
-            } else if (this.form.pago_metodo == "yape") {
-                if (!this.form.pago_id) this.errors.pago_id = "Este campo es obligatorio.";
+                    this.errors.paymentMethodToken = 'Seleccione una tarjeta.'
+            } else if (this.form.pago_metodo == 'yape') {
+                if (!this.form.pago_id) this.errors.pago_id = 'Este campo es obligatorio.'
             }
 
-            return Object.values(this.errors).every((e) => !e);
+            return Object.values(this.errors).every((e) => !e)
         },
         shapeDatos() {
-            this.form.tipo = 2;
-            this.form.origin = "ecommerce";
-            this.form.fecha = new Date().toISOString().split("T")[0];
-            this.form.socio = this.user.id;
+            this.form.tipo = 2
+            this.form.origin = 'ecommerce'
+            this.form.fecha = new Date().toISOString().split('T')[0]
+            this.form.socio = this.user.id
 
-            this.form.pago_condicion = "1";
-            this.form.moneda = "1";
-            this.form.monto = this.total.toFixed(2);
+            this.form.pago_condicion = '1'
+            this.form.moneda = '1'
+            this.form.monto = this.total.toFixed(2)
 
-            this.form.socio_pedido_items = this.items;
-            this.form.entrega_costo = this.costoEnvio;
+            this.form.socio_pedido_items = this.items
+            this.form.entrega_costo = this.costoEnvio
 
-            if (this.form.pago_metodo == "yape") {
-                this.form.codigo = genId();
+            if (this.form.pago_metodo == 'yape') {
+                this.form.codigo = genId()
             }
         },
         async pagar() {
-            if (!this.validarForm3()) return;
+            if (!this.validarForm3()) return
 
-            if (this.form.pago_metodo == "tarjeta") {
-                this.pagarConTarjeta();
-            } else if (this.form.pago_metodo == "yape") {
-                this.pagarConYape();
+            if (this.form.pago_metodo == 'tarjeta') {
+                this.pagarConTarjeta()
+            } else if (this.form.pago_metodo == 'yape') {
+                this.pagarConYape()
             }
         },
         async pagarConTarjeta() {
@@ -1068,191 +1058,191 @@ export default {
                 correo: this.form.socio_datos.correo,
                 user_id: this.user.id,
                 paymentMethodToken: this.form.paymentMethodToken,
-            };
+            }
 
-            this.loadingPagar = true;
-            const res = await post(`${urls.izipay}/create-payment`, send);
-            this.loadingPagar = false;
+            this.loadingPagar = true
+            const res = await post(`${urls.izipay}/create-payment`, send)
+            this.loadingPagar = false
 
             if (res.code == 1) {
-                this.errors.general = res.msg;
+                this.errors.general = res.msg
             } else if (res.code == 0) {
-                this.form.codigo = res.orderId;
-                this.loadingPagar = true;
-                const endpoint = "https://api.micuentaweb.pe";
-                const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY;
+                this.form.codigo = res.orderId
+                this.loadingPagar = true
+                const endpoint = 'https://api.micuentaweb.pe'
+                const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY
 
-                const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
+                const { KR } = await KRGlue.loadLibrary(endpoint, publicKey)
 
                 await KR.setFormConfig({
                     formToken: res.data.formToken,
-                    "kr-language": "es-PE",
-                });
+                    'kr-language': 'es-PE',
+                })
 
                 await KR.onFormCreated(() => {
-                    this.loadingPagar = false;
-                });
+                    this.loadingPagar = false
+                })
 
                 await KR.onSubmit(async (paymentData) => {
-                    this.shapeDatos();
+                    this.shapeDatos()
 
                     const res1 = await post(`${urls.izipay}/validate-payment`, {
                         paymentData,
                         socio_pedido: this.form,
-                    });
+                    })
 
                     if (res1.code > 0) {
-                        KR.closePopin();
-                        this.errors.general = res1.msg;
+                        KR.closePopin()
+                        this.errors.general = res1.msg
                     } else if (res1.code == 0) {
-                        this.paymentSuccess = true;
-                        this.form.id = res1.data.id;
-                        Cart.clear();
-                        KR.closePopin();
+                        this.paymentSuccess = true
+                        this.form.id = res1.data.id
+                        Cart.clear()
+                        KR.closePopin()
 
                         window.scrollTo({
                             top: 0,
-                            behavior: "smooth",
-                        });
+                            behavior: 'smooth',
+                        })
                     }
 
-                    return false;
-                });
+                    return false
+                })
 
-                await KR.renderElements("#myPaymentForm");
+                await KR.renderElements('#myPaymentForm')
 
-                await KR.openPopin();
+                await KR.openPopin()
             }
         },
         async pagarConYape() {
-            this.shapeDatos();
+            this.shapeDatos()
 
-            this.loadingPagar = true;
-            const res = await post("socio_pedidos", this.form);
-            this.loadingPagar = false;
+            this.loadingPagar = true
+            const res = await post('socio_pedidos', this.form)
+            this.loadingPagar = false
 
             if (res.code < 0) {
-                this.errors.general = "Algo salió mal";
+                this.errors.general = 'Algo salió mal'
             }
             if (res.code > 0) {
-                this.errors.general = res.msg;
+                this.errors.general = res.msg
             } else if (res.code == 0) {
-                this.paymentSuccess = true;
-                this.form.id = res.data.id;
-                Cart.clear();
+                this.paymentSuccess = true
+                this.form.id = res.data.id
+                Cart.clear()
 
                 window.scrollTo({
                     top: 0,
-                    behavior: "smooth",
-                });
+                    behavior: 'smooth',
+                })
             }
         },
 
         prevStep() {
-            if (this.step > 1) this.step--;
-            this.errors = {};
+            if (this.step > 1) this.step--
+            this.errors = {}
 
             if (this.step === 1) {
-                this.scrollToForm("seccionForm1");
+                this.scrollToForm('seccionForm1')
             }
             if (this.step === 2) {
-                this.scrollToForm("seccionForm2");
+                this.scrollToForm('seccionForm2')
             }
             if (this.step === 3) {
-                this.scrollToForm("seccionForm3");
+                this.scrollToForm('seccionForm3')
             }
         },
         scrollToForm(id) {
             setTimeout(() => {
-                const el = this.$refs[id];
+                const el = this.$refs[id]
                 if (el) {
-                    const offset = el.getBoundingClientRect().top + window.scrollY - 80;
-                    window.scrollTo({ top: offset, behavior: "smooth" });
+                    const offset = el.getBoundingClientRect().top + window.scrollY - 80
+                    window.scrollTo({ top: offset, behavior: 'smooth' })
                 }
-            }, 100);
+            }, 100)
         },
 
         async loadUbigeos(txtBuscar) {
             if (!txtBuscar) {
-                this.ubigeos.length = 0;
-                return;
+                this.ubigeos.length = 0
+                return
             }
 
             const qry = {
                 fltr: {
-                    distrito: { op: "Contiene", val: txtBuscar },
+                    distrito: { op: 'Contiene', val: txtBuscar },
                 },
-                cols: ["departamento", "provincia", "distrito", "nombre"],
-            };
+                cols: ['departamento', 'provincia', 'distrito', 'nombre'],
+            }
 
-            this.ubigeosLoading = true;
-            const res = await get("ubigeos", { qry }, localStorage.getItem("token"));
-            this.ubigeosLoading = false;
+            this.ubigeosLoading = true
+            const res = await get('ubigeos', { qry }, localStorage.getItem('token'))
+            this.ubigeosLoading = false
 
-            if (res.code !== 0) return;
+            if (res.code !== 0) return
 
-            this.ubigeos = res.data;
+            this.ubigeos = res.data
         },
         setUbigeo(item) {
-            this.form.entrega_direccion_datos.ubigeo1 = item;
+            this.form.entrega_direccion_datos.ubigeo1 = item
         },
 
         setDireccion(item) {
             if (!item) {
-                this.cleanDireccion();
-                return;
+                this.cleanDireccion()
+                return
             }
 
-            this.ubigeos = [{ ...item.ubigeo1 }];
+            this.ubigeos = [{ ...item.ubigeo1 }]
 
-            this.form.entrega_ubigeo = item.ubigeo1.id;
-            this.form.direccion_entrega = item.direccion;
-            this.form.entrega_direccion_datos.numero = item.numero;
-            this.form.entrega_direccion_datos.piso = item.piso;
-            this.form.entrega_direccion_datos.referencia = item.referencia;
-            this.form.entrega_direccion_datos.ubigeo1 = item.ubigeo1;
+            this.form.entrega_ubigeo = item.ubigeo1.id
+            this.form.direccion_entrega = item.direccion
+            this.form.entrega_direccion_datos.numero = item.numero
+            this.form.entrega_direccion_datos.piso = item.piso
+            this.form.entrega_direccion_datos.referencia = item.referencia
+            this.form.entrega_direccion_datos.ubigeo1 = item.ubigeo1
         },
         cleanDireccion() {
-            this.ubigeos = [];
+            this.ubigeos = []
 
-            this.form.direccion_nombre = null;
-            this.form.entrega_direccion_id = null;
+            this.form.direccion_nombre = null
+            this.form.entrega_direccion_id = null
 
-            this.form.entrega_ubigeo = "";
-            this.form.direccion_entrega = "";
-            this.form.entrega_direccion_datos.numero = "";
-            this.form.entrega_direccion_datos.piso = "";
-            this.form.entrega_direccion_datos.referencia = "";
-            this.form.entrega_direccion_datos.ubigeo1 = null;
+            this.form.entrega_ubigeo = ''
+            this.form.direccion_entrega = ''
+            this.form.entrega_direccion_datos.numero = ''
+            this.form.entrega_direccion_datos.piso = ''
+            this.form.entrega_direccion_datos.referencia = ''
+            this.form.entrega_direccion_datos.ubigeo1 = null
         },
 
         async getCustomerWallet() {
-            this.loading = true;
+            this.loading = true
             const res = await get(
                 `${urls.account}/customer-wallet/${this.user.id}`,
                 null,
-                localStorage.getItem("token")
-            );
-            this.loading = false;
+                localStorage.getItem('token'),
+            )
+            this.loading = false
 
             if (res.code == 0) {
-                this.user.wallet = res.data.tokens;
+                this.user.wallet = res.data.tokens
             }
         },
 
         getCardBrandIcon(brand) {
-            if (!brand) return genericUrl;
-            const b = brand.toUpperCase().trim();
+            if (!brand) return genericUrl
+            const b = brand.toUpperCase().trim()
             const map = {
                 VISA: visaUrl,
                 MASTERCARD: mastercardUrl,
-                "DINERS CLUB": dinersUrl,
+                'DINERS CLUB': dinersUrl,
                 DINERS: dinersUrl,
-                "AMERICAN EXPRESS": amexUrl,
+                'AMERICAN EXPRESS': amexUrl,
                 AMEX: amexUrl,
-            };
-            return map[b] || genericUrl;
+            }
+            return map[b] || genericUrl
         },
     },
-};
+}
 </script>
