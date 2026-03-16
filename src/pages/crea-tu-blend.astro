@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BlendForm from '../components/BlendForm.vue';
 import Beneficios from '@/components/home/Beneficios.astro';
+import HeroPremium from '@/components/shared/HeroPremium.astro';
+import bannerBlend from '@/assets/banner1.webp';
 import { get, formatProductos } from '../lib/api.js';
 
 const empaques = [
@@ -56,19 +58,17 @@ for (const a of res.data) {
 }
 ---
 
-<BaseLayout title="Crear tu Blend">
-    <div class="bg-gray-50">
-        <div class="max-w-6xl mx-auto px-6 py-20 text-gray-80">
-            <h1
-                class="text-4xl font-semibold text-gray-900 tracking-tight mb-2"
-            >
-                Crea tu Blend
-            </h1>
+<BaseLayout title="Crea tu Blend | SUNKA Herbal Tea">
+    <HeroPremium
+        imgSrc={bannerBlend}
+        subtitle="Alquimia Personal"
+        title="Crea tu Blend"
+        description="Explora el arte de combinar ingredientes naturales. Diseña una infusión única, pensada exclusivamente por y para ti. Un proceso creativo donde cada elemento cuenta una historia."
+    />
 
-            <p class="text-gray-600 mb-10">
-                Personaliza tu infusión Sunka a tu gusto
-            </p>
-
+    <section class="bg-white py-24 md:py-32">
+        <div class="max-w-4xl mx-auto px-6">
+            <!-- Formulario -->
             <BlendForm
                 client:load
                 formatos={formatos}
@@ -79,7 +79,8 @@ for (const a of res.data) {
                 especias={especias}
             />
         </div>
-    </div>
+    </section>
 
     <Beneficios />
 </BaseLayout>
+

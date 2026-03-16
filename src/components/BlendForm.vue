@@ -1,25 +1,20 @@
 <template>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
         <!-- COLUMNA IZQUIERDA -->
-        <section class="md:col-span-2 space-y-6">
-            <div class="flex gap-6">
-                <!-- FORMATO -->
-                <div
-                    class="flex-1 border border-gray-200 shadow-sm bg-white rounded-2xl p-5 space-y-4"
-                >
+        <section class="space-y-6">
+            <!-- 1. BASICS: FORMATO/EMPAQUE -->
+            <div class="flex flex-col gap-8">
+                <div class="space-y-4">
                     <h2 class="text-xl font-semibold">Formato</h2>
                     <JdRadio
                         :lista="formatos"
                         v-model="blend.formato"
                         :with-border="true"
                         @change="setFormato"
+                        class="flex flex-col gap-2"
                     />
                 </div>
-
-                <!-- EMPAQUE -->
-                <div
-                    class="flex-1 border border-gray-200 shadow-sm bg-white rounded-2xl p-5 space-y-4"
-                >
+                <div class="space-y-4">
                     <h2 class="text-xl font-semibold">Empaque</h2>
 
                     <JdRadio
@@ -27,25 +22,28 @@
                         v-model="blend.empaque"
                         :with-border="true"
                         @change="setEmpaque"
+                        class="flex flex-col gap-2"
                     />
                 </div>
             </div>
 
             <!-- HIERBA BASE -->
-            <div class="border border-gray-200 shadow-sm bg-white rounded-2xl p-5 space-y-4">
-                <div class="flex justify-between">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
                     <h2 class="text-xl font-semibold">Hierba base</h2>
                     <span class="text-sm text-gray-400">(mínimo 40%)</span>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="flex flex-col gap-2">
                     <button
                         v-for="item in hierbasBase"
                         :key="item.id"
                         @click="setHierbaBase(item)"
                         :class="[
-                            'p-2 rounded-md border text-center text-sm text-gray-600 border-gray-300 cursor-pointer bg-gray-100 hover:bg-white',
-                            blend.hierbaBase === item.id ? 'bg-white text-gray-800' : '',
+                            'w-full text-left p-4 rounded-lg border transition-all duration-200 text-sm',
+                            blend.hierbaBase === item.id
+                                ? 'bg-black text-white border-black'
+                                : 'border-gray-200 hover:border-gray-900 text-gray-700',
                         ]"
                     >
                         {{ item.nombre }}
@@ -54,19 +52,19 @@
             </div>
 
             <!-- HIERBAS COMPLEMENTO -->
-            <div class="border border-gray-200 shadow-sm bg-white rounded-2xl p-5 space-y-4">
+            <div class="space-y-4">
                 <h2 class="text-xl font-semibold">Hierbas complemento</h2>
 
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="flex flex-col gap-2">
                     <button
                         v-for="item in complementos"
                         :key="item.id"
                         @click="toggleComplemento(item)"
                         :class="[
-                            'p-2 rounded-md border text-center text-sm text-gray-600 border-gray-300 cursor-pointer bg-gray-100 hover:bg-white',
+                            'w-full text-left p-4 rounded-lg border transition-all duration-200 text-sm',
                             blend.complementos?.some((a) => a.id === item.id)
-                                ? 'bg-white text-gray-800'
-                                : '',
+                                ? 'bg-black text-white border-black'
+                                : 'border-gray-200 hover:border-gray-900 text-gray-700',
                         ]"
                     >
                         {{ item.nombre }}
@@ -75,19 +73,19 @@
             </div>
 
             <!-- FRUTAS -->
-            <div class="border border-gray-200 shadow-sm bg-white rounded-2xl p-5 space-y-4">
+            <div class="space-y-4">
                 <h2 class="text-xl font-semibold">Frutas deshidratadas</h2>
 
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="flex flex-col gap-2">
                     <button
                         v-for="item in frutas"
                         :key="item.id"
                         @click="toggleFruta(item)"
                         :class="[
-                            'p-2 rounded-md border text-center text-sm text-gray-600 border-gray-300 cursor-pointer bg-gray-100 hover:bg-white',
+                            'w-full text-left p-4 rounded-lg border transition-all duration-200 text-sm',
                             blend.frutas?.some((a) => a.id === item.id)
-                                ? 'bg-white text-gray-800'
-                                : '',
+                                ? 'bg-black text-white border-black'
+                                : 'border-gray-200 hover:border-gray-900 text-gray-700',
                         ]"
                     >
                         {{ item.nombre }}
@@ -96,19 +94,19 @@
             </div>
 
             <!-- ESPECIAS -->
-            <div class="border border-gray-200 shadow-sm bg-white rounded-2xl p-5 space-y-4">
+            <div class="space-y-4">
                 <h2 class="text-xl font-semibold">Especias</h2>
 
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="flex flex-col gap-2">
                     <button
                         v-for="item in especias"
                         :key="item.id"
                         @click="toggleEspecia(item)"
                         :class="[
-                            'p-2 rounded-md border text-center text-sm text-gray-600 border-gray-300 cursor-pointer bg-gray-100 hover:bg-white',
+                            'w-full text-left p-4 rounded-lg border transition-all duration-200 text-sm',
                             blend.especias?.some((a) => a.id === item.id)
-                                ? 'bg-white text-gray-800'
-                                : '',
+                                ? 'bg-black text-white border-black'
+                                : 'border-gray-200 hover:border-gray-900 text-gray-700',
                         ]"
                     >
                         {{ item.nombre }}
