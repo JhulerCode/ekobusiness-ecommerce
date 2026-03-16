@@ -1,0 +1,39 @@
+---
+import tiendaHero from '@/assets/banner1.webp'
+---
+
+<section
+    class="relative h-[75vh] md:h-[90vh] flex items-center justify-center text-center overflow-hidden"
+>
+    <img
+        src={tiendaHero.src}
+        alt="Colección SUNKA"
+        class="absolute inset-0 w-full h-full object-cover tienda-hero-zoom"
+    />
+
+    <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-black/35 to-black/60"></div>
+
+    <div class="relative z-10 px-6 max-w-4xl">
+        <p class="text-white/70 tracking-[0.3em] uppercase text-xs mb-6 fade-up">
+            Colección completa
+        </p>
+
+        <h1
+            class="text-white text-4xl md:text-6xl font-heading font-semibold leading-tight fade-up delay-1"
+        >
+            Nuestra Tienda
+        </h1>
+
+        <p class="mt-8 text-white/85 max-w-2xl mx-auto text-lg leading-relaxed fade-up delay-2">
+            Descubre la pureza de los Andes en cada taza. Desde mezclas clásicas hasta nuestras
+            creaciones exclusivas, cada producto Sunka es una invitación al bienestar.
+        </p>
+    </div>
+
+    <!-- Indicador scroll -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 fade-up delay-3">
+        <div class="w-[1px] h-12 bg-white/40 relative overflow-hidden">
+            <div class="w-full h-5 bg-white animate-scrollLine"></div>
+        </div>
+    </div>
+</section>

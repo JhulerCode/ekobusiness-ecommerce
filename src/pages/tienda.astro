@@ -1,0 +1,93 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Hero from '@/components/tienda/Hero.astro'
+import TiendaGrid from '@/components/tienda/TiendaGrid.vue'
+import Beneficios from '@/components/home/Beneficios.astro'
+import { get, formatProductos } from '@/lib/api.js'
+
+//--- Load productos ---//
+const qryProductos = {
+    fltr: {
+        activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
+        categoria: { op: 'No es', val: 'f000be66-e4b1-4334-b57a-0e356eb8c7a6' },
+    },
+    cols: [
+        'linea',
+        'categoria',
+        'nombre',
+        'unidad',
+        'has_fv',
+        'precio',
+        'precio_anterior',
+        'igv_afectacion',
+        'fotos',
+    ],
+    incl: ['linea1', 'categoria1'],
+    ordr: [['nombre', 'ASC']],
+}
+const resProductos = await get('productos', { qry: qryProductos })
+const productos = formatProductos(resProductos.data)
+
+//--- Set líneas ---//
+const lineas = []
+const categorias = []
+for (const a of productos) {
+    if (a.linea1) {
+        const i = lineas.findIndex((b) => b.id == a.linea)
+        if (i === -1) {
+            lineas.push(a.linea1)
+        }
+    }
+
+    if (a.categoria1) {
+        const i = categorias.findIndex((b) => b.id == a.categoria)
+        if (i === -1) {
+            categorias.push(a.categoria1)
+        }
+    }
+}
+console.log('Tienda líneas:', lineas)
+---
+
+<BaseLayout
+    title="Tienda | SUNKA Herbal Tea"
+    description="Explora nuestra colección completa de infusiones y tés naturales SUNKA. Disponibles para compra online con envío a todo el Perú."
+>
+    <Hero />
+    <TiendaGrid client:load productos={productos} lineas={lineas} categorias={categorias} />
+    <Beneficios />
+</BaseLayout>
+
+<style>
+    .tienda-hero-zoom {
+        animation: tiendaHeroZoom 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes tiendaHeroZoom {
+        0% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(1.08);
+        }
+    }
+
+    @keyframes scrollLine {
+        0% {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        40% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(120%);
+            opacity: 0;
+        }
+    }
+
+    .animate-scrollLine {
+        animation: scrollLine 2.5s ease-in-out infinite;
+    }
+</style>
