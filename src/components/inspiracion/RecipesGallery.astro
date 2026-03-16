@@ -1,0 +1,56 @@
+---
+import drink1 from '@/assets/banner3.webp'
+import drink2 from '@/assets/banner1.webp'
+---
+
+<section class="bg-white py-24 md:py-40">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-[1fr_2fr] gap-20 items-end mb-24">
+            <div>
+                <h2 class="text-xs uppercase tracking-[0.5em] text-neutral-400 mb-4">Gastronomía</h2>
+                <h3 class="text-4xl md:text-6xl font-heading text-neutral-900 leading-[0.9]">
+                    Alquimia <br/> <span class="italic font-serif">Moderna</span>
+                </h3>
+            </div>
+            <p class="text-neutral-500 text-lg max-w-lg pb-4">
+                Redescubre nuestras infusiones como ingredientes protagonistas. Mocktails, postres y creaciones que desafían lo convencional.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
+            <!-- Receta 1 -->
+            <div class="group cursor-pointer fade-up">
+                <div class="relative overflow-hidden aspect-square rounded-2xl mb-10">
+                    <img src={drink1.src} alt="Mocktail SUNKA" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                    <div class="absolute inset-0 border-[0px] group-hover:border-[24px] border-white/20 transition-all duration-500"></div>
+                </div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="text-2xl font-heading text-neutral-900 mb-2">Andean Sunrise Mocktail</h4>
+                        <p class="text-neutral-500 text-sm italic font-serif">Infusión de Frutos Rojos + Agua Tónica + Rodaja de Pepino</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receta 2 -->
+            <div class="group cursor-pointer fade-up delay-1">
+                <div class="relative overflow-hidden aspect-square rounded-2xl mb-10">
+                    <img src={drink2.src} alt="Postre SUNKA" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                    <div class="absolute inset-0 border-[0px] group-hover:border-[24px] border-white/20 transition-all duration-500"></div>
+                </div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="text-2xl font-heading text-neutral-900 mb-2">Panna Cotta de Hierba Luisa</h4>
+                        <p class="text-neutral-500 text-sm italic font-serif">Infusión Concentrada + Crema de Coco + Cardamomo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .font-serif {
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>

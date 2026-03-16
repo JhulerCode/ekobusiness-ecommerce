@@ -1,0 +1,41 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import HeroPremium from '@/components/shared/HeroPremium.astro'
+import bannerInspiracion from '@/assets/banner1.webp'
+import EditorialIntro from '@/components/inspiracion/EditorialIntro.astro'
+import RitualsGrid from '@/components/inspiracion/RitualsGrid.astro'
+import RecipesGallery from '@/components/inspiracion/RecipesGallery.astro'
+import InstagramFeed from '@/components/inspiracion/InstagramFeed.astro'
+---
+
+<BaseLayout
+    title="Inspiración | SUNKA Herbal Tea"
+    description="Sumérgete en el universo SUNKA. Descubre rituales de bienestar, recetas creativas y el arte de vivir con consciencia."
+>
+    <HeroPremium
+        imgSrc={bannerInspiracion}
+        subtitle="El Arte de la Pausa"
+        title="Inspiración"
+        description="Donde cada infusión cuenta una historia y cada momento se convierte en un ritual sagrado. Bienvenidos a nuestro universo de bienestar consciente."
+    />
+
+    <!-- Introducción Narrativa -->
+    <EditorialIntro />
+
+    <!-- Sección de Rituales -->
+    <RitualsGrid />
+
+    <!-- Galería de Recetas -->
+    <!-- <RecipesGallery /> -->
+
+    <!-- Conexión Comunidad (Lifestyle) -->
+    <InstagramFeed />
+</BaseLayout>
+
+<style is:global>
+    /* Estilos globales para la página de inspiración */
+    .font-serif-editorial {
+        font-family: 'Times New Roman', Times, serif; /* O una fuente serif que prefieras */
+        font-style: italic;
+    }
+</style>

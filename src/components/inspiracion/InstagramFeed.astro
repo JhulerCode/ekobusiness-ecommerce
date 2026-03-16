@@ -1,0 +1,54 @@
+---
+import img1 from '@/assets/banner1.webp'
+import img2 from '@/assets/banner2.webp'
+import img3 from '@/assets/banner3.webp'
+import img4 from '@/assets/banner1.webp'
+import { get } from '../../lib/api.js';
+
+const res = await get('sistema', {
+    qry: ['empresa'],
+});
+
+const instagramUrl = res.code === 0 ? res.data.empresa.instagram_url : 'https://instagram.com';
+---
+
+<section class="bg-neutral-900 py-32 md:py-48 overflow-hidden text-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-24">
+            <h2 class="text-xs uppercase tracking-[0.6em] text-white/40 mb-6">Comunidad consciente</h2>
+            <h3 class="text-4xl md:text-6xl font-heading mb-8">
+                Comparte tu <span class="italic font-serif">#MomentoSunka</span>
+            </h3>
+            <p class="text-white/60 max-w-xl mx-auto">
+                Únete a nuestra comunidad en Instagram y muéstranos cómo vives tu ritual diario. Las mejores historias serán parte de nuestro muro de inspiración.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+            <div class="aspect-square rounded-lg overflow-hidden fade-up">
+                <img src={img1.src} alt="Social SUNKA" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+            </div>
+            <div class="aspect-square rounded-lg overflow-hidden fade-up delay-1 md:mt-12">
+                <img src={img2.src} alt="Social SUNKA" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+            </div>
+            <div class="aspect-square rounded-lg overflow-hidden fade-up delay-2">
+                <img src={img3.src} alt="Social SUNKA" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+            </div>
+            <div class="aspect-square rounded-lg overflow-hidden fade-up delay-3 md:mt-12">
+                <img src={img4.src} alt="Social SUNKA" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+            </div>
+        </div>
+
+        <div class="mt-24 text-center">
+            <a href={instagramUrl} target="_blank" class="inline-block py-4 px-12 border border-white/20 hover:bg-white hover:text-black transition-all duration-500 tracking-widest uppercase text-xs">
+                Síguenos en Instagram
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .font-serif {
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>

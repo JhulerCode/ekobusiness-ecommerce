@@ -1,14 +1,32 @@
 ---
-import origenHero from '@/assets/banner1.webp'
+interface Props {
+    imgSrc: string | { src: string };
+    altText?: string;
+    subtitle?: string;
+    title: string;
+    description?: string;
+    heightClass?: string;
+}
+
+const {
+    imgSrc,
+    altText = "SUNKA Hero",
+    subtitle,
+    title,
+    description,
+    heightClass = "h-[75vh] md:h-[90vh]"
+} = Astro.props;
+
+const image = typeof imgSrc === 'string' ? imgSrc : imgSrc.src;
 ---
 
 <section
-    class="relative h-[75vh] md:h-[90vh] flex items-center justify-center text-center overflow-hidden"
+    class={`relative flex items-center justify-center text-center overflow-hidden ${heightClass}`}
 >
     <!-- Imagen con movimiento lento -->
     <img
-        src={origenHero.src}
-        alt="Origen SUNKA"
+        src={image}
+        alt={altText}
         class="absolute inset-0 w-full h-full object-cover hero-zoom"
     />
 
@@ -17,21 +35,23 @@ import origenHero from '@/assets/banner1.webp'
 
     <!-- Contenido -->
     <div class="relative z-10 px-6 max-w-4xl">
-        <p class="text-white/70 tracking-[0.3em] uppercase text-xs mb-6 fade-up">
-            Nuestra historia
-        </p>
+        {subtitle && (
+            <p class="text-white/70 tracking-[0.3em] uppercase text-xs mb-6 fade-up">
+                {subtitle}
+            </p>
+        )}
 
         <h1
             class="text-white text-4xl md:text-6xl font-heading font-semibold leading-tight fade-up delay-1"
+            set:html={title}
         >
-            El espíritu de una
-            <br class="hidden md:block" />
-            infusión ancestral
         </h1>
 
-        <p class="mt-8 text-white/90 max-w-2xl mx-auto text-lg leading-relaxed fade-up delay-2">
-            Donde la infusión deja de ser bebida y se convierte en ritual.
-        </p>
+        {description && (
+            <p class="mt-8 text-white/90 max-w-2xl mx-auto text-lg leading-relaxed fade-up delay-2">
+                {description}
+            </p>
+        )}
     </div>
 
     <!-- Indicador scroll -->
@@ -45,7 +65,7 @@ import origenHero from '@/assets/banner1.webp'
 <style>
     /* Zoom lento cinematográfico */
     .hero-zoom {
-        animation: heroZoom 20s ease-in-out infinite alternate;
+        animation: heroZoom 20s ease infinite alternate;
     }
 
     @keyframes heroZoom {
@@ -53,7 +73,7 @@ import origenHero from '@/assets/banner1.webp'
             transform: scale(1);
         }
         100% {
-            transform: scale(1.08);
+            transform: scale(1.1);
         }
     }
 

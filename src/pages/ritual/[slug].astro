@@ -1,0 +1,52 @@
+---
+import { rituals } from '@/lib/rituals.js';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import imgAmanecer from '@/assets/home/preparacion.webp';
+import imgPausa from '@/assets/home/momento-personal.webp';
+import imgReposo from '@/assets/banner2.webp';
+
+const images = {
+  'amanecer': imgAmanecer,
+  'pausa': imgPausa,
+  'reposo': imgReposo
+};
+
+const { slug } = Astro.params;
+const ritual = rituals.find(r => r.slug === slug);
+
+if (!ritual) {
+  return Astro.redirect('/404');
+}
+---
+
+<BaseLayout title={ritual.title}>
+  <article class="max-w-3xl mx-auto px-6 py-24 animate-fade-in">
+    <h1 class="text-4xl md:text-6xl font-serif text-neutral-900 mb-12 text-center">{ritual.title}</h1>
+    
+    <div class="aspect-[21/9] mb-12 overflow-hidden bg-stone-100">
+        <img src={images[ritual.slug].src} alt={ritual.title} class="w-full h-full object-cover" />
+    </div>
+
+    <div class="space-y-12">
+        {ritual.sections.map(section => (
+            <section>
+                <h2 class="text-2xl font-serif text-neutral-900 mb-4">{section.subtitle}</h2>
+                <p class="text-neutral-600 leading-relaxed text-lg">{section.content}</p>
+            </section>
+        ))}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+    .font-serif {
+        font-family: 'Times New Roman', Times, serif;
+    }
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+    }
+</style>

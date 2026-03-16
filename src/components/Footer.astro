@@ -1,18 +1,16 @@
 ---
-import logo from '../assets/logo-sunka-white.webp';
-import imgLibroReclamaciones from '../assets/libro-reclamaciones.webp';
-import BrandFacebookIcon from '../assets/icons/brand-facebook.astro';
-import BrandInstagramIcon from '../assets/icons/brand-instagram.astro';
-import NewsLetterForm from '../components/NewsLetterForm.vue';
-import { get } from '../lib/api.js';
+import logo from '../assets/logo-sunka-white.webp'
+import imgLibroReclamaciones from '../assets/libro-reclamaciones.webp'
+import BrandFacebookIcon from '../assets/icons/brand-facebook.astro'
+import BrandInstagramIcon from '../assets/icons/brand-instagram.astro'
+import NewsLetterForm from '../components/NewsLetterForm.vue'
+import { get } from '../lib/api.js'
 
 const res = await get('sistema', {
     qry: ['empresa'],
-});
+})
 
-if (res.code == 0) {
-    var { empresa } = res.data;
-}
+const empresa = res.data.empresa
 ---
 
 <!-- Footer.astro -->
@@ -25,8 +23,7 @@ if (res.code == 0) {
                 <img src={logo.src} alt="logo-sunka-white" class="h-10 mb-6" />
 
                 <p class="text-sm leading-relaxed">
-                    Té natural seleccionado con cuidado, directo del origen a tu
-                    taza.
+                    Té natural seleccionado con cuidado, directo del origen a tu taza.
                 </p>
 
                 <!-- Redes sociales -->
@@ -70,8 +67,7 @@ if (res.code == 0) {
                 </h3>
                 <ul class="space-y-4 text-sm">
                     <li>
-                        <strong class="text-gray-400">Habla con nosotros</strong
-                        ><br />
+                        <strong class="text-gray-400">Habla con nosotros</strong><br />
                         <p>Resolvemos todas tus dudas</p>
                         <a
                             href={empresa.whatsapp_ventas_url}
@@ -96,10 +92,7 @@ if (res.code == 0) {
                     <li>
                         <strong class="text-gray-400">Llámanos</strong><br />
                         <p>De lunes a domingo de 8:00 am a 8:00 pm</p>
-                        <a
-                            href={`tel:${empresa.telefono}`}
-                            class="hover:text-white transition"
-                        >
+                        <a href={`tel:${empresa.telefono}`} class="hover:text-white transition">
                             {empresa.telefono}
                         </a>
                     </li>
@@ -115,40 +108,28 @@ if (res.code == 0) {
                 </h3>
                 <ul class="space-y-2 text-sm">
                     <li>
-                        <a href="/faq" class="hover:text-white transition"
-                            >Preguntas frecuentes</a
-                        >
+                        <a href="/faq" class="hover:text-white transition">Preguntas frecuentes</a>
                     </li>
                     <li>
-                        <a
-                            href="/terminos-y-condiciones"
-                            class="hover:text-white transition"
+                        <a href="/terminos-y-condiciones" class="hover:text-white transition"
                             >Términos y condiciones</a
                         >
                     </li>
                     <li>
-                        <a
-                            href="/politica-de-despacho"
-                            class="hover:text-white transition"
+                        <a href="/politica-de-despacho" class="hover:text-white transition"
                             >Política de despacho</a
                         >
                     </li>
                     <li>
-                        <a
-                            href="/politica-de-privacidad"
-                            class="hover:text-white transition"
+                        <a href="/politica-de-privacidad" class="hover:text-white transition"
                             >Política de privacidad</a
                         >
                     </li>
                     <li>
-                        <a href="/arco" class="hover:text-white transition"
-                            >Derechos ARCO</a
-                        >
+                        <a href="/arco" class="hover:text-white transition">Derechos ARCO</a>
                     </li>
                     <li>
-                        <a
-                            href="/consulta-pedido"
-                            class="hover:text-white transition"
+                        <a href="/consulta-pedido" class="hover:text-white transition"
                             >Consultar pedido</a
                         >
                     </li>
@@ -163,8 +144,7 @@ if (res.code == 0) {
                     Newsletter
                 </h3>
                 <p class="text-sm mb-4">
-                    Suscríbete y recibe todas nuestras ofertas exclusivas y
-                    novedades.
+                    Suscríbete y recibe todas nuestras ofertas exclusivas y novedades.
                 </p>
 
                 <NewsLetterForm client:load theme="dark" layout="vertical" />
@@ -172,9 +152,7 @@ if (res.code == 0) {
         </div>
 
         <!-- línea divisoria -->
-        <div
-            class="border-t border-gray-700 mt-12 pt-6 text-center text-xs text-gray-500"
-        >
+        <div class="border-t border-gray-700 mt-12 pt-6 text-center text-xs text-gray-500">
             © {new Date().getFullYear()} Sunka Herbal tea. Todos los derechos reservados.
         </div>
     </div>

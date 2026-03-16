@@ -1,0 +1,57 @@
+---
+import { rituals } from '@/lib/rituals.js'
+import imgAmanecer from '@/assets/home/preparacion.webp'
+import imgPausa from '@/assets/home/momento-personal.webp'
+import imgReposo from '@/assets/banner2.webp'
+
+const images = {
+    amanecer: imgAmanecer,
+    pausa: imgPausa,
+    reposo: imgReposo,
+}
+---
+
+<section class="bg-white py-24">
+    <div class="max-w-6xl mx-auto px-6">
+        <!-- Header -->
+        <div class="text-center mb-16 fade-up">
+            <h2 class="text-sm uppercase tracking-widest text-neutral-500 mb-4">
+                Guía de Bienestar
+            </h2>
+            <h3 class="text-4xl md:text-5xl font-serif text-neutral-900">Rituales SUNKA</h3>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {
+                rituals.map((ritual, index) => (
+                    <div class={`flex flex-col fade-up`} style={`animation-delay: ${index * 0.2}s`}>
+                        <div class="aspect-[3/4] overflow-hidden bg-stone-100">
+                            <img
+                                src={images[ritual.slug].src}
+                                alt={ritual.title}
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                            />
+                        </div>
+                        <h4 class="mt-6 text-2xl font-serif text-neutral-900">{ritual.title}</h4>
+                        <p class="mt-2 text-neutral-600 text-sm leading-relaxed">
+                            {ritual.excerpt}
+                        </p>
+                        <a
+                            href={`/ritual/${ritual.slug}`}
+                            class="mt-4 inline-block text-xs uppercase tracking-widest border-b border-neutral-900 w-fit hover:opacity-70 transition-opacity"
+                        >
+                            Leer más
+                        </a>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    .font-serif {
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>
