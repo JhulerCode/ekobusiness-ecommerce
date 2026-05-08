@@ -51,7 +51,9 @@
                 />
             </svg>
 
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">¡Pedido recibido!</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+                ¡Pedido Nro {{ form.codigo }} recibido!
+            </h2>
 
             <p class="text-gray-600 mb-6 max-w-md">
                 Hemos recibido tu pedido exitosamente. En unos momentos recibirás un correo con los
@@ -198,7 +200,7 @@
                             <JdSelect
                                 label="Tipo de documento"
                                 :nec="true"
-                                :lista="documentos_identidad"
+                                :lista="documentos_identidad.filter((a) => a.id != '6')"
                                 v-model="form.socio_datos.doc_tipo"
                                 :error="errors.doc_tipo"
                             />
@@ -479,7 +481,7 @@
                         <JdRadio
                             label="Tipo de comprobante"
                             :nec="true"
-                            :lista="comprobante_tipos"
+                            :lista="comprobante_tipos.filter((a) => a.id != 'NV')"
                             v-model="form.comprobante_tipo"
                             :error="errors.comprobante_tipo"
                             :row="true"
@@ -888,7 +890,6 @@ export default {
                 this.errors.correo = 'Ingrese un correo válido.'
             if (!this.form.socio_datos.telefono) this.errors.telefono = 'Este campo es obligatorio.'
             if (!this.form.socio_datos.nombres) this.errors.nombres = 'Este campo es obligatorio.'
-            if (!this.form.socio_datos.apellidos) this.errors.apellidos = 'Describa su solicitud.'
             if (!this.form.socio_datos.doc_tipo)
                 this.errors.doc_tipo = 'Seleccione un tipo de documento.'
             if (!this.form.socio_datos.doc_numero)
@@ -961,6 +962,19 @@ export default {
 
                 if (!this.form.fecha_entrega)
                     this.errors.fecha_entrega = 'Este campo es obligatorio.'
+
+                if (this.form.fecha_entrega) {
+                    const today = new Date()
+                    today.setHours(0, 0, 0, 0)
+
+                    const [year, month, day] = this.form.fecha_entrega.split('-')
+
+                    const selectedDate = new Date(Number(year), Number(month) - 1, Number(day))
+
+                    if (selectedDate < today) {
+                        this.errors.fecha_entrega = 'La fecha no puede ser anterior a hoy.'
+                    }
+                }
             }
 
             return Object.values(this.errors).every((e) => !e)
@@ -1033,7 +1047,7 @@ export default {
             this.form.socio = this.user.id
 
             this.form.pago_condicion = '1'
-            this.form.moneda = '1'
+            this.form.moneda = 'PEN'
             this.form.monto = this.total.toFixed(2)
 
             this.form.socio_pedido_items = this.items
@@ -1097,6 +1111,7 @@ export default {
                     } else if (res1.code == 0) {
                         this.paymentSuccess = true
                         this.form.id = res1.data.id
+                        this.form.codigo = res.data.codigo
                         Cart.clear()
                         KR.closePopin()
 
@@ -1129,6 +1144,7 @@ export default {
             } else if (res.code == 0) {
                 this.paymentSuccess = true
                 this.form.id = res.data.id
+                this.form.codigo = res.data.codigo
                 Cart.clear()
 
                 window.scrollTo({

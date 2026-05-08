@@ -21,7 +21,7 @@
             </p>
 
             <a
-                href="/"
+                href="/tienda"
                 class="inline-block bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-900 transition"
             >
                 Explorar productos

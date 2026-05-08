@@ -9,7 +9,19 @@ const params = Astro.url.searchParams;
 const is_account = params.get('account');
 
 const { slug } = Astro.params;
-const res = await get(`${urls.socio_pedidos}/uno/${slug}`);
+const qry1 = {
+    incl: ['socio1', 'moneda1', 'socio_pedido_items', 'createdBy1'],
+    iccl: {
+        socio1: {
+            cols: ['doc_numero', 'contactos', 'direcciones', 'pago_condicion'],
+        },
+        socio_pedido_items: {
+            incl: ['articulo1'],
+        },
+        createdBy1: { cols: ['cargo', 'telefono'] },
+    },
+}
+const res = await get(`${urls.socio_pedidos}/uno/${slug}?qry=${encodeURIComponent(JSON.stringify(qry1))}`);
 
 if (res.code === 0) var pedido = res.data || null;
 
@@ -290,8 +302,8 @@ if (pedido) {
                                 )
                             }
 
-                            <a href="/linea/filtrante" class="button button1">
-                                Ver productos
+                            <a href="/tienda" class="button button1">
+                                Ver tienda
                             </a>
                         </div>
                     </div>
