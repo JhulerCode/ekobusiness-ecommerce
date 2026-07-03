@@ -10,7 +10,7 @@ const res = await get('sistema', {
     qry: ['empresa'],
 })
 
-const empresa = res.data.empresa
+const empresa = res.data?.empresa ?? {}
 ---
 
 <!-- Footer.astro -->

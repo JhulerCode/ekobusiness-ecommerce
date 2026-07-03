@@ -203,7 +203,7 @@ export async function delet(endpoint, item, ms) {
 
 
 
-export function formatLineas(datos) {
+export function formatLineas(datos = []) {
     return datos.map((a) => ({
         ...a,
         foto: a.fotos && a.fotos.length > 0 ? a.fotos[0].url : null,
@@ -212,7 +212,7 @@ export function formatLineas(datos) {
     }))
 }
 
-export function formatCategorias(datos) {
+export function formatCategorias(datos = []) {
     return datos.map((a) => ({
         ...a,
         foto: a.fotos && a.fotos.length > 0 ? a.fotos[0].url : null,
@@ -220,7 +220,7 @@ export function formatCategorias(datos) {
     }))
 }
 
-export function formatProductos(datos) {
+export function formatProductos(datos = []) {
     return datos.map((prod) => ({
         ...prod,
         precio: Number(prod.precio).toFixed(2),

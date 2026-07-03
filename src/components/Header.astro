@@ -1,50 +1,57 @@
 ---
-import logo from '../assets/logo-sunka-black.webp'
+import logo from '../assets/logo-sunka-white.webp'
 import Menu from '../assets/icons/menu.astro'
 import XmakIcon from '../assets/icons/xmark.astro'
 import CartIcon from '../components/CartIcon.vue'
 import AuthModal from '../components/AuthModal.vue'
+import HeaderTopBar from '../components/HeaderTopBar.astro'
 
-const navLinks = [
-    { nombre: 'Origen', href: '/origen' },
-    { nombre: 'Inspiración', href: '/inspiracion' },
+const leftNavLinks = [
     { nombre: 'Tienda', href: '/tienda' },
-    { nombre: 'Blends', href: '/crea-tu-blend' },
+    { nombre: 'Crea tu blend', href: '/crea-tu-blend' },
+    { nombre: 'Rituales', href: '/inspiracion' },
 ]
+
+const rightNavLinks = [
+    { nombre: 'Regalos', href: '/tienda' },
+    { nombre: 'Origen', href: '/origen' },
+    { nombre: 'Club Sunka', href: '/account' },
+]
+
+const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
 ---
 
-<header id="site-header" class="w-full sticky top-0 z-50 bg-white transition-all duration-500">
-    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
-        <!-- Logo -->
-        <a href="/" class="flex items-center">
-            <img
-                src={logo.src}
-                alt="SUNKA"
-                class="h-8 w-auto transition-opacity duration-300 hover:opacity-70"
-            />
-        </a>
+<header id="site-header" class="relative z-50 w-full text-sunka-white">
+    <div class="h-7" aria-hidden="true"></div>
+    <div class="fixed top-0 left-0 z-[60] w-full">
+        <HeaderTopBar />
+    </div>
 
-        <!-- Desktop Nav -->
-        <nav class="hidden md:flex items-center gap-12">
-            {
-                navLinks.map((link) => (
-                    <a
-                        href={link.href}
-                        class="text-sm tracking-wide uppercase text-neutral-800
-                   transition-opacity duration-300 hover:opacity-50"
-                    >
-                        {link.nombre}
-                    </a>
-                ))
-            }
-        </nav>
+    <div
+        id="site-header-main"
+        class="fixed top-7 left-0 z-50 w-full border-b border-transparent bg-transparent transition-all duration-500"
+    >
+        <div
+            class="relative mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 md:h-[76px] md:px-8"
+        >
+            <nav class="hidden items-center gap-8 md:flex lg:gap-11">
+                {
+                    leftNavLinks.map((link) => (
+                        <a
+                            href={link.href}
+                            class="text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white/90 transition-colors duration-300 hover:text-sunka-brass-light"
+                        >
+                            {link.nombre}
+                        </a>
+                    ))
+                }
+            </nav>
 
-        <!-- Right -->
-        <div class="flex items-center gap-6">
-            <AuthModal client:load />
-            <CartIcon client:load />
-
-            <button id="menu-toggle" class="md:hidden text-neutral-900">
+            <button
+                id="menu-toggle"
+                class="flex h-10 w-10 items-center justify-center text-sunka-white md:hidden"
+                aria-label="Abrir menu"
+            >
                 <div id="icon-menu">
                     <Menu />
                 </div>
@@ -52,24 +59,68 @@ const navLinks = [
                     <XmakIcon />
                 </div>
             </button>
+
+            <a href="/" class="flex items-center justify-center">
+                <img
+                    src={logo.src}
+                    alt="SUNKA"
+                    class="h-10 w-auto transition-opacity duration-300 hover:opacity-75 md:h-12"
+                />
+            </a>
+
+            <div class="flex items-center justify-end gap-5 md:gap-7">
+                <nav class="hidden items-center gap-8 md:flex lg:gap-11">
+                    {
+                        rightNavLinks.map((link) => (
+                            <a
+                                href={link.href}
+                                class="text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white/90 transition-colors duration-300 hover:text-sunka-brass-light"
+                            >
+                                {link.nombre}
+                            </a>
+                        ))
+                    }
+                </nav>
+
+                <div class="flex items-center gap-4 text-sunka-white md:gap-5">
+                    <AuthModal client:load />
+                    <CartIcon client:load />
+                    <a
+                        href="/tienda"
+                        class="hidden text-sunka-white transition-colors duration-300 hover:text-sunka-brass-light md:flex"
+                        aria-label="Buscar productos"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="m21 21-4.35-4.35"></path>
+                            <circle cx="11" cy="11" r="7"></circle>
+                        </svg>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </header>
 
-<!-- Mobile Menu -->
 <div
     id="mobile-menu"
-    class="fixed inset-0 bg-white flex flex-col justify-center items-center
-         transform translate-x-full transition-transform duration-500
-         z-40 md:hidden"
+    class="fixed inset-0 z-40 flex translate-x-full transform flex-col items-center justify-center bg-sunka-cream transition-transform duration-500 md:hidden"
 >
-    <div class="flex flex-col gap-10 text-center">
+    <div class="flex flex-col gap-8 text-center">
         {
-            navLinks.map((link) => (
+            mobileNavLinks.map((link) => (
                 <a
                     href={link.href}
-                    class="text-2xl font-heading tracking-wide text-neutral-900
-                 transition-opacity duration-300 hover:opacity-50"
+                    class="font-heading text-2xl uppercase tracking-[0.08em] text-sunka-ink transition-colors duration-300 hover:text-sunka-brass"
                 >
                     {link.nombre}
                 </a>
@@ -79,34 +130,36 @@ const navLinks = [
 </div>
 
 <script>
-    const header = document.getElementById('site-header')
+    const headerMain = document.getElementById('site-header-main')
     const toggleBtn = document.getElementById('menu-toggle')
     const mobileMenu = document.getElementById('mobile-menu')
     const iconMenu = document.getElementById('icon-menu')
     const iconClose = document.getElementById('icon-close')
 
-    // Solo efecto visual (NO cambio de posición)
+    // Solo efecto visual para reforzar legibilidad al hacer scroll.
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 40) {
-            header.classList.add('bg-white/80', 'backdrop-blur-md', 'shadow-sm')
+        if (window.scrollY > 4) {
+            headerMain?.classList.add('border-sunka-white/15', 'backdrop-blur-md', 'shadow-lg')
+            headerMain?.classList.remove('border-transparent')
         } else {
-            header.classList.remove('bg-white/80', 'backdrop-blur-md', 'shadow-sm')
+            headerMain?.classList.remove('border-sunka-white/15', 'backdrop-blur-md', 'shadow-lg')
+            headerMain?.classList.add('border-transparent')
         }
     })
 
     toggleBtn?.addEventListener('click', () => {
-        const isOpen = mobileMenu.classList.contains('translate-x-0')
+        const isOpen = mobileMenu?.classList.contains('translate-x-0')
 
         if (isOpen) {
-            mobileMenu.classList.remove('translate-x-0')
-            mobileMenu.classList.add('translate-x-full')
-            iconMenu.classList.remove('hidden')
-            iconClose.classList.add('hidden')
+            mobileMenu?.classList.remove('translate-x-0')
+            mobileMenu?.classList.add('translate-x-full')
+            iconMenu?.classList.remove('hidden')
+            iconClose?.classList.add('hidden')
         } else {
-            mobileMenu.classList.remove('translate-x-full')
-            mobileMenu.classList.add('translate-x-0')
-            iconMenu.classList.add('hidden')
-            iconClose.classList.remove('hidden')
+            mobileMenu?.classList.remove('translate-x-full')
+            mobileMenu?.classList.add('translate-x-0')
+            iconMenu?.classList.add('hidden')
+            iconClose?.classList.remove('hidden')
         }
     })
 </script>

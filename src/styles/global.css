@@ -5,17 +5,40 @@
 
     --font-heading: var(--font-sans);
     --font-body: var(--font-sans);
+
+    --color-sunka-ink: #090806;
+    --color-sunka-forest: #102016;
+    --color-sunka-olive: #5f6441;
+    --color-sunka-brass: #b88a3d;
+    --color-sunka-brass-light: #d7b36b;
+    --color-sunka-cream: #f5f0e7;
+    --color-sunka-sand: #e6dac8;
+    --color-sunka-stone: #8f8577;
+    --color-sunka-white: #fffdf8;
+}
+
+/* Paleta base del rediseño SUNKA, inspirada en el modelo de home. */
+:root {
+    --sunka-ink: #090806;
+    --sunka-forest: #102016;
+    --sunka-olive: #5f6441;
+    --sunka-brass: #b88a3d;
+    --sunka-brass-light: #d7b36b;
+    --sunka-cream: #f5f0e7;
+    --sunka-sand: #e6dac8;
+    --sunka-stone: #8f8577;
+    --sunka-white: #fffdf8;
 }
 
 ::selection {
-    background: black; /* Color de fondo del texto seleccionado */
-    color: white; /* Color del texto seleccionado */
+    background: var(--sunka-ink);
+    color: var(--sunka-white);
 }
 
 /* Para compatibilidad con Firefox */
 ::-moz-selection {
-    background: black;
-    color: white;
+    background: var(--sunka-ink);
+    color: var(--sunka-white);
 }
 
 .button {
