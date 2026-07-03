@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "postdev": "node -e \"require('node:fs').rmSync('.astro',{recursive:true,force:true})\"",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

@@ -1,0 +1,93 @@
+---
+import blend from '@/assets/home/blend.webp'
+import LotusIcon from '@/assets/icons/icon-lotus.astro'
+import RitualGoalIcon from '@/assets/icons/icon-ritual-goal.astro'
+import BotanicalMixIcon from '@/assets/icons/icon-botanical-mix.astro'
+import PersonalPackIcon from '@/assets/icons/icon-personal-pack.astro'
+import ArtisanTeaIcon from '@/assets/icons/icon-artisan-tea.astro'
+
+const pasos = [
+    {
+        titulo: 'Elige tu objetivo',
+        texto: 'Cuentanos que necesitas.',
+        Icon: RitualGoalIcon,
+    },
+    {
+        titulo: 'Selecciona ingredientes',
+        texto: 'Elige tus hierbas, frutas y especias favoritas.',
+        Icon: BotanicalMixIcon,
+    },
+    {
+        titulo: 'Personaliza tu experiencia',
+        texto: 'Nombre, empaque y dedicatoria.',
+        Icon: PersonalPackIcon,
+    },
+    {
+        titulo: 'Nosotros lo creamos para ti',
+        texto: 'Recibe un blend unico, hecho a tu medida.',
+        Icon: ArtisanTeaIcon,
+    },
+]
+---
+
+<section class="bg-[#e9e7e1]">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[65%_35%]">
+        <div class="relative min-h-[430px] overflow-hidden md:min-h-[380px]">
+            <img
+                src={blend.src}
+                alt="Preparacion artesanal de un blend personalizado SUNKA"
+                class="absolute inset-0 h-full w-full object-cover object-center"
+            />
+            <div class="absolute inset-0 bg-[linear-gradient(180deg,#e9e7e1_0%,rgba(233,231,225,.9)_34%,rgba(233,231,225,.12)_76%,rgba(233,231,225,0)_100%)] md:bg-[linear-gradient(90deg,#e9e7e1_0%,#e9e7e1_27%,rgba(233,231,225,.88)_39%,rgba(233,231,225,.22)_58%,rgba(233,231,225,0)_78%)]"></div>
+
+            <div class="relative z-10 flex min-h-[430px] items-start px-5 py-10 md:min-h-[380px] md:items-center md:px-8 md:py-0">
+                <div>
+                    <LotusIcon class="mb-4 text-sunka-brass" aria-hidden="true" />
+
+                    <h2 class="max-w-xs font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl">
+                        Crea tu blend unico y personal
+                    </h2>
+
+                    <p class="mt-4 max-w-sm text-sm leading-relaxed text-sunka-ink/75 md:text-base">
+                        Elige tus ingredientes favoritos y disenamos tu mezcla ideal. Un blend tan
+                        unico como tu.
+                    </p>
+
+                    <a
+                        href="/crea-tu-blend"
+                        class="mt-7 inline-flex h-11 items-center justify-center bg-sunka-brass px-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white transition-colors duration-300 hover:bg-sunka-brass-light hover:text-sunka-ink"
+                    >
+                        Crear mi blend
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center px-5 py-8 md:px-8 md:py-0">
+            <div class="w-full space-y-6">
+                {
+                    pasos.map((paso, index) => {
+                        const Icon = paso.Icon
+
+                        return (
+                            <div class="flex gap-4">
+                                <span class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-sunka-brass/55 text-sunka-brass">
+                                    <Icon width="23" height="23" />
+                                </span>
+
+                                <div>
+                                    <p class="text-sm font-semibold text-sunka-ink">
+                                        {index + 1}. {paso.titulo}
+                                    </p>
+                                    <p class="mt-1 text-sm leading-snug text-sunka-ink/68">
+                                        {paso.texto}
+                                    </p>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        </div>
+    </div>
+</section>

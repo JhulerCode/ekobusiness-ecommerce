@@ -5,6 +5,7 @@ import XmakIcon from '../assets/icons/xmark.astro'
 import CartIcon from '../components/CartIcon.vue'
 import AuthModal from '../components/AuthModal.vue'
 import HeaderTopBar from '../components/HeaderTopBar.astro'
+import SearchIcon from '../assets/icons/icon-search.astro'
 
 const leftNavLinks = [
     { nombre: 'Tienda', href: '/tienda' },
@@ -90,20 +91,7 @@ const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
                         class="hidden text-sunka-white transition-colors duration-300 hover:text-sunka-brass-light md:flex"
                         aria-label="Buscar productos"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="22"
-                            height="22"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="m21 21-4.35-4.35"></path>
-                            <circle cx="11" cy="11" r="7"></circle>
-                        </svg>
+                        <SearchIcon />
                     </a>
                 </div>
             </div>

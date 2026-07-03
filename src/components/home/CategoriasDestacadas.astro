@@ -1,61 +1,62 @@
 ---
-import tetera from '@/assets/home/banner/tetera.webp'
-import campo from '@/assets/home/banner/campo.webp'
-import tazas from '@/assets/home/banner/tazas.webp'
-import ingredientes from '@/assets/home/ingredientes.webp'
-import preparacion from '@/assets/home/preparacion.webp'
-import momentoPersonal from '@/assets/home/momento-personal.webp'
+import signature from '@/assets/home/lineas/signature.webp'
+import piramidal from '@/assets/home/lineas/piramidal.webp'
+import luxury from '@/assets/home/lineas/luxury.webp'
+import granel from '@/assets/home/lineas/granel.webp'
+import tradicional from '@/assets/home/lineas/tradicional.webp'
 
 const colecciones = [
     {
         nombre: 'Signature Black',
         detalle: 'Sunka x Mambroc',
         href: '/tienda',
-        imagen: tetera.src,
+        imagen: signature.src,
         posicion: 'object-left',
     },
     {
         nombre: 'Piramidal Premium',
         detalle: 'Infusiones en piramide',
         href: '/tienda',
-        imagen: tazas.src,
-        posicion: 'object-center',
+        imagen: piramidal.src,
+        posicion: 'object-bottom',
     },
     {
         nombre: 'Luxury Collection',
         detalle: 'Ediciones especiales',
         href: '/tienda',
-        imagen: momentoPersonal.src,
-        posicion: 'object-center',
+        imagen: luxury.src,
+        posicion: 'object-top',
     },
     {
         nombre: 'Tradicionales',
         detalle: 'Sabores de siempre',
         href: '/tienda',
-        imagen: ingredientes.src,
+        imagen: tradicional.src,
         posicion: 'object-center',
     },
-    {
-        nombre: 'RTD - Listo para tomar',
-        detalle: 'Bienestar en movimiento',
-        href: '/tienda',
-        imagen: campo.src,
-        posicion: 'object-center',
-    },
+    // {
+    //     nombre: 'RTD - Listo para tomar',
+    //     detalle: 'Bienestar en movimiento',
+    //     href: '/tienda',
+    //     imagen: campo.src,
+    //     posicion: 'object-center',
+    // },
     {
         nombre: 'Granel',
         detalle: 'Elige a tu medida',
         href: '/tienda',
-        imagen: preparacion.src,
+        imagen: granel.src,
         posicion: 'object-center',
     },
 ]
 ---
 
-<section class="bg-sunka-cream py-8 md:py-10">
+<section class="bg-sunka-white py-8 md:py-10">
     <div class="mx-auto max-w-7xl px-5 md:px-8">
         <div class="mb-6 text-center md:mb-8">
-            <h2 class="font-heading text-2xl font-semibold leading-tight text-sunka-ink md:text-3xl">
+            <h2
+                class="font-heading text-2xl font-semibold leading-tight text-sunka-ink md:text-3xl"
+            >
                 Nuestras colecciones
             </h2>
             <p class="mt-1 text-sm text-sunka-ink/70">
@@ -63,12 +64,12 @@ const colecciones = [
             </p>
         </div>
 
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
             {
                 colecciones.map((coleccion) => (
                     <a
                         href={coleccion.href}
-                        class="group relative flex h-[210px] overflow-hidden rounded-md bg-sunka-ink text-sunka-white sm:h-[230px] lg:h-[205px]"
+                        class="group relative flex h-[245px] overflow-hidden rounded-md bg-sunka-ink text-sunka-white sm:h-[270px] lg:h-[255px]"
                     >
                         <img
                             src={coleccion.imagen}
@@ -76,20 +77,19 @@ const colecciones = [
                             class={`absolute inset-0 h-full w-full object-cover ${coleccion.posicion} transition-transform duration-[2500ms] ease-out group-hover:scale-105`}
                         />
 
-                        <div class="absolute inset-0 bg-black/38 transition-colors duration-300 group-hover:bg-black/25"></div>
+                        <div class="absolute inset-x-0 bottom-0 h-[45%] bg-[linear-gradient(180deg,rgba(42,42,31,0)_0%,rgba(42,42,31,.7)_48%,rgba(42,42,31,.96)_100%)] transition-opacity duration-300 group-hover:opacity-80" />
 
-                        <div class="relative z-10 flex h-full w-full flex-col justify-end p-5 text-center">
+                        <div class="relative z-10 flex h-full w-full flex-col justify-end p-4 text-center">
                             <p class="text-[13px] font-semibold uppercase tracking-[0.08em]">
                                 {coleccion.nombre}
                             </p>
-                            <p class="mt-1 text-sm text-sunka-white/90">{coleccion.detalle}</p>
-                            <span class="mt-4 text-sm text-sunka-white/95">
+                            <span class="mt-2 text-sm text-sunka-sand">
                                 Ver coleccion
                                 <span
                                     aria-hidden="true"
                                     class="inline-block transition-transform duration-300 group-hover:translate-x-1"
                                 >
-                                    →
+                                    &rarr;
                                 </span>
                             </span>
                         </div>
