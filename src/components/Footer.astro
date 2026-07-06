@@ -5,12 +5,6 @@ import BrandFacebookIcon from '../assets/icons/brand-facebook.astro'
 import BrandInstagramIcon from '../assets/icons/brand-instagram.astro'
 import BrandWhatsappIcon from '../assets/icons/brand-whatsapp.astro'
 import BrandPinterestIcon from '../assets/icons/brand-pinterest.astro'
-import GlobeIcon from '../assets/icons/icon-globe.astro'
-import ShieldCheckIcon from '../assets/icons/icon-shield-check.astro'
-import UsersIcon from '../assets/icons/icon-users.astro'
-import GiftIcon from '../assets/icons/icon-gift.astro'
-import NewsLetterForm from '../components/NewsLetterForm.vue'
-import fondoNewsletter from '../assets/home/newsletter.webp'
 import { get } from '../lib/api.js'
 
 const res = await get('sistema', {
@@ -18,29 +12,6 @@ const res = await get('sistema', {
 })
 
 const empresa = res.data?.empresa ?? {}
-
-const beneficios = [
-    {
-        texto: 'Envios a todo el mundo',
-        Icon: GlobeIcon,
-        iconClass: 'scale-[1]',
-    },
-    {
-        texto: 'Pago 100% seguro',
-        Icon: ShieldCheckIcon,
-        iconClass: 'scale-[1.05]',
-    },
-    {
-        texto: 'Atencion personalizada',
-        Icon: UsersIcon,
-        iconClass: 'scale-[0.76]',
-    },
-    {
-        texto: 'Empaque eco amigable',
-        Icon: GiftIcon,
-        iconClass: 'scale-[0.78]',
-    },
-]
 
 const columnas = [
     {
@@ -86,64 +57,6 @@ const columnas = [
 ---
 
 <footer class="bg-sunka-forest text-sunka-white">
-    <section class="relative overflow-hidden bg-[#20221f]">
-        <div class="absolute inset-y-0 left-0 w-full md:w-[38%]" aria-hidden="true">
-            <img
-                src={fondoNewsletter.src}
-                alt=""
-                class="h-full w-full object-cover object-center"
-            />
-            <div
-                class="absolute inset-0 bg-[linear-gradient(90deg,rgba(32,34,31,.55)_0%,rgba(32,34,31,.7)_58%,rgba(32,34,31,1)_100%)]"
-            >
-            </div>
-        </div>
-        <div
-            class="absolute inset-0 bg-[#20221f]/28 md:bg-[linear-gradient(90deg,rgba(32,34,31,0)_0%,rgba(32,34,31,.34)_28%,rgba(32,34,31,.96)_42%,rgba(32,34,31,1)_100%)]"
-        >
-        </div>
-
-        <div
-            class="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-7 px-5 py-7 md:grid-cols-[24%_34%_42%] md:px-8 md:py-8"
-        >
-            <div>
-                <h2 class="font-heading text-2xl font-semibold leading-tight md:text-3xl">
-                    Cartas Sunka
-                </h2>
-                <p class="mt-2 max-w-xs text-sm leading-relaxed text-sunka-white/78">
-                    Rituales, lanzamientos exclusivos y consejos para elevar tu pausa diaria.
-                </p>
-            </div>
-
-            <NewsLetterForm client:load theme="dark" variant="home" showPrivacy={false} />
-
-            <ul class="grid grid-cols-2 gap-y-6 sm:grid-cols-4 md:gap-y-0">
-                {
-                    beneficios.map((beneficio, index) => {
-                        const Icon = beneficio.Icon
-
-                        return (
-                            <li
-                                class={`relative flex flex-col items-center px-3 text-center ${
-                                    index > 0
-                                        ? 'sm:before:absolute sm:before:left-0 sm:before:top-1/2 sm:before:h-12 sm:before:w-[2px] sm:before:-translate-y-1/2 sm:before:bg-sunka-white/16'
-                                        : ''
-                                }`}
-                            >
-                                <span class="flex h-8 items-center justify-center text-sunka-brass-light">
-                                    <Icon class={`h-6 w-6 ${beneficio.iconClass}`} />
-                                </span>
-                                <span class="mt-2 flex min-h-9 max-w-[92px] items-start text-xs font-medium leading-snug text-sunka-white/86">
-                                    {beneficio.texto}
-                                </span>
-                            </li>
-                        )
-                    })
-                }
-            </ul>
-        </div>
-    </section>
-
     <section class="bg-[#111a13]">
         <div class="mx-auto max-w-7xl px-5 py-8 md:px-8">
             <div class="grid gap-9 md:grid-cols-[1.35fr_repeat(4,1fr)_1fr] md:gap-10">
@@ -153,13 +66,6 @@ const columnas = [
                         El ritual peruano del bienestar moderno. Te, infusiones y blends creados
                         para cada momento de tu vida.
                     </p>
-                    <a href="/libro-de-reclamaciones" class="mt-5 inline-flex">
-                        <img
-                            src={imgLibroReclamaciones.src}
-                            alt="Libro de reclamaciones"
-                            class="h-10 opacity-80 transition hover:opacity-100"
-                        />
-                    </a>
                 </div>
 
                 {
@@ -228,6 +134,13 @@ const columnas = [
                             <BrandPinterestIcon />
                         </a>
                     </div>
+                    <a href="/libro-de-reclamaciones" class="mt-5 inline-flex">
+                        <img
+                            src={imgLibroReclamaciones.src}
+                            alt="Libro de reclamaciones"
+                            class="h-10 opacity-80 transition hover:opacity-100"
+                        />
+                    </a>
                 </div>
             </div>
 
