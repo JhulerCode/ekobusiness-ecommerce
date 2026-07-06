@@ -20,6 +20,10 @@ const rightNavLinks = [
 ]
 
 const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
+const startsTransparent = Astro.url.pathname === '/'
+const headerMainClass = startsTransparent
+    ? 'fixed top-7 left-0 z-50 w-full border-b border-transparent bg-transparent transition-all duration-500'
+    : 'fixed top-7 left-0 z-50 w-full border-b border-sunka-white/10 bg-[#2b2b2b]/42 backdrop-blur-md transition-all duration-500'
 ---
 
 <header id="site-header" class="relative z-50 w-full text-sunka-white">
@@ -30,7 +34,7 @@ const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
 
     <div
         id="site-header-main"
-        class="fixed top-7 left-0 z-50 w-full border-b border-transparent bg-transparent transition-all duration-500"
+        class={headerMainClass}
     >
         <div
             class="relative mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 md:h-[76px] md:px-8"
@@ -124,16 +128,30 @@ const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
     const iconMenu = document.getElementById('icon-menu')
     const iconClose = document.getElementById('icon-close')
 
-    // Solo efecto visual para reforzar legibilidad al hacer scroll.
-    window.addEventListener('scroll', () => {
+    const updateHeaderBackground = () => {
         if (window.scrollY > 4) {
-            headerMain?.classList.add('border-sunka-white/15', 'backdrop-blur-md', 'shadow-lg')
-            headerMain?.classList.remove('border-transparent')
+            headerMain?.classList.add(
+                'bg-[#2b2b2b]/58',
+                'backdrop-blur-md',
+                'border-sunka-white/10',
+                'shadow-lg',
+            )
+            headerMain?.classList.remove('bg-transparent', 'border-transparent')
         } else {
-            headerMain?.classList.remove('border-sunka-white/15', 'backdrop-blur-md', 'shadow-lg')
-            headerMain?.classList.add('border-transparent')
+            headerMain?.classList.remove(
+                'bg-[#2b2b2b]/58',
+                'backdrop-blur-md',
+                'border-sunka-white/10',
+                'shadow-lg',
+            )
+            headerMain?.classList.add('bg-transparent', 'border-transparent')
         }
-    })
+    }
+
+    if (window.location.pathname === '/') {
+        updateHeaderBackground()
+        window.addEventListener('scroll', updateHeaderBackground)
+    }
 
     toggleBtn?.addEventListener('click', () => {
         const isOpen = mobileMenu?.classList.contains('translate-x-0')

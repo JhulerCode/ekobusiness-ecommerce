@@ -3,7 +3,14 @@ import logo from '../assets/logo-sunka-white.webp'
 import imgLibroReclamaciones from '../assets/libro-reclamaciones.webp'
 import BrandFacebookIcon from '../assets/icons/brand-facebook.astro'
 import BrandInstagramIcon from '../assets/icons/brand-instagram.astro'
+import BrandWhatsappIcon from '../assets/icons/brand-whatsapp.astro'
+import BrandPinterestIcon from '../assets/icons/brand-pinterest.astro'
+import GlobeIcon from '../assets/icons/icon-globe.astro'
+import ShieldCheckIcon from '../assets/icons/icon-shield-check.astro'
+import UsersIcon from '../assets/icons/icon-users.astro'
+import GiftIcon from '../assets/icons/icon-gift.astro'
 import NewsLetterForm from '../components/NewsLetterForm.vue'
+import fondoNewsletter from '../assets/home/newsletter.webp'
 import { get } from '../lib/api.js'
 
 const res = await get('sistema', {
@@ -11,149 +18,243 @@ const res = await get('sistema', {
 })
 
 const empresa = res.data?.empresa ?? {}
+
+const beneficios = [
+    {
+        texto: 'Envios a todo el mundo',
+        Icon: GlobeIcon,
+        iconClass: 'scale-[1]',
+    },
+    {
+        texto: 'Pago 100% seguro',
+        Icon: ShieldCheckIcon,
+        iconClass: 'scale-[1.05]',
+    },
+    {
+        texto: 'Atencion personalizada',
+        Icon: UsersIcon,
+        iconClass: 'scale-[0.76]',
+    },
+    {
+        texto: 'Empaque eco amigable',
+        Icon: GiftIcon,
+        iconClass: 'scale-[0.78]',
+    },
+]
+
+const columnas = [
+    {
+        titulo: 'Tienda',
+        links: [
+            { texto: 'Todas las colecciones', href: '/tienda' },
+            { texto: 'Tes', href: '/tienda' },
+            { texto: 'Infusiones', href: '/tienda' },
+            { texto: 'Accesorios', href: '/tienda' },
+            { texto: 'Ofertas', href: '/tienda' },
+        ],
+    },
+    {
+        titulo: 'Crea tu blend',
+        links: [
+            { texto: 'Como funciona', href: '/crea-tu-blend' },
+            { texto: 'Ingredientes', href: '/crea-tu-blend' },
+            { texto: 'Formatos y empaques', href: '/crea-tu-blend' },
+            { texto: 'Preguntas frecuentes', href: '/faq' },
+        ],
+    },
+    {
+        titulo: 'Sunka',
+        links: [
+            { texto: 'Nuestro origen', href: '/origen' },
+            { texto: 'Rituales', href: '/inspiracion' },
+            { texto: 'Club Sunka', href: '/account' },
+            { texto: 'Blog / Cartas Sunka', href: '/inspiracion' },
+            { texto: 'Contacto', href: `mailto:${empresa.email_ventas}` },
+        ],
+    },
+    {
+        titulo: 'Ayuda',
+        links: [
+            { texto: 'Envios', href: '/politica-de-despacho' },
+            { texto: 'Cambio y devoluciones', href: '/terminos-y-condiciones' },
+            { texto: 'Metodos de pago', href: '/faq' },
+            { texto: 'Preguntas frecuentes', href: '/faq' },
+            { texto: 'Consultar pedido', href: '/consulta-pedido' },
+        ],
+    },
+]
 ---
 
-<!-- Footer.astro -->
-<footer class="bg-black text-gray-400 pt-16 pb-8">
-    <div class="max-w-7xl mx-auto px-6">
-        <!-- Grid principal -->
-        <div class="grid gap-12 md:gap-24 md:grid-cols-4">
-            <!-- Logo & descripción -->
+<footer class="bg-sunka-forest text-sunka-white">
+    <section class="relative overflow-hidden bg-[#20221f]">
+        <div class="absolute inset-y-0 left-0 w-full md:w-[38%]" aria-hidden="true">
+            <img
+                src={fondoNewsletter.src}
+                alt=""
+                class="h-full w-full object-cover object-center"
+            />
+            <div
+                class="absolute inset-0 bg-[linear-gradient(90deg,rgba(32,34,31,.55)_0%,rgba(32,34,31,.7)_58%,rgba(32,34,31,1)_100%)]"
+            >
+            </div>
+        </div>
+        <div
+            class="absolute inset-0 bg-[#20221f]/28 md:bg-[linear-gradient(90deg,rgba(32,34,31,0)_0%,rgba(32,34,31,.34)_28%,rgba(32,34,31,.96)_42%,rgba(32,34,31,1)_100%)]"
+        >
+        </div>
+
+        <div
+            class="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-7 px-5 py-7 md:grid-cols-[24%_34%_42%] md:px-8 md:py-8"
+        >
             <div>
-                <img src={logo.src} alt="logo-sunka-white" class="h-10 mb-6" />
-
-                <p class="text-sm leading-relaxed">
-                    Té natural seleccionado con cuidado, directo del origen a tu taza.
+                <h2 class="font-heading text-2xl font-semibold leading-tight md:text-3xl">
+                    Cartas Sunka
+                </h2>
+                <p class="mt-2 max-w-xs text-sm leading-relaxed text-sunka-white/78">
+                    Rituales, lanzamientos exclusivos y consejos para elevar tu pausa diaria.
                 </p>
+            </div>
 
-                <!-- Redes sociales -->
-                <div class="flex gap-5 mt-6">
-                    <a
-                        href={empresa.facebook_url}
-                        aria-label="Facebook"
-                        class="hover:text-white transition"
-                        target="_blank"
-                    >
-                        <BrandFacebookIcon class="w-7 h-7 text-inherit" />
-                    </a>
+            <NewsLetterForm client:load theme="dark" variant="home" showPrivacy={false} />
 
-                    <a
-                        href={empresa.instagram_url}
-                        aria-label="Instagram"
-                        target="_blank"
-                        class="hover:text-white transition"
-                    >
-                        <BrandInstagramIcon class="w-7 h-7 text-inherit" />
-                    </a>
-                </div>
+            <ul class="grid grid-cols-2 gap-y-6 sm:grid-cols-4 md:gap-y-0">
+                {
+                    beneficios.map((beneficio, index) => {
+                        const Icon = beneficio.Icon
 
-                <div class="mt-6">
-                    <a href="/libro-de-reclamaciones">
+                        return (
+                            <li
+                                class={`relative flex flex-col items-center px-3 text-center ${
+                                    index > 0
+                                        ? 'sm:before:absolute sm:before:left-0 sm:before:top-1/2 sm:before:h-12 sm:before:w-[2px] sm:before:-translate-y-1/2 sm:before:bg-sunka-white/16'
+                                        : ''
+                                }`}
+                            >
+                                <span class="flex h-8 items-center justify-center text-sunka-brass-light">
+                                    <Icon class={`h-6 w-6 ${beneficio.iconClass}`} />
+                                </span>
+                                <span class="mt-2 flex min-h-9 max-w-[92px] items-start text-xs font-medium leading-snug text-sunka-white/86">
+                                    {beneficio.texto}
+                                </span>
+                            </li>
+                        )
+                    })
+                }
+            </ul>
+        </div>
+    </section>
+
+    <section class="bg-[#111a13]">
+        <div class="mx-auto max-w-7xl px-5 py-8 md:px-8">
+            <div class="grid gap-9 md:grid-cols-[1.35fr_repeat(4,1fr)_1fr] md:gap-10">
+                <div>
+                    <img src={logo.src} alt="Sunka" class="h-10" />
+                    <p class="mt-5 max-w-[230px] text-xs leading-relaxed text-sunka-white/66">
+                        El ritual peruano del bienestar moderno. Te, infusiones y blends creados
+                        para cada momento de tu vida.
+                    </p>
+                    <a href="/libro-de-reclamaciones" class="mt-5 inline-flex">
                         <img
                             src={imgLibroReclamaciones.src}
-                            alt="libro-de-reclamaciones"
-                            class="h-15"
+                            alt="Libro de reclamaciones"
+                            class="h-10 opacity-80 transition hover:opacity-100"
                         />
                     </a>
                 </div>
-            </div>
 
-            <!-- Contacto -->
-            <div>
-                <h3
-                    class="font-heading text-sm font-semibold mb-4 uppercase tracking-wider text-white"
-                >
-                    Contáctanos
-                </h3>
-                <ul class="space-y-4 text-sm">
-                    <li>
-                        <strong class="text-gray-400">Habla con nosotros</strong><br />
-                        <p>Resolvemos todas tus dudas</p>
+                {
+                    columnas.map((columna) => (
+                        <nav aria-label={columna.titulo}>
+                            <h3 class="text-xs font-semibold uppercase tracking-[0.12em] text-sunka-white/88">
+                                {columna.titulo}
+                            </h3>
+                            <ul class="mt-3 space-y-1.5 text-xs leading-relaxed text-sunka-white/62">
+                                {columna.links.map((link) => (
+                                    <li>
+                                        <a
+                                            href={link.href}
+                                            class="transition hover:text-sunka-white"
+                                        >
+                                            {link.texto}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    ))
+                }
+
+                <div>
+                    <h3
+                        class="text-xs font-semibold uppercase tracking-[0.12em] text-sunka-white/88"
+                    >
+                        Siguenos
+                    </h3>
+                    <div class="mt-4 flex flex-wrap gap-2.5 text-sunka-white/72">
                         <a
-                            href={empresa.whatsapp_ventas_url}
+                            href={empresa.instagram_url}
+                            aria-label="Instagram"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="hover:text-white transition"
+                            class="flex h-8 w-8 items-center justify-center rounded-full border border-sunka-white/18 transition hover:border-sunka-brass-light hover:text-sunka-brass-light"
                         >
-                            {empresa.whatsapp_ventas}
+                            <BrandInstagramIcon />
                         </a>
-                    </li>
-                    <li>
-                        <strong class="text-gray-400">Escríbenos</strong><br />
-                        <p>Estamos para ayudarte</p>
                         <a
-                            href={`mailto:${empresa.email_ventas}`}
-                            class="hover:text-white transition"
+                            href={empresa.facebook_url}
+                            aria-label="Facebook"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex h-8 w-8 items-center justify-center rounded-full border border-sunka-white/18 transition hover:border-sunka-brass-light hover:text-sunka-brass-light"
                         >
-                            {empresa.email_ventas}
+                            <BrandFacebookIcon />
                         </a>
-                    </li>
-
-                    <li>
-                        <strong class="text-gray-400">Llámanos</strong><br />
-                        <p>De lunes a domingo de 8:00 am a 8:00 pm</p>
-                        <a href={`tel:${empresa.telefono}`} class="hover:text-white transition">
-                            {empresa.telefono}
+                        <a
+                            href={empresa.whatsapp_ventas_url}
+                            aria-label="WhatsApp"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex h-8 w-8 items-center justify-center rounded-full border border-sunka-white/18 transition hover:border-sunka-brass-light hover:text-sunka-brass-light"
+                        >
+                            <BrandWhatsappIcon />
                         </a>
-                    </li>
-                </ul>
+                        <a
+                            href={empresa.pinterest_url ?? '#'}
+                            aria-label="Pinterest"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex h-8 w-8 items-center justify-center rounded-full border border-sunka-white/18 transition hover:border-sunka-brass-light hover:text-sunka-brass-light"
+                        >
+                            <BrandPinterestIcon />
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <!-- Soporte -->
-            <div>
-                <h3
-                    class="font-heading text-sm font-semibold mb-4 uppercase tracking-wider text-white"
-                >
-                    Soporte
-                </h3>
-                <ul class="space-y-2 text-sm">
-                    <li>
-                        <a href="/faq" class="hover:text-white transition">Preguntas frecuentes</a>
-                    </li>
-                    <li>
-                        <a href="/terminos-y-condiciones" class="hover:text-white transition"
-                            >Términos y condiciones</a
-                        >
-                    </li>
-                    <li>
-                        <a href="/politica-de-despacho" class="hover:text-white transition"
-                            >Política de despacho</a
-                        >
-                    </li>
-                    <li>
-                        <a href="/politica-de-privacidad" class="hover:text-white transition"
-                            >Política de privacidad</a
-                        >
-                    </li>
-                    <li>
-                        <a href="/arco" class="hover:text-white transition">Derechos ARCO</a>
-                    </li>
-                    <li>
-                        <a href="/consulta-pedido" class="hover:text-white transition"
-                            >Consultar pedido</a
-                        >
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Newsletter -->
-            <div>
-                <h3
-                    class="font-heading text-sm font-semibold mb-4 uppercase tracking-wider text-white"
-                >
-                    Newsletter
-                </h3>
-                <p class="text-sm mb-4">
-                    Suscríbete y recibe todas nuestras ofertas exclusivas y novedades.
+            <div
+                class="mt-8 grid gap-4 border-t border-sunka-white/10 pt-5 text-xs text-sunka-white/48 md:grid-cols-3 md:items-center"
+            >
+                <p>© {new Date().getFullYear()} Sunka. Todos los derechos reservados.</p>
+                <div class="flex flex-wrap gap-x-6 gap-y-2 md:justify-center">
+                    <a href="/politica-de-privacidad" class="transition hover:text-sunka-white">
+                        Politicas de privacidad
+                    </a>
+                    <a href="/terminos-y-condiciones" class="transition hover:text-sunka-white">
+                        Terminos y condiciones
+                    </a>
+                </div>
+                <p class="flex items-center gap-2 md:justify-end">
+                    <span>Hecho en Perú</span>
+                    <span
+                        class="inline-flex h-4 w-6 overflow-hidden rounded-[1px]"
+                        aria-hidden="true"
+                    >
+                        <span class="h-full flex-1 bg-[#d91023]"></span>
+                        <span class="h-full flex-1 bg-white"></span>
+                        <span class="h-full flex-1 bg-[#d91023]"></span>
+                    </span>
                 </p>
-
-                <NewsLetterForm client:load theme="dark" layout="vertical" />
             </div>
         </div>
-
-        <!-- línea divisoria -->
-        <div class="border-t border-gray-700 mt-12 pt-6 text-center text-xs text-gray-500">
-            © {new Date().getFullYear()} Sunka Herbal tea. Todos los derechos reservados.
-        </div>
-    </div>
+    </section>
 </footer>
