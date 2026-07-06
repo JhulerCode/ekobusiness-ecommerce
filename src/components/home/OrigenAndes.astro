@@ -1,0 +1,115 @@
+---
+import campo from '@/assets/home/banner/campo.webp'
+import MountainIcon from '@/assets/icons/icon-mountain.astro'
+import LeafIcon from '@/assets/icons/icon-leaf.astro'
+import RitualGoalIcon from '@/assets/icons/icon-ritual-goal.astro'
+import ShieldCheckIcon from '@/assets/icons/icon-shield-check.astro'
+import HeartOriginIcon from '@/assets/icons/icon-heart-origin.astro'
+
+const atributos = [
+    {
+        titulo: '+20',
+        texto: 'años de experiencia',
+        Icon: MountainIcon,
+        iconClass: 'scale-[1.20]',
+    },
+    {
+        titulo: 'Ingredientes',
+        texto: 'naturales y seleccionados',
+        Icon: LeafIcon,
+        iconClass: 'scale-[0.82]',
+    },
+    {
+        titulo: 'Procesos',
+        texto: 'cuidadosos y responsables',
+        Icon: RitualGoalIcon,
+        iconClass: 'scale-[0.95]',
+    },
+    {
+        titulo: 'Certificaciones',
+        texto: 'de calidad',
+        Icon: ShieldCheckIcon,
+        iconClass: 'scale-[1.05]',
+    },
+    {
+        titulo: 'Hecho en Perú',
+        texto: 'con orgullo',
+        Icon: HeartOriginIcon,
+        iconClass: 'scale-[1.12]',
+    },
+]
+---
+
+<section class="relative mt-1 w-full overflow-hidden bg-sunka-forest">
+    <div class="absolute inset-y-0 left-0 hidden w-1/2 md:block">
+        <img
+            src={campo.src}
+            alt=""
+            class="h-full w-full object-cover object-center"
+            aria-hidden="true"
+        />
+        <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,10,7,.78)_0%,rgba(7,10,7,.46)_48%,rgba(7,10,7,.16)_100%)]"></div>
+    </div>
+
+    <div class="relative mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[52%_48%]">
+        <div class="relative min-h-[360px] overflow-hidden md:min-h-[320px] md:overflow-visible">
+            <img
+                src={campo.src}
+                alt="Paisaje andino y comunidades originarias del Peru"
+                class="absolute inset-0 h-full w-full object-cover object-center md:hidden"
+            />
+            <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,10,7,.78)_0%,rgba(7,10,7,.48)_42%,rgba(7,10,7,.08)_100%)] md:hidden"></div>
+
+            <div class="relative z-10 flex min-h-[360px] items-center px-5 py-10 text-sunka-white md:min-h-[320px] md:px-8">
+                <div class="max-w-md">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.28em] text-sunka-brass-light">
+                        Nuestro origen
+                    </p>
+                    <h2 class="mt-3 font-heading text-3xl font-semibold leading-tight md:text-4xl">
+                        De los Andes del Per&uacute; para el mundo
+                    </h2>
+                    <p class="mt-4 max-w-sm text-sm leading-relaxed text-sunka-white/86 md:text-base">
+                        Trabajamos junto a comunidades andinas, seleccionando los mejores
+                        ingredientes naturales con respeto, tradicion y proposito.
+                    </p>
+                    <a
+                        href="/origen"
+                        class="mt-7 inline-flex h-11 items-center justify-center border border-sunka-white/55 px-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white transition-colors duration-300 hover:border-sunka-brass hover:bg-sunka-brass hover:text-sunka-ink"
+                    >
+                        Conoce nuestra historia
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 py-8 text-sunka-white md:px-0 md:py-0">
+            <div class="grid h-full grid-cols-2 gap-y-8 sm:grid-cols-3 md:grid-cols-5">
+                {
+                    atributos.map((atributo, index) => {
+                        const Icon = atributo.Icon
+
+                        return (
+                            <div
+                                class={`relative flex min-h-[170px] flex-col items-center justify-center px-2 py-5 text-center ${
+                                    index > 0
+                                        ? 'md:before:absolute md:before:left-0 md:before:top-1/2 md:before:h-16 md:before:w-[2px] md:before:-translate-y-1/2 md:before:bg-sunka-white/24'
+                                        : ''
+                                }`}
+                            >
+                                <span class="flex h-8 items-center justify-center text-sunka-brass-light">
+                                    <Icon class={`h-7 w-7 ${atributo.iconClass}`} />
+                                </span>
+                                <p class="mt-2 flex min-h-8 items-center text-sm font-semibold leading-tight">
+                                    {atributo.titulo}
+                                </p>
+                                <p class="flex min-h-8 items-start text-xs leading-snug text-sunka-white/78">
+                                    {atributo.texto}
+                                </p>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        </div>
+    </div>
+</section>

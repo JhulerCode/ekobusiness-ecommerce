@@ -2,7 +2,7 @@ export const rituals = [
     {
         slug: 'amanecer',
         title: 'El Ritual del Amanecer',
-        image: '/assets/home/preparacion.webp',
+        image: '/assets/home/blend.webp',
         excerpt: 'Un momento para establecer tu intención antes de que el mundo despierte.',
         sections: [
             {
@@ -25,7 +25,7 @@ export const rituals = [
     {
         slug: 'pausa',
         title: 'Claridad en el Caos',
-        image: '/assets/home/momento-personal.webp',
+        image: '/assets/home/newsletter.webp',
         excerpt: 'Usa las notas picantes para resetear tu mente y encontrar enfoque.',
         sections: [
             {

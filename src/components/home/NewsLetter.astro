@@ -1,20 +1,83 @@
 ---
 import NewsLetterForm from '@/components/NewsLetterForm.vue'
+import GlobeIcon from '@/assets/icons/icon-globe.astro'
+import ShieldCheckIcon from '@/assets/icons/icon-shield-check.astro'
+import UsersIcon from '@/assets/icons/icon-users.astro'
+import GiftIcon from '@/assets/icons/icon-gift.astro'
+import fondo from '@/assets/home/newsletter.webp'
+
+const beneficios = [
+    {
+        texto: 'Envios a todo el Perú',
+        Icon: GlobeIcon,
+        iconClass: 'scale-[1]',
+    },
+    {
+        texto: 'Pago 100% seguro',
+        Icon: ShieldCheckIcon,
+        iconClass: 'scale-[1.05]',
+    },
+    {
+        texto: 'Atencion personalizada',
+        Icon: UsersIcon,
+        iconClass: 'scale-[0.76]',
+    },
+    {
+        texto: 'Empaque eco amigable',
+        Icon: GiftIcon,
+        iconClass: 'scale-[0.78]',
+    },
+]
 ---
 
-<section class="bg-white py-24 md:py-32">
-    <div class="max-w-3xl mx-auto px-6 text-center fade-up">
-        <h2 class="text-3xl md:text-5xl font-heading font-semibold text-neutral-900">
-            Cartas de SUNKA
-        </h2>
+<section class="relative overflow-hidden bg-[#20221f] text-sunka-white">
+    <div class="absolute inset-y-0 left-0 w-full md:w-[38%]" aria-hidden="true">
+        <img
+            src={fondo.src}
+            alt=""
+            class="h-full w-full object-cover object-center"
+        />
+        <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(32,34,31,.55)_0%,rgba(32,34,31,.7)_58%,rgba(32,34,31,1)_100%)]"></div>
+    </div>
+    <div class="absolute inset-0 bg-[#20221f]/28 md:bg-[linear-gradient(90deg,rgba(32,34,31,0)_0%,rgba(32,34,31,.34)_28%,rgba(32,34,31,.96)_42%,rgba(32,34,31,1)_100%)]"></div>
 
-        <p class="mt-6 text-lg text-neutral-600 leading-relaxed max-w-2xl mx-auto">
-            Reflexiones, rituales e inspiración para acompañar tus momentos de pausa. Sin ruido. Sin
-            excesos. Solo lo esencial.
-        </p>
-
-        <div class="mt-12 fade-up delay-1">
-            <NewsLetterForm client:load />
+    <div class="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-7 px-5 py-7 md:grid-cols-[24%_34%_42%] md:px-8 md:py-8">
+        <div>
+            <h2 class="font-heading text-2xl font-semibold leading-tight md:text-3xl">
+                Cartas Sunka
+            </h2>
+            <p class="mt-2 max-w-xs text-sm leading-relaxed text-sunka-white/78">
+                Rituales, lanzamientos exclusivos y consejos para elevar tu pausa diaria.
+            </p>
         </div>
+
+        <div>
+            <NewsLetterForm client:load theme="dark" variant="home" showPrivacy={false} />
+        </div>
+
+        <ul class="grid grid-cols-2 gap-y-6 sm:grid-cols-4 md:gap-y-0">
+            {
+                beneficios.map((beneficio, index) => {
+                    const Icon = beneficio.Icon
+
+                    return (
+                        <li
+                            class={`relative flex flex-col items-center px-3 text-center ${
+                                index > 0
+                                    ? 'sm:before:absolute sm:before:left-0 sm:before:top-1/2 sm:before:h-12 sm:before:w-[2px] sm:before:-translate-y-1/2 sm:before:bg-sunka-white/16'
+                                    : ''
+                            }`}
+                        >
+                            <span class="flex h-8 items-center justify-center text-sunka-brass-light">
+                                <Icon class={`h-6 w-6 ${beneficio.iconClass}`} />
+                            </span>
+                            <span class="mt-2 flex min-h-9 max-w-[90px] items-start text-xs font-medium leading-snug text-sunka-white/86">
+                                {beneficio.texto}
+                            </span>
+                        </li>
+                    )
+                })
+            }
+        </ul>
     </div>
 </section>

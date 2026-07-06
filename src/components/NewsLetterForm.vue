@@ -3,19 +3,28 @@
         @submit.prevent="submit"
         :class="[
             'flex justify-center',
-            layout === 'vertical'
-                ? 'flex-col gap-3'
-                : 'flex-col sm:flex-row gap-4',
+            variant === 'home'
+                ? 'flex-row gap-0'
+                : layout === 'vertical'
+                  ? 'flex-col gap-3'
+                  : 'flex-col sm:flex-row gap-4',
         ]"
     >
-        <div class="flex-1 flex flex-col">
+        <div class="flex flex-1 flex-col">
             <input
                 v-model="email"
                 type="email"
-                placeholder="Tu correo electrónico"
+                placeholder="Tu correo electronico"
                 :class="[
-                    'rounded-lg border focus:outline-none focus:ring-2 transition w-full',
-                    layout === 'vertical' ? 'px-4 py-2 text-sm' : 'px-4 py-3',
+                    'w-full border transition focus:outline-none focus:ring-2',
+                    variant === 'home'
+                        ? 'h-12 rounded-none border-r-0 px-4 text-sm'
+                        : 'rounded-lg',
+                    layout === 'vertical' && variant !== 'home'
+                        ? 'px-4 py-2 text-sm'
+                        : variant !== 'home'
+                          ? 'px-4 py-3'
+                          : '',
                     theme === 'dark'
                         ? [
                               'bg-transparent text-gray-200 placeholder-gray-400',
@@ -28,22 +37,19 @@
                 ]"
             />
 
-            <p
-                v-if="emailError"
-                class="text-left text-red-500 text-xs mt-1 ml-2"
-            >
+            <p v-if="emailError" class="ml-2 mt-1 text-left text-xs text-red-500">
                 {{ emailError }}
             </p>
 
-            <!-- Checkbox de privacidad -->
             <label
-                class="text-sm leading-snug cursor-pointer select-none mt-3 flex items-start gap-2"
+                v-if="showPrivacy"
+                class="mt-3 flex cursor-pointer select-none items-start gap-2 text-sm leading-snug"
                 :class="[theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
             >
                 <input
                     v-model="acceptedPrivacy"
                     type="checkbox"
-                    class="appearance-none w-4 h-4 rounded-md border relative flex-shrink-0 cursor-pointer before:content-['✓'] before:absolute before:text-[10px] before:inset-0 before:flex before:items-center before:justify-center before:text-white checked:before:opacity-100 before:opacity-0 transition-all"
+                    class="relative h-4 w-4 flex-shrink-0 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:inset-0 before:flex before:items-center before:justify-center before:text-[10px] before:text-white before:opacity-0 before:content-['✓'] checked:before:opacity-100"
                     :class="[
                         theme === 'dark'
                             ? [
@@ -59,71 +65,67 @@
                     ]"
                 />
                 <span class="text-left">
-                    He leído la
+                    He leido la
                     <a
                         href="/politica-de-privacidad"
                         target="_blank"
                         class="underline"
-                        :class="[
-                            theme === 'dark'
-                                ? 'hover:text-white'
-                                : 'hover:text-gray-900',
-                        ]"
+                        :class="[theme === 'dark' ? 'hover:text-white' : 'hover:text-gray-900']"
                     >
-                        Política de Privacidad de SUNKA
+                        Politica de Privacidad de SUNKA
                     </a>
-                    y declaro haber sido informado sobre el tratamiento de mis
-                    datos personales.
+                    y declaro haber sido informado sobre el tratamiento de mis datos personales.
                 </span>
             </label>
 
-            <p
-                v-if="privacyError"
-                class="text-left text-red-500 text-xs mt-1 ml-2"
-            >
+            <p v-if="privacyError" class="ml-2 mt-1 text-left text-xs text-red-500">
                 {{ privacyError }}
             </p>
 
-            <!-- Mensajes -->
             <template v-if="showMsg">
-                <p v-if="success" class="text-sm mt-1 text-green-600">
-                    ¡Suscrito correctamente!
+                <p v-if="success" class="mt-1 text-sm text-green-600">
+                    Suscrito correctamente.
                 </p>
-                <p
-                    v-if="resMsg && !success"
-                    class="text-sm mt-1 text-amber-500"
-                >
+                <p v-if="resMsg && !success" class="mt-1 text-sm text-amber-500">
                     {{ resMsg }}
                 </p>
             </template>
         </div>
 
-        <!-- Botón -->
         <button
             type="submit"
             :disabled="loading"
             :class="[
-                'rounded-lg font-medium transition cursor-pointer flex items-center justify-center border',
-                layout === 'vertical'
+                'flex cursor-pointer items-center justify-center border font-medium transition',
+                variant === 'home'
+                    ? 'h-12 rounded-none border-sunka-brass bg-sunka-brass px-7 text-[12px] font-semibold uppercase tracking-[0.08em] text-sunka-white hover:bg-sunka-brass-light hover:text-sunka-ink'
+                    : 'rounded-lg',
+                layout === 'vertical' && variant !== 'home'
                     ? 'w-full px-4 py-2 text-sm'
-                    : 'px-6 py-3 max-h-[3rem]',
-                theme === 'dark'
+                    : variant !== 'home'
+                      ? 'max-h-[3rem] px-6 py-3'
+                      : '',
+                variant !== 'home' && theme === 'dark'
                     ? loading
-                        ? 'bg-gray-500 border-gray-500 text-gray-200 cursor-not-allowed'
-                        : 'bg-white text-black hover:bg-gray-200 border-white'
-                    : loading
-                    ? 'bg-neutral-400 border-neutral-400 text-white cursor-not-allowed'
-                    : 'border-neutral-900 bg-neutral-900 text-white hover:bg-white hover:text-neutral-900',
+                        ? 'cursor-not-allowed border-gray-500 bg-gray-500 text-gray-200'
+                        : 'border-white bg-white text-black hover:bg-gray-200'
+                    : variant !== 'home'
+                      ? loading
+                          ? 'cursor-not-allowed border-neutral-400 bg-neutral-400 text-white'
+                          : 'border-neutral-900 bg-neutral-900 text-white hover:bg-white hover:text-neutral-900'
+                      : loading
+                        ? 'cursor-not-allowed opacity-70'
+                        : '',
             ]"
         >
-            <span v-if="loading">Enviando…</span>
+            <span v-if="loading">Enviando...</span>
             <span v-else>Suscribirme</span>
         </button>
     </form>
 </template>
 
 <script>
-import { post } from '../lib/api.js';
+import { post } from '../lib/api.js'
 
 export default {
     name: 'NewsletterForm',
@@ -135,6 +137,14 @@ export default {
         layout: {
             type: String,
             default: 'horizontal',
+        },
+        variant: {
+            type: String,
+            default: 'default',
+        },
+        showPrivacy: {
+            type: Boolean,
+            default: true,
         },
     },
     data() {
@@ -149,62 +159,53 @@ export default {
             resMsg: null,
             showMsg: false,
             timeOutShowMsg: null,
-        };
+        }
     },
     methods: {
         validEmail(e) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
         },
 
         async submit() {
-            // Reiniciar errores
-            this.emailError = '';
-            this.privacyError = '';
-            this.success = false;
+            this.emailError = ''
+            this.privacyError = ''
+            this.success = false
 
-            // Validar correo
             if (!this.email.trim() || !this.validEmail(this.email)) {
-                this.emailError = 'Por favor, ingrese un correo válido.';
+                this.emailError = 'Por favor, ingrese un correo valido.'
             }
 
-            // Validar privacidad
-            if (!this.acceptedPrivacy) {
-                this.privacyError = 'Este campo es obligatorio.';
+            if (this.showPrivacy && !this.acceptedPrivacy) {
+                this.privacyError = 'Este campo es obligatorio.'
             }
 
-            // Si hay errores, detener envío
-            if (this.emailError || this.privacyError) return;
+            if (this.emailError || this.privacyError) return
 
-            // Enviar datos
-            this.loading = true;
+            this.loading = true
             try {
-                const res = await post(
-                    'newsletter',
-                    { correo: this.email },
-                    'Correo'
-                );
-                this.showMsg = true;
-                this.resMsg = res.msg;
+                const res = await post('newsletter', { correo: this.email }, 'Correo')
+                this.showMsg = true
+                this.resMsg = res.msg
 
-                if (res.code != 0) return;
+                if (res.code != 0) return
 
-                this.success = true;
-                this.email = '';
-                this.acceptedPrivacy = false;
+                this.success = true
+                this.email = ''
+                this.acceptedPrivacy = false
             } catch (err) {
-                this.showMsg = true;
-                this.resMsg = 'Ocurrió un error. Intenta nuevamente.';
+                this.showMsg = true
+                this.resMsg = 'Ocurrio un error. Intenta nuevamente.'
             } finally {
-                this.loading = false;
+                this.loading = false
 
-                clearTimeout(this.timeOutShowMsg);
+                clearTimeout(this.timeOutShowMsg)
 
                 this.timeOutShowMsg = setTimeout(() => {
-                    this.resMsg = null;
-                    this.showMsg = false;
-                }, 4000);
+                    this.resMsg = null
+                    this.showMsg = false
+                }, 4000)
             }
         },
     },
-};
+}
 </script>
