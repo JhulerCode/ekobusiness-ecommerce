@@ -1,22 +1,28 @@
 ---
 import tetera from '@/assets/home/banner/tetera.webp'
+import teteraMobile from '@/assets/home/banner/tetera-mobile.webp'
 import tazas from '@/assets/home/banner/tazas.webp'
+import tazasMobile from '@/assets/home/banner/tazas-mobile.webp'
 import chica from '@/assets/home/banner/chica.webp'
+import chicaMobile from '@/assets/home/banner/chica-mobile.webp'
 
 const slides = [
     {
         src: tetera.src,
+        mobileSrc: teteraMobile.src,
         alt: 'Ritual SUNKA con tetera e infusion',
         position: 'object-right md:object-center',
     },
     // { src: campo.src, alt: 'Campo de cultivo SUNKA en los Andes', position: 'object-right md:object-center' },
     {
         src: chica.src,
+        mobileSrc: chicaMobile.src,
         alt: 'Chica disfrutando de una infusion SUNKA',
         position: 'object-right md:object-center',
     },
     {
         src: tazas.src,
+        mobileSrc: tazasMobile.src,
         alt: 'Tazas de infusion SUNKA en un paisaje andino',
         position: 'object-right md:object-center',
     },
@@ -26,12 +32,17 @@ const slides = [
 <section class="relative min-h-[690px] w-full overflow-hidden bg-sunka-ink md:min-h-[650px]">
     {
         slides.map((slide, index) => (
-            <img
-                src={slide.src}
-                alt={slide.alt}
-                class={`banner-slide absolute inset-0 h-full w-full object-cover ${slide.position}`}
+            <picture
+                class="banner-slide absolute inset-0 block h-full w-full"
                 style={`animation-delay: ${index * 6}s`}
-            />
+            >
+                <source media="(max-width: 767px)" srcset={slide.mobileSrc} />
+                <img
+                    src={slide.src}
+                    alt={slide.alt}
+                    class={`h-full w-full object-cover ${slide.position}`}
+                />
+            </picture>
         ))
     }
 
