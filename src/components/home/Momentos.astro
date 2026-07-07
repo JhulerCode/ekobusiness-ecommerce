@@ -39,7 +39,7 @@ const moments = [
 ]
 ---
 
-<section class="bg-sunka-cream py-9 md:py-11">
+<section class="bg-[#e9e7e1] py-9 md:py-11">
     <div class="mx-auto max-w-7xl px-5 md:px-8">
         <div class="text-center">
             <h2 class="font-heading text-2xl font-semibold leading-tight text-sunka-ink md:text-3xl">
@@ -50,13 +50,17 @@ const moments = [
             </p>
         </div>
 
-        <div class="mt-9 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 md:mt-10 md:grid-cols-7">
+        <div class="mx-auto mt-9 grid max-w-4xl grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 md:mt-10 md:grid-cols-8 md:gap-x-4 lg:max-w-none lg:grid-cols-7 lg:gap-x-6">
             {
-                moments.map((moment) => {
+                moments.map((moment, index) => {
                     const Icon = moment.Icon
+                    const tabletOffsetClass = index === 4 ? 'md:col-start-2 lg:col-start-auto' : ''
 
                     return (
-                        <a href="/tienda" class="group flex flex-col items-center text-center">
+                        <a
+                            href="/tienda"
+                            class={`group flex flex-col items-center text-center md:col-span-2 lg:col-span-1 ${tabletOffsetClass}`}
+                        >
                             <span class="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-sunka-sand/70 text-sunka-ink transition-all duration-300 group-hover:bg-sunka-brass group-hover:text-sunka-white md:h-[78px] md:w-[78px]">
                                 <Icon />
                             </span>

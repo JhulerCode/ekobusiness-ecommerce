@@ -1,0 +1,81 @@
+---
+import { get, formatProductos } from '@/lib/api.js'
+
+const qry2 = {
+    fltr: {
+        activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
+        is_destacado: { op: 'Es', val: true },
+    },
+    cols: [
+        'linea',
+        'categoria',
+        'nombre',
+        'unidad',
+        'has_fv',
+        'precio',
+        'precio_anterior',
+        'igv_afectacion',
+        'fotos',
+    ],
+}
+
+const res2 = await get('productos', { qry: qry2 })
+const productos = formatProductos(res2.data).slice(0, 6)
+---
+
+<section class="bg-sunka-cream py-9 text-sunka-ink md:py-11">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+        <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+                <h2 class="font-heading text-2xl font-semibold leading-tight md:text-3xl">
+                    Regalos que conectan
+                </h2>
+                <p class="mt-1 text-sm leading-relaxed text-sunka-ink/68">
+                    Detalles que transmiten bienestar.
+                </p>
+            </div>
+
+            <a
+                href="/tienda"
+                class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-sunka-ink transition hover:text-sunka-brass"
+            >
+                Ver todos los regalos
+                <span aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+
+        {
+            productos.length > 0 && (
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 lg:gap-7">
+                    {productos.map((producto) => (
+                        <a
+                            href={`/producto/${producto.slug}`}
+                            class="group block overflow-hidden rounded-[6px] border border-sunka-ink/14  shadow-[0_1px_0_rgba(9,8,6,0.05)] transition hover:border-sunka-brass/45"
+                        >
+                            <div class="aspect-[4/3] overflow-hidden bg-sunka-sand">
+                                {producto.foto && (
+                                    <img
+                                        src={producto.foto}
+                                        alt={producto.nombre}
+                                        loading="lazy"
+                                        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                    />
+                                )}
+                            </div>
+
+                            <div class="min-h-[58px] px-3 py-2 text-center">
+                                <h3 class="truncate text-sm font-semibold leading-tight text-sunka-ink">
+                                    {producto.nombre}
+                                </h3>
+                                <p class="mt-0.5 text-sm font-medium leading-tight text-sunka-ink">
+                                    S/ {producto.precio}
+                                </p>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            )
+        }
+    </div>
+</section>

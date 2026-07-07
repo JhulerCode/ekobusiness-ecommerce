@@ -1,5 +1,6 @@
 ---
 import logo from '../assets/logo-sunka-white.webp'
+import logoBlack from '../assets/logo-sunka-black.webp'
 import Menu from '../assets/icons/menu.astro'
 import XmakIcon from '../assets/icons/xmark.astro'
 import CartIcon from '../components/CartIcon.vue'
@@ -32,19 +33,16 @@ const headerMainClass = startsTransparent
         <HeaderTopBar />
     </div>
 
-    <div
-        id="site-header-main"
-        class={headerMainClass}
-    >
+    <div id="site-header-main" class:list={[headerMainClass, 'text-sunka-white']}>
         <div
-            class="relative mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 md:h-[76px] md:px-8"
+            class="relative mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 lg:h-[76px] lg:px-8"
         >
-            <nav class="hidden items-center gap-8 md:flex lg:gap-11">
+            <nav class="hidden items-center gap-7 lg:flex xl:gap-11">
                 {
                     leftNavLinks.map((link) => (
                         <a
                             href={link.href}
-                            class="text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white/90 transition-colors duration-300 hover:text-sunka-brass-light"
+                            class="text-[12px] font-semibold uppercase tracking-[0.12em] text-current opacity-90 transition-colors duration-300 hover:text-sunka-brass-light hover:opacity-100"
                         >
                             {link.nombre}
                         </a>
@@ -54,8 +52,10 @@ const headerMainClass = startsTransparent
 
             <button
                 id="menu-toggle"
-                class="flex h-10 w-10 items-center justify-center text-sunka-white md:hidden"
+                class="flex h-10 w-10 items-center justify-center text-current lg:hidden"
                 aria-label="Abrir menu"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
             >
                 <div id="icon-menu">
                     <Menu />
@@ -67,19 +67,26 @@ const headerMainClass = startsTransparent
 
             <a href="/" class="flex items-center justify-center">
                 <img
+                    id="site-logo-white"
                     src={logo.src}
                     alt="SUNKA"
-                    class="h-10 w-auto transition-opacity duration-300 hover:opacity-75 md:h-12"
+                    class="h-10 w-auto transition-opacity duration-300 hover:opacity-75 lg:h-12"
+                />
+                <img
+                    id="site-logo-black"
+                    src={logoBlack.src}
+                    alt="SUNKA"
+                    class="hidden h-10 w-auto transition-opacity duration-300 hover:opacity-75 lg:h-12"
                 />
             </a>
 
-            <div class="flex items-center justify-end gap-5 md:gap-7">
-                <nav class="hidden items-center gap-8 md:flex lg:gap-11">
+            <div class="flex items-center justify-end gap-5 lg:gap-7">
+                <nav class="hidden items-center gap-7 lg:flex xl:gap-11">
                     {
                         rightNavLinks.map((link) => (
                             <a
                                 href={link.href}
-                                class="text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white/90 transition-colors duration-300 hover:text-sunka-brass-light"
+                                class="text-[12px] font-semibold uppercase tracking-[0.12em] text-current opacity-90 transition-colors duration-300 hover:text-sunka-brass-light hover:opacity-100"
                             >
                                 {link.nombre}
                             </a>
@@ -87,12 +94,12 @@ const headerMainClass = startsTransparent
                     }
                 </nav>
 
-                <div class="flex items-center gap-4 text-sunka-white md:gap-5">
+                <div class="flex items-center gap-4 text-current lg:gap-5">
                     <AuthModal client:load />
                     <CartIcon client:load />
                     <a
                         href="/tienda"
-                        class="hidden text-sunka-white transition-colors duration-300 hover:text-sunka-brass-light md:flex"
+                        class="hidden text-current transition-colors duration-300 hover:text-sunka-brass-light lg:flex"
                         aria-label="Buscar productos"
                     >
                         <SearchIcon />
@@ -105,7 +112,7 @@ const headerMainClass = startsTransparent
 
 <div
     id="mobile-menu"
-    class="fixed inset-0 z-40 flex translate-x-full transform flex-col items-center justify-center bg-sunka-cream transition-transform duration-500 md:hidden"
+    class="fixed inset-0 z-40 flex translate-x-full transform flex-col items-center justify-center bg-sunka-cream transition-transform duration-500 lg:hidden"
 >
     <div class="flex flex-col gap-8 text-center">
         {
@@ -127,9 +134,41 @@ const headerMainClass = startsTransparent
     const mobileMenu = document.getElementById('mobile-menu')
     const iconMenu = document.getElementById('icon-menu')
     const iconClose = document.getElementById('icon-close')
+    const logoWhite = document.getElementById('site-logo-white')
+    const logoBlack = document.getElementById('site-logo-black')
+    const isHomePage = window.location.pathname === '/'
+
+    const setMenuOpen = (isOpen) => {
+        mobileMenu?.classList.toggle('translate-x-0', isOpen)
+        mobileMenu?.classList.toggle('translate-x-full', !isOpen)
+        iconMenu?.classList.toggle('hidden', isOpen)
+        iconClose?.classList.toggle('hidden', !isOpen)
+        logoWhite?.classList.toggle('hidden', isOpen)
+        logoBlack?.classList.toggle('hidden', !isOpen)
+        headerMain?.classList.toggle('text-sunka-white', !isOpen)
+        headerMain?.classList.toggle('text-sunka-ink', isOpen)
+        headerMain?.classList.toggle('bg-transparent', isOpen)
+        headerMain?.classList.toggle('border-transparent', isOpen)
+        headerMain?.classList.remove(
+            'bg-[#2b2b2b]/42',
+            'bg-[#2b2b2b]/58',
+            'backdrop-blur-md',
+            'border-sunka-white/10',
+            'shadow-lg',
+        )
+        toggleBtn?.setAttribute('aria-expanded', String(isOpen))
+        document.body.style.overflow = isOpen ? 'hidden' : ''
+
+        if (!isOpen) updateHeaderBackground()
+    }
 
     const updateHeaderBackground = () => {
-        if (window.scrollY > 4) {
+        if (mobileMenu?.classList.contains('translate-x-0')) return
+
+        if (!isHomePage) {
+            headerMain?.classList.add('bg-[#2b2b2b]/42', 'backdrop-blur-md', 'border-sunka-white/10')
+            headerMain?.classList.remove('bg-transparent', 'border-transparent', 'shadow-lg')
+        } else if (window.scrollY > 4) {
             headerMain?.classList.add(
                 'bg-[#2b2b2b]/58',
                 'backdrop-blur-md',
@@ -148,24 +187,17 @@ const headerMainClass = startsTransparent
         }
     }
 
-    if (window.location.pathname === '/') {
+    if (isHomePage) {
         updateHeaderBackground()
         window.addEventListener('scroll', updateHeaderBackground)
     }
 
     toggleBtn?.addEventListener('click', () => {
         const isOpen = mobileMenu?.classList.contains('translate-x-0')
+        setMenuOpen(!isOpen)
+    })
 
-        if (isOpen) {
-            mobileMenu?.classList.remove('translate-x-0')
-            mobileMenu?.classList.add('translate-x-full')
-            iconMenu?.classList.remove('hidden')
-            iconClose?.classList.add('hidden')
-        } else {
-            mobileMenu?.classList.remove('translate-x-full')
-            mobileMenu?.classList.add('translate-x-0')
-            iconMenu?.classList.add('hidden')
-            iconClose?.classList.remove('hidden')
-        }
+    document.querySelectorAll('#mobile-menu a').forEach((link) => {
+        link.addEventListener('click', () => setMenuOpen(false))
     })
 </script>

@@ -31,7 +31,7 @@ const pasos = [
 ---
 
 <section class="bg-[#e9e7e1]">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[65%_35%]">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[58%_42%] lg:grid-cols-[65%_35%]">
         <div class="relative min-h-[430px] overflow-hidden md:min-h-[380px]">
             <img
                 src={blend.src}
@@ -63,14 +63,14 @@ const pasos = [
             </div>
         </div>
 
-        <div class="flex items-center px-5 py-8 md:px-8 md:py-0">
-            <div class="w-full space-y-6">
+        <div class="flex items-center px-5 py-8 md:px-6 md:py-7 lg:px-8 lg:py-0">
+            <div class="w-full space-y-5 lg:space-y-6">
                 {
                     pasos.map((paso, index) => {
                         const Icon = paso.Icon
 
                         return (
-                            <div class="flex gap-4">
+                            <div class="flex gap-3 lg:gap-4">
                                 <span class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-sunka-brass/55 text-sunka-brass">
                                     <Icon width="23" height="23" />
                                 </span>
