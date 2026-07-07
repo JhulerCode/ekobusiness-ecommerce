@@ -4,7 +4,7 @@
         :class="[
             'flex justify-center',
             variant === 'home'
-                ? 'flex-row gap-0'
+                ? 'flex-col gap-3 sm:flex-row sm:gap-0'
                 : layout === 'vertical'
                   ? 'flex-col gap-3'
                   : 'flex-col sm:flex-row gap-4',
@@ -18,7 +18,7 @@
                 :class="[
                     'w-full border transition focus:outline-none focus:ring-2',
                     variant === 'home'
-                        ? 'h-12 rounded-none border-r-0 px-4 text-sm'
+                        ? 'h-12 rounded-none px-4 text-sm sm:border-r-0'
                         : 'rounded-lg',
                     layout === 'vertical' && variant !== 'home'
                         ? 'px-4 py-2 text-sm'
@@ -98,7 +98,7 @@
             :class="[
                 'flex cursor-pointer items-center justify-center border font-medium transition',
                 variant === 'home'
-                    ? 'h-12 rounded-none border-sunka-brass bg-sunka-brass px-7 text-[12px] font-semibold uppercase tracking-[0.08em] text-sunka-white hover:bg-sunka-brass-light hover:text-sunka-ink'
+                    ? 'h-12 w-full rounded-none border-sunka-brass bg-sunka-brass px-7 text-[12px] font-semibold uppercase tracking-[0.08em] text-sunka-white hover:bg-sunka-brass-light hover:text-sunka-ink sm:w-auto'
                     : 'rounded-lg',
                 layout === 'vertical' && variant !== 'home'
                     ? 'w-full px-4 py-2 text-sm'
