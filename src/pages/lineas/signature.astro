@@ -1,0 +1,336 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import NewsLetter from '@/components/home/NewsLetter.astro'
+import signature from '@/assets/home/lineas/signature.webp'
+
+const blends = [
+    {
+        nombre: 'Vainilla Chai',
+        perfil: 'Calido / especiado / cremoso',
+        descripcion: 'Te negro con notas de vainilla y especias aromaticas para una taza envolvente.',
+        tono: 'bg-sunka-ink',
+    },
+    {
+        nombre: 'Raspberry',
+        perfil: 'Frutal / intenso / elegante',
+        descripcion: 'Una mezcla de te negro con notas de frutos rojos para una pausa moderna.',
+        tono: 'bg-sunka-forest',
+    },
+    {
+        nombre: 'Acai Berry',
+        perfil: 'Profundo / frutal / contemporaneo',
+        descripcion: 'Te negro con un perfil suave, ligeramente dulce y notas de frutos del bosque.',
+        tono: 'bg-sunka-ink',
+    },
+    {
+        nombre: 'Manzana Canela',
+        perfil: 'Dulce / calido / reconfortante',
+        descripcion: 'Una taza especiada y equilibrada, ideal para sobremesa o ritual de calma.',
+        tono: 'bg-sunka-forest',
+    },
+]
+
+const momentos = [
+    { icono: 'sol', titulo: 'Para empezar el dia' },
+    { icono: 'mesa', titulo: 'Para la oficina' },
+    { icono: 'taza', titulo: 'Despues de comer' },
+    { icono: 'luna', titulo: 'Para una pausa de noche' },
+]
+
+const pasos = [
+    {
+        titulo: 'Agua caliente',
+        texto: 'Usa una taza amplia para permitir una mejor expresion del te negro.',
+    },
+    {
+        titulo: 'Infusiona 3 a 5 minutos',
+        texto: 'Mas tiempo para una taza intensa, menos tiempo para un perfil mas suave.',
+    },
+    {
+        titulo: 'Completa tu momento',
+        texto: 'Ideal para oficina, sobremesa, tarde o una pausa lenta al final del dia.',
+    },
+]
+
+const regalos = [
+    { nombre: 'Pack Signature', precio: 'S/ 64.90' },
+    { nombre: 'Pack Oficina', precio: 'S/ 79.90' },
+    { nombre: 'Gift Box Premium', precio: 'S/ 129.90' },
+]
+---
+
+<BaseLayout title="Signature Black | Sunka Herbal Tea">
+    <section class="relative overflow-hidden bg-sunka-ink pt-28 text-sunka-white md:pt-32">
+        <div class="absolute inset-y-0 right-0 hidden w-[46%] md:block" aria-hidden="true">
+            <img
+                src={signature.src}
+                alt=""
+                class="h-full w-full object-cover object-left opacity-72"
+            />
+            <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.48)_42%,rgba(9,8,6,.12)_100%)]"></div>
+        </div>
+
+        <div class="relative mx-auto grid min-h-[620px] max-w-7xl items-center px-5 py-16 md:grid-cols-[minmax(0,1fr)_minmax(320px,440px)] md:px-8 lg:py-20">
+            <div class="max-w-3xl">
+                <p class="text-xs font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                    Signature Black / Sunka x Mabroc
+                </p>
+                <h1 class="mt-8 font-heading text-4xl font-semibold leading-[1.04] text-sunka-white md:text-6xl lg:text-7xl">
+                    Te negro de origen para elevar tu ritual diario.
+                </h1>
+                <p class="mt-7 max-w-2xl text-lg leading-relaxed text-sunka-white/76 md:text-xl">
+                    Una coleccion de tes negros de Sri Lanka en formato doble camara, con mayor
+                    gramaje, mas aroma y una experiencia de taza mas intensa.
+                </p>
+                <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+                    <a
+                        href="/tienda"
+                        class="inline-flex h-13 items-center justify-center border border-sunka-white bg-sunka-white px-8 text-xs font-semibold uppercase tracking-[0.14em] text-sunka-ink transition hover:bg-sunka-sand"
+                    >
+                        Comprar coleccion
+                    </a>
+                    <a
+                        href="#blends"
+                        class="inline-flex h-13 items-center justify-center border border-sunka-white/70 px-8 text-xs font-semibold uppercase tracking-[0.14em] text-sunka-white transition hover:border-sunka-brass-light hover:text-sunka-brass-light"
+                    >
+                        Ver blends
+                    </a>
+                    <a
+                        href="#regalos"
+                        class="inline-flex h-13 items-center justify-center border border-sunka-white/70 px-8 text-xs font-semibold uppercase tracking-[0.14em] text-sunka-white transition hover:border-sunka-brass-light hover:text-sunka-brass-light"
+                    >
+                        Armar pack
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-12 md:hidden">
+                <img src={signature.src} alt="Signature Black" class="h-72 w-full object-cover object-left" />
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-sunka-forest py-16 text-sunka-white md:py-24">
+        <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 md:grid-cols-3 md:px-8">
+            <div class="border border-sunka-white/72 p-8 text-center">
+                <p class="text-xs font-medium uppercase tracking-[0.18em] text-sunka-white/78">
+                    Sunka
+                </p>
+                <p class="mt-12 font-heading text-4xl font-semibold leading-none">Acai<br />Berry</p>
+                <p class="mt-12 text-xs font-semibold uppercase tracking-[0.2em] text-sunka-white/82">
+                    Black tea
+                </p>
+            </div>
+            <div class="border border-sunka-white bg-sunka-ink p-8 text-center md:scale-110">
+                <p class="text-xs font-medium uppercase tracking-[0.18em] text-sunka-white/78">
+                    Sunka
+                </p>
+                <p class="mt-12 font-heading text-4xl font-semibold leading-none">
+                    Signature<br />Black
+                </p>
+                <p class="mt-12 text-xs font-semibold uppercase tracking-[0.2em] text-sunka-white/82">
+                    Double chamber<br />20 bags
+                </p>
+            </div>
+            <div class="bg-sunka-white p-8 text-center text-sunka-ink">
+                <p class="flex min-h-52 items-center justify-center font-heading text-3xl font-semibold leading-tight">
+                    Taza<br />servida
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-sunka-cream py-16 text-sunka-ink md:py-20">
+        <div class="mx-auto max-w-7xl px-5 text-center md:px-8">
+            <h2 class="font-heading text-3xl font-semibold leading-tight md:text-5xl">
+                En que momento vas a vivir Signature Black?
+            </h2>
+            <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-sunka-ink/64 md:text-base">
+                La coleccion guia el ritual por ocasion de consumo antes de mostrar el precio.
+            </p>
+
+            <div class="mt-12 grid gap-9 sm:grid-cols-2 lg:grid-cols-4">
+                {
+                    momentos.map((momento) => (
+                        <a href="#blends" class="group flex flex-col items-center">
+                            <span class="flex h-24 w-24 items-center justify-center rounded-full border border-sunka-ink/8 bg-sunka-sand/52 text-sunka-ink shadow-sm transition group-hover:border-sunka-brass/70 group-hover:bg-sunka-white">
+                                {momento.icono === 'sol' && (
+                                    <svg viewBox="0 0 48 48" class="h-10 w-10" aria-hidden="true">
+                                        <circle cx="24" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="2" />
+                                        <path d="M24 6v8M24 34v8M6 24h8M34 24h8M11 11l6 6M31 31l6 6M37 11l-6 6M17 31l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                    </svg>
+                                )}
+                                {momento.icono === 'mesa' && (
+                                    <svg viewBox="0 0 48 48" class="h-10 w-10" aria-hidden="true">
+                                        <rect x="14" y="12" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" />
+                                        <rect x="20" y="18" width="8" height="8" fill="currentColor" />
+                                    </svg>
+                                )}
+                                {momento.icono === 'taza' && (
+                                    <svg viewBox="0 0 48 48" class="h-10 w-10" aria-hidden="true">
+                                        <path d="M14 22a10 10 0 0 0 20 0H14Z" fill="none" stroke="currentColor" stroke-width="2" />
+                                        <path d="M34 20h3a4 4 0 0 1 0 8h-4" fill="none" stroke="currentColor" stroke-width="2" />
+                                        <path d="M12 34h24" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                    </svg>
+                                )}
+                                {momento.icono === 'luna' && (
+                                    <svg viewBox="0 0 48 48" class="h-10 w-10" aria-hidden="true">
+                                        <path d="M30 8a16 16 0 1 0 9 25A13 13 0 1 1 30 8Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" />
+                                    </svg>
+                                )}
+                            </span>
+                            <span class="mt-5 max-w-36 text-base font-semibold leading-tight">
+                                {momento.titulo}
+                            </span>
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <section id="blends" class="bg-[#f8f6f0] py-16 text-sunka-ink md:py-24">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+            <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div>
+                    <h2 class="font-heading text-3xl font-semibold leading-tight md:text-5xl">
+                        Blends de la coleccion
+                    </h2>
+                    <p class="mt-3 max-w-2xl text-base leading-relaxed text-sunka-ink/70">
+                        Cuatro perfiles con una misma estetica: sobria, legible y simetrica.
+                    </p>
+                </div>
+                <a
+                    href="/tienda"
+                    class="text-xs font-semibold uppercase tracking-[0.16em] text-sunka-ink transition hover:text-sunka-brass"
+                >
+                    Ver coleccion completa -&gt;
+                </a>
+            </div>
+
+            <div class="mt-10 grid gap-6 md:grid-cols-2">
+                {
+                    blends.map((blend) => (
+                        <article class="border border-sunka-ink/28 bg-sunka-white">
+                            <div class={`${blend.tono} min-h-52 p-8 text-sunka-white`}>
+                                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-sunka-white/16">
+                                    {blend.nombre}
+                                </p>
+                                <p class="mt-24 text-sm text-sunka-white/88">{blend.perfil}</p>
+                            </div>
+                            <div class="p-7">
+                                <p class="min-h-20 text-lg leading-relaxed text-sunka-ink/76">
+                                    {blend.descripcion}
+                                </p>
+                                <div class="mt-8 flex items-center justify-between gap-4">
+                                    <p class="font-semibold">S/ 16.90</p>
+                                    <a
+                                        href="/tienda"
+                                        class="text-sm font-semibold transition hover:text-sunka-brass"
+                                    >
+                                        Agregar
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-sunka-forest text-sunka-white">
+        <div class="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
+            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                La diferencia esta en la taza
+            </p>
+            <h2 class="mt-8 max-w-4xl font-heading text-4xl font-semibold leading-tight md:text-6xl">
+                Mas aroma, mas cuerpo y mejor liberacion de sabor.
+            </h2>
+            <p class="mt-7 max-w-3xl text-lg leading-relaxed text-sunka-white/72">
+                El formato doble camara permite una infusion mas uniforme. El diferencial tecnico
+                se comunica con lenguaje claro, premium y facil de leer.
+            </p>
+            <a
+                href="#preparacion"
+                class="mt-10 inline-flex h-13 w-full items-center justify-center bg-sunka-white px-8 text-xs font-semibold uppercase tracking-[0.16em] text-sunka-ink transition hover:bg-sunka-sand md:w-auto"
+            >
+                Conocer el formato
+            </a>
+        </div>
+        <div class="grid border-t border-sunka-white/12 md:grid-cols-4">
+            <div class="border-b border-sunka-white/12 px-5 py-10 text-center md:border-b-0 md:border-r md:border-sunka-white/12">
+                <p class="font-heading text-4xl font-semibold">1.5 g</p>
+                <p class="mt-2 text-sm text-sunka-white/72">Mayor gramaje por filtrante</p>
+            </div>
+            <div class="border-b border-sunka-white/12 px-5 py-10 text-center md:border-b-0 md:border-r md:border-sunka-white/12">
+                <p class="font-heading text-4xl font-semibold">20</p>
+                <p class="mt-2 text-sm text-sunka-white/72">Sobres doble camara</p>
+            </div>
+            <div class="border-b border-sunka-white/12 px-5 py-10 text-center md:border-b-0 md:border-r md:border-sunka-white/12">
+                <p class="font-heading text-4xl font-semibold">ISO</p>
+                <p class="mt-2 text-sm text-sunka-white/72">Calidad consistente</p>
+            </div>
+            <div class="px-5 py-10 text-center">
+                <p class="font-heading text-4xl font-semibold">RA</p>
+                <p class="mt-2 text-sm text-sunka-white/72">Rainforest Alliance</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="preparacion" class="bg-sunka-cream py-16 text-sunka-ink md:py-20">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+            <p class="text-xs font-semibold uppercase tracking-[0.22em]">Modo de preparacion</p>
+            <h2 class="mt-2 font-heading text-4xl font-semibold leading-tight md:text-5xl">
+                Un ritual simple, preciso y elegante.
+            </h2>
+            <ol class="mt-10 space-y-6">
+                {
+                    pasos.map((paso, index) => (
+                        <li class="grid gap-5 md:grid-cols-[64px_minmax(0,1fr)] md:items-center">
+                            <span class="flex h-16 w-16 items-center justify-center rounded-full bg-sunka-ink text-2xl font-semibold text-sunka-white">
+                                {index + 1}
+                            </span>
+                            <div>
+                                <h3 class="text-xl font-semibold">{paso.titulo}</h3>
+                                <p class="mt-1 text-base leading-relaxed text-sunka-ink/72">
+                                    {paso.texto}
+                                </p>
+                            </div>
+                        </li>
+                    ))
+                }
+            </ol>
+        </div>
+    </section>
+
+    <section id="regalos" class="bg-[#f8f6f0] py-16 text-sunka-ink md:py-24">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+            <p class="text-xs font-semibold uppercase tracking-[0.22em]">Regalos que conectan</p>
+            <h2 class="mt-3 max-w-5xl font-heading text-4xl font-semibold leading-tight md:text-5xl">
+                Convierte Signature Black en un regalo premium.
+            </h2>
+            <p class="mt-3 max-w-4xl text-base leading-relaxed text-sunka-ink/70">
+                La coleccion conecta con packs, gift boxes y regalos corporativos manteniendo la
+                misma estetica del home.
+            </p>
+
+            <div class="mt-10 grid gap-6 md:grid-cols-2">
+                {
+                    regalos.map((regalo) => (
+                        <a href="/tienda" class="group border border-sunka-ink/28 bg-sunka-white">
+                            <div class="flex min-h-40 items-center justify-center bg-sunka-forest px-8 text-center text-sunka-white transition group-hover:bg-sunka-ink">
+                                <p class="text-lg font-medium">{regalo.nombre}</p>
+                            </div>
+                            <div class="flex h-16 items-center justify-center font-semibold">
+                                {regalo.precio}
+                            </div>
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <NewsLetter />
+</BaseLayout>
