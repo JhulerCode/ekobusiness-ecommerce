@@ -1,6 +1,7 @@
 ---
-import Header from '../components/Header.astro'
-import Footer from '../components/Footer.astro'
+import Header from '@/components/Header.astro'
+import Footer from '@/components/Footer.astro'
+import NewsLetter from '@/components/home/NewsLetter.astro'
 import '../styles/global.css'
 
 const { title = 'Mi Tienda' } = Astro.props
@@ -57,6 +58,7 @@ const { title = 'Mi Tienda' } = Astro.props
             <slot />
         </main>
 
+        <NewsLetter />
         <Footer />
     </body>
 </html>
