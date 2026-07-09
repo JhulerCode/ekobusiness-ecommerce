@@ -1,0 +1,42 @@
+---
+const pasos = [
+    {
+        titulo: 'Agua caliente',
+        texto: 'Usa una taza amplia para permitir una mejor expresion del te negro.',
+    },
+    {
+        titulo: 'Infusiona 3 a 5 minutos',
+        texto: 'Mas tiempo para una taza intensa, menos tiempo para un perfil mas suave.',
+    },
+    {
+        titulo: 'Completa tu momento',
+        texto: 'Ideal para oficina, sobremesa, tarde o una pausa lenta al final del dia.',
+    },
+]
+---
+
+<section id="preparacion" class="bg-sunka-cream py-16 text-sunka-ink md:py-20">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+        <p class="text-xs font-semibold uppercase tracking-[0.22em]">Modo de preparacion</p>
+        <h2 class="mt-2 font-heading text-4xl font-semibold leading-tight md:text-5xl">
+            Un ritual simple, preciso y elegante.
+        </h2>
+        <ol class="mt-10 space-y-6">
+            {
+                pasos.map((paso, index) => (
+                    <li class="grid gap-5 md:grid-cols-[64px_minmax(0,1fr)] md:items-center">
+                        <span class="flex h-16 w-16 items-center justify-center rounded-full bg-sunka-ink text-2xl font-semibold text-sunka-white">
+                            {index + 1}
+                        </span>
+                        <div>
+                            <h3 class="text-xl font-semibold">{paso.titulo}</h3>
+                            <p class="mt-1 text-base leading-relaxed text-sunka-ink/72">
+                                {paso.texto}
+                            </p>
+                        </div>
+                    </li>
+                ))
+            }
+        </ol>
+    </div>
+</section>

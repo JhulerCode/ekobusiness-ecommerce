@@ -1,0 +1,78 @@
+---
+const blends = [
+    {
+        nombre: 'Vainilla Chai',
+        perfil: 'Calido / especiado / cremoso',
+        descripcion: 'Te negro con notas de vainilla y especias aromaticas para una taza envolvente.',
+        tono: 'bg-sunka-ink',
+    },
+    {
+        nombre: 'Raspberry',
+        perfil: 'Frutal / intenso / elegante',
+        descripcion: 'Una mezcla de te negro con notas de frutos rojos para una pausa moderna.',
+        tono: 'bg-sunka-forest',
+    },
+    {
+        nombre: 'Acai Berry',
+        perfil: 'Profundo / frutal / contemporaneo',
+        descripcion: 'Te negro con un perfil suave, ligeramente dulce y notas de frutos del bosque.',
+        tono: 'bg-sunka-ink',
+    },
+    {
+        nombre: 'Manzana Canela',
+        perfil: 'Dulce / calido / reconfortante',
+        descripcion: 'Una taza especiada y equilibrada, ideal para sobremesa o ritual de calma.',
+        tono: 'bg-sunka-forest',
+    },
+]
+---
+
+<section id="blends" class="bg-[#f8f6f0] py-16 text-sunka-ink md:py-24">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+                <h2 class="font-heading text-3xl font-semibold leading-tight md:text-5xl">
+                    Blends de la coleccion
+                </h2>
+                <p class="mt-3 max-w-2xl text-base leading-relaxed text-sunka-ink/70">
+                    Cuatro perfiles con una misma estetica: sobria, legible y simetrica.
+                </p>
+            </div>
+            <a
+                href="/tienda"
+                class="text-xs font-semibold uppercase tracking-[0.16em] text-sunka-ink transition hover:text-sunka-brass"
+            >
+                Ver coleccion completa -&gt;
+            </a>
+        </div>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-2">
+            {
+                blends.map((blend) => (
+                    <article class="border border-sunka-ink/28 bg-sunka-white">
+                        <div class={`${blend.tono} min-h-52 p-8 text-sunka-white`}>
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-sunka-white/16">
+                                {blend.nombre}
+                            </p>
+                            <p class="mt-24 text-sm text-sunka-white/88">{blend.perfil}</p>
+                        </div>
+                        <div class="p-7">
+                            <p class="min-h-20 text-lg leading-relaxed text-sunka-ink/76">
+                                {blend.descripcion}
+                            </p>
+                            <div class="mt-8 flex items-center justify-between gap-4">
+                                <p class="font-semibold">S/ 16.90</p>
+                                <a
+                                    href="/tienda"
+                                    class="text-sm font-semibold transition hover:text-sunka-brass"
+                                >
+                                    Agregar
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                ))
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,35 @@
+---
+const regalos = [
+    { nombre: 'Pack Signature', precio: 'S/ 64.90' },
+    { nombre: 'Pack Oficina', precio: 'S/ 79.90' },
+    { nombre: 'Gift Box Premium', precio: 'S/ 129.90' },
+]
+---
+
+<section id="regalos" class="bg-[#f8f6f0] py-16 text-sunka-ink md:py-24">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+        <p class="text-xs font-semibold uppercase tracking-[0.22em]">Regalos que conectan</p>
+        <h2 class="mt-3 max-w-5xl font-heading text-4xl font-semibold leading-tight md:text-5xl">
+            Convierte Signature Black en un regalo premium.
+        </h2>
+        <p class="mt-3 max-w-4xl text-base leading-relaxed text-sunka-ink/70">
+            La coleccion conecta con packs, gift boxes y regalos corporativos manteniendo la misma
+            estetica del home.
+        </p>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-2">
+            {
+                regalos.map((regalo) => (
+                    <a href="/tienda" class="group border border-sunka-ink/28 bg-sunka-white">
+                        <div class="flex min-h-40 items-center justify-center bg-sunka-forest px-8 text-center text-sunka-white transition group-hover:bg-sunka-ink">
+                            <p class="text-lg font-medium">{regalo.nombre}</p>
+                        </div>
+                        <div class="flex h-16 items-center justify-center font-semibold">
+                            {regalo.precio}
+                        </div>
+                    </a>
+                ))
+            }
+        </div>
+    </div>
+</section>
