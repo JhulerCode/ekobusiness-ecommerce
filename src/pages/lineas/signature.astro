@@ -60,82 +60,48 @@ const regalos = [
 ---
 
 <BaseLayout title="Signature Black | Sunka Herbal Tea">
-    <section class="relative overflow-hidden bg-sunka-ink pt-28 text-sunka-white md:pt-32">
-        <div class="absolute inset-y-0 right-0 hidden w-[46%] md:block" aria-hidden="true">
+    <section class="relative min-h-[690px] w-full overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[650px]">
+        <div class="absolute inset-0" aria-hidden="true">
             <img
                 src={signature.src}
                 alt=""
-                class="h-full w-full object-cover object-left opacity-72"
+                class="signature-hero-image h-full w-full object-cover object-left md:object-left lg:object-top"
             />
-            <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.48)_42%,rgba(9,8,6,.12)_100%)]"></div>
+            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.98)_34%,rgba(9,8,6,.82)_58%,rgba(9,8,6,.18)_100%)] md:bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.92)_42%,rgba(9,8,6,.46)_68%,rgba(9,8,6,.12)_100%)]"></div>
         </div>
 
-        <div class="relative mx-auto grid min-h-[620px] max-w-7xl items-center px-5 py-16 md:grid-cols-[minmax(0,1fr)_minmax(320px,440px)] md:px-8 lg:py-20">
-            <div class="max-w-3xl">
-                <p class="text-xs font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+        <div class="relative z-10 mx-auto flex min-h-[690px] max-w-7xl items-start px-5 pt-28 md:min-h-[650px] md:items-center md:px-8 md:pt-24">
+            <div class="max-w-2xl">
+                <p class="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-sunka-brass-light/90">
                     Signature Black / Sunka x Mabroc
                 </p>
-                <h1 class="mt-8 font-heading text-4xl font-semibold leading-[1.04] text-sunka-white md:text-6xl lg:text-7xl">
+                <h1 class="max-w-xl font-heading text-3xl font-semibold leading-[1.05] text-sunka-white md:text-5xl">
                     Te negro de origen para elevar tu ritual diario.
                 </h1>
-                <p class="mt-7 max-w-2xl text-lg leading-relaxed text-sunka-white/76 md:text-xl">
+                <p class="mt-6 max-w-md text-base leading-relaxed text-sunka-white/88 md:text-lg">
                     Una coleccion de tes negros de Sri Lanka en formato doble camara, con mayor
                     gramaje, mas aroma y una experiencia de taza mas intensa.
                 </p>
-                <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+                <div class="mt-9 flex flex-col gap-3 sm:flex-row">
                     <a
                         href="/tienda"
-                        class="inline-flex h-13 items-center justify-center border border-sunka-white bg-sunka-white px-8 text-xs font-semibold uppercase tracking-[0.14em] text-sunka-ink transition hover:bg-sunka-sand"
+                        class="inline-flex h-11 items-center justify-center border border-sunka-brass bg-sunka-brass px-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white transition-all duration-300 hover:bg-sunka-brass-light hover:text-sunka-ink"
                     >
                         Comprar coleccion
                     </a>
                     <a
                         href="#blends"
-                        class="inline-flex h-13 items-center justify-center border border-sunka-white/70 px-8 text-xs font-semibold uppercase tracking-[0.14em] text-sunka-white transition hover:border-sunka-brass-light hover:text-sunka-brass-light"
+                        class="inline-flex h-11 items-center justify-center border border-sunka-white/55 px-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white transition-all duration-300 hover:border-sunka-white hover:bg-sunka-white hover:text-sunka-ink"
                     >
                         Ver blends
                     </a>
                     <a
                         href="#regalos"
-                        class="inline-flex h-13 items-center justify-center border border-sunka-white/70 px-8 text-xs font-semibold uppercase tracking-[0.14em] text-sunka-white transition hover:border-sunka-brass-light hover:text-sunka-brass-light"
+                        class="inline-flex h-11 items-center justify-center border border-sunka-white/35 px-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white transition-all duration-300 hover:border-sunka-brass-light hover:text-sunka-brass-light"
                     >
                         Armar pack
                     </a>
                 </div>
-            </div>
-
-            <div class="mt-12 md:hidden">
-                <img src={signature.src} alt="Signature Black" class="h-72 w-full object-cover object-left" />
-            </div>
-        </div>
-    </section>
-
-    <section class="bg-sunka-forest py-16 text-sunka-white md:py-24">
-        <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 md:grid-cols-3 md:px-8">
-            <div class="border border-sunka-white/72 p-8 text-center">
-                <p class="text-xs font-medium uppercase tracking-[0.18em] text-sunka-white/78">
-                    Sunka
-                </p>
-                <p class="mt-12 font-heading text-4xl font-semibold leading-none">Acai<br />Berry</p>
-                <p class="mt-12 text-xs font-semibold uppercase tracking-[0.2em] text-sunka-white/82">
-                    Black tea
-                </p>
-            </div>
-            <div class="border border-sunka-white bg-sunka-ink p-8 text-center md:scale-110">
-                <p class="text-xs font-medium uppercase tracking-[0.18em] text-sunka-white/78">
-                    Sunka
-                </p>
-                <p class="mt-12 font-heading text-4xl font-semibold leading-none">
-                    Signature<br />Black
-                </p>
-                <p class="mt-12 text-xs font-semibold uppercase tracking-[0.2em] text-sunka-white/82">
-                    Double chamber<br />20 bags
-                </p>
-            </div>
-            <div class="bg-sunka-white p-8 text-center text-sunka-ink">
-                <p class="flex min-h-52 items-center justify-center font-heading text-3xl font-semibold leading-tight">
-                    Taza<br />servida
-                </p>
             </div>
         </div>
     </section>
@@ -185,6 +151,36 @@ const regalos = [
                         </a>
                     ))
                 }
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-sunka-forest py-16 text-sunka-white md:py-24">
+        <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 md:grid-cols-3 md:px-8">
+            <div class="border border-sunka-white/72 p-8 text-center">
+                <p class="text-xs font-medium uppercase tracking-[0.18em] text-sunka-white/78">
+                    Sunka
+                </p>
+                <p class="mt-12 font-heading text-4xl font-semibold leading-none">Acai<br />Berry</p>
+                <p class="mt-12 text-xs font-semibold uppercase tracking-[0.2em] text-sunka-white/82">
+                    Black tea
+                </p>
+            </div>
+            <div class="border border-sunka-white bg-sunka-ink p-8 text-center md:scale-110">
+                <p class="text-xs font-medium uppercase tracking-[0.18em] text-sunka-white/78">
+                    Sunka
+                </p>
+                <p class="mt-12 font-heading text-4xl font-semibold leading-none">
+                    Signature<br />Black
+                </p>
+                <p class="mt-12 text-xs font-semibold uppercase tracking-[0.2em] text-sunka-white/82">
+                    Double chamber<br />20 bags
+                </p>
+            </div>
+            <div class="bg-sunka-white p-8 text-center text-sunka-ink">
+                <p class="flex min-h-52 items-center justify-center font-heading text-3xl font-semibold leading-tight">
+                    Taza<br />servida
+                </p>
             </div>
         </div>
     </section>
@@ -334,3 +330,25 @@ const regalos = [
 
     <NewsLetter />
 </BaseLayout>
+
+<style>
+    .signature-hero-image {
+        animation: signatureHeroZoom 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes signatureHeroZoom {
+        from {
+            transform: scale(1);
+        }
+
+        to {
+            transform: scale(1.06);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .signature-hero-image {
+            animation: none;
+        }
+    }
+</style>
