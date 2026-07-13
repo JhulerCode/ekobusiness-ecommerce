@@ -48,23 +48,17 @@ const atributos = [
                         El formato doble camara permite una infusion mas uniforme. El diferencial
                         tecnico se comunica con lenguaje claro, premium y facil de leer.
                     </p>
-                    <a
-                        href="#preparacion"
-                        class="mt-7 inline-flex h-11 items-center justify-center border border-sunka-white/55 px-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white transition-colors duration-300 hover:border-sunka-brass hover:bg-sunka-brass hover:text-sunka-ink"
-                    >
-                        Conocer el formato
-                    </a>
                 </div>
             </div>
 
-            <div class="grid px-4 py-6 text-sunka-white sm:grid-cols-4 md:grid-cols-2 md:px-6 md:py-7 lg:grid-cols-4 lg:px-0 lg:py-0">
+            <div class="grid grid-cols-2 px-4 py-6 text-sunka-white sm:grid-cols-4 md:grid-cols-2 md:px-6 md:py-7 lg:grid-cols-4 lg:px-0 lg:py-0">
                 {
                     atributos.map((atributo, index) => {
                         const Icon = atributo.Icon
 
                         return (
                             <div
-                                class={`relative flex min-h-[130px] flex-col items-center justify-center px-2 py-4 text-center lg:min-h-[155px] lg:py-5 ${
+                                class={`relative flex min-h-[112px] flex-col items-center justify-center px-2 py-3 text-center md:min-h-[130px] md:py-4 lg:min-h-[155px] lg:py-5 ${
                                     index > 0
                                         ? 'lg:before:absolute lg:before:left-0 lg:before:top-1/2 lg:before:h-16 lg:before:w-[2px] lg:before:-translate-y-1/2 lg:before:bg-sunka-white/24'
                                         : ''
