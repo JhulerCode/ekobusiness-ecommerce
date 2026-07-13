@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import LineaHero from '@/components/lineas/LineaHero.astro'
+import LineaMomentos from '@/components/lineas/LineaMomentos.astro'
+import LineaProductosDestacados from '@/components/lineas/LineaProductosDestacados.astro'
+import LineaBlends from '@/components/lineas/LineaBlends.astro'
+import LineaDiferencia from '@/components/lineas/LineaDiferencia.astro'
+import LineaPreparacion from '@/components/lineas/LineaPreparacion.astro'
+import { getLineaBySlug } from '@/data/lineas'
+
+const linea = getLineaBySlug(Astro.params.slug)
+
+if (!linea) {
+    return new Response(null, {
+        status: 404,
+        statusText: 'Linea no encontrada',
+    })
+}
+---
+
+<BaseLayout title={linea.seoTitle}>
+    <LineaHero linea={linea} />
+    <LineaMomentos linea={linea} />
+    <LineaProductosDestacados linea={linea} />
+    <LineaPreparacion linea={linea} />
+    <LineaDiferencia linea={linea} />
+    <LineaBlends linea={linea} />
+</BaseLayout>

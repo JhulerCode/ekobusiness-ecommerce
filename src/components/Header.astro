@@ -21,9 +21,8 @@ const rightNavLinks = [
 ]
 
 const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
-const transparentHeaderPaths = ['/', '/lineas/signature']
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
-const startsTransparent = transparentHeaderPaths.includes(currentPath)
+const startsTransparent = currentPath === '/' || currentPath.startsWith('/lineas/')
 const headerMainClass = startsTransparent
     ? 'fixed top-7 left-0 z-50 w-full border-b border-transparent bg-transparent transition-all duration-500'
     : 'fixed top-7 left-0 z-50 w-full border-b border-sunka-white/10 bg-[#2b2b2b]/42 backdrop-blur-md transition-all duration-500'
@@ -138,9 +137,8 @@ const headerMainClass = startsTransparent
     const iconClose = document.getElementById('icon-close')
     const logoWhite = document.getElementById('site-logo-white')
     const logoBlack = document.getElementById('site-logo-black')
-    const transparentHeaderPaths = ['/', '/lineas/signature']
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/'
-    const isTransparentHeaderPage = transparentHeaderPaths.includes(currentPath)
+    const isTransparentHeaderPage = currentPath === '/' || currentPath.startsWith('/lineas/')
 
     const setMenuOpen = (isOpen) => {
         mobileMenu?.classList.toggle('translate-x-0', isOpen)

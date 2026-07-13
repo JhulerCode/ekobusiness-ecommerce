@@ -1,0 +1,18 @@
+
+> ekobusiness-ecommerce@0.0.1 dev C:\Users\aguir\Documents\Code\itderp\ecommerce
+> astro dev "--host" "127.0.0.1"
+
+16:06:19 [types] Generated 4ms
+16:06:19 [content] Syncing content
+16:06:20 [content] Synced content
+
+ astro  v5.13.10 ready in 4756 ms
+
+┃ Local    http://127.0.0.1:4321/
+
+16:06:20 watching for file changes...
+16:11:15 [200] /lineas/signature 1477ms
+16:11:18 [200] /lineas/piramidal 50ms
+16:11:26 [200] /lineas/luxury 32ms
+16:11:30 [200] /lineas/tradicional 51ms
+16:11:33 [200] /lineas/granel 37ms

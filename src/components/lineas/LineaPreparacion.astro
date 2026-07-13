@@ -1,0 +1,78 @@
+---
+import DropIcon from '@/assets/icons/icon-drop.astro'
+import RitualGoalIcon from '@/assets/icons/icon-ritual-goal.astro'
+import MoonIcon from '@/assets/icons/icon-moon.astro'
+import LotusIcon from '@/assets/icons/icon-lotus.astro'
+import LeafIcon from '@/assets/icons/icon-leaf.astro'
+
+const { linea } = Astro.props
+const preparacion = linea.preparacion
+
+const icons = {
+    drop: DropIcon,
+    ritual: RitualGoalIcon,
+    moon: MoonIcon,
+    lotus: LotusIcon,
+    leaf: LeafIcon,
+}
+
+const IntroIcon = icons[preparacion.icon] ?? LotusIcon
+---
+
+<section id="preparacion" class="bg-[#e9e7e1]">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[58%_42%] lg:grid-cols-[65%_35%]">
+        <div class="relative min-h-[430px] overflow-hidden md:min-h-[380px]">
+            <img
+                src={preparacion.image.src}
+                alt={preparacion.imageAlt}
+                class="absolute inset-0 h-full w-full object-cover object-left md:object-center"
+            />
+            <div class="absolute inset-0 bg-[linear-gradient(180deg,#e9e7e1_0%,rgba(233,231,225,.9)_34%,rgba(233,231,225,.18)_76%,rgba(233,231,225,0)_100%)] md:bg-[linear-gradient(90deg,#e9e7e1_0%,#e9e7e1_27%,rgba(233,231,225,.88)_39%,rgba(233,231,225,.22)_58%,rgba(233,231,225,0)_78%)]"></div>
+
+            <div class="relative z-10 flex min-h-[430px] items-start px-5 py-10 md:min-h-[380px] md:items-center md:px-8 md:py-0">
+                <div>
+                    <IntroIcon class="mb-4 text-sunka-brass" aria-hidden="true" />
+
+                    <p class="mb-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass">
+                        {preparacion.label}
+                    </p>
+
+                    <h2 class="max-w-xs font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl">
+                        {preparacion.title}
+                    </h2>
+
+                    <p class="mt-4 max-w-sm text-sm leading-relaxed text-sunka-ink/75 md:text-base">
+                        {preparacion.description}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center px-5 py-8 md:px-6 md:py-7 lg:px-8 lg:py-0">
+            <div class="w-full space-y-5 lg:space-y-6">
+                {
+                    preparacion.steps.map((paso, index) => {
+                        const Icon = icons[paso.icon] ?? LeafIcon
+
+                        return (
+                            <div class="flex gap-3 lg:gap-4">
+                                <span class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-sunka-brass/55 text-sunka-brass">
+                                    <Icon class="h-5 w-5" />
+                                </span>
+
+                                <div>
+                                    <p class="text-sm font-semibold text-sunka-ink">
+                                        {index + 1}. {paso.titulo}
+                                    </p>
+                                    <p class="mt-1 text-sm leading-snug text-sunka-ink/68">
+                                        {paso.texto}
+                                    </p>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        </div>
+    </div>
+</section>

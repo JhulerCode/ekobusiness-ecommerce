@@ -1,0 +1,82 @@
+---
+const { linea } = Astro.props
+
+const buttonClasses = {
+    primary:
+        'border-sunka-brass bg-sunka-brass text-sunka-white hover:bg-sunka-brass-light hover:text-sunka-ink',
+    secondary:
+        'border-sunka-white/55 text-sunka-white hover:border-sunka-white hover:bg-sunka-white hover:text-sunka-ink',
+    ghost:
+        'border-sunka-white/35 text-sunka-white hover:border-sunka-brass-light hover:text-sunka-brass-light',
+}
+---
+
+<section
+    class="relative min-h-[690px] w-full overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[650px]"
+>
+    <div class="absolute inset-0" aria-hidden="true">
+        <img
+            src={linea.heroImage.src}
+            alt=""
+            class={`linea-hero-image h-full w-full object-cover ${linea.heroImagePosition}`}
+        />
+        <div
+            class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.98)_34%,rgba(9,8,6,.82)_58%,rgba(9,8,6,.18)_100%)] md:bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.92)_42%,rgba(9,8,6,.46)_68%,rgba(9,8,6,.12)_100%)]"
+        >
+        </div>
+    </div>
+
+    <div
+        class="relative z-10 mx-auto flex min-h-[690px] max-w-7xl items-start px-5 pt-28 md:min-h-[650px] md:items-center md:px-8 md:pt-24"
+    >
+        <div class="max-w-2xl">
+            <p
+                class="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-sunka-brass-light/90"
+            >
+                {linea.eyebrow}
+            </p>
+            <h1
+                class="max-w-xl font-heading text-3xl font-semibold leading-[1.05] text-sunka-white md:text-5xl"
+            >
+                {linea.heroTitle}
+            </h1>
+            <p class="mt-6 max-w-md text-base leading-relaxed text-sunka-white/88 md:text-lg">
+                {linea.description}
+            </p>
+            <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+                {
+                    linea.heroCtas.map((cta) => (
+                        <a
+                            href={cta.href}
+                            class={`inline-flex h-11 items-center justify-center border px-6 text-[12px] font-semibold uppercase tracking-[0.12em] transition-all duration-300 ${buttonClasses[cta.variant] ?? buttonClasses.secondary}`}
+                        >
+                            {cta.label}
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .linea-hero-image {
+        animation: lineaHeroZoom 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes lineaHeroZoom {
+        from {
+            transform: scale(1);
+        }
+
+        to {
+            transform: scale(1.06);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .linea-hero-image {
+            animation: none;
+        }
+    }
+</style>

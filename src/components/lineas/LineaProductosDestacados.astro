@@ -1,0 +1,42 @@
+---
+const { linea } = Astro.props
+---
+
+<section id="productos" class="bg-sunka-cream py-12 text-sunka-ink md:py-16">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+        <div class="grid items-center gap-5 md:grid-cols-3 lg:gap-7">
+            {
+                linea.productosDestacados.map((producto) => (
+                    <article class="group bg-sunka-cream">
+                        <a
+                            href={producto.href}
+                            class={`relative block aspect-square overflow-hidden rounded-[6px] bg-sunka-forest transition duration-500 group-hover:shadow-[0_20px_50px_rgba(9,8,6,.14)] ${producto.imageClass}`}
+                        >
+                            <img
+                                src={producto.image.src}
+                                alt={producto.imageAlt || producto.nombre}
+                                class="h-full w-full object-cover object-left transition duration-[1800ms] ease-out group-hover:scale-105"
+                            />
+                            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,0)_34%,rgba(9,8,6,.18)_100%)]"></div>
+                        </a>
+
+                        <div class="pt-5 text-center">
+                            <h2 class="font-heading text-2xl font-semibold leading-tight text-sunka-ink md:text-3xl">
+                                {producto.nombre}
+                            </h2>
+                            <p class="mt-2 text-sm leading-relaxed text-sunka-ink/68">
+                                {producto.perfil}
+                            </p>
+                            <a
+                                href={producto.href}
+                                class="mt-5 inline-flex h-10 items-center justify-center border border-sunka-ink/22 px-5 text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-ink transition-colors duration-300 hover:border-sunka-brass hover:bg-sunka-brass hover:text-sunka-white"
+                            >
+                                Ver detalle
+                            </a>
+                        </div>
+                    </article>
+                ))
+            }
+        </div>
+    </div>
+</section>

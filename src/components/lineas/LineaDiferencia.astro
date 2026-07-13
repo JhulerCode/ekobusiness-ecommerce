@@ -1,0 +1,72 @@
+---
+import DropIcon from '@/assets/icons/icon-drop.astro'
+import BoxIcon from '@/assets/icons/icon-box.astro'
+import ShieldCheckIcon from '@/assets/icons/icon-shield-check.astro'
+import LeafIcon from '@/assets/icons/icon-leaf.astro'
+
+const { linea } = Astro.props
+const diferencia = linea.diferencia
+
+const icons = {
+    drop: DropIcon,
+    box: BoxIcon,
+    shield: ShieldCheckIcon,
+    leaf: LeafIcon,
+}
+---
+
+<section class="mt-1 w-full overflow-hidden bg-sunka-forest">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[52%_48%]">
+        <div class="bg-sunka-forest text-sunka-white">
+            <div class="px-5 py-12 md:px-7 md:py-10 lg:px-8 lg:py-12">
+                <div class="max-w-md">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.28em] text-sunka-brass-light">
+                        {diferencia.label}
+                    </p>
+                    <h2 class="mt-3 font-heading text-3xl font-semibold leading-tight md:text-4xl">
+                        {diferencia.title}
+                    </h2>
+                    <p class="mt-4 max-w-sm text-sm leading-relaxed text-sunka-white/86 md:text-base">
+                        {diferencia.description}
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 px-4 py-6 text-sunka-white sm:grid-cols-4 md:grid-cols-2 md:px-6 md:py-7 lg:grid-cols-4 lg:px-0 lg:py-0">
+                {
+                    diferencia.metrics.map((atributo, index) => {
+                        const Icon = icons[atributo.icon] ?? LeafIcon
+
+                        return (
+                            <div
+                                class={`relative flex min-h-[112px] flex-col items-center justify-center px-2 py-3 text-center md:min-h-[130px] md:py-4 lg:min-h-[155px] lg:py-5 ${
+                                    index > 0
+                                        ? 'lg:before:absolute lg:before:left-0 lg:before:top-1/2 lg:before:h-16 lg:before:w-[2px] lg:before:-translate-y-1/2 lg:before:bg-sunka-white/24'
+                                        : ''
+                                }`}
+                            >
+                                <span class="flex h-8 items-center justify-center text-sunka-brass-light">
+                                    <Icon class={`h-7 w-7 ${atributo.iconClass ?? ''}`} />
+                                </span>
+                                <p class="mt-2 flex min-h-8 items-center font-heading text-xl font-semibold leading-tight">
+                                    {atributo.titulo}
+                                </p>
+                                <p class="flex min-h-8 max-w-[110px] items-start text-xs leading-snug text-sunka-white/78">
+                                    {atributo.texto}
+                                </p>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        </div>
+
+        <div class="relative min-h-[320px] overflow-hidden md:min-h-full">
+            <img
+                src={diferencia.image.src}
+                alt={diferencia.imageAlt}
+                class="absolute inset-0 h-full w-full object-cover object-left"
+            />
+        </div>
+    </div>
+</section>
