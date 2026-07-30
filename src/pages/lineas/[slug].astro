@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import LineaHero from '@/components/lineas/LineaHero.astro'
 import LineaMomentos from '@/components/lineas/LineaMomentos.astro'
 import LineaProductosDestacados from '@/components/lineas/LineaProductosDestacados.astro'
-import LineaBlends from '@/components/lineas/LineaBlends.astro'
+import LineaIdealParaTi from '@/components/lineas/LineaIdealParaTi.astro'
 import LineaDiferencia from '@/components/lineas/LineaDiferencia.astro'
 import LineaPreparacion from '@/components/lineas/LineaPreparacion.astro'
 import { getLineaBySlug } from '@/data/lineas'
@@ -22,7 +22,7 @@ if (!linea) {
     <LineaHero linea={linea} />
     <LineaMomentos linea={linea} />
     <LineaProductosDestacados linea={linea} />
-    <LineaPreparacion linea={linea} />
     <LineaDiferencia linea={linea} />
-    <LineaBlends linea={linea} />
+    <LineaPreparacion linea={linea} />
+    <LineaIdealParaTi linea={linea} />
 </BaseLayout>

@@ -16,13 +16,6 @@ const signatureProducts = [
     ['Acai Berry', 'Profundo, frutal y contemporaneo', '/producto/acai-berry'],
 ]
 
-const signatureBlends = [
-    ['Vainilla Chai', '16.90', '/producto/vainilla-chai'],
-    ['Raspberry', '16.90', '/producto/raspberry'],
-    ['Acai Berry', '16.90', '/producto/acai-berry'],
-    ['Manzana Canela', '16.90', '/producto/manzana-canela'],
-]
-
 const buildProducts = (items, image, imageAlt) =>
     items.map(([nombre, perfil, href], index) => ({
         nombre,
@@ -33,20 +26,11 @@ const buildProducts = (items, image, imageAlt) =>
         imageClass: productImageClasses[index] || productImageClasses[0],
     }))
 
-const buildBlends = (items, image, imageAlt) =>
-    items.map(([nombre, precio, href]) => ({
-        nombre,
-        precio,
-        href,
-        image,
-        imageAlt,
-    }))
-
 const defaultMomentos = [
-    { titulo: 'Para empezar el dia', icon: 'sun' },
-    { titulo: 'Para la oficina', icon: 'briefcase' },
-    { titulo: 'Despues de comer', icon: 'leaf' },
-    { titulo: 'Para una pausa de noche', icon: 'moon' },
+    { slug: 'manana', titulo: 'Para empezar el dia', icon: 'sun' },
+    { slug: 'oficina', titulo: 'Para la oficina', icon: 'briefcase' },
+    { slug: 'despues-de-comer', titulo: 'Despues de comer', icon: 'leaf' },
+    { slug: 'noche', titulo: 'Para una pausa de noche', icon: 'moon' },
 ]
 
 const defaultPreparacionSteps = [
@@ -87,8 +71,8 @@ export const lineas = [
         heroImageAlt: 'Coleccion Signature Black',
         heroImagePosition: 'object-left md:object-left lg:object-top',
         heroCtas: [
-            { label: 'Comprar coleccion', href: '/tienda', variant: 'primary' },
-            { label: 'Ver blends', href: '#blends', variant: 'secondary' },
+            { label: 'Comprar coleccion', href: '/tienda?linea=signature', variant: 'primary' },
+            { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
             { label: 'Armar pack', href: '#productos', variant: 'ghost' },
         ],
         momentosTitle: 'En que momento vas a vivir Signature Black?',
@@ -139,12 +123,17 @@ export const lineas = [
                 { titulo: 'RA', texto: 'Rainforest Alliance', icon: 'leaf', iconClass: 'scale-[0.82]' },
             ],
         },
-        blendsTitle: 'Blends de la coleccion',
-        blendsSubtitle:
-            'Descubre el blend que tenias en mente, o ese que aun no sabias que buscabas.',
-        blendsCtaText: 'Ver coleccion completa',
-        blendsCtaHref: '/tienda',
-        blends: buildBlends(signatureBlends, signature, 'Blend Signature Black'),
+        idealPara: {
+            label: 'Una linea para ti',
+            title: 'Signature Black es para ti si...',
+            description:
+                'Una coleccion creada para quienes buscan una taza con mas presencia y un ritual cotidiano con caracter.',
+            points: [
+                'Prefieres sabores con cuerpo, intensidad y aromas especiados o frutales.',
+                'Buscas una infusion que acompane el inicio del dia, la oficina o una sobremesa pausada.',
+                'Valoras el origen del te negro, una presentacion premium y una preparacion consistente.',
+            ],
+        },
     },
     {
         slug: 'piramidal',
@@ -158,8 +147,8 @@ export const lineas = [
         heroImageAlt: 'Linea Piramidal Premium',
         heroImagePosition: 'object-bottom md:object-center lg:object-bottom',
         heroCtas: [
-            { label: 'Comprar coleccion', href: '/tienda', variant: 'primary' },
-            { label: 'Ver blends', href: '#blends', variant: 'secondary' },
+            { label: 'Comprar coleccion', href: '/tienda?linea=piramidal', variant: 'primary' },
+            { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
             { label: 'Ver destacados', href: '#productos', variant: 'ghost' },
         ],
         momentosTitle: 'En que momento vas a vivir Piramidal Premium?',
@@ -193,21 +182,17 @@ export const lineas = [
             imageAlt: 'Detalle linea Piramidal Premium',
             metrics: defaultMetrics,
         },
-        blendsTitle: 'Blends piramidales',
-        blendsSubtitle:
-            'Explora perfiles que pueden acompanar una pausa breve o convertirse en tu ritual favorito.',
-        blendsCtaText: 'Ver coleccion completa',
-        blendsCtaHref: '/tienda',
-        blends: buildBlends(
-            [
-                ['Relax', '18.90', '/producto/piramidal-relax'],
-                ['Digestivo', '18.90', '/producto/piramidal-digestivo'],
-                ['Frutos Rojos', '18.90', '/producto/piramidal-frutos-rojos'],
-                ['Hierbas Andinas', '18.90', '/producto/piramidal-hierbas-andinas'],
+        idealPara: {
+            label: 'Una linea para ti',
+            title: 'Piramidal Premium es para ti si...',
+            description:
+                'Una propuesta para disfrutar ingredientes expresivos y una taza que privilegia aroma, espacio y claridad.',
+            points: [
+                'Te gusta reconocer hojas, flores y frutos dentro de cada mezcla.',
+                'Buscas aromas definidos y una infusion que se despliegue con amplitud.',
+                'Disfrutas convertir una pausa breve en un ritual mas sensorial.',
             ],
-            piramidal,
-            'Blend Piramidal Premium',
-        ),
+        },
     },
     {
         slug: 'luxury',
@@ -221,8 +206,8 @@ export const lineas = [
         heroImageAlt: 'Linea Luxury Collection',
         heroImagePosition: 'object-top md:object-center lg:object-top',
         heroCtas: [
-            { label: 'Comprar coleccion', href: '/tienda', variant: 'primary' },
-            { label: 'Ver blends', href: '#blends', variant: 'secondary' },
+            { label: 'Comprar coleccion', href: '/tienda?linea=luxury', variant: 'primary' },
+            { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
             { label: 'Ver destacados', href: '#productos', variant: 'ghost' },
         ],
         momentosTitle: 'En que momento vas a vivir Luxury Collection?',
@@ -256,21 +241,17 @@ export const lineas = [
             imageAlt: 'Detalle Luxury Collection',
             metrics: defaultMetrics,
         },
-        blendsTitle: 'Blends de Luxury Collection',
-        blendsSubtitle:
-            'Encuentra una seleccion para regalar, compartir o descubrir un perfil que aun no tenias en mente.',
-        blendsCtaText: 'Ver coleccion completa',
-        blendsCtaHref: '/tienda',
-        blends: buildBlends(
-            [
-                ['Selection', '24.90', '/producto/luxury-selection'],
-                ['Cacao', '24.90', '/producto/luxury-cacao'],
-                ['Floral', '24.90', '/producto/luxury-floral'],
-                ['Andes', '24.90', '/producto/luxury-andes'],
+        idealPara: {
+            label: 'Una linea para ti',
+            title: 'Luxury Collection es para ti si...',
+            description:
+                'Una seleccion pensada para hacer memorable una ocasion, tanto al regalarla como al servirla.',
+            points: [
+                'Buscas perfiles elegantes para sobremesas y celebraciones especiales.',
+                'Quieres regalar una experiencia cuidada desde el empaque hasta la taza.',
+                'Valoras los detalles, la presentacion y los sabores que invitan a beber despacio.',
             ],
-            luxury,
-            'Blend Luxury Collection',
-        ),
+        },
     },
     {
         slug: 'tradicional',
@@ -284,8 +265,8 @@ export const lineas = [
         heroImageAlt: 'Linea Tradicionales',
         heroImagePosition: 'object-center',
         heroCtas: [
-            { label: 'Comprar coleccion', href: '/tienda', variant: 'primary' },
-            { label: 'Ver blends', href: '#blends', variant: 'secondary' },
+            { label: 'Comprar coleccion', href: '/tienda?linea=tradicional', variant: 'primary' },
+            { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
             { label: 'Ver destacados', href: '#productos', variant: 'ghost' },
         ],
         momentosTitle: 'En que momento vas a vivir Tradicionales?',
@@ -319,21 +300,17 @@ export const lineas = [
             imageAlt: 'Detalle linea Tradicionales',
             metrics: defaultMetrics,
         },
-        blendsTitle: 'Infusiones tradicionales',
-        blendsSubtitle:
-            'Busca el sabor que ya conoces o encuentra ese clasico que puede convertirse en tu nueva costumbre.',
-        blendsCtaText: 'Ver coleccion completa',
-        blendsCtaHref: '/tienda',
-        blends: buildBlends(
-            [
-                ['Manzanilla', '12.90', '/producto/manzanilla'],
-                ['Anis', '12.90', '/producto/anis'],
-                ['Hierba Luisa', '12.90', '/producto/hierba-luisa'],
-                ['Emoliente', '12.90', '/producto/emoliente'],
+        idealPara: {
+            label: 'Una linea para ti',
+            title: 'Tradicionales es para ti si...',
+            description:
+                'Sabores cercanos y faciles de incorporar en una rutina que encuentra bienestar en lo esencial.',
+            points: [
+                'Prefieres infusiones conocidas, suaves y faciles de disfrutar todos los dias.',
+                'Buscas una taza sencilla para despues de comer, descansar o hacer una pausa.',
+                'Valoras la constancia y los sabores familiares por encima de la complejidad.',
             ],
-            tradicional,
-            'Infusion Tradicional',
-        ),
+        },
     },
     {
         slug: 'granel',
@@ -347,8 +324,8 @@ export const lineas = [
         heroImageAlt: 'Linea Granel',
         heroImagePosition: 'object-center',
         heroCtas: [
-            { label: 'Comprar coleccion', href: '/tienda', variant: 'primary' },
-            { label: 'Ver blends', href: '#blends', variant: 'secondary' },
+            { label: 'Comprar coleccion', href: '/tienda?linea=granel', variant: 'primary' },
+            { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
             { label: 'Ver destacados', href: '#productos', variant: 'ghost' },
         ],
         momentosTitle: 'En que momento vas a vivir Granel?',
@@ -382,21 +359,17 @@ export const lineas = [
             imageAlt: 'Detalle linea Granel',
             metrics: defaultMetrics,
         },
-        blendsTitle: 'Blends a granel',
-        blendsSubtitle:
-            'Encuentra el perfil que estabas buscando o prueba uno que no sabias que podia encajar contigo.',
-        blendsCtaText: 'Ver coleccion completa',
-        blendsCtaHref: '/tienda',
-        blends: buildBlends(
-            [
-                ['Serenidad', '9.90', '/producto/granel-serenidad'],
-                ['Energia', '9.90', '/producto/granel-energia'],
-                ['Digestivo', '9.90', '/producto/granel-digestivo'],
-                ['Andino', '9.90', '/producto/granel-andino'],
+        idealPara: {
+            label: 'Una linea para ti',
+            title: 'Granel es para ti si...',
+            description:
+                'Una linea flexible para quienes quieren intervenir en la preparacion y encontrar su propia medida.',
+            points: [
+                'Disfrutas ajustar cantidad, intensidad y tiempo de infusion a tu gusto.',
+                'Quieres experimentar con mezclas y preparar cada taza de una manera distinta.',
+                'Prefieres tener mayor control sobre tu ritual sin renunciar a un blend cuidado.',
             ],
-            granel,
-            'Blend Granel',
-        ),
+        },
     },
 ]
 

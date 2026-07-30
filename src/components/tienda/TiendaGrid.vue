@@ -33,35 +33,6 @@
                         </ul>
                     </div>
 
-                    <!-- Filtro por Categoría -->
-                    <div class="mb-8">
-                        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-4">
-                            Categoría
-                        </h3>
-                        <ul class="space-y-2.5">
-                            <li>
-                                <label class="checkbox">
-                                    <input
-                                        type="checkbox"
-                                        :checked="filtroCategorias.length === 0"
-                                        @change="clearFiltroCategorias"
-                                    />
-                                    <span>Todas</span>
-                                </label>
-                            </li>
-                            <li v-for="c in categorias" :key="c.id">
-                                <label class="checkbox">
-                                    <input
-                                        type="checkbox"
-                                        :value="c.id"
-                                        v-model="filtroCategorias"
-                                    />
-                                    <span>{{ c.nombre }}</span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
                     <!-- Filtro por Precio -->
                     <div class="mb-8">
                         <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-4">
@@ -119,6 +90,23 @@
                     <p class="text-sm text-gray-500">
                         {{ rangoInicio }}–{{ rangoFin }} de {{ productosFiltrados.length }} productos
                     </p>
+                </div>
+
+                <div
+                    v-if="selectedMoment"
+                    class="mb-6 flex flex-wrap items-center gap-3 rounded-xl border border-sunka-brass/25 bg-sunka-sand/35 px-4 py-3"
+                >
+                    <span class="text-sm text-gray-600">Momento seleccionado:</span>
+                    <span class="rounded-full bg-sunka-forest px-3 py-1.5 text-xs font-semibold text-white">
+                        {{ momentoLabel }}
+                    </span>
+                    <button
+                        type="button"
+                        class="text-xs font-semibold uppercase tracking-wider text-gray-600 transition hover:text-black"
+                        @click="clearMomento"
+                    >
+                        Quitar
+                    </button>
                 </div>
 
                 <!-- Filtros móviles -->
@@ -192,39 +180,6 @@
                                         ]"
                                     >
                                         {{ l.nombre }}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Categoría -->
-                            <div>
-                                <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
-                                    Categoría
-                                </h3>
-                                <div class="flex flex-wrap gap-2">
-                                    <button
-                                        @click="clearFiltroCategorias"
-                                        :class="[
-                                            'px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer',
-                                            filtroCategorias.length === 0
-                                                ? 'bg-black text-white'
-                                                : 'border border-gray-300 text-gray-700 hover:bg-gray-100',
-                                        ]"
-                                    >
-                                        Todas
-                                    </button>
-                                    <button
-                                        v-for="c in categorias"
-                                        :key="c.id"
-                                        @click="toggleCategoria(c.id)"
-                                        :class="[
-                                            'px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer',
-                                            filtroCategorias.includes(c.id)
-                                                ? 'bg-black text-white'
-                                                : 'border border-gray-300 text-gray-700 hover:bg-gray-100',
-                                        ]"
-                                    >
-                                        {{ c.nombre }}
                                     </button>
                                 </div>
                             </div>
@@ -366,22 +321,18 @@ export default {
             required: true,
             default: () => [],
         },
-        categorias: {
-            type: Array,
-            required: true,
-            default: () => [],
-        },
     },
     data() {
         return {
             orden: 'nombre-asc',
             filtroLineas: [],
-            filtroCategorias: [],
+            selectedMoment: '',
             precioMin: null,
             precioMax: null,
             paginaActual: 1,
             porPagina: 15,
             showMobileFilters: false,
+            isInitializing: true,
         };
     },
     computed: {
@@ -395,10 +346,11 @@ export default {
                 );
             }
 
-            // Filtro por categoría
-            if (this.filtroCategorias.length > 0) {
+            // Los momentos son tags de selección múltiple por producto. Mientras la
+            // API no entregue tags, se conserva la colección de la línea como fallback.
+            if (this.selectedMoment && this.hasMomentMetadata) {
                 resultado = resultado.filter((p) =>
-                    this.filtroCategorias.includes(p.categoria)
+                    this.productMatchesMoment(p, this.selectedMoment)
                 );
             }
 
@@ -471,7 +423,7 @@ export default {
         hasActiveFilters() {
             return (
                 this.filtroLineas.length > 0 ||
-                this.filtroCategorias.length > 0 ||
+                this.selectedMoment !== '' ||
                 (this.precioMin != null && this.precioMin !== '') ||
                 (this.precioMax != null && this.precioMax !== '')
             );
@@ -479,35 +431,167 @@ export default {
         activeFilterCount() {
             let count = 0;
             if (this.filtroLineas.length > 0) count += this.filtroLineas.length;
-            if (this.filtroCategorias.length > 0) count += this.filtroCategorias.length;
+            if (this.selectedMoment) count++;
             if (this.precioMin != null && this.precioMin !== '') count++;
             if (this.precioMax != null && this.precioMax !== '') count++;
             return count;
         },
+        hasMomentMetadata() {
+            return this.productos.some((producto) => this.getProductMoments(producto).length > 0);
+        },
+        momentoLabel() {
+            const labels = {
+                manana: 'Para empezar el día',
+                oficina: 'Para la oficina',
+                'despues-de-comer': 'Después de comer',
+                noche: 'Para una pausa de noche',
+            };
+
+            return labels[this.selectedMoment] || this.selectedMoment;
+        },
     },
     watch: {
         filtroLineas() {
-            this.paginaActual = 1;
-            this.scrollToTop();
+            this.handleFilterChange();
         },
-        filtroCategorias() {
-            this.paginaActual = 1;
-            this.scrollToTop();
+        selectedMoment() {
+            this.handleFilterChange();
         },
         precioMin() {
-            this.paginaActual = 1;
-            this.scrollToTop();
+            this.handleFilterChange();
         },
         precioMax() {
-            this.paginaActual = 1;
-            this.scrollToTop();
+            this.handleFilterChange();
         },
         orden() {
             this.paginaActual = 1;
             this.scrollToTop();
         },
     },
+    mounted() {
+        this.applyUrlFilters();
+        this.isInitializing = false;
+    },
     methods: {
+        normalizeSlug(value = '') {
+            return String(value)
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        },
+        getLineaSlug(linea) {
+            return this.normalizeSlug(linea.slug || linea.nombre);
+        },
+        lineMatchesSlug(linea, requestedSlug) {
+            const currentSlug = this.getLineaSlug(linea);
+            const requested = this.normalizeSlug(requestedSlug);
+
+            return (
+                currentSlug === requested ||
+                currentSlug.startsWith(`${requested}-`) ||
+                requested.startsWith(`${currentSlug}-`)
+            );
+        },
+        applyUrlFilters() {
+            const params = new URLSearchParams(window.location.search);
+            const requestedLines = (params.get('linea') || '')
+                .split(',')
+                .map((slug) => this.normalizeSlug(slug))
+                .filter(Boolean);
+
+            if (requestedLines.length > 0) {
+                this.filtroLineas = this.lineas
+                    .filter((linea) => requestedLines.some((slug) => this.lineMatchesSlug(linea, slug)))
+                    .map((linea) => linea.id);
+            }
+
+            this.selectedMoment = this.normalizeSlug(params.get('momento') || '');
+
+            const min = Number(params.get('precio_min'));
+            const max = Number(params.get('precio_max'));
+            this.precioMin = Number.isFinite(min) && params.has('precio_min') ? min : null;
+            this.precioMax = Number.isFinite(max) && params.has('precio_max') ? max : null;
+        },
+        updateUrl() {
+            if (this.isInitializing) return;
+
+            const url = new URL(window.location.href);
+            const lineSlugs = this.filtroLineas
+                .map((id) => this.lineas.find((linea) => linea.id === id))
+                .filter(Boolean)
+                .map((linea) => this.getLineaSlug(linea));
+
+            if (lineSlugs.length > 0) url.searchParams.set('linea', lineSlugs.join(','));
+            else url.searchParams.delete('linea');
+
+            if (this.selectedMoment) url.searchParams.set('momento', this.selectedMoment);
+            else url.searchParams.delete('momento');
+
+            if (this.precioMin != null && this.precioMin !== '') {
+                url.searchParams.set('precio_min', this.precioMin);
+            } else {
+                url.searchParams.delete('precio_min');
+            }
+
+            if (this.precioMax != null && this.precioMax !== '') {
+                url.searchParams.set('precio_max', this.precioMax);
+            } else {
+                url.searchParams.delete('precio_max');
+            }
+
+            window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+        },
+        handleFilterChange() {
+            if (this.isInitializing) return;
+            this.paginaActual = 1;
+            this.updateUrl();
+            this.scrollToTop();
+        },
+        getProductMoments(producto) {
+            const sources = [
+                producto.momentos,
+                producto.momento,
+                producto.tags,
+                producto.tags1,
+                producto.etiquetas,
+                producto.etiquetas1,
+            ];
+            const values = [];
+
+            const append = (value) => {
+                if (value == null) return;
+                if (Array.isArray(value)) {
+                    value.forEach(append);
+                    return;
+                }
+                if (typeof value === 'object') {
+                    append(value.slug || value.codigo || value.nombre || value.name);
+                    return;
+                }
+
+                String(value).split(/[,;|]/).forEach((item) => {
+                    const slug = this.normalizeSlug(item);
+                    if (slug) values.push(slug);
+                });
+            };
+
+            sources.forEach(append);
+            return [...new Set(values)];
+        },
+        productMatchesMoment(producto, moment) {
+            const aliases = {
+                manana: ['manana', 'empezar-el-dia', 'para-empezar-el-dia'],
+                oficina: ['oficina', 'para-la-oficina'],
+                'despues-de-comer': ['despues-de-comer', 'sobremesa', 'digestivo'],
+                noche: ['noche', 'pausa-de-noche', 'para-una-pausa-de-noche'],
+            };
+            const accepted = aliases[moment] || [moment];
+
+            return this.getProductMoments(producto).some((tag) => accepted.includes(tag));
+        },
         scrollToTop() {
             this.$nextTick(() => {
                 this.$refs.gridTop?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -520,9 +604,6 @@ export default {
         clearFiltroLineas() {
             this.filtroLineas = [];
         },
-        clearFiltroCategorias() {
-            this.filtroCategorias = [];
-        },
         toggleLinea(id) {
             const idx = this.filtroLineas.indexOf(id);
             if (idx === -1) {
@@ -531,17 +612,12 @@ export default {
                 this.filtroLineas.splice(idx, 1);
             }
         },
-        toggleCategoria(id) {
-            const idx = this.filtroCategorias.indexOf(id);
-            if (idx === -1) {
-                this.filtroCategorias.push(id);
-            } else {
-                this.filtroCategorias.splice(idx, 1);
-            }
+        clearMomento() {
+            this.selectedMoment = '';
         },
         clearAllFilters() {
             this.filtroLineas = [];
-            this.filtroCategorias = [];
+            this.selectedMoment = '';
             this.precioMin = null;
             this.precioMax = null;
         },

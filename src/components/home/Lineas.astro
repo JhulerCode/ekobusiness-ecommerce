@@ -2,8 +2,8 @@
 import signature from '@/assets/home/lineas/signature.webp'
 import piramidal from '@/assets/home/lineas/piramidal.webp'
 import luxury from '@/assets/home/lineas/luxury.webp'
-import granel from '@/assets/home/lineas/granel.webp'
 import tradicional from '@/assets/home/lineas/tradicional.webp'
+// import granel from '@/assets/home/lineas/granel.webp'
 
 const colecciones = [
     {
@@ -41,13 +41,13 @@ const colecciones = [
     //     imagen: campo.src,
     //     posicion: 'object-center',
     // },
-    {
-        nombre: 'Granel',
-        detalle: 'Elige a tu medida',
-        href: '/lineas/granel',
-        imagen: granel.src,
-        posicion: 'object-center',
-    },
+    // {
+    //     nombre: 'Granel',
+    //     detalle: 'Elige a tu medida',
+    //     href: '/lineas/granel',
+    //     imagen: granel.src,
+    //     posicion: 'object-center',
+    // },
 ]
 ---
 
@@ -64,7 +64,7 @@ const colecciones = [
             </p>
         </div>
 
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {
                 colecciones.map((coleccion) => (
                     <a

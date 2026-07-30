@@ -4,6 +4,28 @@ const { linea } = Astro.props
 
 <section id="productos" class="bg-sunka-cream py-12 text-sunka-ink md:py-16">
     <div class="mx-auto max-w-7xl px-5 md:px-8">
+        <div class="mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between">
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass">
+                    Seleccion de la linea
+                </p>
+                <h2 class="mt-2 font-heading text-3xl font-semibold leading-tight md:text-4xl">
+                    Productos destacados
+                </h2>
+                <p class="mt-2 max-w-xl text-sm leading-relaxed text-sunka-ink/68 md:text-base">
+                    Conoce algunos de los perfiles que definen {linea.title}.
+                </p>
+            </div>
+
+            <a
+                href={`/tienda?linea=${encodeURIComponent(linea.slug)}`}
+                class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-sunka-ink transition hover:text-sunka-brass"
+            >
+                Ver coleccion completa
+                <span aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+
         <div class="grid items-center gap-5 md:grid-cols-3 lg:gap-7">
             {
                 linea.productosDestacados.map((producto) => (

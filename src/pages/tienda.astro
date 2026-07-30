@@ -15,7 +15,6 @@ const qryProductos = {
     },
     cols: [
         'linea',
-        'categoria',
         'nombre',
         'unidad',
         'has_fv',
@@ -24,7 +23,7 @@ const qryProductos = {
         'igv_afectacion',
         'fotos',
     ],
-    incl: ['linea1', 'categoria1'],
+    incl: ['linea1'],
     ordr: [['nombre', 'ASC']],
 }
 const resProductos = await get('productos', { qry: qryProductos })
@@ -32,7 +31,6 @@ const productos = formatProductos(resProductos.data)
 
 //--- Set líneas ---//
 const lineas = []
-const categorias = []
 for (const a of productos) {
     if (a.linea1) {
         const i = lineas.findIndex((b) => b.id == a.linea)
@@ -40,15 +38,7 @@ for (const a of productos) {
             lineas.push(a.linea1)
         }
     }
-
-    if (a.categoria1) {
-        const i = categorias.findIndex((b) => b.id == a.categoria)
-        if (i === -1) {
-            categorias.push(a.categoria1)
-        }
-    }
 }
-console.log('Tienda líneas:', lineas)
 ---
 
 <BaseLayout
@@ -61,8 +51,6 @@ console.log('Tienda líneas:', lineas)
         title="Nuestra Tienda"
         description="Descubre la pureza de los Andes en cada taza. Desde mezclas clásicas hasta nuestras creaciones exclusivas, cada producto Sunka es una invitación al bienestar."
     />
-    <TiendaGrid client:load productos={productos} lineas={lineas} categorias={categorias} />
+    <TiendaGrid client:load productos={productos} lineas={lineas} />
     <Beneficios />
 </BaseLayout>
-
-

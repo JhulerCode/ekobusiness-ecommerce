@@ -1,0 +1,50 @@
+---
+import LeafIcon from '@/assets/icons/icon-leaf.astro'
+
+const { linea } = Astro.props
+const ideal = linea.idealPara
+---
+
+<section class="bg-sunka-cream py-14 text-sunka-ink md:py-20">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+        <div class="overflow-hidden rounded-[8px] bg-sunka-forest text-sunka-white">
+            <div class="grid md:grid-cols-[42%_58%]">
+                <div class="px-6 py-10 md:px-8 md:py-12 lg:px-12 lg:py-14">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.26em] text-sunka-brass-light">
+                        {ideal.label}
+                    </p>
+                    <h2 class="mt-3 font-heading text-3xl font-semibold leading-tight md:text-4xl">
+                        {ideal.title}
+                    </h2>
+                    <p class="mt-4 max-w-md text-sm leading-relaxed text-sunka-white/78 md:text-base">
+                        {ideal.description}
+                    </p>
+                </div>
+
+                <div class="border-t border-sunka-white/14 px-6 py-9 md:border-l md:border-t-0 md:px-8 md:py-12 lg:px-12 lg:py-14">
+                    <ul class="space-y-5">
+                        {
+                            ideal.points.map((point) => (
+                                <li class="flex gap-4">
+                                    <span class="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-sunka-brass-light/60 text-sunka-brass-light">
+                                        <LeafIcon class="h-4 w-4" aria-hidden="true" />
+                                    </span>
+                                    <span class="text-sm leading-relaxed text-sunka-white/90 md:text-base">
+                                        {point}
+                                    </span>
+                                </li>
+                            ))
+                        }
+                    </ul>
+
+                    <a
+                        href={`/tienda?linea=${encodeURIComponent(linea.slug)}`}
+                        class="mt-8 inline-flex h-11 items-center justify-center border border-sunka-brass bg-sunka-brass px-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-sunka-white transition hover:bg-sunka-brass-light hover:text-sunka-ink"
+                    >
+                        Ver coleccion completa
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
