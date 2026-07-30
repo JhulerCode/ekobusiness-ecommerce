@@ -1,21 +1,20 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProductoFotos from '../../components/ProductoFotos.vue';
-import ShoppingCartPlus from '../../assets/icons/shopping-cart-plus.vue';
-import ProductosCarrusel from '../../components/ProductosCarrusel.vue';
-import Beneficios from '@/components/home/Beneficios.astro';
-import BrandFacebookIcon from '../../assets/icons/brand-facebook.astro';
-import BrandPinterestIcon from '../../assets/icons/brand-pinterest.astro';
-import BrandWhatsappIcon from '../../assets/icons/brand-whatsapp.astro';
-import MailIcon from '../../assets/icons/mail.astro';
-import AddToCart from '../../components/AddToCart.vue';
-import { get, formatProductos } from '../../lib/api.js';
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import BoxIcon from '@/assets/icons/icon-box.astro'
+import BotanicalMixIcon from '@/assets/icons/icon-botanical-mix.astro'
+import LeafIcon from '@/assets/icons/icon-leaf.astro'
+import { get, formatProductos } from '@/lib/api.js'
 
-const { slug } = Astro.params;
+const { slug } = Astro.params
 
-const qry = {
-    fltr: { id: { op: 'Es', val: slug } },
+const productQuery = {
+    fltr: {
+        id: { op: 'Es', val: slug },
+        activo: { op: 'Es', val: true },
+        is_ecommerce: { op: 'Es', val: true },
+    },
     cols: [
+        'id',
         'linea',
         'categoria',
         'nombre',
@@ -25,7 +24,7 @@ const qry = {
         'precio_anterior',
         'igv_afectacion',
         'fotos',
-
+        'filtrantes',
         'contenido_neto',
         'descripcion',
         'ingredientes',
@@ -34,19 +33,21 @@ const qry = {
         'envase_tipo',
     ],
     incl: ['linea1', 'categoria1'],
-};
-const res = await get('productos', { qry });
-const productos = formatProductos(res.data);
-const producto = productos[0];
-const producto_nombre = producto.nombre;
+}
 
-const qry2 = {
+const productResponse = await get('productos', { qry: productQuery })
+const producto = formatProductos(productResponse?.data ?? [])[0]
+
+if (!producto) return Astro.redirect('/404')
+
+const relatedQuery = {
     fltr: {
         activo: { op: 'Es', val: true },
         is_ecommerce: { op: 'Es', val: true },
         categoria: { op: 'Es', val: producto.categoria },
     },
     cols: [
+        'id',
         'linea',
         'categoria',
         'nombre',
@@ -57,263 +58,494 @@ const qry2 = {
         'igv_afectacion',
         'fotos',
     ],
-};
-const res2 = await get('productos', { qry: qry2 });
-const productos_relacionados = formatProductos(res2.data);
+    incl: ['linea1', 'categoria1'],
+    ordr: [['nombre', 'ASC']],
+}
+
+const relatedResponse = await get('productos', { qry: relatedQuery })
+const relacionados = formatProductos(relatedResponse?.data ?? [])
+    .filter((item) => item.id !== producto.id)
+    .slice(0, 3)
+
+const linea = producto.linea1?.nombre ?? 'Colección Sunka'
+const categoria = producto.categoria1?.nombre ?? 'Infusión'
+const fotos = Array.isArray(producto.fotos) ? producto.fotos.filter((foto) => foto?.url) : []
+const fotoPrincipal = fotos[0]?.url ?? producto.foto
+
+const normalizeList = (value) => {
+    if (!value) return []
+    if (Array.isArray(value)) {
+        return value
+            .map((item) =>
+                typeof item === 'string' ? item : item?.nombre ?? item?.name ?? item?.label,
+            )
+            .filter(Boolean)
+    }
+
+    return String(value)
+        .split(/\r?\n|,|;/)
+        .map((item) => item.trim())
+        .filter(Boolean)
+}
+
+const ingredientes = normalizeList(producto.ingredientes)
+const beneficios = normalizeList(producto.beneficios)
+const precio = Number(producto.precio ?? 0).toFixed(2)
+const contenidoNeto = Number(producto.contenido_neto)
+const filtrantes = Number(producto.filtrantes)
+const gramosPorSobre =
+    Number.isFinite(contenidoNeto) &&
+    contenidoNeto > 0 &&
+    Number.isFinite(filtrantes) &&
+    filtrantes > 0
+        ? `${(contenidoNeto / filtrantes).toLocaleString('es-PE', {
+              maximumFractionDigits: 1,
+          })} g`
+        : null
+
+const caracteristicas = [
+    filtrantes > 0 && { value: filtrantes, label: 'unidades' },
+    gramosPorSobre && { value: gramosPorSobre, label: 'por unidad' },
+    producto.envase_tipo && { value: producto.envase_tipo, label: 'presentación' },
+].filter(Boolean)
+
+const diferencias = [
+    {
+        icon: 'leaf',
+        title: linea,
+        text: `Una selección de la colección ${linea}, creada para disfrutar con calma.`,
+    },
+    producto.envase_tipo && {
+        icon: 'layers',
+        title: producto.envase_tipo,
+        text: 'Una presentación que ayuda a conservar las cualidades del producto.',
+    },
+    {
+        icon: 'box',
+        title:
+            contenidoNeto > 0
+                ? `${contenidoNeto.toLocaleString('es-PE')} g de contenido neto`
+                : categoria,
+        text: producto.dimenciones
+            ? `Formato de ${producto.dimenciones}, pensado para acompañar tu ritual.`
+            : `Una propuesta de ${categoria.toLowerCase()} para sumar a tu ritual diario.`,
+    },
+].filter(Boolean)
+
+const pageDescription =
+    producto.descripcion ||
+    `Descubre ${producto.nombre}, parte de la colección ${linea} de Sunka.`
+const cartProduct = JSON.stringify(producto)
+const eyebrowClass =
+    'text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass'
+const sectionTitleClass =
+    'mt-3 font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl'
 ---
 
-<BaseLayout title={`Producto: ${producto_nombre}`}>
-    <section
-        class="w-full px-4 md:px-10 py-10 flex flex-col md:flex-row gap-12"
-    >
-        <!-- Fotos -->
-        <div class="flex-[2]">
-            <ProductoFotos producto={producto} client:load />
+<BaseLayout title={`${producto.nombre} | SUNKA`} description={pageDescription}>
+    <article class="overflow-hidden bg-sunka-white text-sunka-ink">
+        <div class="mx-auto max-w-7xl px-5 pt-24 md:px-8">
+            <nav
+                aria-label="Ruta de navegación"
+                class="flex flex-wrap gap-2 py-5 text-[11px] text-sunka-stone"
+            >
+                <a href="/tienda" class="transition-colors hover:text-sunka-brass">Tienda</a>
+                <span>/</span>
+                <span>{linea}</span>
+                <span>/</span>
+                <span aria-current="page">{producto.nombre}</span>
+            </nav>
         </div>
 
-        <!-- Información -->
-        <div class="producto-info flex-[1.5] flex flex-col justify-between">
-            <div>
-                <!-- Línea / categoría -->
-                <p class="text-sm uppercase text-gray-500 tracking-wider mb-2">
-                    {producto.linea1.nombre} | {
-                        producto.categoria1.nombre
-                    }
-                </p>
+        <section
+            class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-14 md:px-8 lg:grid-cols-[minmax(0,1.18fr)_minmax(350px,.82fr)] lg:gap-14 xl:gap-20"
+        >
+            <div
+                class:list={[
+                    'grid min-w-0 gap-3 sm:gap-5',
+                    fotos.length > 1
+                        ? 'grid-cols-1 sm:grid-cols-[76px_minmax(0,1fr)]'
+                        : 'grid-cols-1',
+                ]}
+                data-gallery
+            >
+                {
+                    fotos.length > 1 && (
+                        <div class="order-2 flex gap-2 overflow-x-auto pb-1 sm:order-1 sm:flex-col sm:gap-4 sm:overflow-visible">
+                            {fotos.map((foto, index) => (
+                                <button
+                                    type="button"
+                                    class="group w-[62px] shrink-0 cursor-pointer text-center text-[10px] text-sunka-stone sm:w-[68px] [&[aria-pressed=true]_img]:border-sunka-brass"
+                                    data-gallery-thumb={foto.url}
+                                    aria-label={`Ver imagen ${index + 1} de ${producto.nombre}`}
+                                    aria-pressed={index === 0 ? 'true' : 'false'}
+                                >
+                                    <img
+                                        src={foto.url}
+                                        alt=""
+                                        loading="lazy"
+                                        class="mb-1 aspect-square w-full border border-transparent bg-sunka-cream object-cover transition group-hover:border-sunka-brass"
+                                    />
+                                    <span class="line-clamp-1">
+                                        {foto.nombre ?? foto.name ?? `Vista ${index + 1}`}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    )
+                }
 
-                <!-- Nombre -->
-                <h1
-                    class="text-2xl md:text-3xl font-semibold mb-4 text-gray-900 leading-tight"
-                >
+                <div class="order-1 grid min-h-[360px] place-items-center overflow-hidden bg-sunka-cream sm:order-2 sm:min-h-[480px] lg:min-h-[590px]">
+                    {
+                        fotoPrincipal ? (
+                            <img
+                                src={fotoPrincipal}
+                                alt={producto.nombre}
+                                data-gallery-main
+                                fetchpriority="high"
+                                class="h-full max-h-[680px] w-full object-contain"
+                            />
+                        ) : (
+                            <span class="font-heading text-3xl tracking-[0.12em]">SUNKA</span>
+                        )
+                    }
+                </div>
+            </div>
+
+            <div class="self-center py-3 lg:max-w-xl">
+                <p class={eyebrowClass}>{linea} · {categoria}</p>
+                <h1 class="mt-3 font-heading text-4xl font-semibold leading-tight text-sunka-ink md:text-5xl xl:text-6xl">
                     {producto.nombre}
                 </h1>
+                <p class="mt-4 text-sm leading-relaxed text-sunka-ink/65 md:text-base">
+                    {pageDescription}
+                </p>
 
-                <!-- Reseñas -->
-                <div class="flex items-center gap-1 mb-3">
-                    <span class="text-yellow-400">★★★★★</span>
-                    <span class="text-sm text-gray-500">(12 reseñas)</span>
+                <span class="mt-5 inline-flex rounded-full bg-sunka-sand px-4 py-1.5 text-xs text-sunka-ink/80">
+                    {categoria}
+                </span>
+
+                <div class="mt-5 flex items-baseline gap-3">
+                    <span class="text-2xl font-medium">S/ {precio}</span>
+                    {
+                        producto.precio_anterior && (
+                            <span class="text-base text-sunka-stone line-through">
+                                S/ {producto.precio_anterior}
+                            </span>
+                        )
+                    }
                 </div>
 
-                <!-- Precio -->
-                <div class="mb-3">
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-semibold text-gray-900">
-                            S/ {producto.precio}
-                        </span>
-                        {
-                            producto.precio_anterior && (
-                                <span class="text-gray-400 line-through text-lg">
-                                    S/ {producto.precio_anterior}
+                {
+                    caracteristicas.length > 0 && (
+                        <dl class="mt-7 grid grid-cols-3 border-y border-sunka-sand">
+                            {caracteristicas.map((item) => (
+                                <div class="min-w-0 py-3 pr-3">
+                                    <dt class="truncate text-base text-sunka-ink">{item.value}</dt>
+                                    <dd class="mt-0.5 text-[10px] text-sunka-stone">{item.label}</dd>
+                                </div>
+                            ))}
+                        </dl>
+                    )
+                }
+
+                <div class="mt-6" data-product={cartProduct}>
+                    <label for="product-quantity" class="mb-2 block text-xs text-sunka-ink/65">
+                        Cantidad
+                    </label>
+                    <div class="grid grid-cols-[112px_1fr] gap-3 sm:grid-cols-[124px_1fr]">
+                        <div class="grid h-12 grid-cols-[38px_1fr_38px] border border-sunka-sand">
+                            <button
+                                type="button"
+                                data-quantity-minus
+                                aria-label="Reducir cantidad"
+                                class="cursor-pointer text-lg transition hover:bg-sunka-cream"
+                            >
+                                −
+                            </button>
+                            <input
+                                id="product-quantity"
+                                data-quantity
+                                value="1"
+                                inputmode="numeric"
+                                readonly
+                                class="min-w-0 border-0 bg-transparent p-0 text-center text-sunka-ink focus:ring-0"
+                            />
+                            <button
+                                type="button"
+                                data-quantity-plus
+                                aria-label="Aumentar cantidad"
+                                class="cursor-pointer text-lg transition hover:bg-sunka-cream"
+                            >
+                                +
+                            </button>
+                        </div>
+                        <button
+                            type="button"
+                            data-add-cart
+                            class="cursor-pointer border border-sunka-brass bg-sunka-brass px-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-sunka-white transition-colors hover:bg-transparent hover:text-sunka-brass"
+                        >
+                            Agregar al carrito
+                        </button>
+                    </div>
+                    <p
+                        class="mt-2 min-h-4 text-xs text-sunka-brass"
+                        data-cart-message
+                        aria-live="polite"
+                    >
+                    </p>
+                </div>
+
+                <div class="mt-2 flex flex-col gap-2 border-t border-sunka-sand pt-4 text-[11px] text-sunka-stone sm:flex-row sm:gap-6">
+                    <span class="inline-flex items-center gap-2">
+                        <i class="grid h-5 w-5 place-items-center rounded-full border border-sunka-brass text-[11px] not-italic text-sunka-brass">
+                            ✓
+                        </i>
+                        Producto Sunka original
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                        <i class="grid h-5 w-5 place-items-center rounded-full border border-sunka-brass text-xs not-italic text-sunka-brass">
+                            +
+                        </i>
+                        Compra segura
+                    </span>
+                </div>
+
+                <details class="group mt-5 border-y border-sunka-sand py-3 text-xs text-sunka-ink/70">
+                    <summary class="flex cursor-pointer list-none items-center justify-between">
+                        Descripción
+                        <span class="text-base transition-transform group-open:rotate-45">+</span>
+                    </summary>
+                    <p class="mt-3 leading-relaxed">{pageDescription}</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="bg-sunka-forest text-sunka-white">
+            <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 py-14 md:px-8 md:py-16 lg:grid-cols-[1.15fr_.85fr] lg:gap-24">
+                <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                        Perfil del producto
+                    </p>
+                    <h2 class="mt-3 font-heading text-3xl font-semibold leading-tight md:text-4xl">
+                        Una pausa con carácter.
+                    </h2>
+                    <p class="mt-5 max-w-xl text-sm leading-relaxed text-sunka-white/75 md:text-base">
+                        {pageDescription}
+                    </p>
+
+                    {
+                        ingredientes.length > 0 && (
+                            <div class="mt-10">
+                                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                                    Ingredientes
+                                </p>
+                                <p class="mt-3 font-heading text-xl font-medium leading-relaxed md:text-2xl">
+                                    {ingredientes.join(' · ')}
+                                </p>
+                            </div>
+                        )
+                    }
+                </div>
+
+                <div class="self-center border border-sunka-white/15 p-6">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                        Lo que encontrarás
+                    </p>
+                    {
+                        beneficios.length > 0 ? (
+                            <ul class="mt-3">
+                                {beneficios.slice(0, 5).map((beneficio, index) => (
+                                    <li class="grid grid-cols-[36px_1fr] gap-3 border-b border-sunka-white/10 py-3 text-sm leading-snug text-sunka-white/78 last:border-0">
+                                        <span class="font-heading text-sunka-brass-light">
+                                            {String(index + 1).padStart(2, '0')}
+                                        </span>
+                                        <p>{beneficio}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p class="mt-4 text-sm leading-relaxed text-sunka-white/75">
+                                Una experiencia pensada para disfrutar el aroma, el sabor y el momento.
+                            </p>
+                        )
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-sunka-white">
+            <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
+                <p class={eyebrowClass}>La diferencia Sunka</p>
+                <h2 class={sectionTitleClass}>Más expresión en cada taza.</h2>
+                <p class="mt-3 text-sm text-sunka-ink/65">
+                    Conoce los detalles de esta presentación.
+                </p>
+
+                <div class="mt-10 grid grid-cols-1 gap-9 md:grid-cols-3 md:gap-10 lg:gap-16">
+                    {
+                        diferencias.map((item) => (
+                            <article class="border-t-2 border-sunka-brass pt-5">
+                                <span class="grid h-10 w-10 place-items-center rounded-full bg-sunka-sand text-sunka-brass">
+                                    {item.icon === 'leaf' && <LeafIcon class="h-5 w-5" />}
+                                    {item.icon === 'layers' && <BotanicalMixIcon class="h-5 w-5" />}
+                                    {item.icon === 'box' && <BoxIcon class="h-5 w-5" />}
                                 </span>
-                            )
-                        }
-                    </div>
-                    <p class="text-sm text-gray-500">Impuestos incluidos</p>
-                </div>
-
-                <!-- Descripción -->
-                <p class="text-gray-700 leading-relaxed mb-6">
-                    {producto.descripcion}
-                </p>
-
-                <AddToCart producto={producto} client:load />
-            </div>
-
-            <!-- Compartir -->
-            <div class="mt-8 border-t border-gray-200 pt-6">
-                <p class="text-sm uppercase text-gray-500 mb-4 tracking-wider">
-                    Compartir
-                </p>
-
-                <div class="flex gap-4">
-                    <a
-                        data-share="facebook"
-                        data-text={producto_nombre}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full hover:bg-gray-100 transition text-gray-600"
-                        aria-label="Compartir en Facebook"
-                    >
-                        <BrandFacebookIcon /></a
-                    >
-
-                    <a
-                        data-share="pinterest"
-                        data-text={producto_nombre}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full hover:bg-gray-100 transition text-gray-600"
-                        aria-label="Compartir en Pinterest"
-                    >
-                        <BrandPinterestIcon /></a
-                    >
-
-                    <a
-                        data-share="whatsapp"
-                        data-text={producto_nombre}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full hover:bg-gray-100 transition text-gray-600"
-                        aria-label="Compartir por WhatsApp"
-                    >
-                        <BrandWhatsappIcon />
-                    </a>
-
-                    <a
-                        data-share="email"
-                        data-text={producto_nombre}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full hover:bg-gray-100 transition text-gray-600"
-                        aria-label="Compartir por correo"
-                    >
-                        <MailIcon />
-                    </a>
+                                <h3 class="mt-4 text-base font-semibold text-sunka-ink">
+                                    {item.title}
+                                </h3>
+                                <p class="mt-2 text-sm leading-relaxed text-sunka-ink/65">
+                                    {item.text}
+                                </p>
+                            </article>
+                        ))
+                    }
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="bg-neutral-50 py-16">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2
-                class="text-2xl font-semibold text-gray-800 mb-8 border-b pb-2 border-gray-200"
-            >
-                Información adicional
-            </h2>
+        <section class="bg-sunka-cream">
+            <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
+                <p class={eyebrowClass}>Modo de preparación</p>
+                <h2 class={sectionTitleClass}>Tu ritual en tres pasos.</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-700">
-                <div class="flex flex-col gap-4">
-                    <div>
-                        <h3
-                            class="text-sm font-medium text-gray-500 uppercase tracking-wide"
-                        >
-                            Contenido neto
-                        </h3>
-                        <p class="text-base font-semibold">
-                            {producto.contenido_neto}
+                <ol class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10 lg:gap-16">
+                    <li class="grid grid-cols-[auto_1fr] gap-3 border-b border-sunka-sand pb-6">
+                        <span class="font-heading text-3xl font-semibold leading-none text-sunka-brass">01</span>
+                        <div>
+                            <h3 class="text-base font-semibold">Prepara</h3>
+                            <p class="mt-2 text-sm leading-snug text-sunka-ink/65">
+                                Sirve la porción adecuada para tu taza.
+                            </p>
+                        </div>
+                    </li>
+                    <li class="grid grid-cols-[auto_1fr] gap-3 border-b border-sunka-sand pb-6">
+                        <span class="font-heading text-3xl font-semibold leading-none text-sunka-brass">02</span>
+                        <div>
+                            <h3 class="text-base font-semibold">Infusiona</h3>
+                            <p class="mt-2 text-sm leading-snug text-sunka-ink/65">
+                                Agrega agua caliente y deja que el perfil se exprese.
+                            </p>
+                        </div>
+                    </li>
+                    <li class="grid grid-cols-[auto_1fr] gap-3 border-b border-sunka-sand pb-6">
+                        <span class="font-heading text-3xl font-semibold leading-none text-sunka-brass">03</span>
+                        <div>
+                            <h3 class="text-base font-semibold">Disfruta</h3>
+                            <p class="mt-2 text-sm leading-snug text-sunka-ink/65">
+                                Tómate una pausa y personaliza el sabor a tu gusto.
+                            </p>
+                        </div>
+                    </li>
+                </ol>
+
+                {
+                    (producto.dimenciones || producto.contenido_neto) && (
+                        <p class="mt-8 bg-sunka-white px-5 py-3 text-center text-xs text-sunka-ink/65">
+                            {producto.dimenciones && `Presentación: ${producto.dimenciones}. `}
+                            {contenidoNeto > 0 &&
+                                `Contenido neto: ${contenidoNeto.toLocaleString('es-PE')} g.`}
                         </p>
-                    </div>
-
-                    <div>
-                        <h3
-                            class="text-sm font-medium text-gray-500 uppercase tracking-wide"
-                        >
-                            Dimensiones
-                        </h3>
-                        <p class="text-base font-semibold">
-                            {producto.dimenciones}
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3
-                            class="text-sm font-medium text-gray-500 uppercase tracking-wide"
-                        >
-                            Tipo de envase
-                        </h3>
-                        <p class="text-base font-semibold">
-                            {producto.envase_tipo}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-4">
-                    <div>
-                        <h3
-                            class="text-sm font-medium text-gray-500 uppercase tracking-wide"
-                        >
-                            Ingredientes
-                        </h3>
-                        <ul
-                            class="list-disc list-inside space-y-1 text-base leading-relaxed"
-                        >
-                            {
-                                producto.ingredientes.map((a) => (
-                                    <li>{a.nombre}</li>
-                                ))
-                            }
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h3
-                            class="text-sm font-medium text-gray-500 uppercase tracking-wide"
-                        >
-                            Beneficios
-                        </h3>
-                        <ul
-                            class="list-disc list-inside space-y-1 text-base leading-relaxed"
-                        >
-                            {
-                                producto.beneficios.map((a) => (
-                                    <li>{a.nombre}</li>
-                                ))
-                            }
-                        </ul>
-                    </div>
-                </div>
+                    )
+                }
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="max-w-8xl mx-auto px-6 py-16">
-        <div class="text-center mb-12">
-            <h2
-                class="text-3xl md:text-4xl font-heading font-bold text-gray-900"
-            >
-                Productos similares
-            </h2>
-            <p class="mt-2 text-gray-600">
-                Descubre otros productos que podrían interesarte.
-            </p>
-        </div>
+        {
+            relacionados.length > 0 && (
+                <section class="bg-sunka-white">
+                    <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
+                        <p class={eyebrowClass}>Completa tu ritual</p>
+                        <h2 class={sectionTitleClass}>Descubre {linea}.</h2>
 
-        <ProductosCarrusel productos={productos_relacionados} client:load />
-    </section>
-
-    <Beneficios />
+                        <div class="mt-10 grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+                            {relacionados.map((item) => (
+                                <a
+                                    class="group min-w-0 transition-transform duration-300 hover:-translate-y-1"
+                                    href={`/producto/${item.slug}`}
+                                >
+                                    <div class="grid aspect-[1.08] place-items-center overflow-hidden bg-sunka-cream">
+                                        {item.foto ? (
+                                            <img
+                                                src={item.foto}
+                                                alt={item.nombre}
+                                                loading="lazy"
+                                                class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+                                            />
+                                        ) : (
+                                            <span class="font-heading tracking-[0.1em]">SUNKA</span>
+                                        )}
+                                    </div>
+                                    <h3 class="mt-4 text-base font-semibold text-sunka-ink">
+                                        {item.nombre}
+                                    </h3>
+                                    <p class="mt-1 text-xs text-sunka-stone">
+                                        {item.categoria1?.nombre ?? categoria}
+                                    </p>
+                                    <strong class="mt-2 block text-sm font-semibold text-sunka-ink">
+                                        S/ {item.precio}
+                                    </strong>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )
+        }
+    </article>
 </BaseLayout>
 
 <script>
-    // se ejecuta solo en cliente (el navegador)
-    const setShareLinks = () => {
-        try {
-            const url = window.location.href;
-            if (!url) return;
-            const encUrl = encodeURIComponent(url);
-            const text = encodeURIComponent(
-                'Descubre nuestro producto ' +
-                    document.querySelector('[data-share]')?.dataset?.text
-            );
+    import { Cart } from '../../lib/cart.js'
 
-            // mapea los tipos a los templates de sharing
-            const templates = {
-                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encUrl}`,
-                pinterest: `https://pinterest.com/pin/create/button/?url=${encUrl}&description=${text}`,
-                whatsapp: `https://api.whatsapp.com/send?text=${text}%20${encUrl}`,
-                email: `mailto:?subject=${text}&body=${encUrl}`,
-            };
+    document.querySelectorAll('[data-gallery]').forEach((gallery) => {
+        const mainImage = gallery.querySelector('[data-gallery-main]')
+        const thumbs = gallery.querySelectorAll('[data-gallery-thumb]')
 
-            document.querySelectorAll('[data-share]').forEach((el) => {
-                const key = el.dataset.share;
-                if (templates[key]) {
-                    el.setAttribute('href', templates[key]);
-                }
-            });
-        } catch (err) {
-            // fail gracefully
-            console.warn(
-                'No se pudo inicializar los enlaces de compartir:',
-                err
-            );
+        thumbs.forEach((thumb) => {
+            thumb.addEventListener('click', () => {
+                const nextImage = thumb.getAttribute('data-gallery-thumb')
+                if (mainImage instanceof HTMLImageElement && nextImage) mainImage.src = nextImage
+
+                thumbs.forEach((item) => {
+                    item.setAttribute('aria-pressed', String(item === thumb))
+                })
+            })
+        })
+    })
+
+    document.querySelectorAll('[data-product]').forEach((purchase) => {
+        const input = purchase.querySelector('[data-quantity]')
+        const message = purchase.querySelector('[data-cart-message]')
+        if (!(input instanceof HTMLInputElement)) return
+
+        const setQuantity = (quantity) => {
+            input.value = String(Math.max(1, quantity))
         }
-    };
 
-    // Ejecutar cuando DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setShareLinks);
-    } else {
-        setShareLinks();
-    }
+        purchase.querySelector('[data-quantity-minus]')?.addEventListener('click', () => {
+            setQuantity(Number(input.value) - 1)
+        })
+        purchase.querySelector('[data-quantity-plus]')?.addEventListener('click', () => {
+            setQuantity(Number(input.value) + 1)
+        })
+        purchase.querySelector('[data-add-cart]')?.addEventListener('click', () => {
+            const serializedProduct = purchase.getAttribute('data-product')
+            if (!serializedProduct) return
+
+            try {
+                const product = JSON.parse(serializedProduct)
+                Cart.add({ ...product, articulo: product.id, cantidad: Number(input.value) })
+                if (message) message.textContent = 'Producto agregado al carrito.'
+                window.setTimeout(() => {
+                    if (message) message.textContent = ''
+                }, 2500)
+            } catch (error) {
+                console.error('No se pudo agregar el producto al carrito.', error)
+                if (message) {
+                    message.textContent = 'No pudimos agregar el producto. Inténtalo otra vez.'
+                }
+            }
+        })
+    })
 </script>
