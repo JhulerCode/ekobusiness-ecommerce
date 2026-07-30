@@ -33,6 +33,35 @@
                         </ul>
                     </div>
 
+                    <!-- Filtro por Momento -->
+                    <div class="mb-8">
+                        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-4">
+                            Momento
+                        </h3>
+                        <ul class="space-y-2.5">
+                            <li>
+                                <label class="checkbox">
+                                    <input
+                                        type="checkbox"
+                                        :checked="selectedMoment === ''"
+                                        @change="clearMomento"
+                                    />
+                                    <span>Todos</span>
+                                </label>
+                            </li>
+                            <li v-for="momento in momentos" :key="momento.slug">
+                                <label class="checkbox">
+                                    <input
+                                        type="checkbox"
+                                        :checked="selectedMoment === momento.slug"
+                                        @change="toggleMomento(momento.slug)"
+                                    />
+                                    <span>{{ momento.titulo }}</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+
                     <!-- Filtro por Precio -->
                     <div class="mb-8">
                         <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-4">
@@ -90,23 +119,6 @@
                     <p class="text-sm text-gray-500">
                         {{ rangoInicio }}–{{ rangoFin }} de {{ productosFiltrados.length }} productos
                     </p>
-                </div>
-
-                <div
-                    v-if="selectedMoment"
-                    class="mb-6 flex flex-wrap items-center gap-3 rounded-xl border border-sunka-brass/25 bg-sunka-sand/35 px-4 py-3"
-                >
-                    <span class="text-sm text-gray-600">Momento seleccionado:</span>
-                    <span class="rounded-full bg-sunka-forest px-3 py-1.5 text-xs font-semibold text-white">
-                        {{ momentoLabel }}
-                    </span>
-                    <button
-                        type="button"
-                        class="text-xs font-semibold uppercase tracking-wider text-gray-600 transition hover:text-black"
-                        @click="clearMomento"
-                    >
-                        Quitar
-                    </button>
                 </div>
 
                 <!-- Filtros móviles -->
@@ -180,6 +192,39 @@
                                         ]"
                                     >
                                         {{ l.nombre }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Momento -->
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
+                                    Momento
+                                </h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <button
+                                        @click="clearMomento"
+                                        :class="[
+                                            'px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer',
+                                            selectedMoment === ''
+                                                ? 'bg-black text-white'
+                                                : 'border border-gray-300 text-gray-700 hover:bg-gray-100',
+                                        ]"
+                                    >
+                                        Todos
+                                    </button>
+                                    <button
+                                        v-for="momento in momentos"
+                                        :key="momento.slug"
+                                        @click="toggleMomento(momento.slug)"
+                                        :class="[
+                                            'px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer',
+                                            selectedMoment === momento.slug
+                                                ? 'bg-black text-white'
+                                                : 'border border-gray-300 text-gray-700 hover:bg-gray-100',
+                                        ]"
+                                    >
+                                        {{ momento.titulo }}
                                     </button>
                                 </div>
                             </div>
@@ -302,7 +347,7 @@ import Producto from '@/components/Producto.vue';
 import Ghost from '@/assets/icons/ghost.vue';
 import ChevronLeft from '@/assets/icons/chevron-left.vue';
 import ChevronRight from '@/assets/icons/chevron-right.vue';
-import { momentosBySlug } from '@/data/momentos.js';
+import { momentos, momentosBySlug } from '@/data/momentos.js';
 
 export default {
     components: {
@@ -325,6 +370,7 @@ export default {
     },
     data() {
         return {
+            momentos,
             orden: 'nombre-asc',
             filtroLineas: [],
             selectedMoment: '',
@@ -439,9 +485,6 @@ export default {
         },
         hasMomentMetadata() {
             return this.productos.some((producto) => this.getProductMoments(producto).length > 0);
-        },
-        momentoLabel() {
-            return momentosBySlug[this.selectedMoment]?.titulo || this.selectedMoment;
         },
     },
     watch: {
@@ -600,6 +643,9 @@ export default {
             } else {
                 this.filtroLineas.splice(idx, 1);
             }
+        },
+        toggleMomento(slug) {
+            this.selectedMoment = this.selectedMoment === slug ? '' : slug;
         },
         clearMomento() {
             this.selectedMoment = '';
