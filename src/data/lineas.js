@@ -8,6 +8,7 @@ import piramidalDiferencia from '@/assets/lines/premium/diferencia.webp'
 import luxuryDiferencia from '@/assets/lines/luxury/diferencia.webp'
 import tradicionalDiferencia from '@/assets/lines/tradicional/diferencia.webp'
 import preparacion from '@/assets/lines/luxury/preparacion.webp'
+import { getMomentosBySlugs } from '@/data/momentos.js'
 
 const productImageClasses = [
     'md:aspect-[4/5] lg:aspect-[5/6]',
@@ -31,12 +32,16 @@ const buildProducts = (items, image, imageAlt) =>
         imageClass: productImageClasses[index] || productImageClasses[0],
     }))
 
-const defaultMomentos = [
-    { slug: 'manana', titulo: 'Para empezar el dia', icon: 'sun' },
-    { slug: 'oficina', titulo: 'Para la oficina', icon: 'briefcase' },
-    { slug: 'despues-de-comer', titulo: 'Despues de comer', icon: 'leaf' },
-    { slug: 'noche', titulo: 'Para una pausa de noche', icon: 'moon' },
-]
+const defaultMomentos = getMomentosBySlugs([
+    'manana',
+    'oficina',
+    'despues-de-comer',
+    'noche',
+]).map((momento) =>
+    momento.slug === 'noche'
+        ? { ...momento, titulo: 'Para una pausa de noche' }
+        : momento,
+)
 
 const defaultPreparacionSteps = [
     {

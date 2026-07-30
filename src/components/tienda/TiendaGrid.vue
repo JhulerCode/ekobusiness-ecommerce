@@ -302,6 +302,7 @@ import Producto from '@/components/Producto.vue';
 import Ghost from '@/assets/icons/ghost.vue';
 import ChevronLeft from '@/assets/icons/chevron-left.vue';
 import ChevronRight from '@/assets/icons/chevron-right.vue';
+import { momentosBySlug } from '@/data/momentos.js';
 
 export default {
     components: {
@@ -440,14 +441,7 @@ export default {
             return this.productos.some((producto) => this.getProductMoments(producto).length > 0);
         },
         momentoLabel() {
-            const labels = {
-                manana: 'Para empezar el día',
-                oficina: 'Para la oficina',
-                'despues-de-comer': 'Después de comer',
-                noche: 'Para una pausa de noche',
-            };
-
-            return labels[this.selectedMoment] || this.selectedMoment;
+            return momentosBySlug[this.selectedMoment]?.titulo || this.selectedMoment;
         },
     },
     watch: {
@@ -508,7 +502,8 @@ export default {
                     .map((linea) => linea.id);
             }
 
-            this.selectedMoment = this.normalizeSlug(params.get('momento') || '');
+            const requestedMoment = this.normalizeSlug(params.get('momento') || '');
+            this.selectedMoment = momentosBySlug[requestedMoment] ? requestedMoment : '';
 
             const min = Number(params.get('precio_min'));
             const max = Number(params.get('precio_max'));
@@ -582,13 +577,7 @@ export default {
             return [...new Set(values)];
         },
         productMatchesMoment(producto, moment) {
-            const aliases = {
-                manana: ['manana', 'empezar-el-dia', 'para-empezar-el-dia'],
-                oficina: ['oficina', 'para-la-oficina'],
-                'despues-de-comer': ['despues-de-comer', 'sobremesa', 'digestivo'],
-                noche: ['noche', 'pausa-de-noche', 'para-una-pausa-de-noche'],
-            };
-            const accepted = aliases[moment] || [moment];
+            const accepted = momentosBySlug[moment]?.aliases || [moment];
 
             return this.getProductMoments(producto).some((tag) => accepted.includes(tag));
         },
