@@ -15,60 +15,78 @@ const icons = {
     lotus: LotusIcon,
     leaf: LeafIcon,
 }
-
-const IntroIcon = icons[preparacion.icon] ?? LotusIcon
 ---
 
-<section id="preparacion" class="bg-[#e9e7e1]">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[58%_42%] lg:grid-cols-[65%_35%]">
-        <div class="relative min-h-[430px] overflow-hidden md:min-h-[380px]">
+<section id="preparacion" class="bg-[#fbfaf6] py-12 text-sunka-ink md:py-16 lg:py-20">
+    <div
+        class="mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:gap-10 md:px-8 lg:gap-16"
+    >
+        <div
+            class="relative min-h-[460px] overflow-hidden rounded-[22px] bg-sunka-ink md:min-h-[620px] lg:min-h-[680px]"
+        >
             <img
                 src={preparacion.image.src}
                 alt={preparacion.imageAlt}
-                class="absolute inset-0 h-full w-full object-cover object-left md:object-center"
+                class="absolute inset-0 h-full w-full object-cover object-center"
             />
-            <div class="absolute inset-0 bg-[linear-gradient(180deg,#e9e7e1_0%,rgba(233,231,225,.9)_34%,rgba(233,231,225,.18)_76%,rgba(233,231,225,0)_100%)] md:bg-[linear-gradient(90deg,#e9e7e1_0%,#e9e7e1_27%,rgba(233,231,225,.88)_39%,rgba(233,231,225,.22)_58%,rgba(233,231,225,0)_78%)]"></div>
-
-            <div class="relative z-10 flex min-h-[430px] items-start px-5 py-10 md:min-h-[380px] md:items-center md:px-8 md:py-0">
-                <div>
-                    <IntroIcon class="mb-4 text-sunka-brass" aria-hidden="true" />
-
-                    <p class="mb-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass">
-                        {preparacion.label}
-                    </p>
-
-                    <h2 class="max-w-xs font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl">
-                        {preparacion.title}
-                    </h2>
-
-                    <p class="mt-4 max-w-sm text-sm leading-relaxed text-sunka-ink/75 md:text-base">
-                        {preparacion.description}
-                    </p>
-                </div>
+            <div
+                class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,.04),rgba(9,8,6,.2))]"
+            >
             </div>
         </div>
 
-        <div class="flex items-center px-5 py-8 md:px-6 md:py-7 lg:px-8 lg:py-0">
-            <div class="w-full space-y-5 lg:space-y-6">
+        <div class="min-w-0 flex flex-col md:pt-5 lg:pt-7">
+            <header class="text-center">
+                <h2 class="font-heading text-3xl font-semibold leading-tight md:text-4xl">
+                    Preparación
+                </h2>
+                <!-- <div
+                    class="mx-auto mt-5 flex items-center justify-center gap-2 text-sunka-brass"
+                    aria-hidden="true"
+                >
+                    <span class="h-px w-12 bg-sunka-brass/70"></span>
+                    <LeafIcon class="h-5 w-5" />
+                    <span class="h-px w-12 bg-sunka-brass/70"></span>
+                </div> -->
+                <p
+                    class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-sunka-brass md:text-base"
+                >
+                    {preparacion.title}
+                </p>
+            </header>
+
+            <div class="relative mt-9 space-y-5 md:mt-10 lg:mt-12 lg:space-y-7">
+                <span
+                    class="absolute bottom-[14%] left-[18px] top-[14%] w-px bg-sunka-brass/45 md:left-[19px]"
+                    aria-hidden="true"></span>
+
                 {
                     preparacion.steps.map((paso, index) => {
                         const Icon = icons[paso.icon] ?? LeafIcon
 
                         return (
-                            <div class="flex gap-3 lg:gap-4">
-                                <span class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-sunka-brass/55 text-sunka-brass">
-                                    <Icon class="h-5 w-5" />
-                                </span>
+                            <article class="relative ml-2 grid min-h-[138px] grid-cols-[68px_1px_54px_1fr] items-center gap-4 rounded-[18px] border border-sunka-brass/35 bg-[#fffefa] px-5 py-5 shadow-[0_10px_25px_rgba(55,37,13,.1)] md:grid-cols-[76px_1px_60px_1fr] md:px-6 lg:min-h-[150px] lg:grid-cols-[86px_1px_68px_1fr] lg:gap-5 lg:px-7">
+                                <span
+                                    class="absolute -left-[9px] top-1/2 z-10 h-[18px] w-[18px] -translate-y-1/2 rounded-full border-2 border-sunka-brass bg-[#fbfaf6]"
+                                    aria-hidden="true"
+                                />
 
+                                <span class="font-heading text-4xl leading-none text-sunka-brass md:text-5xl">
+                                    {String(index + 1).padStart(2, '0')}
+                                </span>
+                                <span class="h-24 bg-sunka-brass/25" aria-hidden="true" />
+                                <span class="flex items-center justify-center text-sunka-ink">
+                                    <Icon class="h-11 w-11 lg:h-12 lg:w-12" aria-hidden="true" />
+                                </span>
                                 <div>
-                                    <p class="text-sm font-semibold text-sunka-ink">
-                                        {index + 1}. {paso.titulo}
-                                    </p>
-                                    <p class="mt-1 text-sm leading-snug text-sunka-ink/68">
+                                    <h3 class="font-heading text-lg font-semibold leading-tight md:text-xl">
+                                        {paso.titulo}
+                                    </h3>
+                                    <p class="mt-2 text-sm leading-relaxed text-sunka-ink/68">
                                         {paso.texto}
                                     </p>
                                 </div>
-                            </div>
+                            </article>
                         )
                     })
                 }

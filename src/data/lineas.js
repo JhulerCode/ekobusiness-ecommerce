@@ -3,6 +3,11 @@ import piramidal from '@/assets/home/lineas/piramidal.webp'
 import luxury from '@/assets/home/lineas/luxury.webp'
 import tradicional from '@/assets/home/lineas/tradicional.webp'
 import granel from '@/assets/home/lineas/granel.webp'
+import signatureDiferencia from '@/assets/lines/signature/diferencia.webp'
+import piramidalDiferencia from '@/assets/lines/premium/diferencia.webp'
+import luxuryDiferencia from '@/assets/lines/luxury/diferencia.webp'
+import tradicionalDiferencia from '@/assets/lines/tradicional/diferencia.webp'
+import preparacion from '@/assets/lines/luxury/preparacion.webp'
 
 const productImageClasses = [
     'md:aspect-[4/5] lg:aspect-[5/6]',
@@ -88,7 +93,7 @@ export const lineas = [
             title: 'Un ritual simple, preciso y elegante.',
             description:
                 'Prepara Signature Black con calma y deja que el formato doble camara libere todo su aroma en cada taza.',
-            image: signature,
+            image: preparacion,
             imageAlt: 'Ritual de preparacion Signature Black',
             icon: 'lotus',
             steps: [
@@ -114,7 +119,7 @@ export const lineas = [
             title: 'Mas aroma, mas cuerpo y mejor liberacion de sabor.',
             description:
                 'El formato doble camara permite una infusion mas uniforme. El diferencial tecnico se comunica con lenguaje claro, premium y facil de leer.',
-            image: signature,
+            image: signatureDiferencia,
             imageAlt: 'Coleccion Signature Black con taza servida',
             metrics: [
                 { titulo: '1.5 g', texto: 'mayor gramaje por filtrante', icon: 'drop', iconClass: 'scale-[0.86]' },
@@ -129,9 +134,26 @@ export const lineas = [
             description:
                 'Una coleccion creada para quienes buscan una taza con mas presencia y un ritual cotidiano con caracter.',
             points: [
-                'Prefieres sabores con cuerpo, intensidad y aromas especiados o frutales.',
-                'Buscas una infusion que acompane el inicio del dia, la oficina o una sobremesa pausada.',
-                'Valoras el origen del te negro, una presentacion premium y una preparacion consistente.',
+                {
+                    title: 'Buscas intensidad',
+                    text: 'Prefieres una taza con cuerpo y presencia, ideal para empezar el dia o acompanar una pausa con caracter.',
+                    icon: 'leaf',
+                },
+                {
+                    title: 'Disfrutas aromas complejos',
+                    text: 'Te atraen perfiles especiados, frutales y con una mayor profundidad en sabor.',
+                    icon: 'botanical',
+                },
+                {
+                    title: 'Valoras el ritual',
+                    text: 'No buscas solo una bebida, sino un momento personal de pausa y disfrute.',
+                    icon: 'ritual',
+                },
+                {
+                    title: 'Te gusta lo premium',
+                    text: 'Aprecias una presentacion cuidada, blends seleccionados y una experiencia mas sofisticada.',
+                    icon: 'gift',
+                },
             ],
         },
     },
@@ -168,7 +190,7 @@ export const lineas = [
             title: 'Deja que la piramide despliegue todo su perfil.',
             description:
                 'Usa agua caliente y una taza amplia para que cada ingrediente tenga espacio de infusion.',
-            image: piramidal,
+            image: preparacion,
             imageAlt: 'Preparacion de infusion piramidal',
             icon: 'lotus',
             steps: defaultPreparacionSteps,
@@ -178,7 +200,7 @@ export const lineas = [
             title: 'Mas espacio para una infusion limpia y aromaticamente completa.',
             description:
                 'El sobre piramidal ayuda a que los ingredientes se expandan con naturalidad y entreguen una taza mas definida.',
-            image: piramidal,
+            image: piramidalDiferencia,
             imageAlt: 'Detalle linea Piramidal Premium',
             metrics: defaultMetrics,
         },
@@ -188,9 +210,26 @@ export const lineas = [
             description:
                 'Una propuesta para disfrutar ingredientes expresivos y una taza que privilegia aroma, espacio y claridad.',
             points: [
-                'Te gusta reconocer hojas, flores y frutos dentro de cada mezcla.',
-                'Buscas aromas definidos y una infusion que se despliegue con amplitud.',
-                'Disfrutas convertir una pausa breve en un ritual mas sensorial.',
+                {
+                    title: 'Quieres ver los ingredientes',
+                    text: 'Disfrutas reconocer hojas, flores y frutos dentro de cada mezcla.',
+                    icon: 'botanical',
+                },
+                {
+                    title: 'Buscas mas aroma',
+                    text: 'Prefieres una infusion amplia, limpia y con perfiles claramente definidos.',
+                    icon: 'leaf',
+                },
+                {
+                    title: 'Disfrutas la preparacion',
+                    text: 'Te gusta observar como los ingredientes se despliegan dentro de la piramide.',
+                    icon: 'ritual',
+                },
+                {
+                    title: 'Exploras nuevos perfiles',
+                    text: 'Quieres convertir una pausa cotidiana en una experiencia mas sensorial.',
+                    icon: 'lotus',
+                },
             ],
         },
     },
@@ -227,7 +266,7 @@ export const lineas = [
             title: 'Prepara cada taza como un pequeno regalo.',
             description:
                 'Cuida el tiempo de infusion y deja que los aromas se abran antes del primer sorbo.',
-            image: luxury,
+            image: preparacion,
             imageAlt: 'Preparacion Luxury Collection',
             icon: 'lotus',
             steps: defaultPreparacionSteps,
@@ -237,7 +276,7 @@ export const lineas = [
             title: 'Perfiles especiales, presentacion cuidada y una experiencia mas memorable.',
             description:
                 'Luxury Collection esta pensada para elevar el momento: desde el empaque hasta la expresion final en taza.',
-            image: luxury,
+            image: luxuryDiferencia,
             imageAlt: 'Detalle Luxury Collection',
             metrics: defaultMetrics,
         },
@@ -247,9 +286,26 @@ export const lineas = [
             description:
                 'Una seleccion pensada para hacer memorable una ocasion, tanto al regalarla como al servirla.',
             points: [
-                'Buscas perfiles elegantes para sobremesas y celebraciones especiales.',
-                'Quieres regalar una experiencia cuidada desde el empaque hasta la taza.',
-                'Valoras los detalles, la presentacion y los sabores que invitan a beber despacio.',
+                {
+                    title: 'Celebras lo especial',
+                    text: 'Buscas perfiles elegantes para sobremesas, encuentros y ocasiones memorables.',
+                    icon: 'lotus',
+                },
+                {
+                    title: 'Disfrutas regalar',
+                    text: 'Quieres compartir una experiencia cuidada desde el empaque hasta la taza.',
+                    icon: 'gift',
+                },
+                {
+                    title: 'Valoras los detalles',
+                    text: 'Aprecias una presentacion refinada y una seleccion hecha con intencion.',
+                    icon: 'personal',
+                },
+                {
+                    title: 'Prefieres beber despacio',
+                    text: 'Te atraen sabores especiales que invitan a detenerte y disfrutar el momento.',
+                    icon: 'ritual',
+                },
             ],
         },
     },
@@ -286,7 +342,7 @@ export const lineas = [
             title: 'Una taza sencilla, calida y de todos los dias.',
             description:
                 'Prepara tu infusion tradicional con calma y ajusta el tiempo segun el sabor que busques.',
-            image: tradicional,
+            image: preparacion,
             imageAlt: 'Preparacion linea Tradicionales',
             icon: 'lotus',
             steps: defaultPreparacionSteps,
@@ -296,7 +352,7 @@ export const lineas = [
             title: 'Sabores familiares con una taza clara, amable y constante.',
             description:
                 'La linea tradicional mantiene perfiles cercanos y faciles de integrar en cualquier rutina.',
-            image: tradicional,
+            image: tradicionalDiferencia,
             imageAlt: 'Detalle linea Tradicionales',
             metrics: defaultMetrics,
         },
@@ -306,9 +362,26 @@ export const lineas = [
             description:
                 'Sabores cercanos y faciles de incorporar en una rutina que encuentra bienestar en lo esencial.',
             points: [
-                'Prefieres infusiones conocidas, suaves y faciles de disfrutar todos los dias.',
-                'Buscas una taza sencilla para despues de comer, descansar o hacer una pausa.',
-                'Valoras la constancia y los sabores familiares por encima de la complejidad.',
+                {
+                    title: 'Eliges sabores familiares',
+                    text: 'Prefieres infusiones conocidas, suaves y faciles de disfrutar todos los dias.',
+                    icon: 'leaf',
+                },
+                {
+                    title: 'Buscas bienestar cotidiano',
+                    text: 'Quieres una taza cercana para despues de comer, descansar o hacer una pausa.',
+                    icon: 'lotus',
+                },
+                {
+                    title: 'Valoras lo sencillo',
+                    text: 'Disfrutas perfiles honestos y constantes sin necesidad de mayor complejidad.',
+                    icon: 'drop',
+                },
+                {
+                    title: 'Tienes un ritual diario',
+                    text: 'Te gusta contar con una infusion confiable que encaje naturalmente en tu rutina.',
+                    icon: 'ritual',
+                },
             ],
         },
     },
@@ -345,7 +418,7 @@ export const lineas = [
             title: 'Mide, infusiona y ajusta cada taza a tu gusto.',
             description:
                 'El formato granel te permite jugar con intensidad, cantidad y combinaciones segun el momento.',
-            image: granel,
+            image: preparacion,
             imageAlt: 'Preparacion linea Granel',
             icon: 'lotus',
             steps: defaultPreparacionSteps,
@@ -365,9 +438,26 @@ export const lineas = [
             description:
                 'Una linea flexible para quienes quieren intervenir en la preparacion y encontrar su propia medida.',
             points: [
-                'Disfrutas ajustar cantidad, intensidad y tiempo de infusion a tu gusto.',
-                'Quieres experimentar con mezclas y preparar cada taza de una manera distinta.',
-                'Prefieres tener mayor control sobre tu ritual sin renunciar a un blend cuidado.',
+                {
+                    title: 'Quieres mayor control',
+                    text: 'Disfrutas ajustar cantidad, intensidad y tiempo de infusion a tu gusto.',
+                    icon: 'personal',
+                },
+                {
+                    title: 'Te gusta experimentar',
+                    text: 'Quieres probar mezclas y preparar cada taza de una manera diferente.',
+                    icon: 'botanical',
+                },
+                {
+                    title: 'Disfrutas lo artesanal',
+                    text: 'Valoras medir, servir y participar activamente en cada paso del ritual.',
+                    icon: 'ritual',
+                },
+                {
+                    title: 'Eliges a tu medida',
+                    text: 'Prefieres decidir cuanto comprar y adaptar cada preparacion a tu propio ritmo.',
+                    icon: 'mountain',
+                },
             ],
         },
     },
