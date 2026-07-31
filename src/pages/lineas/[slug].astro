@@ -7,15 +7,55 @@ import LineaIdealParaTi from '@/components/lineas/LineaIdealParaTi.astro'
 import LineaDiferencia from '@/components/lineas/LineaDiferencia.astro'
 import LineaPreparacion from '@/components/lineas/LineaPreparacion.astro'
 import { getLineaBySlug } from '@/data/lineas'
+import { get } from '@/lib/api.js'
 
-const linea = getLineaBySlug(Astro.params.slug)
+const lineaConfig = getLineaBySlug(Astro.params.slug)
 
-if (!linea) {
+if (!lineaConfig) {
     return new Response(null, {
         status: 404,
         statusText: 'Linea no encontrada',
     })
 }
+
+const productosDestacadosIds = lineaConfig.productosDestacadosIds ?? []
+let productosDestacados = []
+
+if (productosDestacadosIds.length > 0) {
+    const productosQuery = {
+        fltr: {
+            id: { op: 'En', val: productosDestacadosIds },
+            activo: { op: 'Es', val: true },
+            is_ecommerce: { op: 'Es', val: true },
+        },
+        cols: ['id', 'ecommerce_data'],
+    }
+
+    const productosResponse = await get('productos', { qry: productosQuery })
+    const productosById = new Map(
+        (productosResponse?.data ?? []).map((producto) => [producto.id, producto]),
+    )
+
+    productosDestacados = productosDestacadosIds
+        .map((id) => productosById.get(id))
+        .filter(Boolean)
+        .map((producto) => {
+            const ecommerceData = producto.ecommerce_data ?? {}
+            const fotoPrincipal = ecommerceData.fotos?.[0]
+
+            return {
+                id: producto.id,
+                // ...ecommerceData,
+                nombre: ecommerceData.name,
+                perfil: ecommerceData.descripcion,
+                image: fotoPrincipal?.url,
+                imageAlt: fotoPrincipal?.name ?? ecommerceData.name,
+                href: `/producto/${producto.id}`,
+            }
+        })
+}
+
+const linea = { ...lineaConfig, productosDestacados }
 ---
 
 <BaseLayout title={linea.seoTitle}>

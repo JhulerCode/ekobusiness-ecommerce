@@ -10,37 +10,9 @@ import tradicionalDiferencia from '@/assets/lines/tradicional/diferencia.webp'
 import preparacion from '@/assets/lines/luxury/preparacion.webp'
 import { getMomentosBySlugs } from '@/data/momentos.js'
 
-const productImageClasses = [
-    'md:aspect-[4/5] lg:aspect-[5/6]',
-    'md:aspect-[4/6] lg:aspect-[5/7]',
-    'md:aspect-[4/5] lg:aspect-[5/6]',
-]
-
-const signatureProducts = [
-    ['Vainilla Chai', 'Calido, especiado y cremoso', '/producto/vainilla-chai'],
-    ['Raspberry', 'Frutal, intenso y elegante', '/producto/raspberry'],
-    ['Acai Berry', 'Profundo, frutal y contemporaneo', '/producto/acai-berry'],
-]
-
-const buildProducts = (items, image, imageAlt) =>
-    items.map(([nombre, perfil, href], index) => ({
-        nombre,
-        perfil,
-        href,
-        image,
-        imageAlt,
-        imageClass: productImageClasses[index] || productImageClasses[0],
-    }))
-
-const defaultMomentos = getMomentosBySlugs([
-    'manana',
-    'oficina',
-    'despues-de-comer',
-    'noche',
-]).map((momento) =>
-    momento.slug === 'noche'
-        ? { ...momento, titulo: 'Para una pausa de noche' }
-        : momento,
+const defaultMomentos = getMomentosBySlugs(['manana', 'oficina', 'despues-de-comer', 'noche']).map(
+    (momento) =>
+        momento.slug === 'noche' ? { ...momento, titulo: 'Para una pausa de noche' } : momento,
 )
 
 const defaultPreparacionSteps = [
@@ -88,11 +60,11 @@ export const lineas = [
         momentosTitle: 'En que momento vas a vivir Signature Black?',
         momentosSubtitle: 'Elige tu momento y encuentra el blend ideal para tu ritual.',
         momentos: defaultMomentos,
-        productosDestacados: buildProducts(
-            signatureProducts,
-            signature,
-            'Coleccion Signature Black',
-        ),
+        productosDestacadosIds: [
+            'b123560d-bfce-4c8a-996f-9db13f682358',
+            'a3471eb0-ffbc-488c-b256-911d78592241',
+            '8977694d-de6e-47f2-81f8-71ae3e84b6bf',
+        ],
         preparacion: {
             label: 'Modo de preparacion',
             title: 'Un ritual simple, preciso y elegante.',
@@ -127,10 +99,30 @@ export const lineas = [
             image: signatureDiferencia,
             imageAlt: 'Coleccion Signature Black con taza servida',
             metrics: [
-                { titulo: '1.5 g', texto: 'mayor gramaje por filtrante', icon: 'drop', iconClass: 'scale-[0.86]' },
-                { titulo: '20', texto: 'sobres doble camara', icon: 'box', iconClass: 'scale-[0.86]' },
-                { titulo: 'ISO', texto: 'calidad consistente', icon: 'shield', iconClass: 'scale-[1.05]' },
-                { titulo: 'RA', texto: 'Rainforest Alliance', icon: 'leaf', iconClass: 'scale-[0.82]' },
+                {
+                    titulo: '1.5 g',
+                    texto: 'mayor gramaje por filtrante',
+                    icon: 'drop',
+                    iconClass: 'scale-[0.86]',
+                },
+                {
+                    titulo: '20',
+                    texto: 'sobres doble camara',
+                    icon: 'box',
+                    iconClass: 'scale-[0.86]',
+                },
+                {
+                    titulo: 'ISO',
+                    texto: 'calidad consistente',
+                    icon: 'shield',
+                    iconClass: 'scale-[1.05]',
+                },
+                {
+                    titulo: 'RA',
+                    texto: 'Rainforest Alliance',
+                    icon: 'leaf',
+                    iconClass: 'scale-[0.82]',
+                },
             ],
         },
         idealPara: {
@@ -181,15 +173,11 @@ export const lineas = [
         momentosTitle: 'En que momento vas a vivir Piramidal Premium?',
         momentosSubtitle: 'Encuentra una infusion para cada pausa del dia.',
         momentos: defaultMomentos,
-        productosDestacados: buildProducts(
-            [
-                ['Piramidal Relax', 'Suave, herbal y envolvente', '/producto/piramidal-relax'],
-                ['Piramidal Digestivo', 'Fresco, limpio y balanceado', '/producto/piramidal-digestivo'],
-                ['Piramidal Frutos Rojos', 'Frutal, brillante y aromatico', '/producto/piramidal-frutos-rojos'],
-            ],
-            piramidal,
-            'Productos Piramidal Premium',
-        ),
+        productosDestacadosIds: [
+            '64d85e33-243c-4036-8030-bf9b3e141682',
+            'f5d90ebb-38b1-4c10-844e-28b805927ad1',
+            'e9dc6380-3c61-4e2b-a17d-7bb74b2e2d67',
+        ],
         preparacion: {
             label: 'Modo de preparacion',
             title: 'Deja que la piramide despliegue todo su perfil.',
@@ -257,15 +245,11 @@ export const lineas = [
         momentosTitle: 'En que momento vas a vivir Luxury Collection?',
         momentosSubtitle: 'Para regalos, sobremesas y rituales que merecen un gesto especial.',
         momentos: defaultMomentos,
-        productosDestacados: buildProducts(
-            [
-                ['Luxury Selection', 'Elegante, aromatico y fino', '/producto/luxury-selection'],
-                ['Luxury Cacao', 'Profundo, calido y sedoso', '/producto/luxury-cacao'],
-                ['Luxury Floral', 'Delicado, fresco y luminoso', '/producto/luxury-floral'],
-            ],
-            luxury,
-            'Productos Luxury Collection',
-        ),
+        productosDestacadosIds: [
+            'b9eb31f9-4159-4267-a52d-77444e392562',
+            '8b40851b-e6c6-4607-936d-81be73a8f845',
+            '623f2b51-f181-4085-9ee3-f9036198f774',
+        ],
         preparacion: {
             label: 'Modo de preparacion',
             title: 'Prepara cada taza como un pequeno regalo.',
@@ -333,15 +317,11 @@ export const lineas = [
         momentosTitle: 'En que momento vas a vivir Tradicionales?',
         momentosSubtitle: 'Elige el sabor de siempre para la pausa que necesitas hoy.',
         momentos: defaultMomentos,
-        productosDestacados: buildProducts(
-            [
-                ['Manzanilla', 'Suave, floral y reconfortante', '/producto/manzanilla'],
-                ['Anis', 'Calido, dulce y digestivo', '/producto/anis'],
-                ['Hierba Luisa', 'Citrica, fresca y ligera', '/producto/hierba-luisa'],
-            ],
-            tradicional,
-            'Productos Tradicionales',
-        ),
+        productosDestacadosIds: [
+            '615ad62c-a2a6-46bc-b4f4-89ce251c1442',
+            'a3d94dff-f781-4389-9475-45979324b919',
+            '079abd48-0241-4fac-9a90-8c6be2fa5a23',
+        ],
         preparacion: {
             label: 'Modo de preparacion',
             title: 'Una taza sencilla, calida y de todos los dias.',
@@ -409,15 +389,7 @@ export const lineas = [
         momentosTitle: 'En que momento vas a vivir Granel?',
         momentosSubtitle: 'Arma tu ritual con la cantidad y el perfil que mejor encajen contigo.',
         momentos: defaultMomentos,
-        productosDestacados: buildProducts(
-            [
-                ['Granel Serenidad', 'Herbal, suave y aromatico', '/producto/granel-serenidad'],
-                ['Granel Energia', 'Vivo, fresco y persistente', '/producto/granel-energia'],
-                ['Granel Digestivo', 'Ligero, limpio y balanceado', '/producto/granel-digestivo'],
-            ],
-            granel,
-            'Productos Granel',
-        ),
+        productosDestacadosIds: [],
         preparacion: {
             label: 'Modo de preparacion',
             title: 'Mide, infusiona y ajusta cada taza a tu gusto.',
