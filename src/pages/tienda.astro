@@ -13,18 +13,8 @@ const qryProductos = {
         is_ecommerce: { op: 'Es', val: true },
         categoria: { op: 'No es', val: 'f000be66-e4b1-4334-b57a-0e356eb8c7a6' },
     },
-    cols: [
-        'linea',
-        'nombre',
-        'unidad',
-        'has_fv',
-        'precio',
-        'precio_anterior',
-        'igv_afectacion',
-        'fotos',
-    ],
+    cols: ['id', 'linea', 'ecommerce_data'],
     incl: ['linea1'],
-    ordr: [['nombre', 'ASC']],
 }
 const resProductos = await get('productos', { qry: qryProductos })
 const productos = formatProductos(resProductos.data)

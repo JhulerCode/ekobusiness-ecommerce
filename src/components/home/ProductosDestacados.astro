@@ -6,23 +6,12 @@ const qry2 = {
     fltr: {
         activo: { op: 'Es', val: true },
         is_ecommerce: { op: 'Es', val: true },
-        is_destacado: { op: 'Es', val: true },
     },
-    cols: [
-        'linea',
-        'categoria',
-        'nombre',
-        'unidad',
-        'has_fv',
-        'precio',
-        'precio_anterior',
-        'igv_afectacion',
-        'fotos',
-    ],
+    cols: ['id', 'linea', 'categoria', 'ecommerce_data'],
 }
 
 const res2 = await get('productos', { qry: qry2 })
-const productos = formatProductos(res2.data)
+const productos = formatProductos(res2.data).filter((producto) => producto.is_destacado)
 ---
 
 <section class="bg-white py-24 md:py-32">

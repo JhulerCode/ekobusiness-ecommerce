@@ -221,11 +221,32 @@ export function formatCategorias(datos = []) {
 }
 
 export function formatProductos(datos = []) {
-    return datos.map((prod) => ({
-        ...prod,
-        precio: Number(prod.precio).toFixed(2),
-        precio_anterior: prod.precio_anterior ? Number(prod.precio_anterior).toFixed(2) : null,
-        foto: prod.fotos[0]?.url,
-        slug: prod.id,
-    }))
+    return datos.map((prod) => {
+        const ecommerceData = prod.ecommerce_data ?? {}
+        const fotos = Array.isArray(ecommerceData.fotos)
+            ? ecommerceData.fotos
+            : Array.isArray(prod.fotos)
+              ? prod.fotos
+              : []
+        const producto = {
+            ...prod,
+            ...ecommerceData,
+            nombre: ecommerceData.name ?? prod.nombre,
+            fotos,
+        }
+
+        return {
+            ...producto,
+            precio:
+                producto.precio == null || producto.precio === ''
+                    ? producto.precio
+                    : Number(producto.precio).toFixed(2),
+            precio_anterior:
+                producto.precio_anterior == null || producto.precio_anterior === ''
+                    ? null
+                    : Number(producto.precio_anterior).toFixed(2),
+            foto: producto.fotos[0]?.url,
+            slug: producto.id,
+        }
+    })
 }
