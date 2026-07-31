@@ -18,6 +18,8 @@ const res = await get('lineas', { qry });
 const lineas = res.data;
 const linea = lineas[0];
 
+if (!linea) return Astro.rewrite('/404');
+
 //--- Load productos ---//
 const qry2 = {
     fltr: {

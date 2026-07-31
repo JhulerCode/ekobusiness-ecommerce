@@ -12,10 +12,7 @@ import { get } from '@/lib/api.js'
 const lineaConfig = getLineaBySlug(Astro.params.slug)
 
 if (!lineaConfig) {
-    return new Response(null, {
-        status: 404,
-        statusText: 'Linea no encontrada',
-    })
+    return Astro.rewrite('/404')
 }
 
 const productosDestacadosIds = lineaConfig.productosDestacadosIds ?? []

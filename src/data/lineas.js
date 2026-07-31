@@ -10,10 +10,7 @@ import tradicionalDiferencia from '@/assets/lines/tradicional/diferencia.webp'
 import preparacion from '@/assets/lines/luxury/preparacion.webp'
 import { getMomentosBySlugs } from '@/data/momentos.js'
 
-const defaultMomentos = getMomentosBySlugs(['manana', 'oficina', 'despues-de-comer', 'noche']).map(
-    (momento) =>
-        momento.slug === 'noche' ? { ...momento, titulo: 'Para una pausa de noche' } : momento,
-)
+const defaultMomentos = getMomentosBySlugs(['manana', 'oficina', 'despues-de-comer', 'noche'])
 
 const defaultPreparacionSteps = [
     {
@@ -370,74 +367,74 @@ export const lineas = [
             ],
         },
     },
-    {
-        slug: 'granel',
-        title: 'Granel',
-        seoTitle: 'Granel | Sunka Herbal Tea',
-        eyebrow: 'Granel / Elige a tu medida',
-        heroTitle: 'Elige cantidad, mezcla y ritmo a tu manera.',
-        description:
-            'Una linea flexible para quienes disfrutan preparar sus infusiones con mayor libertad.',
-        heroImage: granel,
-        heroImageAlt: 'Linea Granel',
-        heroImagePosition: 'object-center',
-        heroCtas: [
-            { label: 'Comprar coleccion', href: '/tienda?linea=granel', variant: 'primary' },
-            { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
-            { label: 'Ver destacados', href: '#productos', variant: 'ghost' },
-        ],
-        momentosTitle: 'En que momento vas a vivir Granel?',
-        momentosSubtitle: 'Arma tu ritual con la cantidad y el perfil que mejor encajen contigo.',
-        momentos: defaultMomentos,
-        productosDestacadosIds: [],
-        preparacion: {
-            label: 'Modo de preparacion',
-            title: 'Mide, infusiona y ajusta cada taza a tu gusto.',
-            description:
-                'El formato granel te permite jugar con intensidad, cantidad y combinaciones segun el momento.',
-            image: preparacion,
-            imageAlt: 'Preparacion linea Granel',
-            icon: 'lotus',
-            steps: defaultPreparacionSteps,
-        },
-        diferencia: {
-            label: 'La diferencia esta en la libertad',
-            title: 'Mas control sobre cantidad, intensidad y forma de preparar.',
-            description:
-                'Granel esta pensado para quienes quieren personalizar cada taza sin perder la calidad del blend.',
-            image: granel,
-            imageAlt: 'Detalle linea Granel',
-            metrics: defaultMetrics,
-        },
-        idealPara: {
-            label: 'Una linea para ti',
-            title: 'Granel es para ti si...',
-            description:
-                'Una linea flexible para quienes quieren intervenir en la preparacion y encontrar su propia medida.',
-            points: [
-                {
-                    title: 'Quieres mayor control',
-                    text: 'Disfrutas ajustar cantidad, intensidad y tiempo de infusion a tu gusto.',
-                    icon: 'personal',
-                },
-                {
-                    title: 'Te gusta experimentar',
-                    text: 'Quieres probar mezclas y preparar cada taza de una manera diferente.',
-                    icon: 'botanical',
-                },
-                {
-                    title: 'Disfrutas lo artesanal',
-                    text: 'Valoras medir, servir y participar activamente en cada paso del ritual.',
-                    icon: 'ritual',
-                },
-                {
-                    title: 'Eliges a tu medida',
-                    text: 'Prefieres decidir cuanto comprar y adaptar cada preparacion a tu propio ritmo.',
-                    icon: 'mountain',
-                },
-            ],
-        },
-    },
+    // {
+    //     slug: 'granel',
+    //     title: 'Granel',
+    //     seoTitle: 'Granel | Sunka Herbal Tea',
+    //     eyebrow: 'Granel / Elige a tu medida',
+    //     heroTitle: 'Elige cantidad, mezcla y ritmo a tu manera.',
+    //     description:
+    //         'Una linea flexible para quienes disfrutan preparar sus infusiones con mayor libertad.',
+    //     heroImage: granel,
+    //     heroImageAlt: 'Linea Granel',
+    //     heroImagePosition: 'object-center',
+    //     heroCtas: [
+    //         { label: 'Comprar coleccion', href: '/tienda?linea=granel', variant: 'primary' },
+    //         { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
+    //         { label: 'Ver destacados', href: '#productos', variant: 'ghost' },
+    //     ],
+    //     momentosTitle: 'En que momento vas a vivir Granel?',
+    //     momentosSubtitle: 'Arma tu ritual con la cantidad y el perfil que mejor encajen contigo.',
+    //     momentos: defaultMomentos,
+    //     productosDestacadosIds: [],
+    //     preparacion: {
+    //         label: 'Modo de preparacion',
+    //         title: 'Mide, infusiona y ajusta cada taza a tu gusto.',
+    //         description:
+    //             'El formato granel te permite jugar con intensidad, cantidad y combinaciones segun el momento.',
+    //         image: preparacion,
+    //         imageAlt: 'Preparacion linea Granel',
+    //         icon: 'lotus',
+    //         steps: defaultPreparacionSteps,
+    //     },
+    //     diferencia: {
+    //         label: 'La diferencia esta en la libertad',
+    //         title: 'Mas control sobre cantidad, intensidad y forma de preparar.',
+    //         description:
+    //             'Granel esta pensado para quienes quieren personalizar cada taza sin perder la calidad del blend.',
+    //         image: granel,
+    //         imageAlt: 'Detalle linea Granel',
+    //         metrics: defaultMetrics,
+    //     },
+    //     idealPara: {
+    //         label: 'Una linea para ti',
+    //         title: 'Granel es para ti si...',
+    //         description:
+    //             'Una linea flexible para quienes quieren intervenir en la preparacion y encontrar su propia medida.',
+    //         points: [
+    //             {
+    //                 title: 'Quieres mayor control',
+    //                 text: 'Disfrutas ajustar cantidad, intensidad y tiempo de infusion a tu gusto.',
+    //                 icon: 'personal',
+    //             },
+    //             {
+    //                 title: 'Te gusta experimentar',
+    //                 text: 'Quieres probar mezclas y preparar cada taza de una manera diferente.',
+    //                 icon: 'botanical',
+    //             },
+    //             {
+    //                 title: 'Disfrutas lo artesanal',
+    //                 text: 'Valoras medir, servir y participar activamente en cada paso del ritual.',
+    //                 icon: 'ritual',
+    //             },
+    //             {
+    //                 title: 'Eliges a tu medida',
+    //                 text: 'Prefieres decidir cuanto comprar y adaptar cada preparacion a tu propio ritmo.',
+    //                 icon: 'mountain',
+    //             },
+    //         ],
+    //     },
+    // },
 ]
 
 export const lineasBySlug = Object.fromEntries(lineas.map((linea) => [linea.slug, linea]))

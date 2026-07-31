@@ -25,7 +25,7 @@ export const momentos = [
     },
     {
         slug: 'noche',
-        titulo: 'Para dormir',
+        titulo: 'Para una pausa de noche',
         icon: 'moon',
         aliases: ['noche', 'dormir', 'para-dormir', 'pausa-de-noche', 'para-una-pausa-de-noche'],
     },

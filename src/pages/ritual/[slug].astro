@@ -15,7 +15,7 @@ const { slug } = Astro.params;
 const ritual = rituals.find(r => r.slug === slug);
 
 if (!ritual) {
-  return Astro.redirect('/404');
+  return Astro.rewrite('/404');
 }
 ---
 

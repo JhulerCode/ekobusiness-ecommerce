@@ -19,6 +19,8 @@ const res = await get('categorias', { qry });
 const categorias = formatCategorias(res.data);
 const categoria = categorias[0];
 
+if (!categoria) return Astro.rewrite('/404');
+
 //--- Load productos ---//
 const qry2 = {
     fltr: {

@@ -1,0 +1,103 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import LeafIcon from '@/assets/icons/icon-leaf.astro'
+import GiftIcon from '@/assets/icons/icon-gift.astro'
+import HeartIcon from '@/assets/icons/icon-heart-origin.astro'
+
+const helpfulLinks = [
+    {
+        title: 'Explora la tienda',
+        description: 'Encuentra tés, infusiones y accesorios para tu próximo ritual.',
+        href: '/tienda',
+        icon: LeafIcon,
+    },
+    {
+        title: 'Crea tu propio blend',
+        description: 'Combina ingredientes y crea una mezcla hecha para ti.',
+        href: '/crea-tu-blend',
+        icon: GiftIcon,
+    },
+    {
+        title: 'Descubre nuestro origen',
+        description: 'Conoce la historia, el propósito y la esencia de Sunka.',
+        href: '/origen',
+        icon: HeartIcon,
+    },
+]
+---
+
+<BaseLayout title="Página no encontrada | SUNKA">
+    <section class="relative overflow-hidden bg-sunka-cream text-sunka-ink">
+        <div
+            class="pointer-events-none absolute -right-24 top-28 h-72 w-72 rounded-full border border-sunka-brass/15 md:h-[28rem] md:w-[28rem]"
+            aria-hidden="true"
+        ></div>
+        <div
+            class="pointer-events-none absolute -left-20 bottom-32 h-48 w-48 rounded-full bg-sunka-sand/45 blur-3xl"
+            aria-hidden="true"
+        ></div>
+
+        <div class="relative mx-auto max-w-7xl px-5 pb-16 pt-36 md:px-8 md:pb-24 md:pt-44">
+            <div class="mx-auto max-w-2xl text-center">
+                <span
+                    class="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass"
+                >
+                    <span class="h-px w-8 bg-sunka-brass/55" aria-hidden="true"></span>
+                    Error 404
+                    <span class="h-px w-8 bg-sunka-brass/55" aria-hidden="true"></span>
+                </span>
+
+                <h1 class="mt-5 font-heading text-4xl font-semibold leading-tight md:text-6xl">
+                    Esta página no existe
+                </h1>
+                <p class="mx-auto mt-5 max-w-xl text-base leading-relaxed text-sunka-ink/65 md:text-lg">
+                    Parece que este camino terminó antes de llegar a destino. Puedes volver al
+                    inicio o seguir explorando el universo Sunka.
+                </p>
+
+                <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                    <a
+                        href="/"
+                        class="inline-flex min-h-12 items-center justify-center border border-sunka-forest bg-sunka-forest px-7 text-xs font-semibold uppercase tracking-[0.1em] text-sunka-white transition-colors hover:bg-transparent hover:text-sunka-forest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sunka-brass"
+                    >
+                        Volver al inicio
+                    </a>
+                    <a
+                        href="/tienda"
+                        class="inline-flex min-h-12 items-center justify-center border border-sunka-forest/25 px-7 text-xs font-semibold uppercase tracking-[0.1em] text-sunka-forest transition-colors hover:border-sunka-brass hover:text-sunka-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sunka-brass"
+                    >
+                        Ir a la tienda
+                    </a>
+                </div>
+            </div>
+
+            <div class="mx-auto mt-14 max-w-5xl border-t border-sunka-ink/10 pt-8 md:mt-20 md:pt-10">
+                <p class="text-center text-xs font-semibold uppercase tracking-[0.18em] text-sunka-stone">
+                    Quizás estabas buscando
+                </p>
+                <div class="mt-6 grid gap-3 md:grid-cols-3 md:gap-5">
+                    {
+                        helpfulLinks.map(({ title, description, href, icon: Icon }) => (
+                            <a
+                                href={href}
+                                class="group flex items-start gap-4 border border-sunka-ink/10 bg-sunka-white/50 p-5 transition-colors hover:border-sunka-brass/60 hover:bg-sunka-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sunka-brass md:p-6"
+                            >
+                                <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sunka-sand/65 text-sunka-brass transition-colors group-hover:bg-sunka-brass group-hover:text-sunka-white">
+                                    <Icon class="h-5 w-5" aria-hidden="true" />
+                                </span>
+                                <span>
+                                    <strong class="block text-sm font-semibold text-sunka-ink">
+                                        {title}
+                                    </strong>
+                                    <span class="mt-1.5 block text-xs leading-relaxed text-sunka-ink/58">
+                                        {description}
+                                    </span>
+                                </span>
+                            </a>
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>

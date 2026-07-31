@@ -38,7 +38,7 @@ const productQuery = {
 const productResponse = await get('productos', { qry: productQuery })
 const producto = formatProductos(productResponse?.data ?? [])[0]
 
-if (!producto) return Astro.redirect('/404')
+if (!producto) return Astro.rewrite('/404')
 
 const relatedQuery = {
     fltr: {
