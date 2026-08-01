@@ -13,7 +13,7 @@ const productQuery = {
         activo: { op: 'Es', val: true },
         is_ecommerce: { op: 'Es', val: true },
     },
-    cols: ['id', 'linea', 'categoria', 'unidad', 'filtrantes', 'ecommerce_data'],
+    cols: ['id', 'linea', 'categoria', 'unidad', 'ecommerce_data'],
     incl: ['linea1', 'categoria1'],
 }
 
@@ -22,90 +22,137 @@ const producto = formatProductos(productResponse?.data ?? [])[0]
 
 if (!producto) return Astro.rewrite('/404')
 
-const relatedQuery = {
-    fltr: {
-        activo: { op: 'Es', val: true },
-        is_ecommerce: { op: 'Es', val: true },
-        categoria: { op: 'Es', val: producto.categoria },
-    },
-    cols: ['id', 'linea', 'categoria', 'unidad', 'ecommerce_data'],
-    incl: ['linea1', 'categoria1'],
-    ordr: [['nombre', 'ASC']],
-}
+const normalizeTextList = (value) => {
+    if (!Array.isArray(value)) return []
 
-const relatedResponse = await get('productos', { qry: relatedQuery })
-const relacionados = formatProductos(relatedResponse?.data ?? [])
-    .filter((item) => item.id !== producto.id)
-    .slice(0, 3)
-
-const linea = producto.linea1?.nombre ?? 'Colección Sunka'
-const categoria = producto.categoria1?.nombre ?? 'Infusión'
-const fotos = Array.isArray(producto.fotos) ? producto.fotos.filter((foto) => foto?.url) : []
-const fotoPrincipal = fotos[0]?.url ?? producto.foto
-
-const normalizeList = (value) => {
-    if (!value) return []
-    if (Array.isArray(value)) {
-        return value
-            .map((item) =>
-                typeof item === 'string' ? item : item?.nombre ?? item?.name ?? item?.label,
-            )
-            .filter(Boolean)
-    }
-
-    return String(value)
-        .split(/\r?\n|,|;/)
-        .map((item) => item.trim())
+    return value
+        .map((item) =>
+            typeof item === 'string'
+                ? item
+                : item?.nombre ?? item?.name ?? item?.label ?? item?.titulo,
+        )
         .filter(Boolean)
 }
 
-const ingredientes = normalizeList(producto.ingredientes)
-const beneficios = normalizeList(producto.beneficios)
+const normalizePairs = (value) => {
+    if (!Array.isArray(value)) return []
+
+    return value
+        .map((item) => {
+            if (Array.isArray(item)) return { label: item[0], value: item[1] }
+            if (!item || typeof item !== 'object') return null
+
+            return {
+                label: item.label ?? item.nombre ?? item.titulo,
+                value: item.value ?? item.valor ?? item.descripcion,
+            }
+        })
+        .filter((item) => item?.label && item?.value !== undefined && item?.value !== null)
+}
+
+const fotos = Array.isArray(producto.fotos) ? producto.fotos.filter((foto) => foto?.url) : []
+const fotoPrincipal = fotos[0]?.url ?? producto.foto
+const presentacion = normalizePairs(producto.presentacion)
+const presentationGridClass =
+    presentacion.length >= 4
+        ? 'grid-cols-2 sm:grid-cols-4'
+        : presentacion.length === 3
+          ? 'grid-cols-3'
+          : presentacion.length === 2
+            ? 'grid-cols-2'
+            : 'grid-cols-1'
+const certificaciones = normalizeTextList(producto.certificaciones)
+
+const perfilSensorial =
+    producto.perfil_sensorial && typeof producto.perfil_sensorial === 'object'
+        ? producto.perfil_sensorial
+        : {}
+const notas = normalizeTextList(perfilSensorial.notas)
+const momentos = normalizeTextList(perfilSensorial.momentos)
+const atributos = normalizePairs(perfilSensorial.atributos).map((atributo) => ({
+    ...atributo,
+    percentage: Math.min(100, Math.max(0, Number.parseFloat(atributo.value) || 0)),
+}))
+const hasPerfilSensorial = Boolean(
+    perfilSensorial.titulo ||
+        perfilSensorial.descripcion ||
+        notas.length ||
+        atributos.length ||
+        momentos.length,
+)
+
+const diferenciales = Array.isArray(producto.diferenciales)
+    ? producto.diferenciales
+          .map((item, index) => {
+              if (Array.isArray(item)) {
+                  item = { titulo: item[0], descripcion: item[1], icono: item[2] }
+              }
+
+              const iconName = String(item?.icono ?? '').toLowerCase()
+              const icon = iconName.includes('origen')
+                  ? 'leaf'
+                  : iconName.includes('cámara') ||
+                      iconName.includes('camara') ||
+                      iconName.includes('infusi')
+                    ? 'layers'
+                    : iconName
+                      ? 'box'
+                      : ['leaf', 'layers', 'box'][index % 3]
+
+              return { ...item, icon }
+          })
+          .filter((item) => item?.titulo || item?.descripcion)
+    : []
+
+const preparacion =
+    producto.preparacion && typeof producto.preparacion === 'object'
+        ? producto.preparacion
+        : {}
+const pasosPreparacion = Array.isArray(preparacion.pasos)
+    ? preparacion.pasos
+          .map((paso) => {
+              if (Array.isArray(paso)) return { titulo: paso[0], descripcion: paso[1] }
+              return paso
+          })
+          .filter((paso) => paso?.titulo || paso?.descripcion)
+    : []
+const hasPreparacion = Boolean(pasosPreparacion.length || preparacion.maridaje)
+
+const relatedIds = Array.isArray(producto.productos_relacionados)
+    ? [
+          ...new Set(
+              producto.productos_relacionados
+                  .map((item) =>
+                      typeof item === 'string' ? item : item?.id ?? item?.articulo,
+                  )
+                  .filter((id) => id && id !== producto.id),
+          ),
+      ].slice(0, 3)
+    : []
+
+const relatedResponses = await Promise.all(
+    relatedIds.map((id) =>
+        get('productos', {
+            qry: {
+                fltr: {
+                    id: { op: 'Es', val: id },
+                    activo: { op: 'Es', val: true },
+                    is_ecommerce: { op: 'Es', val: true },
+                },
+                cols: ['id', 'linea', 'categoria', 'unidad', 'ecommerce_data'],
+                incl: ['linea1', 'categoria1'],
+            },
+        }),
+    ),
+)
+const relacionados = relatedResponses.flatMap((response) =>
+    formatProductos(response?.data ?? []),
+)
+
+const linea = producto.linea1?.nombre ?? ''
+const origen = producto.origen ?? ''
 const precio = Number(producto.precio ?? 0).toFixed(2)
-const contenidoNeto = Number(producto.contenido_neto)
-const filtrantes = Number(producto.filtrantes)
-const gramosPorSobre =
-    Number.isFinite(contenidoNeto) &&
-    contenidoNeto > 0 &&
-    Number.isFinite(filtrantes) &&
-    filtrantes > 0
-        ? `${(contenidoNeto / filtrantes).toLocaleString('es-PE', {
-              maximumFractionDigits: 1,
-          })} g`
-        : null
-
-const caracteristicas = [
-    filtrantes > 0 && { value: filtrantes, label: 'unidades' },
-    gramosPorSobre && { value: gramosPorSobre, label: 'por unidad' },
-    producto.envase_tipo && { value: producto.envase_tipo, label: 'presentación' },
-].filter(Boolean)
-
-const diferencias = [
-    {
-        icon: 'leaf',
-        title: linea,
-        text: `Una selección de la colección ${linea}, creada para disfrutar con calma.`,
-    },
-    producto.envase_tipo && {
-        icon: 'layers',
-        title: producto.envase_tipo,
-        text: 'Una presentación que ayuda a conservar las cualidades del producto.',
-    },
-    {
-        icon: 'box',
-        title:
-            contenidoNeto > 0
-                ? `${contenidoNeto.toLocaleString('es-PE')} g de contenido neto`
-                : categoria,
-        text: producto.dimenciones
-            ? `Formato de ${producto.dimenciones}, pensado para acompañar tu ritual.`
-            : `Una propuesta de ${categoria.toLowerCase()} para sumar a tu ritual diario.`,
-    },
-].filter(Boolean)
-
-const pageDescription =
-    producto.descripcion ||
-    `Descubre ${producto.nombre}, parte de la colección ${linea} de Sunka.`
+const pageDescription = producto.descripcion_corta || producto.descripcion || producto.nombre
 const cartProduct = JSON.stringify(producto)
 const eyebrowClass =
     'text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass'
@@ -121,21 +168,18 @@ const sectionTitleClass =
                 class="flex flex-wrap gap-2 py-5 text-[11px] text-sunka-stone"
             >
                 <a href="/tienda" class="transition-colors hover:text-sunka-brass">Tienda</a>
-                <span>/</span>
-                <span>{linea}</span>
+                {linea && <><span>/</span><span>{linea}</span></>}
                 <span>/</span>
                 <span aria-current="page">{producto.nombre}</span>
             </nav>
         </div>
 
-        <section
-            class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-14 md:px-8 lg:grid-cols-[minmax(0,1.18fr)_minmax(350px,.82fr)] lg:gap-14 xl:gap-20"
-        >
+        <section class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-14 md:px-8 lg:grid-cols-[minmax(0,1.18fr)_minmax(350px,.82fr)] lg:gap-14 xl:gap-20">
             <div
                 class:list={[
-                    'grid min-w-0 gap-3 sm:gap-5',
+                    'grid min-w-0 self-start gap-3 bg-sunka-cream p-3 sm:gap-8 sm:py-5 sm:pr-8 sm:pl-5',
                     fotos.length > 1
-                        ? 'grid-cols-1 sm:grid-cols-[76px_minmax(0,1fr)]'
+                        ? 'grid-cols-1 sm:grid-cols-[68px_minmax(0,1fr)]'
                         : 'grid-cols-1',
                 ]}
                 data-gallery
@@ -146,7 +190,7 @@ const sectionTitleClass =
                             {fotos.map((foto, index) => (
                                 <button
                                     type="button"
-                                    class="group w-[62px] shrink-0 cursor-pointer text-center text-[10px] text-sunka-stone sm:w-[68px] [&[aria-pressed=true]_img]:border-sunka-brass"
+                                    class="group w-[62px] shrink-0 cursor-pointer sm:w-[68px] [&[aria-pressed=true]_img]:border-sunka-brass"
                                     data-gallery-thumb={foto.url}
                                     aria-label={`Ver imagen ${index + 1} de ${producto.nombre}`}
                                     aria-pressed={index === 0 ? 'true' : 'false'}
@@ -155,18 +199,15 @@ const sectionTitleClass =
                                         src={foto.url}
                                         alt=""
                                         loading="lazy"
-                                        class="mb-1 aspect-square w-full border border-transparent bg-sunka-cream object-cover transition group-hover:border-sunka-brass"
+                                        class="aspect-square w-full border border-transparent object-cover transition group-hover:border-sunka-brass"
                                     />
-                                    <span class="line-clamp-1">
-                                        {foto.nombre ?? foto.name ?? `Vista ${index + 1}`}
-                                    </span>
                                 </button>
                             ))}
                         </div>
                     )
                 }
 
-                <div class="order-1 grid min-h-[360px] place-items-center overflow-hidden bg-sunka-cream sm:order-2 sm:min-h-[480px] lg:min-h-[590px]">
+                <div class="order-1 grid h-[320px] place-items-center overflow-hidden sm:order-2 sm:h-[440px] lg:h-[560px]">
                     {
                         fotoPrincipal ? (
                             <img
@@ -184,17 +225,29 @@ const sectionTitleClass =
             </div>
 
             <div class="self-center py-3 lg:max-w-xl">
-                <p class={eyebrowClass}>{linea} · {categoria}</p>
-                <h1 class="mt-3 font-heading text-4xl font-semibold leading-tight text-sunka-ink md:text-5xl xl:text-6xl">
+                {
+                    (linea || origen) && (
+                        <p class={eyebrowClass}>{[linea, origen].filter(Boolean).join(' · ')}</p>
+                    )
+                }
+                <h1 class="mt-3 font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl">
                     {producto.nombre}
                 </h1>
-                <p class="mt-4 text-sm leading-relaxed text-sunka-ink/65 md:text-base">
-                    {pageDescription}
-                </p>
+                {
+                    producto.descripcion_corta && (
+                        <p class="mt-4 text-sm leading-relaxed text-sunka-ink/65 md:text-base">
+                            {producto.descripcion_corta}
+                        </p>
+                    )
+                }
 
-                <span class="mt-5 inline-flex rounded-full bg-sunka-sand px-4 py-1.5 text-xs text-sunka-ink/80">
-                    {categoria}
-                </span>
+                {
+                    producto.badge && (
+                        <span class="mt-5 inline-flex rounded-full bg-sunka-sand px-4 py-1.5 text-xs text-sunka-ink/80">
+                            {producto.badge}
+                        </span>
+                    )
+                }
 
                 <div class="mt-5 flex items-baseline gap-3">
                     <span class="text-2xl font-medium">S/ {precio}</span>
@@ -208,9 +261,17 @@ const sectionTitleClass =
                 </div>
 
                 {
-                    caracteristicas.length > 0 && (
-                        <dl class="mt-7 grid grid-cols-3 border-y border-sunka-sand">
-                            {caracteristicas.map((item) => (
+                    producto.descripcion && (
+                        <p class="mt-4 text-sm leading-relaxed text-sunka-ink/65">
+                            {producto.descripcion}
+                        </p>
+                    )
+                }
+
+                {
+                    presentacion.length > 0 && (
+                        <dl class:list={['mt-7 grid border-y border-sunka-sand', presentationGridClass]}>
+                            {presentacion.map((item) => (
                                 <div class="min-w-0 py-3 pr-3">
                                     <dt class="truncate text-base text-sunka-ink">{item.value}</dt>
                                     <dd class="mt-0.5 text-[10px] text-sunka-stone">{item.label}</dd>
@@ -226,233 +287,197 @@ const sectionTitleClass =
                     </label>
                     <div class="grid grid-cols-[112px_1fr] gap-3 sm:grid-cols-[124px_1fr]">
                         <div class="grid h-12 grid-cols-[38px_1fr_38px] border border-sunka-sand">
-                            <button
-                                type="button"
-                                data-quantity-minus
-                                aria-label="Reducir cantidad"
-                                class="cursor-pointer text-lg transition hover:bg-sunka-cream"
-                            >
-                                −
-                            </button>
-                            <input
-                                id="product-quantity"
-                                data-quantity
-                                value="1"
-                                inputmode="numeric"
-                                readonly
-                                class="min-w-0 border-0 bg-transparent p-0 text-center text-sunka-ink focus:ring-0"
-                            />
-                            <button
-                                type="button"
-                                data-quantity-plus
-                                aria-label="Aumentar cantidad"
-                                class="cursor-pointer text-lg transition hover:bg-sunka-cream"
-                            >
-                                +
-                            </button>
+                            <button type="button" data-quantity-minus aria-label="Reducir cantidad" class="cursor-pointer text-lg transition hover:bg-sunka-cream">−</button>
+                            <input id="product-quantity" data-quantity value="1" inputmode="numeric" readonly class="min-w-0 border-0 bg-transparent p-0 text-center text-sunka-ink focus:ring-0" />
+                            <button type="button" data-quantity-plus aria-label="Aumentar cantidad" class="cursor-pointer text-lg transition hover:bg-sunka-cream">+</button>
                         </div>
-                        <button
-                            type="button"
-                            data-add-cart
-                            class="cursor-pointer border border-sunka-brass bg-sunka-brass px-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-sunka-white transition-colors hover:bg-transparent hover:text-sunka-brass"
-                        >
+                        <button type="button" data-add-cart class="cursor-pointer border border-sunka-brass bg-sunka-brass px-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-sunka-white transition-colors hover:bg-transparent hover:text-sunka-brass">
                             Agregar al carrito
                         </button>
                     </div>
-                    <p
-                        class="mt-2 min-h-4 text-xs text-sunka-brass"
-                        data-cart-message
-                        aria-live="polite"
-                    >
-                    </p>
+                    <p class="mt-2 min-h-4 text-xs text-sunka-brass" data-cart-message aria-live="polite"></p>
                 </div>
 
-                <div class="mt-2 flex flex-col gap-2 border-t border-sunka-sand pt-4 text-[11px] text-sunka-stone sm:flex-row sm:gap-6">
+                <div class="mt-2 flex flex-col gap-2 border-t border-sunka-sand pt-4 text-[11px] text-sunka-stone sm:flex-row sm:flex-wrap sm:gap-6">
+                    {
+                        certificaciones.map((certificacion) => (
+                            <span class="inline-flex items-center gap-2">
+                                <i class="grid h-5 w-5 place-items-center rounded-full border border-sunka-brass text-[11px] not-italic text-sunka-brass">✓</i>
+                                {certificacion}
+                            </span>
+                        ))
+                    }
                     <span class="inline-flex items-center gap-2">
-                        <i class="grid h-5 w-5 place-items-center rounded-full border border-sunka-brass text-[11px] not-italic text-sunka-brass">
-                            ✓
-                        </i>
-                        Producto Sunka original
-                    </span>
-                    <span class="inline-flex items-center gap-2">
-                        <i class="grid h-5 w-5 place-items-center rounded-full border border-sunka-brass text-xs not-italic text-sunka-brass">
-                            +
-                        </i>
+                        <i class="grid h-5 w-5 place-items-center rounded-full border border-sunka-brass text-xs not-italic text-sunka-brass">+</i>
                         Compra segura
                     </span>
                 </div>
-
-                <details class="group mt-5 border-y border-sunka-sand py-3 text-xs text-sunka-ink/70">
-                    <summary class="flex cursor-pointer list-none items-center justify-between">
-                        Descripción
-                        <span class="text-base transition-transform group-open:rotate-45">+</span>
-                    </summary>
-                    <p class="mt-3 leading-relaxed">{pageDescription}</p>
-                </details>
             </div>
         </section>
 
-        <section class="bg-sunka-forest text-sunka-white">
-            <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 py-14 md:px-8 md:py-16 lg:grid-cols-[1.15fr_.85fr] lg:gap-24">
-                <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
-                        Perfil del producto
-                    </p>
-                    <h2 class="mt-3 font-heading text-3xl font-semibold leading-tight md:text-4xl">
-                        Una pausa con carácter.
-                    </h2>
-                    <p class="mt-5 max-w-xl text-sm leading-relaxed text-sunka-white/75 md:text-base">
-                        {pageDescription}
-                    </p>
+        {
+            hasPerfilSensorial && (
+                <section class="bg-sunka-forest text-sunka-white">
+                    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 py-14 md:px-8 md:py-16 lg:grid-cols-[1.15fr_.85fr] lg:gap-24">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                                Perfil sensorial
+                            </p>
+                            {perfilSensorial.titulo && (
+                                <h2 class="mt-3 font-heading text-3xl font-semibold leading-tight md:text-4xl">
+                                    {perfilSensorial.titulo}
+                                </h2>
+                            )}
+                            {perfilSensorial.descripcion && (
+                                <p class="mt-5 max-w-xl text-sm leading-relaxed text-sunka-white/75 md:text-base">
+                                    {perfilSensorial.descripcion}
+                                </p>
+                            )}
 
-                    {
-                        ingredientes.length > 0 && (
-                            <div class="mt-10">
-                                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
-                                    Ingredientes
-                                </p>
-                                <p class="mt-3 font-heading text-xl font-medium leading-relaxed md:text-2xl">
-                                    {ingredientes.join(' · ')}
-                                </p>
+                            {notas.length > 0 && (
+                                <div class="mt-10">
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                                        Notas principales
+                                    </p>
+                                    <p class="mt-3 font-heading text-xl font-medium leading-relaxed md:text-2xl">
+                                        {notas.join(' · ')}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+                        {(atributos.length > 0 || momentos.length > 0) && (
+                            <div class="self-center">
+                                {atributos.length > 0 && (
+                                    <dl class="space-y-5">
+                                        {atributos.map((atributo) => (
+                                            <div class="grid grid-cols-[90px_1fr] items-center gap-4">
+                                                <dt class="text-[11px] uppercase text-sunka-white/75">
+                                                    {atributo.label}
+                                                </dt>
+                                                <dd class="h-2 bg-sunka-white/15">
+                                                    <span
+                                                        class="block h-full bg-sunka-brass"
+                                                        style={`width: ${atributo.percentage}%`}
+                                                    />
+                                                </dd>
+                                            </div>
+                                        ))}
+                                    </dl>
+                                )}
+
+                                {momentos.length > 0 && (
+                                    <div class="mt-8 rounded-sm border border-sunka-white/10 bg-sunka-white/5 px-5 py-4">
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-sunka-brass-light">
+                                            Momento ideal
+                                        </p>
+                                        <p class="mt-3 text-xs leading-relaxed text-sunka-white/75">
+                                            {momentos.join(' · ')}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
-                        )
-                    }
-                </div>
+                        )}
+                    </div>
+                </section>
+            )
+        }
 
-                <div class="self-center border border-sunka-white/15 p-6">
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
-                        Lo que encontrarás
-                    </p>
-                    {
-                        beneficios.length > 0 ? (
-                            <ul class="mt-3">
-                                {beneficios.slice(0, 5).map((beneficio, index) => (
-                                    <li class="grid grid-cols-[36px_1fr] gap-3 border-b border-sunka-white/10 py-3 text-sm leading-snug text-sunka-white/78 last:border-0">
-                                        <span class="font-heading text-sunka-brass-light">
+        {
+            diferenciales.length > 0 && (
+                <section class="bg-sunka-white">
+                    <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
+                        <p class={eyebrowClass}>La diferencia Sunka</p>
+                        <h2 class={sectionTitleClass}>Más expresión en cada taza.</h2>
+
+                        <div class="mt-10 grid grid-cols-1 gap-9 md:grid-cols-3 md:gap-10 lg:gap-16">
+                            {diferenciales.map((item) => (
+                                <article class="border-t-2 border-sunka-brass pt-5">
+                                    <span class="grid h-10 w-10 place-items-center rounded-full bg-sunka-sand text-sunka-brass">
+                                        {item.icon === 'leaf' && <LeafIcon class="h-5 w-5" />}
+                                        {item.icon === 'layers' && <BotanicalMixIcon class="h-5 w-5" />}
+                                        {item.icon === 'box' && <BoxIcon class="h-5 w-5" />}
+                                    </span>
+                                    {item.titulo && (
+                                        <h3 class="mt-4 text-base font-semibold text-sunka-ink">
+                                            {item.titulo}
+                                        </h3>
+                                    )}
+                                    {item.descripcion && (
+                                        <p class="mt-2 text-sm leading-relaxed text-sunka-ink/65">
+                                            {item.descripcion}
+                                        </p>
+                                    )}
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )
+        }
+
+        {
+            hasPreparacion && (
+                <section class="bg-sunka-cream">
+                    <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
+                        <p class={eyebrowClass}>Modo de preparación</p>
+                        <h2 class={sectionTitleClass}>Tu ritual paso a paso.</h2>
+
+                        {pasosPreparacion.length > 0 && (
+                            <ol class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10 lg:gap-16">
+                                {pasosPreparacion.map((paso, index) => (
+                                    <li class="grid grid-cols-[auto_1fr] gap-3 border-b border-sunka-sand pb-6">
+                                        <span class="font-heading text-3xl font-semibold leading-none text-sunka-brass">
                                             {String(index + 1).padStart(2, '0')}
                                         </span>
-                                        <p>{beneficio}</p>
+                                        <div>
+                                            {paso.titulo && (
+                                                <h3 class="text-base font-semibold">{paso.titulo}</h3>
+                                            )}
+                                            {paso.descripcion && (
+                                                <p class="mt-2 text-sm leading-snug text-sunka-ink/65">
+                                                    {paso.descripcion}
+                                                </p>
+                                            )}
+                                        </div>
                                     </li>
                                 ))}
-                            </ul>
-                        ) : (
-                            <p class="mt-4 text-sm leading-relaxed text-sunka-white/75">
-                                Una experiencia pensada para disfrutar el aroma, el sabor y el momento.
+                            </ol>
+                        )}
+
+                        {preparacion.maridaje && (
+                            <p class="mt-8 rounded-sm bg-sunka-white px-5 py-3 text-center text-xs text-sunka-ink/65">
+                                {preparacion.maridaje}
                             </p>
-                        )
-                    }
-                </div>
-            </div>
-        </section>
-
-        <section class="bg-sunka-white">
-            <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
-                <p class={eyebrowClass}>La diferencia Sunka</p>
-                <h2 class={sectionTitleClass}>Más expresión en cada taza.</h2>
-                <p class="mt-3 text-sm text-sunka-ink/65">
-                    Conoce los detalles de esta presentación.
-                </p>
-
-                <div class="mt-10 grid grid-cols-1 gap-9 md:grid-cols-3 md:gap-10 lg:gap-16">
-                    {
-                        diferencias.map((item) => (
-                            <article class="border-t-2 border-sunka-brass pt-5">
-                                <span class="grid h-10 w-10 place-items-center rounded-full bg-sunka-sand text-sunka-brass">
-                                    {item.icon === 'leaf' && <LeafIcon class="h-5 w-5" />}
-                                    {item.icon === 'layers' && <BotanicalMixIcon class="h-5 w-5" />}
-                                    {item.icon === 'box' && <BoxIcon class="h-5 w-5" />}
-                                </span>
-                                <h3 class="mt-4 text-base font-semibold text-sunka-ink">
-                                    {item.title}
-                                </h3>
-                                <p class="mt-2 text-sm leading-relaxed text-sunka-ink/65">
-                                    {item.text}
-                                </p>
-                            </article>
-                        ))
-                    }
-                </div>
-            </div>
-        </section>
-
-        <section class="bg-sunka-cream">
-            <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
-                <p class={eyebrowClass}>Modo de preparación</p>
-                <h2 class={sectionTitleClass}>Tu ritual en tres pasos.</h2>
-
-                <ol class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10 lg:gap-16">
-                    <li class="grid grid-cols-[auto_1fr] gap-3 border-b border-sunka-sand pb-6">
-                        <span class="font-heading text-3xl font-semibold leading-none text-sunka-brass">01</span>
-                        <div>
-                            <h3 class="text-base font-semibold">Prepara</h3>
-                            <p class="mt-2 text-sm leading-snug text-sunka-ink/65">
-                                Sirve la porción adecuada para tu taza.
-                            </p>
-                        </div>
-                    </li>
-                    <li class="grid grid-cols-[auto_1fr] gap-3 border-b border-sunka-sand pb-6">
-                        <span class="font-heading text-3xl font-semibold leading-none text-sunka-brass">02</span>
-                        <div>
-                            <h3 class="text-base font-semibold">Infusiona</h3>
-                            <p class="mt-2 text-sm leading-snug text-sunka-ink/65">
-                                Agrega agua caliente y deja que el perfil se exprese.
-                            </p>
-                        </div>
-                    </li>
-                    <li class="grid grid-cols-[auto_1fr] gap-3 border-b border-sunka-sand pb-6">
-                        <span class="font-heading text-3xl font-semibold leading-none text-sunka-brass">03</span>
-                        <div>
-                            <h3 class="text-base font-semibold">Disfruta</h3>
-                            <p class="mt-2 text-sm leading-snug text-sunka-ink/65">
-                                Tómate una pausa y personaliza el sabor a tu gusto.
-                            </p>
-                        </div>
-                    </li>
-                </ol>
-
-                {
-                    (producto.dimenciones || producto.contenido_neto) && (
-                        <p class="mt-8 bg-sunka-white px-5 py-3 text-center text-xs text-sunka-ink/65">
-                            {producto.dimenciones && `Presentación: ${producto.dimenciones}. `}
-                            {contenidoNeto > 0 &&
-                                `Contenido neto: ${contenidoNeto.toLocaleString('es-PE')} g.`}
-                        </p>
-                    )
-                }
-            </div>
-        </section>
+                        )}
+                    </div>
+                </section>
+            )
+        }
 
         {
             relacionados.length > 0 && (
                 <section class="bg-sunka-white">
                     <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
                         <p class={eyebrowClass}>Completa tu ritual</p>
-                        <h2 class={sectionTitleClass}>Descubre {linea}.</h2>
+                        <h2 class={sectionTitleClass}>Más productos recomendados.</h2>
 
                         <div class="mt-10 grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
                             {relacionados.map((item) => (
-                                <a
-                                    class="group min-w-0 transition-transform duration-300 hover:-translate-y-1"
-                                    href={`/producto/${item.slug}`}
-                                >
+                                <a class="group min-w-0 transition-transform duration-300 hover:-translate-y-1" href={`/producto/${item.slug}`}>
                                     <div class="grid aspect-[1.08] place-items-center overflow-hidden bg-sunka-cream">
                                         {item.foto ? (
-                                            <img
-                                                src={item.foto}
-                                                alt={item.nombre}
-                                                loading="lazy"
-                                                class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-                                            />
+                                            <img src={item.foto} alt={item.nombre} loading="lazy" class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
                                         ) : (
                                             <span class="font-heading tracking-[0.1em]">SUNKA</span>
                                         )}
                                     </div>
-                                    <h3 class="mt-4 text-base font-semibold text-sunka-ink">
-                                        {item.nombre}
-                                    </h3>
-                                    <p class="mt-1 text-xs text-sunka-stone">
-                                        {item.categoria1?.nombre ?? categoria}
-                                    </p>
+                                    <h3 class="mt-4 text-base font-semibold text-sunka-ink">{item.nombre}</h3>
+                                    {item.descripcion_corta && (
+                                        <p class="mt-1 line-clamp-2 text-xs text-sunka-stone">
+                                            {item.descripcion_corta}
+                                        </p>
+                                    )}
                                     <strong class="mt-2 block text-sm font-semibold text-sunka-ink">
                                         S/ {item.precio}
                                     </strong>
