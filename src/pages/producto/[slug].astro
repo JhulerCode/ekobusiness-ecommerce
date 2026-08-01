@@ -460,27 +460,37 @@ const sectionTitleClass =
                 <section class="bg-sunka-white">
                     <div class="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
                         <p class={eyebrowClass}>Completa tu ritual</p>
-                        <h2 class={sectionTitleClass}>Más productos recomendados.</h2>
+                        <h2 class={sectionTitleClass}>Descubre lo que resuena contigo.</h2>
 
-                        <div class="mt-10 grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+                        <div class="mt-10 grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
                             {relacionados.map((item) => (
-                                <a class="group min-w-0 transition-transform duration-300 hover:-translate-y-1" href={`/producto/${item.slug}`}>
+                                <a
+                                    class="group flex h-full min-w-0 flex-col bg-sunka-cream px-5 pb-5 pt-5 shadow-[0_6px_16px_rgba(35,29,24,0.12)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(35,29,24,0.16)]"
+                                    href={`/producto/${item.slug}`}
+                                >
                                     <div class="grid aspect-[1.08] place-items-center overflow-hidden bg-sunka-cream">
                                         {item.foto ? (
-                                            <img src={item.foto} alt={item.nombre} loading="lazy" class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
+                                            <img
+                                                src={item.foto}
+                                                alt={item.nombre}
+                                                loading="lazy"
+                                                class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                                            />
                                         ) : (
                                             <span class="font-heading tracking-[0.1em]">SUNKA</span>
                                         )}
                                     </div>
-                                    <h3 class="mt-4 text-base font-semibold text-sunka-ink">{item.nombre}</h3>
-                                    {item.descripcion_corta && (
-                                        <p class="mt-1 line-clamp-2 text-xs text-sunka-stone">
-                                            {item.descripcion_corta}
-                                        </p>
-                                    )}
-                                    <strong class="mt-2 block text-sm font-semibold text-sunka-ink">
-                                        S/ {item.precio}
-                                    </strong>
+                                    <div class="mt-5">
+                                        <h3 class="text-base font-semibold text-sunka-ink">{item.nombre}</h3>
+                                        {item.descripcion_corta && (
+                                            <p class="mt-1 line-clamp-2 text-xs leading-relaxed text-sunka-stone">
+                                                {item.descripcion_corta}
+                                            </p>
+                                        )}
+                                        <strong class="mt-2 block text-sm font-semibold text-sunka-ink">
+                                            S/ {item.precio}
+                                        </strong>
+                                    </div>
                                 </a>
                             ))}
                         </div>
