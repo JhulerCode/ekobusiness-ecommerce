@@ -2,8 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BlendForm from '../components/BlendForm.vue';
 import Beneficios from '@/components/home/Beneficios.astro';
-import HeroPremium from '@/components/shared/HeroPremium.astro';
-import bannerBlend from '@/assets/banner1.webp';
+import blendHero from '@/assets/home/blend.webp';
 import { get, formatProductos } from '../lib/api.js';
 
 const empaques = [
@@ -20,8 +19,7 @@ const qry1 = {
 };
 
 const res1 = await get('insumos', { qry: qry1 });
-if (res1.code != 0) return;
-const formatos = formatProductos(res1.data).sort(
+const formatos = formatProductos(res1?.code === 0 ? (res1.data ?? []) : []).sort(
     (a, b) => a.contenido_neto - b.contenido_neto
 );
 
@@ -33,43 +31,114 @@ const qry = {
     cols: ['id', 'nombre', 'precio', 'unidad', 'mp_tipo'],
 };
 const res = await get('insumos', { qry });
-if (res.code != 0) return;
+const ingredientes = res?.code === 0 && Array.isArray(res.data) ? res.data : [];
+const apiDisponible = res1?.code === 0 && res?.code === 0;
 
 const hierbasBase = [];
 const complementos = [];
 const frutas = [];
 const especias = [];
 
-for (const a of res.data) {
-    switch (a.mp_tipo) {
+for (const ingrediente of ingredientes) {
+    switch (ingrediente.mp_tipo) {
         case '1':
-            hierbasBase.push(a);
+            hierbasBase.push(ingrediente);
             break;
         case '2':
-            complementos.push(a);
+            complementos.push(ingrediente);
             break;
         case '3':
-            frutas.push(a);
+            frutas.push(ingrediente);
             break;
         case '4':
-            especias.push(a);
+            especias.push(ingrediente);
             break;
     }
 }
+
+const pasos = [
+    { numero: '01', titulo: 'Formato' },
+    { numero: '02', titulo: 'Ingredientes', activo: true },
+    { numero: '03', titulo: 'Personaliza' },
+    { numero: '04', titulo: 'Revisa' },
+];
 ---
 
 <BaseLayout title="Crea tu Blend | SUNKA Herbal Tea">
-    <HeroPremium
-        imgSrc={bannerBlend}
-        subtitle="Alquimia Personal"
-        title="Crea tu Blend"
-        description="Explora el arte de combinar ingredientes naturales. Diseña una infusión única, pensada exclusivamente por y para ti. Un proceso creativo donde cada elemento cuenta una historia."
-    />
+    <section
+        class="relative min-h-[480px] w-full overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[430px]"
+    >
+        <div class="absolute inset-0" aria-hidden="true">
+            <img
+                src={blendHero.src}
+                alt=""
+                class="blend-hero-image h-full w-full object-cover object-center"
+            />
+            <div
+                class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.98)_34%,rgba(9,8,6,.82)_58%,rgba(9,8,6,.18)_100%)] md:bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.92)_42%,rgba(9,8,6,.46)_68%,rgba(9,8,6,.12)_100%)]"
+            >
+            </div>
+        </div>
 
-    <section class="bg-white py-24 md:py-32">
-        <div class="max-w-4xl mx-auto px-6">
-            <!-- Formulario -->
+        <div
+            class="relative z-10 mx-auto flex min-h-[480px] max-w-7xl items-start px-5 pt-28 md:min-h-[430px] md:items-center md:px-8 md:pt-24"
+        >
+            <div class="max-w-2xl">
+                <p
+                    class="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-sunka-brass-light/90"
+                >
+                    Alquimia personal
+                </p>
+                <h1
+                    class="max-w-xl font-heading text-3xl font-semibold leading-[1.05] text-sunka-white md:text-5xl"
+                >
+                    Crea tu Blend
+                </h1>
+                <p class="mt-6 max-w-md text-base leading-relaxed text-sunka-white/88 md:text-lg">
+                    Combina ingredientes naturales y crea una infusión verdaderamente tuya.
+                    Nosotros te guiamos para lograr un blend equilibrado.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <main id="constructor" class="blend-page">
+        <div class="blend-container">
+            <nav class="blend-steps" aria-label="Progreso de creación del blend">
+                {
+                    pasos.map((paso, index) => (
+                        <div class:list={['blend-step', paso.activo && 'is-active']}>
+                            <span class="blend-step__number">{paso.numero}</span>
+                            <span class="blend-step__title">{paso.titulo}</span>
+                            {index < pasos.length - 1 && <span class="blend-step__line" />}
+                        </div>
+                    ))
+                }
+            </nav>
+
+            <div class="blend-intro">
+                <div>
+                    <p class="blend-eyebrow">Tu fórmula, a tu manera</p>
+                    <h2>Construye tu mezcla</h2>
+                    <p>Elige el formato, una base y completa el perfil con tus notas favoritas.</p>
+                </div>
+                <span class="blend-intro__badge">Creación guiada</span>
+            </div>
+
+            {
+                !apiDisponible && (
+                    <div class="blend-api-notice" role="status">
+                        <strong>No pudimos cargar los ingredientes.</strong>
+                        <span>
+                            Verifica que el servidor de la tienda esté disponible y vuelve a cargar
+                            esta página.
+                        </span>
+                    </div>
+                )
+            }
+
             <BlendForm
+                class="blend-form"
                 client:load
                 formatos={formatos}
                 empaques={empaques}
@@ -79,8 +148,289 @@ for (const a of res.data) {
                 especias={especias}
             />
         </div>
-    </section>
+    </main>
 
     <Beneficios />
 </BaseLayout>
 
+<style>
+    .blend-hero-image {
+        animation: blendHeroZoom 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes blendHeroZoom {
+        from { transform: scale(1); }
+        to { transform: scale(1.06); }
+    }
+
+    .blend-eyebrow {
+        margin: 0 0 14px;
+        color: var(--sunka-brass-light);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+    }
+
+    .blend-page {
+        padding: 96px 24px 128px;
+        background: var(--sunka-cream);
+    }
+
+    .blend-container {
+        width: min(100%, 1280px);
+        margin: 0 auto;
+    }
+
+    .blend-steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        margin-bottom: 32px;
+        padding: 16px 28px;
+        border: 1px solid #d8d8d4;
+        border-radius: 14px;
+        background: var(--sunka-white);
+    }
+
+    .blend-step {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: 10px;
+        color: var(--sunka-stone);
+        font-size: 13px;
+    }
+
+    .blend-step__number {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        flex: 0 0 auto;
+        place-items: center;
+        border: 1px solid #d8d8d4;
+        border-radius: 50%;
+        font-size: 10px;
+    }
+
+    .blend-step__line {
+        height: 1px;
+        flex: 1;
+        margin: 0 16px;
+        background: #dededb;
+    }
+
+    .blend-step.is-active {
+        color: var(--sunka-forest);
+        font-weight: 600;
+    }
+
+    .blend-step.is-active .blend-step__number {
+        border-color: var(--sunka-brass);
+        color: var(--sunka-white);
+        background: var(--sunka-brass);
+        box-shadow: 0 0 0 5px rgba(184, 138, 61, 0.12);
+    }
+
+    .blend-intro {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: -1px;
+        padding: 32px 32px 26px;
+        border: 1px solid var(--sunka-sand);
+        border-bottom: 0;
+        background: var(--sunka-white);
+    }
+
+    .blend-intro h2 {
+        margin: 0;
+        color: var(--sunka-ink);
+        font-family: 'Jost', 'Helvetica', Arial, sans-serif;
+        font-size: clamp(30px, 3vw, 40px);
+        font-weight: 600;
+    }
+
+    .blend-intro p:last-child {
+        margin: 7px 0 0;
+        color: var(--sunka-stone);
+        font-size: 14px;
+    }
+
+    .blend-intro__badge {
+        flex: 0 0 auto;
+        padding: 8px 13px;
+        border: 1px solid var(--sunka-brass);
+        color: var(--sunka-brass);
+        background: transparent;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .blend-api-notice {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 24px;
+        padding: 13px 18px;
+        border: 1px solid rgba(184, 138, 61, 0.45);
+        color: var(--sunka-ink);
+        background: var(--sunka-white);
+        font-size: 13px;
+    }
+
+    .blend-api-notice span {
+        color: var(--sunka-stone);
+    }
+
+    :global(.blend-form) {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 370px !important;
+        align-items: start;
+        gap: 32px !important;
+    }
+
+    :global(.blend-form > section:first-child) {
+        padding: 8px 32px 32px;
+        border: 1px solid var(--sunka-sand);
+        border-top: 0;
+        border-radius: 0;
+        background: var(--sunka-white);
+    }
+
+    :global(.blend-form > section:first-child > div:first-child) {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px !important;
+        margin-bottom: 34px;
+        padding: 18px;
+        border-radius: 0;
+        background: rgba(230, 218, 200, 0.38);
+    }
+
+    :global(.blend-form > section:first-child > div:not(:first-child)) {
+        padding-top: 26px;
+        border-top: 1px solid var(--sunka-sand);
+    }
+
+    :global(.blend-form > section:first-child h2) {
+        color: var(--sunka-forest);
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    :global(.blend-form .radio) {
+        min-height: 48px;
+        align-items: center;
+        border-color: var(--sunka-sand) !important;
+        border-radius: 0 !important;
+        color: var(--sunka-forest);
+        background: var(--sunka-white);
+        transition: 180ms ease;
+    }
+
+    :global(.blend-form .radio:has(input:checked)) {
+        border-color: var(--sunka-forest) !important;
+        box-shadow: inset 0 0 0 1px var(--sunka-forest);
+    }
+
+    :global(.blend-form button) {
+        min-height: 54px;
+        border-color: var(--sunka-sand) !important;
+        border-radius: 0 !important;
+        background: var(--sunka-white) !important;
+        color: var(--sunka-forest) !important;
+        font-weight: 500;
+    }
+
+    :global(.blend-form button:hover) {
+        border-color: var(--sunka-olive) !important;
+        transform: translateY(-1px);
+    }
+
+    :global(.blend-form button.bg-black) {
+        border-color: var(--sunka-forest) !important;
+        color: var(--sunka-white) !important;
+        background: var(--sunka-forest) !important;
+        box-shadow: none;
+    }
+
+    :global(.blend-form > section:last-child) {
+        top: 118px !important;
+        padding: 26px !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        color: var(--sunka-white);
+        background: var(--sunka-forest) !important;
+        box-shadow: 0 18px 38px rgba(13, 35, 23, 0.18) !important;
+    }
+
+    :global(.blend-form > section:last-child h2) {
+        color: var(--sunka-white) !important;
+        border-color: rgba(255, 255, 255, 0.13) !important;
+        font-family: 'Jost', 'Helvetica', Arial, sans-serif;
+        font-size: 24px !important;
+        font-weight: 600 !important;
+    }
+
+    :global(.blend-form > section:last-child p),
+    :global(.blend-form > section:last-child span),
+    :global(.blend-form > section:last-child small) {
+        color: inherit;
+    }
+
+    :global(.blend-form > section:last-child .text-gray-400) {
+        color: rgba(255, 253, 248, 0.57) !important;
+    }
+
+    :global(.blend-form > section:last-child .border-gray-300),
+    :global(.blend-form > section:last-child .border-gray-200) {
+        border-color: rgba(255, 255, 255, 0.14) !important;
+    }
+
+    :global(.blend-form > section:last-child .button) {
+        min-height: 48px;
+        border: 1px solid var(--sunka-brass) !important;
+        border-radius: 0 !important;
+        color: var(--sunka-white) !important;
+        background: var(--sunka-brass) !important;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    :global(.blend-form > section:last-child input[type='range']) {
+        filter: invert(1) sepia(0.25) saturate(0.8);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .blend-hero-image {
+            animation: none;
+        }
+    }
+
+    @media (min-width: 900px) {
+        :global(.blend-form > section:first-child > div:not(:first-child) > .flex.flex-col) {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 900px) {
+        .blend-steps { padding-inline: 16px; }
+        .blend-step { justify-content: center; }
+        .blend-step__title, .blend-step__line { display: none; }
+        :global(.blend-form) { grid-template-columns: 1fr !important; }
+        :global(.blend-form > section:last-child) { position: relative !important; top: auto !important; }
+    }
+
+    @media (max-width: 560px) {
+        .blend-page { padding: 64px 12px 96px; }
+        .blend-intro { align-items: flex-start; padding: 24px 20px 20px; }
+        .blend-intro__badge { display: none; }
+        .blend-api-notice { align-items: flex-start; flex-direction: column; }
+        :global(.blend-form > section:first-child) { padding: 6px 20px 26px; }
+        :global(.blend-form > section:first-child > div:first-child) { grid-template-columns: 1fr; }
+    }
+</style>

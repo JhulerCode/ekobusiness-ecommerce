@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div class="blend-form grid grid-cols-1 md:grid-cols-2 gap-12">
         <!-- COLUMNA IZQUIERDA -->
         <section class="space-y-6">
             <!-- 1. BASICS: FORMATO/EMPAQUE -->

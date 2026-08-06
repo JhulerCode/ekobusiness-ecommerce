@@ -22,7 +22,7 @@ const rightNavLinks = [
 
 const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
-const startsTransparent = currentPath === '/' || currentPath.startsWith('/lineas/')
+const startsTransparent = currentPath === '/' || currentPath.startsWith('/lineas/') || currentPath === '/crea-tu-blend'
 const headerMainClass = startsTransparent
     ? 'fixed top-7 left-0 z-50 w-full border-b border-transparent bg-transparent transition-all duration-500'
     : 'fixed top-7 left-0 z-50 w-full border-b border-sunka-white/10 bg-[#2b2b2b]/42 backdrop-blur-md transition-all duration-500'
