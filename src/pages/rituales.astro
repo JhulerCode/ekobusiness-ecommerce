@@ -1,60 +1,82 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import heroImage from '@/assets/home/banner/tetera.webp'
-import pauseImage from '@/assets/home/newsletter.webp'
-import ingredientsImage from '@/assets/home/blend.webp'
-import morningImage from '@/assets/lines/tradicional/diferencia.webp'
-import tableImage from '@/assets/lines/signature/diferencia.webp'
+import heroImage from '@/assets/rituales/hero.webp'
+import pauseImage from '@/assets/rituales/destacado.webp'
+import ingredientsImage from '@/assets/rituales/pequenos-detalles.webp'
 import nightImage from '@/assets/home/banner/chica.webp'
-import shareImage from '@/assets/lines/luxury/preparacion.webp'
-import fieldImage from '@/assets/home/campo.webp'
 
-const rituals = [
+const moments = [
     {
+        key: 'morning',
+        label: '6:00 – 9:00',
         eyebrow: 'Mañana',
-        title: 'Empieza a tu ritmo.',
-        product: 'Té verde con frutos rojos',
-        image: morningImage,
-        href: '/ritual/amanecer',
-    },
-    {
-        eyebrow: 'Enfoque',
-        title: 'Ordena el día.',
-        product: 'Signature Black',
-        image: ingredientsImage,
-        href: '/ritual/pausa',
-    },
-    {
-        eyebrow: 'Compartir',
-        title: 'Haz sitio en la mesa.',
-        product: 'Frambuesa',
-        image: tableImage,
-        href: '/tienda',
-    },
-    {
-        eyebrow: 'Noche',
-        title: 'Baja el ritmo.',
-        product: 'Manzanilla',
+        button: 'Empezar el día',
+        title: 'Pausa de mañana',
+        copy: 'Para despertar con ligereza y claridad.',
+        product: 'Té verde · 20 sobres',
+        notes: 'Fresco, frutal y aromático.',
+        productHref: '/producto/3baf320d-3389-4778-bb72-9dcd44bfb8ae',
         image: nightImage,
-        href: '/ritual/reposo',
+        alt: 'Ritual SUNKA para empezar la mañana',
+    },
+    {
+        key: 'pause',
+        label: '9:00 – 5:00',
+        eyebrow: 'Pausa y enfoque',
+        button: 'Hacer una pausa',
+        title: 'Claridad para continuar',
+        copy: 'Cinco minutos para ordenar las ideas y volver a tu ritmo.',
+        product: 'Jamaica y Piña · 20 sobres',
+        notes: 'Frutal, intenso y aromático.',
+        productHref: '/producto/a3d94dff-f781-4389-9475-45979324b919',
+        image: nightImage,
+        alt: 'Preparación de una infusión durante una pausa SUNKA',
+    },
+    {
+        key: 'share',
+        label: '5:00 – 8:00',
+        eyebrow: 'Compartir',
+        button: 'Compartir',
+        title: 'Una mesa compartida',
+        copy: 'Para conversar, acompañar y disfrutar sin mirar el reloj.',
+        product: 'Passion Tea Luxury · 10 sobres',
+        notes: 'Vibrante, dulce y ligeramente ácido.',
+        productHref: '/producto/623f2b51-f181-4085-9ee3-f9036198f774',
+        image: nightImage,
+        alt: 'Tazas SUNKA preparadas para compartir',
+    },
+    {
+        key: 'night',
+        label: '9:00 – 11:00',
+        eyebrow: 'Noche',
+        button: 'Cerrar el día',
+        title: 'Bajar el ritmo',
+        copy: 'Una señal amable para cerrar el día y entrar en calma.',
+        product: 'Manzanilla · 20 sobres',
+        notes: 'Suave, floral y reconfortante.',
+        productHref: '/producto/2bbbced5-62e2-4d2d-89f8-aa6373ff3904',
+        image: nightImage,
+        alt: 'Ritual nocturno SUNKA para entrar en calma',
     },
 ]
+
+const initialMoment = moments[0]
 
 const articles = [
     {
         eyebrow: 'Guía · 4 min',
         title: 'Cómo preparar té frío sin perder aroma.',
-        image: ingredientsImage,
+        image: nightImage,
     },
     {
         eyebrow: 'Formato · 5 min',
         title: 'Doble cámara o piramidal: qué cambia en tu taza.',
-        image: pauseImage,
+        image: nightImage,
     },
     {
         eyebrow: 'Inspiración · 3 min',
         title: 'Tres ideas para acompañar una buena sobremesa.',
-        image: tableImage,
+        image: nightImage,
     },
 ]
 ---
@@ -63,15 +85,22 @@ const articles = [
     title="Rituales | SUNKA Herbal Tea"
     description="Encuentra el ritual SUNKA que acompaña tu momento: mañana, pausa, sobremesa o noche."
 >
-    <section class="ritual-hero relative isolate flex min-h-[690px] overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[650px]">
-        <img
-            src={heroImage.src}
-            alt="Tetera y taza de té SUNKA sobre una mesa"
-            class="absolute inset-0 -z-20 h-full w-full object-cover object-[68%_center]"
-        />
-        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/90 via-black/65 to-black/5"></div>
-        <div class="mx-auto flex w-full max-w-7xl items-start px-5 pt-28 md:items-center md:px-8 md:pt-24">
-            <div class="max-w-2xl fade-up">
+    <section class="ritual-hero relative min-h-[690px] w-full overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[650px]">
+        <div class="absolute inset-0" aria-hidden="true">
+            <img
+                src={heroImage.src}
+                alt=""
+                class="ritual-hero-image h-full w-full object-cover object-[68%_center]"
+            />
+            <div
+                class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.98)_34%,rgba(9,8,6,.82)_58%,rgba(9,8,6,.18)_100%)] md:bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.92)_42%,rgba(9,8,6,.46)_68%,rgba(9,8,6,.12)_100%)]"
+            >
+            </div>
+        </div>
+        <div
+            class="relative z-10 mx-auto flex min-h-[690px] max-w-7xl items-start px-5 pt-28 md:min-h-[650px] md:items-center md:px-8 md:pt-24"
+        >
+            <div class="max-w-2xl">
                 <p class="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-sunka-brass-light/90">
                     Momentos SUNKA
                 </p>
@@ -83,46 +112,112 @@ const articles = [
                     o una infusión que acompañe tu ritmo.
                 </p>
                 <div class="mt-9 flex flex-col gap-3 sm:flex-row">
-                    <a class="ritual-button ritual-button-gold" href="#encuentra-tu-ritual">
-                        Encuentra tu ritual
+                    <a class="ritual-button ritual-hero-button-primary" href="#ideas-para-disfrutar">
+                        Ideas SUNKA
                     </a>
-                    <a class="ritual-button ritual-button-dark" href="#rituales">Explorar colecciones</a>
+                    <a class="ritual-button ritual-hero-button-secondary" href="/tienda">Explorar colecciones</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="encuentra-tu-ritual" class="bg-sunka-cream py-10 md:py-14">
+    <section id="encuentra-tu-ritual" class="bg-sunka-cream py-12 md:py-16">
         <div class="mx-auto max-w-7xl px-5 md:px-8">
-            <div class="fade-up">
-                <p class="section-kicker">Tu día, a tu manera</p>
-                <h2 class="section-title">¿Qué momento quieres acompañar?</h2>
-                <p class="mt-2 max-w-xl text-sm leading-relaxed text-sunka-ink/68">
-                    Elige cómo estás viviendo el día y descubre una recomendación pensada para ese momento.
+            <div class="grid gap-4 fade-up md:grid-cols-2 md:items-end">
+                <div>
+                    <p class="section-kicker">Tu día, a tu manera</p>
+                    <h2 class="section-title">Un ritual para cada ritmo.</h2>
+                </div>
+                <p class="max-w-lg text-sm leading-relaxed text-sunka-ink/68 md:justify-self-end">
+                    Elige el momento que estás viviendo y descubre el ritual SUNKA que mejor lo
+                    acompaña.
                 </p>
             </div>
 
-            <div class="mt-8 grid grid-cols-2 gap-2 md:grid-cols-5" role="group" aria-label="Selecciona un momento del día">
-                <button class="moment-button is-active" data-moment="morning" type="button">Empezar el día</button>
-                <button class="moment-button" data-moment="focus" type="button">Enfocarme</button>
-                <button class="moment-button" data-moment="pause" type="button">Hacer una pausa</button>
-                <button class="moment-button" data-moment="share" type="button">Compartir</button>
-                <button class="moment-button col-span-2 md:col-span-1" data-moment="night" type="button">Cerrar el día</button>
+            <div
+                class="mt-8 grid grid-cols-2 gap-2 md:grid-cols-4"
+                role="group"
+                aria-label="Selecciona un momento del día"
+            >
+                {moments.map((moment, index) => (
+                    <button
+                        class={`moment-button ${index === 0 ? 'is-active' : ''}`}
+                        data-moment={moment.key}
+                        data-label={moment.label}
+                        data-eyebrow={moment.eyebrow}
+                        data-name={moment.title}
+                        data-copy={moment.copy}
+                        data-product={moment.product}
+                        data-product-href={moment.productHref}
+                        data-notes={moment.notes}
+                        data-image={moment.image.src}
+                        data-alt={moment.alt}
+                        type="button"
+                        aria-pressed={index === 0 ? 'true' : 'false'}
+                    >
+                        {moment.button}
+                    </button>
+                ))}
             </div>
 
-            <div class="mt-6 grid items-center gap-6 rounded-md border border-sunka-ink/14 bg-sunka-white p-5 md:grid-cols-[0.8fr_1.6fr_auto] md:px-6">
-                <div>
-                    <p id="moment-label" class="section-kicker mb-2">6:00 – 9:00</p>
-                    <p id="moment-name" class="font-heading text-base font-semibold text-sunka-ink">Pausa de mañana</p>
-                    <p id="moment-copy" class="mt-1 text-sm leading-relaxed text-sunka-ink/68">Para despertar con ligereza y claridad.</p>
+            <article
+                class="mt-6 grid overflow-hidden rounded-md border border-sunka-ink/14 bg-sunka-white shadow-[0_1px_0_rgba(9,8,6,.05)] fade-up lg:grid-cols-[1.15fr_0.85fr]"
+                aria-live="polite"
+            >
+                <figure class="relative h-[330px] min-h-0 w-full self-start overflow-hidden bg-sunka-forest sm:h-[420px] lg:h-[500px]">
+                    <img
+                        id="moment-image"
+                        src={initialMoment.image.src}
+                        alt={initialMoment.alt}
+                        class="absolute inset-0 block h-full w-full object-cover transition-all duration-500"
+                    />
+                    <div
+                        class="pointer-events-none absolute inset-0 bg-gradient-to-t from-sunka-ink/85 via-sunka-ink/5 to-transparent"
+                        aria-hidden="true"
+                    ></div>
+                    <figcaption class="absolute inset-x-0 bottom-0 p-6 text-sunka-white md:p-8">
+                        <p id="moment-eyebrow" class="text-[11px] font-semibold uppercase tracking-[0.2em] text-sunka-brass-light">
+                            {initialMoment.eyebrow}
+                        </p>
+                        <p id="moment-label" class="mt-2 text-sm text-sunka-white/78">
+                            {initialMoment.label}
+                        </p>
+                    </figcaption>
+                </figure>
+
+                <div id="moment-content" class="flex flex-col justify-center p-6 transition-all duration-300 md:p-8 lg:p-10">
+                    <p class="section-kicker">Tu ritual SUNKA</p>
+                    <h3 id="moment-name" class="mt-2 font-heading text-2xl font-semibold leading-tight text-sunka-ink md:text-3xl">
+                        {initialMoment.title}
+                    </h3>
+                    <p id="moment-copy" class="mt-4 text-sm leading-relaxed text-sunka-ink/68 md:text-base">
+                        {initialMoment.copy}
+                    </p>
+
+                    <div class="my-6 h-px bg-sunka-sand"></div>
+
+                    <div>
+                        <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-sunka-brass">
+                            Te recomendamos
+                        </p>
+                        <p id="moment-product" class="font-heading text-xl font-semibold text-sunka-ink">
+                            {initialMoment.product}
+                        </p>
+                        <p id="moment-notes" class="mt-2 text-sm leading-relaxed text-sunka-ink/68">
+                            {initialMoment.notes}
+                        </p>
+                    </div>
+
+                    <a
+                        id="moment-product-link"
+                        class="ritual-button ritual-button-gold mt-7 w-full sm:w-fit"
+                        href={initialMoment.productHref}
+                    >
+                        Ver producto recomendado
+                    </a>
+
                 </div>
-                <div class="border-sunka-sand md:border-l md:pl-8">
-                    <p class="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-sunka-brass">Te recomendamos</p>
-                    <p id="moment-product" class="font-heading text-lg font-semibold text-sunka-ink">Té verde con frutos rojos</p>
-                    <p id="moment-notes" class="mt-1 text-sm text-sunka-ink/68">Fresco, frutal y aromático.</p>
-                </div>
-                <a id="moment-link" class="ritual-button ritual-button-gold" href="/ritual/amanecer">Ver este ritual</a>
-            </div>
+            </article>
         </div>
     </section>
 
@@ -134,7 +229,7 @@ const articles = [
             </div>
             <div class="fade-up delay-1">
                 <p class="section-kicker">Ritual destacado · 5 min</p>
-                <h2 class="section-title text-sunka-white">Cinco minutos para volver a tu ritmo.</h2>
+                <h2 class="section-title section-title-light">Cinco minutos para volver a tu ritmo.</h2>
                 <p class="mt-4 max-w-lg text-sm leading-relaxed text-sunka-white/78 md:text-base">
                     Un ritual no es una regla. Es una pequeña decisión que convierte una taza en un momento propio.
                 </p>
@@ -143,40 +238,7 @@ const articles = [
                     <li class="ritual-step"><span>02</span><div><strong>Infusiona y deja que el aroma aparezca.</strong><small>Respeta el tiempo indicado en cada producto.</small></div></li>
                     <li class="ritual-step"><span>03</span><div><strong>Haz una pausa. Continúa distinto.</strong><small>Cinco minutos también pueden cambiar el día.</small></div></li>
                 </ol>
-                <a class="ritual-button ritual-button-gold mt-7" href="/crea-tu-blend">Descubre el blend</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="rituales" class="bg-sunka-white py-10 md:py-14">
-        <div class="mx-auto max-w-7xl px-5 md:px-8">
-            <div class="grid gap-5 md:grid-cols-2 md:items-end">
-                <div>
-                    <p class="section-kicker">Sunka en tu día</p>
-                    <h2 class="section-title">Un ritual para cada ritmo.</h2>
-                </div>
-                <p class="max-w-lg text-sm leading-relaxed text-sunka-ink/68 md:justify-self-end">
-                    No todos los días se sienten igual. Por eso creamos opciones para distintos momentos,
-                    sabores y formas de disfrutar.
-                </p>
-            </div>
-            <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {rituals.map((ritual, index) => (
-                    <article class={`group fade-up delay-${Math.min(index, 3)}`}>
-                        <a href={ritual.href} class="block overflow-hidden rounded-md bg-sunka-ink">
-                            <div class="relative aspect-[4/5] overflow-hidden">
-                                <img src={ritual.image.src} alt={ritual.product} class="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                                <div class="absolute inset-x-0 bottom-0 p-5 text-sunka-white">
-                                    <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-sunka-brass-light">{ritual.eyebrow}</p>
-                                    <h3 class="mt-2 font-heading text-xl font-semibold leading-tight">{ritual.title}</h3>
-                                </div>
-                            </div>
-                        </a>
-                        <h4 class="mt-4 font-heading text-base font-semibold text-sunka-ink">{ritual.product}</h4>
-                        <a href={ritual.href} class="mt-2 inline-flex text-xs font-semibold uppercase tracking-[0.1em] text-sunka-ink transition hover:text-sunka-brass">Ver ritual →</a>
-                    </article>
-                ))}
+                <a class="ritual-button ritual-button-gold mt-7 w-full sm:w-fit" href="/crea-tu-blend">Descubre tu blend</a>
             </div>
         </div>
     </section>
@@ -196,9 +258,28 @@ const articles = [
                     <li class="detail-step"><span>03</span><div><strong>Disfrútalo a tu manera</strong><small>Caliente, frío, solo o acompañado.</small></div></li>
                 </ol>
             </div>
-            <div class="relative fade-up delay-1">
-                <span class="absolute -right-4 top-4 h-full w-full border border-sunka-brass/60"></span>
-                <img src={ingredientsImage.src} alt="Selección de hojas, flores y especias para infusiones" class="relative aspect-[4/3] w-full object-cover" />
+            <div class="relative mx-auto w-full max-w-[470px] px-5 pb-7 pt-5 fade-up delay-1 md:px-6 md:pb-8">
+                <div
+                    class="absolute inset-5 -translate-x-2 translate-y-2 rounded-[20px] bg-sunka-sand md:inset-6 md:-translate-x-3 md:translate-y-3"
+                    aria-hidden="true"
+                ></div>
+                <div
+                    class="absolute inset-5 translate-x-2 -translate-y-2 rounded-[20px] border border-sunka-brass/65 md:inset-6 md:translate-x-3 md:-translate-y-3"
+                    aria-hidden="true"
+                ></div>
+                <figure
+                    class="relative z-10 aspect-[4/5] overflow-hidden rounded-[20px] bg-sunka-sand shadow-[0_18px_38px_rgba(55,42,24,.18)]"
+                >
+                    <img
+                        src={ingredientsImage.src}
+                        alt="Selección de hojas, flores y especias para infusiones"
+                        class="ritual-detail-image h-full w-full object-cover object-center"
+                    />
+                    <div
+                        class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_62%,rgba(9,8,6,.42)_100%)]"
+                        aria-hidden="true"
+                    ></div>
+                </figure>
             </div>
         </div>
     </section>
@@ -206,7 +287,7 @@ const articles = [
     <section class="bg-sunka-forest py-10 text-center text-sunka-white md:py-14">
         <div class="mx-auto max-w-7xl px-5 md:px-8">
             <p class="section-kicker">Elige por sabor</p>
-            <h2 class="section-title text-sunka-white">¿Cómo quieres que se sienta tu taza?</h2>
+            <h2 class="section-title section-title-light">¿Cómo quieres que se sienta tu taza?</h2>
             <p class="mt-2 text-sm text-sunka-white/72">Explora las colecciones por perfil sensorial, sin complicaciones.</p>
             <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {['Fresco y ligero', 'Cálido y envolvente', 'Frutal y vibrante', 'Intenso y aromático'].map((flavor) => (
@@ -219,14 +300,14 @@ const articles = [
         </div>
     </section>
 
-    <section class="bg-sunka-white py-10 md:py-14">
+    <section id="ideas-para-disfrutar" class="scroll-mt-24 bg-sunka-white py-10 md:py-14">
         <div class="mx-auto max-w-7xl px-5 md:px-8">
             <div class="flex flex-wrap items-end justify-between gap-6">
                 <div>
-                    <p class="section-kicker">Cartas SUNKA</p>
-                    <h2 class="section-title">Ideas para disfrutar mejor el té.</h2>
+                    <p class="section-kicker">Ideas SUNKA</p>
+                    <h2 class="section-title">Para disfrutar mejor el té.</h2>
                 </div>
-                <a href="#" class="text-xs font-semibold uppercase tracking-[0.1em] text-sunka-ink hover:text-sunka-brass">Ver todas las cartas →</a>
+                <a href="#" class="text-xs font-semibold uppercase tracking-[0.1em] text-sunka-ink hover:text-sunka-brass">Ver todas las ideas →</a>
             </div>
             <div class="mt-8 grid gap-6 md:grid-cols-3">
                 {articles.map((article, index) => (
@@ -242,7 +323,7 @@ const articles = [
         </div>
     </section>
 
-    <section class="relative isolate overflow-hidden py-14 text-sunka-white md:py-20">
+    <!-- <section class="relative isolate overflow-hidden py-14 text-sunka-white md:py-20">
         <img src={fieldImage.src} alt="Paisaje andino donde nace SUNKA" class="absolute inset-0 -z-20 h-full w-full object-cover" />
         <div class="absolute inset-0 -z-10 bg-sunka-forest/85"></div>
         <div class="mx-auto max-w-7xl px-5 md:px-8">
@@ -254,41 +335,56 @@ const articles = [
                 Calidad e innovación para acompañarte hoy y seguir evolucionando contigo mañana.
             </p>
         </div>
-    </section>
+    </section> -->
 </BaseLayout>
 
 <script>
-    const moments = {
-        morning: { label: '6:00 – 9:00', name: 'Pausa de mañana', copy: 'Para despertar con ligereza y claridad.', product: 'Té verde con frutos rojos', notes: 'Fresco, frutal y aromático.', href: '/ritual/amanecer' },
-        focus: { label: '9:00 – 12:00', name: 'Claridad para avanzar', copy: 'Una pausa breve antes de entrar en ritmo.', product: 'Signature Black', notes: 'Equilibrado, intenso y elegante.', href: '/ritual/pausa' },
-        pause: { label: '3:00 – 5:00', name: 'Pausa de tarde', copy: 'Cinco minutos para cambiar el ritmo.', product: 'Cacao, Jamaica y Maracuyá', notes: 'Frutal, intenso y aromático.', href: '/ritual/pausa' },
-        share: { label: '5:00 – 8:00', name: 'Una mesa compartida', copy: 'Para conversar sin mirar el reloj.', product: 'Frambuesa', notes: 'Vibrante, dulce y ligeramente ácido.', href: '/tienda' },
-        night: { label: '9:00 – 11:00', name: 'Bajar el ritmo', copy: 'Una señal amable para cerrar el día.', product: 'Manzanilla', notes: 'Suave, floral y reconfortante.', href: '/ritual/reposo' },
-    }
-
     const fields = {
         label: document.getElementById('moment-label'),
+        eyebrow: document.getElementById('moment-eyebrow'),
         name: document.getElementById('moment-name'),
         copy: document.getElementById('moment-copy'),
         product: document.getElementById('moment-product'),
         notes: document.getElementById('moment-notes'),
-        link: document.getElementById('moment-link'),
+        productLink: document.getElementById('moment-product-link'),
+        image: document.getElementById('moment-image'),
+        content: document.getElementById('moment-content'),
     }
+
+    let contentTimer
+    let imageTimer
 
     document.querySelectorAll('[data-moment]').forEach((button) => {
         button.addEventListener('click', () => {
-            const key = button.getAttribute('data-moment')
-            const moment = moments[key]
-            if (!moment) return
+            if (button.classList.contains('is-active')) return
 
-            document.querySelectorAll('[data-moment]').forEach((item) => item.classList.remove('is-active'))
+            document.querySelectorAll('[data-moment]').forEach((item) => {
+                item.classList.remove('is-active')
+                item.setAttribute('aria-pressed', 'false')
+            })
             button.classList.add('is-active')
-            fields.label.textContent = moment.label
-            fields.name.textContent = moment.name
-            fields.copy.textContent = moment.copy
-            fields.product.textContent = moment.product
-            fields.notes.textContent = moment.notes
-            fields.link.setAttribute('href', moment.href)
+            button.setAttribute('aria-pressed', 'true')
+
+            window.clearTimeout(contentTimer)
+            fields.content.classList.add('is-changing')
+            contentTimer = window.setTimeout(() => {
+                fields.label.textContent = button.dataset.label
+                fields.eyebrow.textContent = button.dataset.eyebrow
+                fields.name.textContent = button.dataset.name
+                fields.copy.textContent = button.dataset.copy
+                fields.product.textContent = button.dataset.product
+                fields.notes.textContent = button.dataset.notes
+                fields.productLink.setAttribute('href', button.dataset.productHref)
+                fields.content.classList.remove('is-changing')
+            }, 150)
+
+            window.clearTimeout(imageTimer)
+            fields.image.classList.add('is-changing')
+            imageTimer = window.setTimeout(() => {
+                fields.image.setAttribute('src', button.dataset.image)
+                fields.image.setAttribute('alt', button.dataset.alt)
+                fields.image.classList.remove('is-changing')
+            }, 220)
         })
     })
 </script>
@@ -304,8 +400,20 @@ const articles = [
         @apply mt-2 font-heading text-2xl font-semibold leading-tight text-sunka-ink md:text-3xl;
     }
 
+    .section-title-light {
+        @apply text-sunka-white;
+    }
+
     .ritual-button {
-        @apply inline-flex h-11 items-center justify-center border px-6 text-[12px] font-semibold uppercase tracking-[0.12em] transition duration-300;
+        @apply inline-flex h-11 items-center justify-center border px-6 text-[12px] font-semibold uppercase tracking-[0.12em] transition-all duration-300;
+    }
+
+    .ritual-hero-button-primary {
+        @apply border-sunka-brass bg-sunka-brass text-sunka-white hover:bg-sunka-brass-light hover:text-sunka-ink;
+    }
+
+    .ritual-hero-button-secondary {
+        @apply border-sunka-white/55 text-sunka-white hover:border-sunka-white hover:bg-sunka-white hover:text-sunka-ink;
     }
 
     .ritual-button-gold {
@@ -322,6 +430,16 @@ const articles = [
 
     .moment-button.is-active {
         @apply border-sunka-forest bg-sunka-forest text-sunka-white;
+    }
+
+    #moment-content.is-changing {
+        opacity: 0.35;
+        transform: translateY(4px);
+    }
+
+    #moment-image.is-changing {
+        opacity: 0;
+        transform: scale(1.025);
     }
 
     .ritual-step,
@@ -352,9 +470,49 @@ const articles = [
         @apply text-sunka-ink/68;
     }
 
+    .ritual-hero-image {
+        animation: ritualHeroZoom 12s ease-in-out infinite alternate;
+    }
+
+    .ritual-detail-image {
+        animation: ritualDetailZoom 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes ritualHeroZoom {
+        from {
+            transform: scale(1);
+        }
+
+        to {
+            transform: scale(1.06);
+        }
+    }
+
+    @keyframes ritualDetailZoom {
+        from {
+            transform: scale(1);
+        }
+
+        to {
+            transform: scale(1.04);
+        }
+    }
+
     @media (max-width: 767px) {
         .ritual-hero {
             min-height: 690px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ritual-hero-image,
+        .ritual-detail-image {
+            animation: none;
+        }
+
+        #moment-content,
+        #moment-image {
+            transition: none;
         }
     }
 </style>
