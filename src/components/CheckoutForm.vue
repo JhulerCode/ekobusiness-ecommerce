@@ -851,7 +851,7 @@ export default {
         this.items = Cart.get()
 
         if (this.items.length == 0) {
-            window.location.href = '/cart'
+            window.location.href = '/tienda'
             return
         }
     },
