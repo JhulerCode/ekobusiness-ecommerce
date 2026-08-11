@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import HeroPremium from '@/components/shared/HeroPremium.astro'
 import TiendaGrid from '@/components/tienda/TiendaGrid.vue'
 import Beneficios from '@/components/home/Beneficios.astro'
 import bannerTienda from '@/assets/banner1.webp'
@@ -35,12 +34,63 @@ for (const a of productos) {
     title="Tienda | SUNKA Herbal Tea"
     description="Explora nuestra colección completa de infusiones y tés naturales SUNKA. Disponibles para compra online con envío a todo el Perú."
 >
-    <HeroPremium 
-        imgSrc={bannerTienda}
-        subtitle="Colección completa"
-        title="Nuestra Tienda"
-        description="Descubre la pureza de los Andes en cada taza. Desde mezclas clásicas hasta nuestras creaciones exclusivas, cada producto Sunka es una invitación al bienestar."
-    />
+    <section
+        class="relative min-h-[480px] w-full overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[430px]"
+    >
+        <div class="absolute inset-0" aria-hidden="true">
+            <img
+                src={bannerTienda.src}
+                alt=""
+                class="tienda-hero-image h-full w-full object-cover object-center"
+            />
+            <div
+                class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.98)_34%,rgba(9,8,6,.82)_58%,rgba(9,8,6,.18)_100%)] md:bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.92)_42%,rgba(9,8,6,.46)_68%,rgba(9,8,6,.12)_100%)]"
+            ></div>
+        </div>
+
+        <div
+            class="relative z-10 mx-auto flex min-h-[480px] max-w-7xl items-start px-5 pt-28 md:min-h-[430px] md:items-center md:px-8 md:pt-24"
+        >
+            <div class="max-w-2xl">
+                <p
+                    class="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-sunka-brass-light/90"
+                >
+                    Colección completa
+                </p>
+                <h1
+                    class="max-w-xl font-heading text-3xl font-semibold leading-[1.05] text-sunka-white md:text-5xl"
+                >
+                    Nuestra Tienda
+                </h1>
+                <p class="mt-6 max-w-md text-base leading-relaxed text-sunka-white/88 md:text-lg">
+                    Descubre la pureza de los Andes en cada taza. Desde mezclas clásicas hasta
+                    nuestras creaciones exclusivas, cada producto Sunka es una invitación al
+                    bienestar.
+                </p>
+            </div>
+        </div>
+    </section>
     <TiendaGrid client:load productos={productos} lineas={lineas} />
     <Beneficios />
 </BaseLayout>
+
+<style>
+    .tienda-hero-image {
+        animation: tiendaHeroZoom 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes tiendaHeroZoom {
+        from {
+            transform: scale(1);
+        }
+        to {
+            transform: scale(1.06);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .tienda-hero-image {
+            animation: none;
+        }
+    }
+</style>

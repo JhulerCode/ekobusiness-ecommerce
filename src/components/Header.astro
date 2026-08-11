@@ -9,15 +9,15 @@ import HeaderTopBar from '../components/HeaderTopBar.astro'
 import SearchIcon from '../assets/icons/icon-search.astro'
 
 const leftNavLinks = [
-    { nombre: 'Tienda', href: '/tienda' },
-    { nombre: 'Crea tu blend', href: '/crea-tu-blend' },
+    { nombre: 'Origen', href: '/origen' },
     { nombre: 'Rituales', href: '/rituales' },
+    { nombre: 'Club Sunka', href: '/club' },
+    // { nombre: 'Regalos', href: '/tienda' },
 ]
 
 const rightNavLinks = [
-    // { nombre: 'Regalos', href: '/tienda' },
-    { nombre: 'Origen', href: '/origen' },
-    { nombre: 'Club Sunka', href: '/club' },
+    { nombre: 'Tienda', href: '/tienda' },
+    { nombre: 'Crea tu blend', href: '/crea-tu-blend' },
 ]
 
 const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
@@ -25,13 +25,14 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
 const startsTransparent =
     currentPath === '/' ||
     currentPath.startsWith('/lineas/') ||
+    currentPath === '/tienda' ||
     currentPath === '/crea-tu-blend' ||
     currentPath === '/rituales' ||
     currentPath === '/origen' ||
     currentPath === '/club'
 const headerMainClass = startsTransparent
     ? 'fixed top-7 left-0 z-50 w-full border-b border-transparent bg-transparent transition-all duration-500'
-    : 'fixed top-7 left-0 z-50 w-full border-b border-sunka-white/10 bg-[#2b2b2b]/42 backdrop-blur-md transition-all duration-500'
+    : 'fixed top-7 left-0 z-50 w-full border-b border-sunka-white/10 bg-[#2b2b2b]/42 transition-all duration-500'
 ---
 
 <header id="site-header" class="relative z-50 w-full text-sunka-white">
@@ -140,6 +141,7 @@ const headerMainClass = startsTransparent
     const isTransparentHeaderPage =
         currentPath === '/' ||
         currentPath.startsWith('/lineas/') ||
+        currentPath === '/tienda' ||
         currentPath === '/crea-tu-blend' ||
         currentPath === '/rituales' ||
         currentPath === '/origen' ||
@@ -159,7 +161,6 @@ const headerMainClass = startsTransparent
         headerMain?.classList.remove(
             'bg-[#2b2b2b]/42',
             'bg-[#2b2b2b]/58',
-            'backdrop-blur-md',
             'border-sunka-white/10',
             'shadow-lg',
         )
@@ -173,12 +174,14 @@ const headerMainClass = startsTransparent
         if (mobileMenu?.classList.contains('translate-x-0')) return
 
         if (!isTransparentHeaderPage) {
-            headerMain?.classList.add('bg-[#2b2b2b]/42', 'backdrop-blur-md', 'border-sunka-white/10')
+            headerMain?.classList.add(
+                'bg-[#2b2b2b]/42',
+                'border-sunka-white/10',
+            )
             headerMain?.classList.remove('bg-transparent', 'border-transparent', 'shadow-lg')
         } else if (window.scrollY > 4) {
             headerMain?.classList.add(
                 'bg-[#2b2b2b]/58',
-                'backdrop-blur-md',
                 'border-sunka-white/10',
                 'shadow-lg',
             )
@@ -186,7 +189,6 @@ const headerMainClass = startsTransparent
         } else {
             headerMain?.classList.remove(
                 'bg-[#2b2b2b]/58',
-                'backdrop-blur-md',
                 'border-sunka-white/10',
                 'shadow-lg',
             )
