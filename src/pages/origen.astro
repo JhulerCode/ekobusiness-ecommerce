@@ -1,11 +1,442 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import OrigenEditorial from '@/components/origen/OrigenEditorial.astro'
+import hero from '@/assets/origen/hero.webp'
+import heroMobile from '@/assets/origen/hero.webp'
+import teapot from '@/assets/origen/inicio.webp'
+import ritualPause from '@/assets/home/campo.webp'
+import ritualDetail from '@/assets/home/lineas/piramidal.webp'
+import ritualBlend from '@/assets/home/blend.webp'
+import tradicional from '@/assets/home/lineas/tradicional.webp'
+import signature from '@/assets/home/lineas/signature.webp'
+import premium from '@/assets/home/lineas/piramidal.webp'
+import luxury from '@/assets/home/lineas/luxury.webp'
+import peru from '@/assets/origen/andes.webp'
+import ThreeLeafSproutIcon from '@/assets/icons/icon-three-leaf-sprout.astro'
+import BotanicalBranchIcon from '@/assets/icons/icon-botanical-branch.astro'
+
+const principles = [
+    [
+        '01',
+        'Calidad sin concesiones',
+        'Ingredientes seleccionados y procesos cuidados para una experiencia consistente.',
+    ],
+    [
+        '02',
+        'Innovación constante',
+        'Blends y formatos creados para una vida que siempre está cambiando.',
+    ],
+    [
+        '03',
+        'Orgullo peruano',
+        'Creada en Perú, con identidad propia y una visión que mira hacia el mundo.',
+    ],
+]
+
+const collections = [
+    ['Todos los días', 'Tradicionales', 'Tu ritual diario.', tradicional],
+    ['Una pausa superior', 'Signature Black', 'Tés de autoría.', signature],
+    ['Blends con intención', 'Piramidal Premium', 'Ingredientes visibles.', premium],
+    ['La máxima expresión', 'Luxury Collection', 'Creaciones especiales.', luxury],
+]
 ---
 
 <BaseLayout
     title="Origen | SUNKA Herbal Tea"
     description="Conoce el origen de SUNKA: una marca peruana de té e infusiones creada para transformar cada taza en una experiencia que permanezca."
 >
-    <OrigenEditorial />
+<div class="origin-page bg-sunka-cream text-sunka-ink">
+    <section
+        class="hero relative min-h-[690px] w-full overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[650px]"
+    >
+        <picture class="absolute inset-0 block h-full w-full">
+            <source media="(max-width: 767px)" srcset={heroMobile.src} />
+            <img
+                src={hero.src}
+                alt="Mujer disfrutando una infusión SUNKA"
+                class="origin-hero-image h-full w-full object-cover object-right md:object-center"
+            />
+        </picture>
+        <div
+            class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.98)_34%,rgba(9,8,6,.82)_58%,rgba(9,8,6,.18)_100%)] md:bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.92)_42%,rgba(9,8,6,.46)_68%,rgba(9,8,6,.12)_100%)]"
+        >
+        </div>
+        <div
+            class="relative mx-auto flex min-h-[690px] max-w-7xl items-start px-5 pt-28 md:min-h-[650px] md:items-center md:px-8 md:pt-24"
+        >
+            <div class="max-w-2xl fade-up">
+                <p class="kicker text-sunka-brass-light/90">Nuestra historia</p>
+                <h1
+                    class="mt-4 max-w-xl font-heading text-3xl font-semibold leading-[1.05] md:text-5xl"
+                >
+                    Una marca creada<br />para trascender.
+                </h1>
+                <p class="mt-6 max-w-md text-base leading-relaxed text-sunka-white/88 md:text-lg">
+                    Sunka es una marca peruana de té e infusiones que combina calidad e innovación
+                    para acompañarte en cada momento de tu día.
+                </p>
+                <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+                    <a
+                        href="/tienda"
+                        class="button-origin border border-sunka-brass bg-sunka-brass text-sunka-white hover:bg-sunka-brass-light hover:text-sunka-ink"
+                        >Descubre nuestras colecciones</a
+                    ><a
+                        href="#historia"
+                        class="button-origin border border-sunka-white/55 text-sunka-white hover:bg-sunka-white hover:text-sunka-ink"
+                        >Conoce nuestra esencia</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="historia" class="overflow-hidden bg-[#e9e7e1] py-20 md:py-28">
+        <div
+            class="mx-auto grid max-w-7xl items-center gap-14 px-5 md:grid-cols-2 md:px-8 lg:gap-24"
+        >
+            <div class="relative mx-auto w-full max-w-[470px] px-5 pb-7 pt-5 fade-up md:px-6 md:pb-8">
+                <div
+                    class="absolute inset-5 -translate-x-3 translate-y-3 rounded-[20px] bg-sunka-forest md:inset-6 md:-translate-x-5 md:translate-y-5"
+                    aria-hidden="true"
+                ></div>
+                <div
+                    class="absolute inset-5 translate-x-3 -translate-y-3 rounded-[20px] border border-sunka-brass/65 md:inset-6 md:translate-x-5 md:-translate-y-5"
+                    aria-hidden="true"
+                ></div>
+                <figure
+                    class="relative z-10 aspect-[4/5] overflow-hidden rounded-[20px] bg-sunka-forest shadow-[0_22px_45px_rgba(55,42,24,.22)]"
+                >
+                    <img
+                        src={teapot.src}
+                        alt="Tetera SUNKA sobre una mesa"
+                        class="origin-story-image h-full w-full object-cover object-center"
+                    />
+                    <div
+                        class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(8,18,12,.58)_100%)]"
+                        aria-hidden="true"
+                    ></div>
+                </figure>
+            </div>
+            <div class="fade-up delay-1">
+                <p class="kicker text-sunka-brass">El origen de Sunka</p><h2
+                    class="mt-4 max-w-lg font-heading text-3xl font-semibold leading-tight md:text-4xl"
+                >
+                    Nacimos para crear algo que permanezca.
+                </h2><p
+                    class="mt-7 max-w-lg text-base leading-relaxed text-sunka-ink/72 md:text-lg"
+                >
+                    Sunka nació de una convicción: lo cotidiano también puede dejar huella.
+                </p><p class="mt-4 max-w-lg leading-relaxed text-sunka-ink/62">
+                    Por eso transformamos una taza de té en una experiencia que evoluciona contigo.
+                    Seleccionamos, desarrollamos y presentamos cada producto con una mirada
+                    contemporánea, cuidando lo que se siente hoy y lo que representará mañana.
+                </p><p
+                    class="mt-8 flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[.26em]"
+                >
+                    <span class="h-px w-12 bg-sunka-brass"></span>The soul of tea
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="principles-section relative overflow-hidden bg-[#f5ecdc] py-14 md:py-20 lg:py-24">
+        <BotanicalBranchIcon
+            class="absolute -right-8 -top-2 h-auto w-64 text-sunka-brass opacity-[0.13] md:w-80 lg:w-[380px]"
+            aria-hidden="true"
+        />
+        <BotanicalBranchIcon
+            class="absolute -bottom-16 -left-20 h-auto w-64 -scale-x-100 rotate-[12deg] text-sunka-brass opacity-[0.08] md:w-72"
+            aria-hidden="true"
+        />
+
+        <div class="relative mx-auto max-w-7xl px-5 md:px-8">
+            <div class="mx-auto max-w-3xl text-center fade-up">
+                <p class="kicker text-sunka-brass">Lo que nos mueve</p><h2
+                    class="mt-4 font-heading text-3xl font-semibold leading-tight md:text-4xl"
+                >
+                    Tres principios. Una sola forma<br class="hidden md:block" /> de hacer las cosas.
+                </h2>
+                <div
+                    class="mx-auto mt-5 flex items-center justify-center gap-2 text-sunka-brass"
+                    aria-hidden="true"
+                >
+                    <span class="h-px w-14 bg-sunka-brass/70"></span>
+                    <ThreeLeafSproutIcon class="h-5 w-5" />
+                    <span class="h-px w-14 bg-sunka-brass/70"></span>
+                </div>
+                <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-sunka-ink/80 md:text-base">
+                    Nuestra historia se construye con decisiones concretas: elevar la calidad,
+                    innovar con propósito y demostrar todo lo que una marca peruana puede llegar a
+                    ser.
+                </p>
+            </div>
+            <div class="mt-10 grid gap-5 md:mt-12 md:grid-cols-3">
+                {
+                    principles.map((item, index) => (
+                        <article class="flex min-h-[285px] flex-col items-center rounded-[20px] border border-sunka-brass/35 bg-[#fffdf8]/90 px-5 py-7 text-center shadow-[0_12px_28px_rgba(73,48,17,.11)] fade-up lg:min-h-[305px] lg:px-6">
+                            <>
+                                <span class="flex h-20 w-20 items-center justify-center rounded-full border border-sunka-brass/55 text-sunka-brass">
+                                    <span class="font-heading text-2xl font-semibold tracking-[0.08em]">
+                                        {item[0]}
+                                    </span>
+                                </span>
+                                <h3 class="mt-5 font-heading text-xl font-semibold leading-tight">
+                                    {item[1]}
+                                </h3>
+                                <span class="mt-4 flex items-center gap-1.5 text-sunka-brass" aria-hidden="true">
+                                    <span class="h-px w-5 bg-sunka-brass/70"></span>
+                                    <span class="h-1.5 w-1.5 rounded-full bg-sunka-brass"></span>
+                                    <span class="h-px w-5 bg-sunka-brass/70"></span>
+                                </span>
+                                <p class="mt-4 max-w-sm text-sm leading-relaxed text-sunka-ink/72">
+                                    {item[2]}
+                                </p>
+                            </>
+                        </article>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-sunka-forest py-20 text-sunka-white md:py-28">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+            <div class="grid gap-6 md:grid-cols-[1.2fr_.8fr] md:items-end">
+                <div class="fade-up">
+                    <p class="kicker text-sunka-brass-light">Sunka en tu día</p><h2
+                        class="mt-4 font-heading text-3xl font-semibold leading-tight md:text-4xl"
+                    >
+                        Hay una forma de acompañar<br class="hidden lg:block" /> cada momento.
+                    </h2>
+                </div><p class="max-w-md leading-relaxed text-sunka-white/72 fade-up delay-1">
+                    No creemos en una única manera de vivir el té. Creamos opciones para tus
+                    mañanas, tus pausas y esos momentos que eliges compartir.
+                </p>
+            </div>
+            <div class="mt-12 grid auto-rows-[250px] gap-4 md:grid-cols-5 md:auto-rows-[270px]">
+                <a href="/rituales" class="card md:col-span-3 md:row-span-2"
+                    ><img src={ritualPause.src} alt="Pausa con té SUNKA" /><div></div><span
+                        ><small>Tu pausa</small><strong>Un instante que vuelve a ser tuyo.</strong
+                        ></span
+                    ></a
+                ><a href="/rituales" class="card md:col-span-2"
+                    ><img src={ritualDetail.src} alt="Preparación de té piramidal" /><div>
+                    </div><span
+                        ><small>Tu ritual</small><strong>Calidad que se siente.</strong></span
+                    ></a
+                ><a href="/crea-tu-blend" class="card md:col-span-2"
+                    ><img src={ritualBlend.src} alt="Ingredientes de infusiones" /><div></div><span
+                        ><small>Tu creación</small><strong>Una mezcla a tu manera.</strong></span
+                    ></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-sunka-white py-20 md:py-28">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+            <div class="grid gap-6 md:grid-cols-[1.2fr_.8fr] md:items-end">
+                <div class="fade-up">
+                    <p class="kicker text-sunka-brass">Una marca en evolución</p><h2
+                        class="mt-4 font-heading text-3xl font-semibold leading-tight md:text-4xl"
+                    >
+                        De lo cotidiano a<br />lo extraordinario.
+                    </h2>
+                </div><p class="max-w-md leading-relaxed text-sunka-ink/65 fade-up delay-1">
+                    Creamos distintas colecciones para acompañarte hoy y seguir evolucionando
+                    contigo mañana.
+                </p>
+            </div>
+            <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {
+                    collections.map((item) => (
+                        <a href="/tienda" class="card aspect-[.78] fade-up">
+                            <>
+                                <img src={item[3].src} alt={item[1]} />
+                                <div />
+                                <span>
+                                    <>
+                                        <small>{item[0]}</small>
+                                        <strong>{item[1]}</strong>
+                                        <em>{item[2]}</em>
+                                    </>
+                                </span>
+                            </>
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="relative min-h-[520px] overflow-hidden text-sunka-white md:min-h-[560px]">
+        <img
+            src={peru.src}
+            alt="Tazas SUNKA bajo el cielo del Perú"
+            class="absolute inset-0 h-full w-full object-cover object-[68%_center]"
+        /><div
+            class="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,14,11,.92)_0%,rgba(3,14,11,.62)_48%,rgba(3,14,11,.08)_82%)]"
+        >
+        </div><div
+            class="relative mx-auto flex min-h-[520px] max-w-7xl items-center px-5 py-20 md:min-h-[560px] md:px-8"
+        >
+            <div class="max-w-2xl fade-up">
+                <p class="kicker text-sunka-brass-light">Marca peruana</p><h2
+                    class="mt-4 font-heading text-3xl font-semibold leading-tight md:text-4xl"
+                >
+                    Desde Perú, con una visión<br class="hidden md:block" /> que mira al mundo.
+                </h2><p class="mt-6 max-w-xl text-base leading-relaxed text-sunka-white/82">
+                    Aquí nace nuestra historia. De nuestra creatividad, exigencia y capacidad de
+                    reinventarnos. Sunka se construye para representar una nueva generación de
+                    marcas peruanas: contemporáneas, relevantes y preparadas para trascender
+                    fronteras.
+                </p><p
+                    class="mt-8 flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[.26em]"
+                >
+                    <span class="h-px w-12 bg-sunka-brass"></span>Creado en Perú
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-[#10120f] px-5 py-20 text-center text-sunka-white md:px-8 md:py-28">
+        <div class="mx-auto max-w-4xl fade-up">
+            <p class="kicker text-sunka-brass-light">Nuestro propósito</p><h2
+                class="mt-5 font-heading text-2xl font-semibold leading-tight md:text-4xl"
+            >
+                Queremos estar presentes en tu vida de una forma sencilla: haciendo que cada taza se
+                sienta mejor, se recuerde más y <span class="text-sunka-brass-light"
+                    >permanezca en el tiempo.</span>
+            </h2><p class="mt-6 text-sm text-sunka-white/60">
+                Hoy te acompañamos en una infusión. Mañana, en nuevas formas de vivir el té.
+            </p><div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <a
+                    href="/tienda"
+                    class="button-origin border border-sunka-brass bg-sunka-brass text-sunka-white hover:bg-sunka-brass-light hover:text-sunka-ink"
+                    >Explorar la tienda</a
+                ><a
+                    href="/crea-tu-blend"
+                    class="button-origin border border-sunka-white/40 hover:bg-sunka-white hover:text-sunka-ink"
+                    >Crear mi blend</a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .principles-section {
+        background-image:
+            radial-gradient(circle at 18% 28%, rgba(181, 139, 71, 0.08), transparent 26%),
+            radial-gradient(circle at 78% 72%, rgba(181, 139, 71, 0.07), transparent 30%);
+    }
+    .origin-hero-image {
+        animation: originHeroZoom 12s ease-in-out infinite alternate;
+    }
+
+    .origin-story-image {
+        animation: originStoryZoom 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes originHeroZoom {
+        from {
+            transform: scale(1);
+        }
+
+        to {
+            transform: scale(1.06);
+        }
+    }
+
+    @keyframes originStoryZoom {
+        from {
+            transform: scale(1);
+        }
+
+        to {
+            transform: scale(1.04);
+        }
+    }
+
+    .kicker {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+    }
+    .button-origin {
+        display: inline-flex;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 24px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        transition: 0.3s ease;
+    }
+    .card {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        border-radius: 0.375rem;
+        color: var(--sunka-white);
+    }
+    .card > img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.7s ease;
+    }
+    .card:hover > img {
+        transform: scale(1.035);
+    }
+    .card > div {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 34%, rgba(2, 4, 3, 0.82) 100%);
+    }
+    .card > span {
+        position: absolute;
+        right: 24px;
+        bottom: 24px;
+        left: 24px;
+        display: flex;
+        flex-direction: column;
+    }
+    .card small {
+        margin-bottom: 8px;
+        color: var(--sunka-brass-light);
+        font-size: 9px;
+        font-style: normal;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+    }
+    .card strong {
+        font-family: var(--font-sans);
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+    .card em {
+        margin-top: 6px;
+        color: rgba(255, 253, 248, 0.68);
+        font-size: 12px;
+        font-style: normal;
+    }
+    @media (max-width: 767px) {
+        .origin-page h1,
+        .origin-page h2 {
+            text-wrap: balance;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .origin-hero-image {
+            animation: none;
+        }
+
+        .origin-story-image {
+            animation: none;
+        }
+    }
+</style>
 </BaseLayout>
