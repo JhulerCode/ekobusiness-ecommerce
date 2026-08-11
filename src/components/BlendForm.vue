@@ -494,13 +494,19 @@
                         <span>Total</span><b>S/ {{ money(costoTotal) }}</b>
                     </div>
                 </div>
+                <div class="blend-mobile-summary">
+                    <small>Blend {{ formatSummary }} · {{ empaqueSummary }}</small>
+                    <strong>S/ {{ money(costoTotal) }}</strong>
+                </div>
                 <button
                     type="button"
                     class="blend-summary-action"
                     :disabled="pasoActual >= 2 && !isIngredientsComplete"
                     @click="summaryAction"
                 >
-                    {{ summaryActionText }} <span>→</span>
+                    <span class="blend-summary-action-full">{{ summaryActionText }}</span>
+                    <span class="blend-summary-action-mobile">{{ summaryActionMobileText }}</span>
+                    <span>→</span>
                 </button>
             </aside>
         </div>
@@ -694,6 +700,9 @@ export default {
             if (this.pasoActual === 2) return 'Continuar: personalizar etiqueta'
             if (this.pasoActual === 3) return 'Añadir al carrito'
             return 'Añadir al carrito'
+        },
+        summaryActionMobileText() {
+            return this.pasoActual === 3 ? 'Añadir al carrito' : 'Continuar'
         },
     },
     mounted() {
@@ -1983,6 +1992,10 @@ export default {
     background: var(--sunka-brass);
     color: var(--sunka-white);
 }
+.blend-mobile-summary,
+.blend-summary-action-mobile {
+    display: none;
+}
 .blend-summary-action:hover:not(:disabled) {
     background: #c69a50;
 }
@@ -2079,6 +2092,65 @@ export default {
         flex-wrap: wrap;
         gap: 5px 15px;
     }
+    .blend-builder {
+        padding-bottom: 104px;
+    }
+    .blend-summary-card {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 30;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+        border: 1px solid var(--sunka-sand);
+        border-bottom: 0;
+        border-radius: 14px 14px 0 0;
+        background: var(--sunka-white);
+        color: var(--sunka-ink);
+        box-shadow: 0 -8px 24px rgba(13, 35, 23, 0.14);
+    }
+    .blend-summary-head,
+    .blend-product-preview,
+    .blend-summary-meta,
+    .blend-summary-section,
+    .blend-price-lines,
+    .blend-summary-footnote {
+        display: none;
+    }
+    .blend-mobile-summary {
+        display: grid;
+        min-width: 0;
+        gap: 2px;
+    }
+    .blend-mobile-summary small {
+        overflow: hidden;
+        color: var(--sunka-stone);
+        font-size: 8px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .blend-mobile-summary strong {
+        color: var(--sunka-forest);
+        font-size: 19px;
+    }
+    .blend-summary-action {
+        width: auto;
+        min-width: 132px;
+        min-height: 44px;
+        margin-top: 0;
+        padding: 0 16px;
+        white-space: nowrap;
+    }
+    .blend-summary-action-full {
+        display: none;
+    }
+    .blend-summary-action-mobile {
+        display: inline;
+    }
 }
 @media (max-width: 460px) {
     .blend-config-head {
@@ -2089,7 +2161,7 @@ export default {
         width: 100%;
     }
     .blend-summary-card {
-        padding: 18px;
+        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
     }
     .blend-product-preview {
         padding: 10px;

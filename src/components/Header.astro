@@ -17,7 +17,7 @@ const leftNavLinks = [
 const rightNavLinks = [
     // { nombre: 'Regalos', href: '/tienda' },
     { nombre: 'Origen', href: '/origen' },
-    { nombre: 'Club Sunka', href: '/account' },
+    { nombre: 'Club Sunka', href: '/club' },
 ]
 
 const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
@@ -26,7 +26,9 @@ const startsTransparent =
     currentPath === '/' ||
     currentPath.startsWith('/lineas/') ||
     currentPath === '/crea-tu-blend' ||
-    currentPath === '/rituales'
+    currentPath === '/rituales' ||
+    currentPath === '/origen' ||
+    currentPath === '/club'
 const headerMainClass = startsTransparent
     ? 'fixed top-7 left-0 z-50 w-full border-b border-transparent bg-transparent transition-all duration-500'
     : 'fixed top-7 left-0 z-50 w-full border-b border-sunka-white/10 bg-[#2b2b2b]/42 backdrop-blur-md transition-all duration-500'
@@ -146,7 +148,9 @@ const headerMainClass = startsTransparent
         currentPath === '/' ||
         currentPath.startsWith('/lineas/') ||
         currentPath === '/crea-tu-blend' ||
-        currentPath === '/rituales'
+        currentPath === '/rituales' ||
+        currentPath === '/origen' ||
+        currentPath === '/club'
 
     const setMenuOpen = (isOpen) => {
         mobileMenu?.classList.toggle('translate-x-0', isOpen)
