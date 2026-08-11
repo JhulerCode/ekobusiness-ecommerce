@@ -138,7 +138,8 @@ const headerMainClass = startsTransparent
     const logoWhite = document.getElementById('site-logo-white')
     const logoBlack = document.getElementById('site-logo-black')
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/'
-    const isTransparentHeaderPage = currentPath === '/' || currentPath.startsWith('/lineas/')
+    const isTransparentHeaderPage =
+        currentPath === '/' || currentPath.startsWith('/lineas/') || currentPath === '/crea-tu-blend'
 
     const setMenuOpen = (isOpen) => {
         mobileMenu?.classList.toggle('translate-x-0', isOpen)
