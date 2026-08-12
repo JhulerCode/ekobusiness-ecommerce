@@ -439,4 +439,26 @@ export const lineas = [
 
 export const lineasBySlug = Object.fromEntries(lineas.map((linea) => [linea.slug, linea]))
 
+const coleccionesOrder = ['tradicional', 'signature', 'piramidal', 'luxury']
+const coleccionesPosition = {
+    signature: 'object-left',
+    piramidal: 'object-bottom',
+    luxury: 'object-top',
+    tradicional: 'object-center',
+}
+
+export const colecciones = coleccionesOrder.map((slug) => {
+    const linea = lineasBySlug[slug]
+
+    return {
+        nombre: linea.title,
+        etiqueta: linea.eyebrow.split(' / ')[1],
+        descripcion: linea.description,
+        detalle: linea.eyebrow.split(' / ')[1],
+        href: `/lineas/${linea.slug}`,
+        imagen: linea.heroImage.src,
+        posicion: coleccionesPosition[slug],
+    }
+})
+
 export const getLineaBySlug = (slug) => lineasBySlug[slug]

@@ -6,16 +6,13 @@ import teapot from '@/assets/origen/inicio.webp'
 import ritualPause from '@/assets/home/campo.webp'
 import ritualDetail from '@/assets/home/lineas/piramidal.webp'
 import ritualBlend from '@/assets/home/blend.webp'
-import tradicional from '@/assets/home/lineas/tradicional.webp'
-import signature from '@/assets/home/lineas/signature.webp'
-import premium from '@/assets/home/lineas/piramidal.webp'
-import luxury from '@/assets/home/lineas/luxury.webp'
 import peru from '@/assets/origen/andes.webp'
 import ThreeLeafSproutIcon from '@/assets/icons/icon-three-leaf-sprout.astro'
 import BotanicalBranchIcon from '@/assets/icons/icon-botanical-branch.astro'
 import proposito1 from '@/assets/origen/proposito1.webp'
 import proposito2 from '@/assets/origen/proposito2.webp'
 import proposito3 from '@/assets/origen/proposito3.webp'
+import { colecciones } from '@/data/lineas.js'
 
 const principles = [
     [
@@ -35,12 +32,6 @@ const principles = [
     ],
 ]
 
-const collections = [
-    ['Todos los días', 'Tradicionales', 'Tu ritual diario.', tradicional],
-    ['Una pausa superior', 'Signature Black', 'Tés de autoría.', signature],
-    ['Blends con intención', 'Piramidal Premium', 'Ingredientes visibles.', premium],
-    ['La máxima expresión', 'Luxury Collection', 'Creaciones especiales.', luxury],
-]
 ---
 
 <BaseLayout
@@ -275,33 +266,45 @@ const collections = [
 
     <section class="bg-sunka-white py-20 md:py-28">
         <div class="mx-auto max-w-7xl px-5 md:px-8">
-            <div class="grid gap-6 md:grid-cols-[1.2fr_.8fr] md:items-end">
+            <div class="grid gap-8 md:grid-cols-[1.15fr_.85fr] md:items-center lg:gap-16">
                 <div class="fade-up">
-                    <p class="kicker text-sunka-brass">Una marca en evolución</p><h2
-                        class="mt-4 font-heading text-3xl font-semibold leading-tight md:text-4xl"
+                    <p class="kicker text-sunka-brass">Un portafolio que evoluciona</p><h2
+                        class="mt-4 max-w-xl font-heading text-3xl font-semibold leading-tight md:text-4xl"
                     >
-                        De lo cotidiano a<br />lo extraordinario.
+                        Evolucionamos para<br class="hidden md:block" /> permanecer.
                     </h2>
-                </div><p class="max-w-md text-sm leading-relaxed text-sunka-ink/65 fade-up delay-1 md:text-base">
-                    Creamos distintas colecciones para acompañarte hoy y seguir evolucionando
-                    contigo mañana.
+                </div>
+                <p class="max-w-lg border-l border-sunka-brass/70 pl-6 text-sm leading-relaxed text-sunka-ink/65 fade-up delay-1 md:pl-8 md:text-base">
+                    Desde nuestros sabores esenciales hasta las creaciones más exclusivas, cada
+                    colección representa una nueva forma de vivir Sunka: calidad, innovación y una
+                    visión creada para trascender.
                 </p>
             </div>
-            <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="mt-12 grid gap-5 sm:grid-cols-2 md:mt-14 lg:grid-cols-4">
                 {
-                    collections.map((item) => (
-                        <a href="/tienda" class="card aspect-[.78] fade-up">
-                            <>
-                                <img src={item[3].src} alt={item[1]} />
-                                <div />
-                                <span>
-                                    <>
-                                        <small>{item[0]}</small>
-                                        <strong>{item[1]}</strong>
-                                        <em>{item[2]}</em>
-                                    </>
-                                </span>
-                            </>
+                    colecciones.map((item) => (
+                        <a
+                            href={item.href}
+                            class="group relative flex h-[340px] overflow-hidden rounded-[4px] bg-sunka-ink text-sunka-white fade-up sm:h-[370px] lg:h-[380px]"
+                        >
+                            <img
+                                src={item.imagen}
+                                alt={item.nombre}
+                                class={`absolute inset-0 h-full w-full object-cover ${item.posicion} transition-transform duration-[2500ms] ease-out group-hover:scale-105`}
+                            />
+                            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,5,0)_34%,rgba(3,14,11,.9)_73%,rgba(3,14,11,.99)_100%)] transition-opacity duration-300 group-hover:opacity-90"></div>
+                            <div class="relative z-10 flex h-full w-full flex-col justify-end p-6">
+                                <span class="mb-4 h-px w-9 bg-sunka-brass"></span>
+                                <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                                    {item.etiqueta}
+                                </p>
+                                <h3 class="font-heading text-xl font-semibold leading-tight">
+                                    {item.nombre}
+                                </h3>
+                                <p class="mt-3 line-clamp-2 text-sm leading-relaxed text-sunka-white/72">
+                                    {item.descripcion}
+                                </p>
+                            </div>
                         </a>
                     ))
                 }
