@@ -13,6 +13,9 @@ import luxury from '@/assets/home/lineas/luxury.webp'
 import peru from '@/assets/origen/andes.webp'
 import ThreeLeafSproutIcon from '@/assets/icons/icon-three-leaf-sprout.astro'
 import BotanicalBranchIcon from '@/assets/icons/icon-botanical-branch.astro'
+import proposito1 from '@/assets/origen/proposito1.webp'
+import proposito2 from '@/assets/origen/proposito2.webp'
+import proposito3 from '@/assets/origen/proposito3.webp'
 
 const principles = [
     [
@@ -121,10 +124,10 @@ const collections = [
                 >
                     Nacimos para crear algo que permanezca.
                 </h2><p
-                    class="mt-7 max-w-lg text-base leading-relaxed text-sunka-ink/72 md:text-lg"
+                    class="mt-7 max-w-lg text-sm leading-relaxed text-sunka-ink/72 md:text-base"
                 >
                     Sunka nació de una convicción: lo cotidiano también puede dejar huella.
-                </p><p class="mt-4 max-w-lg leading-relaxed text-sunka-ink/62">
+                </p><p class="mt-4 max-w-lg text-sm leading-relaxed text-sunka-ink/62 md:text-base">
                     Por eso transformamos una taza de té en una experiencia que evoluciona contigo.
                     Seleccionamos, desarrollamos y presentamos cada producto con una mirada
                     contemporánea, cuidando lo que se siente hoy y lo que representará mañana.
@@ -197,9 +200,49 @@ const collections = [
         </div>
     </section>
 
-    <section class="bg-sunka-forest py-20 text-sunka-white md:py-28">
+    <section class="purpose-section bg-sunka-forest py-20 text-sunka-white md:py-28">
         <div class="mx-auto max-w-7xl px-5 md:px-8">
-            <div class="grid gap-6 md:grid-cols-[1.2fr_.8fr] md:items-end">
+            <header class="grid gap-8 md:grid-cols-[1.15fr_.85fr] md:items-start lg:gap-16">
+                <div class="fade-up">
+                    <p class="kicker text-sunka-brass-light">El propósito de Sunka</p>
+                    <h2 class="mt-4 max-w-xl font-heading text-3xl font-semibold leading-tight md:text-4xl">
+                        Nacimos para<br class="hidden md:block" /> trascender.
+                    </h2>
+                </div>
+                <div class="border-l border-sunka-brass/55 pl-6 fade-up delay-1 md:mt-1 md:pl-8">
+                    <p class="max-w-lg text-base leading-relaxed text-sunka-white/75 md:text-lg">
+                        Sunka nació en el Perú con la convicción de crear una marca capaz de permanecer
+                        en el tiempo. Unimos calidad, innovación e identidad propia para acompañar la
+                        vida de las personas y construir un legado que trascienda generaciones.
+                    </p>
+                    <p class="mt-7 text-[10px] font-semibold uppercase tracking-[.28em] text-sunka-brass-light">
+                        Marca peruana <span class="mx-1 text-sunka-brass/70">·</span> Visión global
+                    </p>
+                </div>
+            </header>
+            <div class="mt-12 grid auto-rows-[230px] gap-4 md:mt-14 md:grid-cols-[1fr_1fr_1.15fr] md:auto-rows-[220px] lg:auto-rows-[250px]">
+                <a href="#historia" class="purpose-card purpose-card-main md:col-span-2 md:row-span-2 fade-up">
+                    <img src={proposito1.src} alt="Ingredientes y productos SUNKA sobre una mesa" />
+                    <div class="purpose-card-overlay"></div>
+                    <span>
+                        <small>Nuestro origen</small>
+                        <strong>Una idea creada para permanecer.</strong>
+                        <em>Todo comenzó con la intención de construir algo que el tiempo no pudiera borrar.</em>
+                    </span>
+                </a>
+                <a href="/tienda" class="purpose-card fade-up delay-1">
+                    <img src={proposito2.src} alt="Preparación de una infusión SUNKA" />
+                    <div class="purpose-card-overlay"></div>
+                    <span><small>Nuestro ideal</small><strong>Elevar cada experiencia a través de la calidad.</strong></span>
+                </a>
+                <a href="/origen" class="purpose-card fade-up delay-2">
+                    <img src={proposito3.src} alt="Tazas SUNKA bajo el cielo peruano" />
+                    <div class="purpose-card-overlay"></div>
+                    <span><small>Nuestra visión</small><strong>Una marca peruana destinada a trascender.</strong></span>
+                </a>
+            </div>
+
+            <div class="hidden grid gap-6 md:grid-cols-[1.2fr_.8fr] md:items-end">
                 <div class="fade-up">
                     <p class="kicker text-sunka-brass-light">Sunka en tu día</p><h2
                         class="mt-4 font-heading text-3xl font-semibold leading-tight md:text-4xl"
@@ -211,7 +254,7 @@ const collections = [
                     mañanas, tus pausas y esos momentos que eliges compartir.
                 </p>
             </div>
-            <div class="mt-12 grid auto-rows-[250px] gap-4 md:grid-cols-5 md:auto-rows-[270px]">
+            <div class="hidden mt-12 grid auto-rows-[250px] gap-4 md:grid-cols-5 md:auto-rows-[270px]">
                 <a href="/rituales" class="card md:col-span-3 md:row-span-2"
                     ><img src={ritualPause.src} alt="Pausa con té SUNKA" /><div></div><span
                         ><small>Tu pausa</small><strong>Un instante que vuelve a ser tuyo.</strong
@@ -239,7 +282,7 @@ const collections = [
                     >
                         De lo cotidiano a<br />lo extraordinario.
                     </h2>
-                </div><p class="max-w-md leading-relaxed text-sunka-ink/65 fade-up delay-1">
+                </div><p class="max-w-md text-sm leading-relaxed text-sunka-ink/65 fade-up delay-1 md:text-base">
                     Creamos distintas colecciones para acompañarte hoy y seguir evolucionando
                     contigo mañana.
                 </p>
@@ -282,15 +325,11 @@ const collections = [
                     class="mt-4 font-heading text-3xl font-semibold leading-tight md:text-4xl"
                 >
                     Desde Perú, con una visión<br class="hidden md:block" /> que mira al mundo.
-                </h2><p class="mt-6 max-w-xl text-base leading-relaxed text-sunka-white/82">
+                </h2><p class="mt-6 max-w-xl text-sm leading-relaxed text-sunka-white/82 md:text-base">
                     Aquí nace nuestra historia. De nuestra creatividad, exigencia y capacidad de
                     reinventarnos. Sunka se construye para representar una nueva generación de
                     marcas peruanas: contemporáneas, relevantes y preparadas para trascender
                     fronteras.
-                </p><p
-                    class="mt-8 flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[.26em]"
-                >
-                    <span class="h-px w-12 bg-sunka-brass"></span>Creado en Perú
                 </p>
             </div>
         </div>
@@ -360,6 +399,9 @@ const collections = [
         letter-spacing: 0.28em;
         text-transform: uppercase;
     }
+    .hero .kicker {
+        font-size: 12px;
+    }
     .button-origin {
         display: inline-flex;
         min-height: 44px;
@@ -371,6 +413,62 @@ const collections = [
         letter-spacing: 0.12em;
         text-transform: uppercase;
         transition: 0.3s ease;
+    }
+    .purpose-card {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        border-radius: 0.375rem;
+        color: var(--sunka-white);
+    }
+    .purpose-card img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.8s ease;
+    }
+    .purpose-card:hover img {
+        transform: scale(1.04);
+    }
+    .purpose-card-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(3, 8, 5, 0.02) 28%, rgba(3, 8, 5, 0.9) 100%);
+    }
+    .purpose-card > span {
+        position: absolute;
+        right: 28px;
+        bottom: 26px;
+        left: 28px;
+        display: flex;
+        max-width: 620px;
+        flex-direction: column;
+    }
+    .purpose-card small {
+        margin-bottom: 10px;
+        color: var(--sunka-brass-light);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+    }
+    .purpose-card strong {
+        max-width: 620px;
+        font-family: var(--font-sans);
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+    .purpose-card-main strong {
+        font-size: 24px;
+        line-height: 1.12;
+    }
+    .purpose-card em {
+        margin-top: 8px;
+        color: rgba(255, 253, 248, 0.72);
+        font-size: 12px;
+        font-style: normal;
+        line-height: 1.5;
     }
     .card {
         position: relative;
