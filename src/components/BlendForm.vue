@@ -1,6 +1,10 @@
 <template>
     <div class="blend-builder">
-        <nav class="blend-steps" aria-label="Progreso de creación del blend">
+        <nav
+            ref="stepsNav"
+            class="blend-steps"
+            aria-label="Progreso de creación del blend"
+        >
             <template v-for="(step, index) in steps" :key="step.id">
                 <button
                     type="button"
@@ -799,6 +803,7 @@ export default {
             this.errors.general = ''
             this.blend.pasoActual = id
             this.persist()
+            this.scrollToSteps()
         },
         nextStep() {
             this.errors.general = ''
@@ -812,6 +817,18 @@ export default {
             }
             this.blend.pasoActual = Math.min(3, this.pasoActual + 1)
             this.persist()
+            this.scrollToSteps()
+        },
+        scrollToSteps() {
+            this.$nextTick(() => {
+                const el = this.$refs.stepsNav
+                if (!el) return
+                const offset = 140
+                window.scrollTo({
+                    top: el.getBoundingClientRect().top + window.pageYOffset - offset,
+                    behavior: 'smooth',
+                })
+            })
         },
         summaryAction() {
             if (this.pasoActual === 3) {
