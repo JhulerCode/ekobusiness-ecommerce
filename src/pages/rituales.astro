@@ -1,9 +1,12 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import heroImage from '@/assets/rituales/hero.webp'
-import pauseImage from '@/assets/rituales/destacado.webp'
+import destacadoImage from '@/assets/rituales/destacado.webp'
 import ingredientsImage from '@/assets/rituales/pequenos-detalles.webp'
-import nightImage from '@/assets/home/banner/chica.webp'
+import nightImage from '@/assets/rituales/night.webp'
+import morningImage from '@/assets/rituales/morning.webp'
+import shareImage from '@/assets/rituales/share.webp'
+import pauseImage from '@/assets/rituales/pause.webp'
 
 const moments = [
     {
@@ -16,7 +19,7 @@ const moments = [
         product: 'Té verde · 20 sobres',
         notes: 'Fresco, frutal y aromático.',
         productHref: '/producto/3baf320d-3389-4778-bb72-9dcd44bfb8ae',
-        image: nightImage,
+        image: morningImage,
         alt: 'Ritual SUNKA para empezar la mañana',
     },
     {
@@ -29,7 +32,7 @@ const moments = [
         product: 'Jamaica y Piña · 20 sobres',
         notes: 'Frutal, intenso y aromático.',
         productHref: '/producto/a3d94dff-f781-4389-9475-45979324b919',
-        image: nightImage,
+        image: pauseImage,
         alt: 'Preparación de una infusión durante una pausa SUNKA',
     },
     {
@@ -42,7 +45,7 @@ const moments = [
         product: 'Passion Tea Luxury · 10 sobres',
         notes: 'Vibrante, dulce y ligeramente ácido.',
         productHref: '/producto/623f2b51-f181-4085-9ee3-f9036198f774',
-        image: nightImage,
+        image: shareImage,
         alt: 'Tazas SUNKA preparadas para compartir',
     },
     {
@@ -169,7 +172,7 @@ const articles = [
                         id="moment-image"
                         src={initialMoment.image.src}
                         alt={initialMoment.alt}
-                        class="absolute inset-0 block h-full w-full object-cover transition-all duration-500"
+                        class="absolute inset-0 block h-full w-full object-cover object-[right_center] transition-all duration-500"
                     />
                     <div
                         class="pointer-events-none absolute inset-0 bg-gradient-to-t from-sunka-ink/85 via-sunka-ink/5 to-transparent"
@@ -225,7 +228,7 @@ const articles = [
         <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 md:px-8 lg:grid-cols-2 lg:gap-16">
             <div class="relative fade-up">
                 <span class="absolute -left-4 top-4 h-full w-full border border-sunka-brass/70"></span>
-                <img src={pauseImage.src} alt="Preparación consciente de una taza de té" class="relative aspect-[4/3] w-full object-cover" />
+                <img src={destacadoImage.src} alt="Preparación consciente de una taza de té" class="relative aspect-[4/3] w-full object-cover" />
             </div>
             <div class="fade-up delay-1">
                 <p class="section-kicker">Ritual destacado · 5 min</p>
