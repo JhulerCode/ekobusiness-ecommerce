@@ -45,7 +45,7 @@ const momentosOrdenados = [...momentos].sort((a, b) => collator.compare(a.titulo
             <img
                 src={bannerTienda.src}
                 alt=""
-                class="tienda-hero-image h-full w-full object-cover object-center"
+                class="linea-hero-image h-full w-full object-cover object-center"
             />
             <div
                 class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.98)_34%,rgba(9,8,6,.82)_58%,rgba(9,8,6,.18)_100%)] md:bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.92)_42%,rgba(9,8,6,.46)_68%,rgba(9,8,6,.12)_100%)]"
@@ -84,21 +84,22 @@ const momentosOrdenados = [...momentos].sort((a, b) => collator.compare(a.titulo
 </BaseLayout>
 
 <style>
-    .tienda-hero-image {
-        animation: tiendaHeroZoom 12s ease-in-out infinite alternate;
+    .linea-hero-image {
+        animation: lineaHeroZoom 12s ease-in-out infinite alternate;
     }
 
-    @keyframes tiendaHeroZoom {
+    @keyframes lineaHeroZoom {
         from {
             transform: scale(1);
         }
+
         to {
             transform: scale(1.06);
         }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .tienda-hero-image {
+        .linea-hero-image {
             animation: none;
         }
     }

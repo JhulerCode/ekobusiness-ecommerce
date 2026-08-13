@@ -92,7 +92,7 @@ export const lineas = [
             label: 'La diferencia esta en la taza',
             title: 'Mas aroma, mas cuerpo y mejor liberacion de sabor.',
             description:
-                'El formato doble camara permite una infusion mas uniforme. El diferencial tecnico se comunica con lenguaje claro, premium y facil de leer.',
+                'Una colección elaborada en Sri Lanka con té negro de Ceylán cuidadosamente seleccionado. Filtrantes de doble cámara con 2 g y sobres laminados que preservan el aroma, la frescura y la intensidad en cada taza.',
             image: signatureDiferencia,
             imageAlt: 'Coleccion Signature Black con taza servida',
             metrics: [
@@ -156,9 +156,9 @@ export const lineas = [
         title: 'Piramidal Premium',
         seoTitle: 'Piramidal Premium | Sunka Herbal Tea',
         eyebrow: 'Piramidal Premium / Infusiones en piramide',
-        heroTitle: 'Infusiones amplias para un ritual mas expresivo.',
+        heroTitle: 'Infusiones piramidales para transformar cada taza en una experiencia extraordinaria.',
         description:
-            'Una linea pensada para liberar hojas, flores y frutos con mas espacio, aroma y presencia en taza.',
+            'Más espacio para que cada ingrediente libere plenamente sus aromas y sabores. Una infusión equilibrada, intensa y de calidad Premium.',
         heroImage: piramidal,
         heroImageAlt: 'Linea Piramidal Premium',
         heroImagePosition: 'object-bottom md:object-center lg:object-bottom',
@@ -187,9 +187,9 @@ export const lineas = [
         },
         diferencia: {
             label: 'La diferencia esta en el formato',
-            title: 'Mas espacio para una infusion limpia y aromaticamente completa.',
+            title: 'La diferencia se ve antes de probarla.',
             description:
-                'El sobre piramidal ayuda a que los ingredientes se expandan con naturalidad y entreguen una taza mas definida.',
+                'Frente a los filtrantes convencionales, Sunka Premium reúne 2.5 g de hojas, frutas y especias en cortes visibles dentro de una malla piramidal compostable. Su mayor espacio permite que los ingredientes se expandan y liberen mejor sus aromas y sabores, logrando una infusión más compleja, definida y memorable.',
             image: piramidalDiferencia,
             imageAlt: 'Detalle linea Piramidal Premium',
             metrics: defaultMetrics,
@@ -228,9 +228,9 @@ export const lineas = [
         title: 'Luxury Collection',
         seoTitle: 'Luxury Collection | Sunka Herbal Tea',
         eyebrow: 'Luxury Collection / Ediciones especiales',
-        heroTitle: 'Una seleccion especial para regalar o disfrutar lento.',
+        heroTitle: 'Creaciones excepcionales para momentos que merecen ser recordados.',
         description:
-            'Ediciones cuidadas para momentos especiales, con perfiles elegantes y una presentacion memorable.',
+            'Blends cuidadosamente seleccionados, con perfiles refinados y una presentación impecable. Una colección concebida para regalar, celebrar y disfrutar sin prisa.',
         heroImage: luxury,
         heroImageAlt: 'Linea Luxury Collection',
         heroImagePosition: 'object-top md:object-center lg:object-top',
@@ -259,9 +259,9 @@ export const lineas = [
         },
         diferencia: {
             label: 'La diferencia esta en el detalle',
-            title: 'Perfiles especiales, presentacion cuidada y una experiencia mas memorable.',
+            title: 'Más que un té, la máxima expresión de Sunka',
             description:
-                'Luxury Collection esta pensada para elevar el momento: desde el empaque hasta la expresion final en taza.',
+                'Más allá de un té premium convencional, Sunka Luxury reúne 3 g de ingredientes visibles en cada pirámide compostable, blends de mayor complejidad y una presentación creada para cautivar. Desde el primer encuentro hasta la última nota en taza, cada detalle transforma el té en una experiencia excepcional.',
             image: luxuryDiferencia,
             imageAlt: 'Detalle Luxury Collection',
             metrics: defaultMetrics,
@@ -300,9 +300,9 @@ export const lineas = [
         title: 'Tradicionales',
         seoTitle: 'Tradicionales | Sunka Herbal Tea',
         eyebrow: 'Tradicionales / Sabores de siempre',
-        heroTitle: 'Sabores conocidos para volver a lo simple.',
+        heroTitle: 'El sabor natural que siempre quieres tener en casa.',
         description:
-            'Infusiones clasicas, honestas y cercanas para acompanar la rutina con bienestar cotidiano.',
+            'Infusiones elaboradas con ingredientes naturales, sin colorantes ni saborizantes. Sabores deliciosos y prácticos filtrantes tradicionales para disfrutar una taza de bienestar todos los días.',
         heroImage: tradicional,
         heroImageAlt: 'Linea Tradicionales',
         heroImagePosition: 'object-center',
@@ -331,9 +331,9 @@ export const lineas = [
         },
         diferencia: {
             label: 'La diferencia esta en lo esencial',
-            title: 'Sabores familiares con una taza clara, amable y constante.',
+            title: 'Lo tradicional no tiene por qué ser básico.',
             description:
-                'La linea tradicional mantiene perfiles cercanos y faciles de integrar en cualquier rutina.',
+                'Frente a una categoría que suele ofrecer las mismas opciones, Sunka Tradicional combina hierbas, frutas y especias para crear sabores definidos y una mayor variedad de infusiones. Alternativas naturales pensadas para acompañarte en cada momento del día.',
             image: tradicionalDiferencia,
             imageAlt: 'Detalle linea Tradicionales',
             metrics: defaultMetrics,
