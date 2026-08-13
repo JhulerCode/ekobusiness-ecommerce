@@ -4,13 +4,13 @@ import TiendaGrid from '@/components/tienda/TiendaGrid.vue'
 import Beneficios from '@/components/home/Beneficios.astro'
 import bannerTienda from '@/assets/banner1.webp'
 import { get, formatProductos } from '@/lib/api.js'
+import { momentos } from '@/data/momentos.js'
 
 //--- Load productos ---//
 const qryProductos = {
     fltr: {
         activo: { op: 'Es', val: true },
         is_ecommerce: { op: 'Es', val: true },
-        categoria: { op: 'No es', val: 'f000be66-e4b1-4334-b57a-0e356eb8c7a6' },
     },
     cols: ['id', 'linea', 'ecommerce_data'],
     incl: ['linea1'],
@@ -28,6 +28,10 @@ for (const a of productos) {
         }
     }
 }
+
+const collator = new Intl.Collator('es', { sensitivity: 'base' })
+lineas.sort((a, b) => collator.compare(a.nombre, b.nombre))
+const momentosOrdenados = [...momentos].sort((a, b) => collator.compare(a.titulo, b.titulo))
 ---
 
 <BaseLayout
@@ -70,7 +74,12 @@ for (const a of productos) {
             </div>
         </div>
     </section>
-    <TiendaGrid client:load productos={productos} lineas={lineas} />
+    <TiendaGrid
+        client:load
+        productos={productos}
+        lineas={lineas}
+        momentos={momentosOrdenados}
+    />
     <Beneficios />
 </BaseLayout>
 

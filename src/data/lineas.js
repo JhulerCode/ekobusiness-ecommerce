@@ -44,8 +44,8 @@ export const lineas = [
         seoTitle: 'Signature Black | Sunka Herbal Tea',
         eyebrow: 'Signature Black / Sunka x Mabroc',
         description:
-            'Una coleccion de tes negros de Sri Lanka en formato doble camara, con mayor gramaje, mas aroma y una experiencia de taza mas intensa.',
-        heroTitle: 'Te negro de origen para elevar tu ritual diario.',
+            'Una colección elaborada en Sri Lanka con té negro de Ceylán cuidadosamente seleccionado. Filtrantes de doble cámara con 2 g y sobres laminados que preservan el aroma, la frescura y la intensidad en cada taza.',
+        heroTitle: 'Té negro de Ceylán para una experiencia superior.',
         heroImage: signature,
         heroImageAlt: 'Coleccion Signature Black',
         heroImagePosition: 'object-left md:object-left lg:object-top',
@@ -439,7 +439,7 @@ export const lineas = [
 
 export const lineasBySlug = Object.fromEntries(lineas.map((linea) => [linea.slug, linea]))
 
-const coleccionesOrder = ['tradicional', 'signature', 'piramidal', 'luxury']
+const coleccionesOrder = ['signature', 'piramidal', 'luxury', 'tradicional']
 const coleccionesPosition = {
     signature: 'object-left',
     piramidal: 'object-bottom',

@@ -347,7 +347,7 @@ import Producto from '@/components/Producto.vue';
 import Ghost from '@/assets/icons/ghost.vue';
 import ChevronLeft from '@/assets/icons/chevron-left.vue';
 import ChevronRight from '@/assets/icons/chevron-right.vue';
-import { momentos, momentosBySlug } from '@/data/momentos.js';
+import { momentosBySlug } from '@/data/momentos.js';
 
 export default {
     components: {
@@ -367,10 +367,13 @@ export default {
             required: true,
             default: () => [],
         },
+        momentos: {
+            type: Array,
+            default: () => [],
+        },
     },
     data() {
         return {
-            momentos,
             orden: 'nombre-asc',
             filtroLineas: [],
             selectedMoment: '',
