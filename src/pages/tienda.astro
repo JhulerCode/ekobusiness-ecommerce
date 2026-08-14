@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import TiendaGrid from '@/components/tienda/TiendaGrid.vue'
+import TiendaCatalog from '@/components/tienda/TiendaCatalog.vue'
 import Beneficios from '@/components/home/Beneficios.astro'
 import bannerTienda from '@/assets/banner1.webp'
+import originImage from '@/assets/origen/proposito2.webp'
 import { get, formatProductos } from '@/lib/api.js'
 import { momentos } from '@/data/momentos.js'
 
@@ -74,12 +75,36 @@ const momentosOrdenados = [...momentos].sort((a, b) => collator.compare(a.titulo
             </div>
         </div>
     </section>
-    <TiendaGrid
+    <TiendaCatalog
         client:load
         productos={productos}
         lineas={lineas}
         momentos={momentosOrdenados}
     />
+    <section class="mx-auto max-w-7xl px-5 pb-16 md:px-8 md:pb-24">
+        <div class="tienda-origin-banner relative min-h-[310px] overflow-hidden rounded-lg bg-sunka-cream md:min-h-[250px]">
+            <img
+                src={originImage.src}
+                alt="Preparación artesanal de una infusión SUNKA"
+                class="absolute inset-0 h-full w-full object-cover object-[58%_center]"
+            />
+            <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(245,240,231,.98)_0%,rgba(245,240,231,.91)_30%,rgba(245,240,231,.35)_58%,rgba(245,240,231,.04)_100%)]"></div>
+            <div class="relative z-10 flex min-h-[310px] max-w-lg flex-col justify-center px-6 py-10 md:min-h-[250px] md:px-8 md:py-8">
+                <p class="text-[10px] font-bold uppercase tracking-[0.22em] text-sunka-olive">
+                    El ritual comienza con el origen
+                </p>
+                <h2 class="mt-3 max-w-sm font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl">
+                    Cada mezcla nace de una selección cuidadosa.
+                </h2>
+                <a
+                    href="/origen"
+                    class="mt-6 inline-flex items-center gap-3 text-xs font-semibold text-sunka-ink transition-colors hover:text-sunka-olive"
+                >
+                    Conoce nuestro origen <span aria-hidden="true" class="text-base">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
     <Beneficios />
 </BaseLayout>
 
