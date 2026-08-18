@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div @click="handleControlClick">
         <div class="flex justify-between items-center gap-2">
             <label class="label" v-if="label">
                 <span v-if="label">{{ label }}</span>
@@ -22,6 +22,7 @@
                 class="relative input overflow-x-auto whitespace-nowrap no-scrollbar"
                 v-if="inputModel"
                 :title="setMostrar()"
+                ref="right"
             >
                 {{ setMostrar() }}
             </div>
@@ -127,10 +128,16 @@ export default {
         this.init(this.inputModel);
     },
     methods: {
-        handleClickOutside(event) {
-            const el = this.$refs['lista-box'];
+        handleControlClick(event) {
+            if (this.disabled || !event.target.closest?.('.input')) return;
 
-            if (el && !el.contains(event.target)) {
+            this.openList();
+        },
+        handleClickOutside(event) {
+            const trigger = this.$refs.right;
+            const list = this.$refs['lista-box'];
+
+            if (!trigger?.contains(event.target) && !list?.contains(event.target)) {
                 this.ocultar();
             }
         },
@@ -139,8 +146,10 @@ export default {
                 this.ocultar();
             }
         },
-        toogleList() {
-            // this.isVisible = !this.isVisible
+        openList() {
+            if (this.disabled) return;
+
+            this.isVisible = true;
 
             if (this.isVisible) {
                 this.$nextTick(() => {
@@ -156,8 +165,6 @@ export default {
                     document.addEventListener('click', this.handleClickOutside);
                     window.addEventListener('keydown', this.handleEscapeKey);
                 }, 0);
-            } else {
-                this.ocultar();
             }
         },
         ocultar() {
@@ -201,15 +208,13 @@ export default {
         handleInput() {
             clearTimeout(this.searchTimeOut);
 
+            this.openList();
+
             if (this.txtBuscar == '') {
-                this.isVisible = false;
-                this.toogleList();
                 this.$emit('search');
                 return;
             }
 
-            this.isVisible = true;
-            this.toogleList();
             this.searchTimeOut = setTimeout(() => {
                 this.search();
             }, 500);
