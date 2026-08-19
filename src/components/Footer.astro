@@ -9,12 +9,22 @@ import empresa from '../data/company.js'
 
 const columnas = [
     {
+        titulo: 'Sunka',
+        links: [
+            { texto: 'Nuestro origen', href: '/origen' },
+            { texto: 'Rituales', href: '/rituales' },
+            // { texto: 'Club Sunka', href: '/club' },
+            { texto: 'Blog / Cartas Sunka', href: '/rituales' },
+            { texto: 'Contacto', href: `mailto:${empresa.email_ventas}` },
+        ],
+    },
+    {
         titulo: 'Tienda',
         links: [
             { texto: 'Todas las colecciones', href: '/tienda' },
-            { texto: 'Tes', href: '/tienda' },
-            { texto: 'Infusiones', href: '/tienda' },
-            { texto: 'Accesorios', href: '/tienda' },
+            { texto: 'Tradicionales', href: '/tienda?linea=tradicional' },
+            { texto: 'Luxury', href: '/tienda?linea=luxury' },
+            { texto: 'Regalos', href: '/tienda' },
             { texto: 'Ofertas', href: '/tienda' },
         ],
     },
@@ -27,16 +37,6 @@ const columnas = [
     //         { texto: 'Preguntas frecuentes', href: '/faq' },
     //     ],
     // },
-    {
-        titulo: 'Sunka',
-        links: [
-            { texto: 'Nuestro origen', href: '/origen' },
-            { texto: 'Rituales', href: '/rituales' },
-            // { texto: 'Club Sunka', href: '/club' },
-            { texto: 'Blog / Cartas Sunka', href: '/rituales' },
-            { texto: 'Contacto', href: `mailto:${empresa.email_ventas}` },
-        ],
-    },
     {
         titulo: 'Ayuda',
         links: [
@@ -143,12 +143,12 @@ const columnas = [
             >
                 <p>© {new Date().getFullYear()} Sunka. Todos los derechos reservados.</p>
                 <div class="flex flex-wrap gap-x-6 gap-y-2 md:justify-center">
-                    <a href="/politica-de-privacidad" class="transition hover:text-sunka-white">
+                    <!-- <a href="/politica-de-privacidad" class="transition hover:text-sunka-white">
                         Politicas de privacidad
                     </a>
                     <a href="/terminos-y-condiciones" class="transition hover:text-sunka-white">
                         Terminos y condiciones
-                    </a>
+                    </a> -->
                 </div>
                 <p class="flex items-center gap-2 md:justify-end">
                     <span>Hecho en Perú</span>
