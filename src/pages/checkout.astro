@@ -1,8 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import CheckoutForm from '../components/CheckoutForm.vue';
-import { get } from '../lib/api.js';
-import empresa from '../data/company.js';
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import CheckoutForm from '@/components/CheckoutForm.vue'
+import checkoutHero from '@/assets/home/blend.webp'
+import { get } from '@/lib/api.js'
+import empresa from '@/data/company.js'
 
 const res = await get('sistema', {
     qry: [
@@ -11,7 +12,7 @@ const res = await get('sistema', {
         'comprobante_tipos',
         'pago_metodos',
     ],
-});
+})
 
 if (res.code == 0) {
     var {
@@ -19,17 +20,133 @@ if (res.code == 0) {
         entrega_tipos,
         comprobante_tipos,
         pago_metodos,
-    } = res.data;
+    } = res.data
 }
 ---
 
-<BaseLayout title="Checkout">
-    <CheckoutForm
-        client:load
-        empresa={empresa}
-        pago_metodos={pago_metodos}
-        documentos_identidad={documentos_identidad}
-        entrega_tipos={entrega_tipos}
-        comprobante_tipos={comprobante_tipos}
-    />
+<BaseLayout
+    title="Finaliza tu compra | SUNKA Herbal Tea"
+    description="Completa tus datos de entrega y elige tu método de pago para finalizar tu compra SUNKA."
+>
+    <section class="checkout-hero">
+        <div class="checkout-hero__image" aria-hidden="true">
+            <img src={checkoutHero.src} alt="" />
+        </div>
+        <div class="checkout-hero__shade" aria-hidden="true"></div>
+
+        <div class="checkout-hero__content">
+            <a href="/tienda" class="checkout-back">← Volver a la tienda</a>
+            <p>Tu ritual, a un paso</p>
+            <h1>Finaliza tu compra</h1>
+            <span>Completa tus datos con tranquilidad. Tu pedido está reservado mientras avanzas.</span>
+        </div>
+    </section>
+
+    <main class="checkout-page">
+        <CheckoutForm
+            client:load
+            empresa={empresa}
+            pago_metodos={pago_metodos}
+            documentos_identidad={documentos_identidad}
+            entrega_tipos={entrega_tipos}
+            comprobante_tipos={comprobante_tipos}
+        />
+    </main>
 </BaseLayout>
+
+<style>
+    .checkout-hero {
+        position: relative;
+        min-height: 350px;
+        overflow: hidden;
+        background: var(--sunka-ink);
+        color: var(--sunka-white);
+    }
+
+    .checkout-hero__image,
+    .checkout-hero__shade {
+        position: absolute;
+        inset: 0;
+    }
+
+    .checkout-hero__image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 58%;
+        animation: checkoutHeroZoom 14s ease-in-out infinite alternate;
+    }
+
+    .checkout-hero__shade {
+        background: linear-gradient(90deg, rgba(9, 8, 6, 0.98) 0%, rgba(9, 8, 6, 0.88) 40%, rgba(9, 8, 6, 0.2) 100%);
+    }
+
+    .checkout-hero__content {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 1280px);
+        margin: 0 auto;
+        padding: 112px 32px 62px;
+    }
+
+    .checkout-back {
+        display: inline-flex;
+        margin-bottom: 25px;
+        color: rgba(255, 253, 248, 0.68);
+        font-size: 12px;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .checkout-back:hover {
+        color: var(--sunka-brass-light);
+    }
+
+    .checkout-hero__content p {
+        margin: 0 0 10px;
+        color: var(--sunka-brass-light);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+    }
+
+    .checkout-hero__content h1 {
+        margin: 0;
+        font-family: var(--font-heading);
+        font-size: clamp(34px, 5vw, 54px);
+        line-height: 1.05;
+    }
+
+    .checkout-hero__content span {
+        display: block;
+        max-width: 520px;
+        margin-top: 16px;
+        color: rgba(255, 253, 248, 0.78);
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .checkout-page {
+        padding: 28px 24px 120px;
+        background: var(--sunka-cream);
+    }
+
+    @keyframes checkoutHeroZoom {
+        from { transform: scale(1); }
+        to { transform: scale(1.05); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .checkout-hero__image img { animation: none; }
+    }
+
+    @media (max-width: 640px) {
+        .checkout-hero { min-height: 330px; }
+        .checkout-hero__shade {
+            background: linear-gradient(180deg, rgba(9, 8, 6, 0.98) 0%, rgba(9, 8, 6, 0.82) 62%, rgba(9, 8, 6, 0.38) 100%);
+        }
+        .checkout-hero__content { padding: 100px 20px 48px; }
+        .checkout-page { padding: 16px 12px 88px; }
+    }
+</style>

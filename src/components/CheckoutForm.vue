@@ -1,7 +1,7 @@
 <template>
-    <section class="max-w-6xl mx-auto px-4 py-12 gap-10" v-if="paymentSuccess == true">
+    <section class="checkout-success" v-if="paymentSuccess == true">
         <div
-            class="flex flex-col items-center justify-center text-center p-8 bg-white rounded-2xl shadow-md border border-gray-100 animate-fade-in"
+            class="checkout-success__card"
             v-if="form.pago_metodo == 'tarjeta'"
         >
             <svg
@@ -33,7 +33,7 @@
         </div>
 
         <div
-            class="flex flex-col items-center justify-center text-center p-8 bg-white rounded-2xl shadow-md border border-gray-100 animate-fade-in"
+            class="checkout-success__card"
             v-if="form.pago_metodo == 'yape'"
         >
             <svg
@@ -69,29 +69,25 @@
         </div>
     </section>
 
-    <section class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-10" v-else>
+    <section class="checkout-layout" v-else>
         <!-- Columna izquierda: pasos -->
-        <div class="md:col-span-2 flex md:flex-row flex-col gap-10">
+        <div class="checkout-workspace">
             <!-- Encabezado -->
-            <div class="md:sticky md:top-20 md:h-fit flex gap-2 justify-between md:flex-col">
+            <nav class="checkout-steps" aria-label="Progreso de compra">
                 <!-- Paso 1 -->
-                <div class="flex flex-col md:flex-row gap-2 items-center">
+                <div class="checkout-step" :class="{ 'is-active': step === 1, 'is-done': step > 1 }">
                     <div
-                        class="w-10 h-10 flex items-center justify-center rounded-full border-2 transition-all duration-300"
+                        class="checkout-step__number"
                         :class="{
-                            'border-black bg-black text-white': step >= 1,
-                            'border-gray-300 bg-white text-gray-400': step < 1,
+                            'is-current': step === 1,
+                            'is-complete': step > 1,
                         }"
                     >
                         1
                     </div>
 
                     <span
-                        class="text-sm transition-colors duration-300"
-                        :class="{
-                            'text-black font-medium': step >= 1,
-                            'text-gray-400': step < 1,
-                        }"
+                        class="checkout-step__label"
                     >
                         Identificación
                     </span>
@@ -99,28 +95,24 @@
 
                 <!-- Línea entre pasos -->
                 <div
-                    class="h-[2px] w-20 my-5 md:w-[2px] md:h-20 md:mx-5 md:my-0"
-                    :class="step > 1 ? 'bg-black' : 'bg-gray-300'"
+                    class="checkout-step__line"
+                    :class="{ 'is-complete': step > 1 }"
                 ></div>
 
                 <!-- Paso 2 -->
-                <div class="flex flex-col md:flex-row gap-2 items-center">
+                <div class="checkout-step" :class="{ 'is-active': step === 2, 'is-done': step > 2 }">
                     <div
-                        class="w-10 h-10 flex items-center justify-center rounded-full border-2 transition-all duration-300"
+                        class="checkout-step__number"
                         :class="{
-                            'border-black bg-black text-white': step >= 2,
-                            'border-gray-300 bg-white text-gray-400': step < 2,
+                            'is-current': step === 2,
+                            'is-complete': step > 2,
                         }"
                     >
                         2
                     </div>
 
                     <span
-                        class="text-sm transition-colors duration-300"
-                        :class="{
-                            'text-black font-medium': step >= 2,
-                            'text-gray-400': step < 2,
-                        }"
+                        class="checkout-step__label"
                     >
                         Entrega
                     </span>
@@ -128,41 +120,42 @@
 
                 <!-- Línea entre pasos -->
                 <div
-                    class="h-[2px] w-20 my-5 md:w-[2px] md:h-20 md:mx-5 md:my-0"
-                    :class="step > 2 ? 'bg-black' : 'bg-gray-300'"
+                    class="checkout-step__line"
+                    :class="{ 'is-complete': step > 2 }"
                 ></div>
 
                 <!-- Paso 3 -->
-                <div class="flex flex-col md:flex-row gap-2 items-center">
+                <div class="checkout-step" :class="{ 'is-active': step === 3 }">
                     <div
-                        class="w-10 h-10 flex items-center justify-center rounded-full border-2 transition-all duration-300"
+                        class="checkout-step__number"
                         :class="{
-                            'border-black bg-black text-white': step >= 3,
-                            'border-gray-300 bg-white text-gray-400': step < 3,
+                            'is-current': step === 3,
                         }"
                     >
                         3
                     </div>
 
                     <span
-                        class="text-sm transition-colors duration-300"
-                        :class="{
-                            'text-black font-medium': step >= 3,
-                            'text-gray-400': step < 3,
-                        }"
+                        class="checkout-step__label"
                     >
                         Pago
                     </span>
                 </div>
-            </div>
+            </nav>
 
-            <div class="flex-1 space-y-8">
+            <div class="checkout-panels">
                 <!-- Paso 1: Identificación -->
                 <div
-                    class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
+                    class="checkout-card"
                     ref="seccionForm1"
                 >
-                    <h2 class="text-xl font-semibold">1. Identificación</h2>
+                    <div class="checkout-card__heading">
+                        <span>01</span>
+                        <div>
+                            <p>Datos personales</p>
+                            <h2>Identificación</h2>
+                        </div>
+                    </div>
 
                     <!-- Formulario activo -->
                     <div v-if="step === 1" class="space-y-6">
@@ -250,7 +243,7 @@
                     <!-- Resumen cuando ya se completó -->
                     <div
                         v-else
-                        class="bg-gray-50 p-4 rounded-xl text-sm text-gray-700 shadow-inner flex justify-between items-start"
+                        class="checkout-completed"
                     >
                         <div v-if="form.socio_datos">
                             <p>
@@ -278,11 +271,17 @@
 
                 <!-- Paso 2: Entrega -->
                 <div
-                    class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
+                    class="checkout-card"
                     v-if="step >= 2"
                     ref="seccionForm2"
                 >
-                    <h2 class="text-xl font-semibold">2. Entrega</h2>
+                    <div class="checkout-card__heading">
+                        <span>02</span>
+                        <div>
+                            <p>Cómo recibirás tu pedido</p>
+                            <h2>Entrega</h2>
+                        </div>
+                    </div>
 
                     <!-- Formulario activo -->
                     <div v-if="step === 2" class="space-y-6">
@@ -412,7 +411,7 @@
                     <!-- Resumen cuando ya se completó -->
                     <div
                         v-else-if="step > 2"
-                        class="bg-gray-50 p-4 rounded-xl text-sm text-gray-700 shadow-inner flex justify-between items-start"
+                        class="checkout-completed"
                     >
                         <div>
                             <template v-if="form.entrega_tipo === 'envio'">
@@ -469,11 +468,17 @@
 
                 <!-- Paso 3: Pago -->
                 <div
-                    class="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6"
+                    class="checkout-card"
                     v-if="step >= 3"
                     ref="seccionForm3"
                 >
-                    <h2 class="text-xl font-semibold">3. Pago</h2>
+                    <div class="checkout-card__heading">
+                        <span>03</span>
+                        <div>
+                            <p>Comprobante y método</p>
+                            <h2>Pago seguro</h2>
+                        </div>
+                    </div>
 
                     <!-- Formulario activo -->
                     <div v-if="step === 3" class="space-y-4">
@@ -682,22 +687,26 @@
         </div>
 
         <!-- Columna derecha: Resumen -->
-        <div class="border border-gray-200 rounded-2xl p-6 h-fit sticky top-20 shadow-sm">
-            <h2 class="text-xl font-semibold mb-6 text-gray-900 border-b border-gray-200 pb-3">
-                Resumen del pedido
-            </h2>
+        <aside class="checkout-summary">
+            <div class="checkout-summary__heading">
+                <div>
+                    <p>Tu selección</p>
+                    <h2>Resumen del pedido</h2>
+                </div>
+                <span>{{ items.length }} {{ items.length === 1 ? 'producto' : 'productos' }}</span>
+            </div>
 
             <!-- Lista de productos -->
-            <div class="space-y-4 mb-6">
+            <div class="checkout-summary__items">
                 <div
                     v-for="item in items"
                     :key="item.id"
-                    class="flex gap-4 border-b border-gray-200 pb-3"
+                    class="checkout-summary__item"
                 >
                     <img
                         :src="item.foto"
                         alt="Producto"
-                        class="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                        class="checkout-summary__image"
                     />
                     <div class="flex-1">
                         <p class="text-sm font-medium text-gray-800 leading-tight">
@@ -717,7 +726,7 @@
             </div>
 
             <!-- Totales -->
-            <div class="space-y-2 text-sm text-gray-700">
+            <div class="checkout-totals">
                 <div class="flex justify-between">
                     <span>Subtotal</span>
                     <span>S/ {{ subtotal.toFixed(2) }}</span>
@@ -731,13 +740,17 @@
                 </div>
 
                 <div
-                    class="flex justify-between text-gray-900 text-lg font-semibold mt-4 border-t border-gray-300 pt-4"
+                    class="checkout-total"
                 >
                     <span>Total</span>
                     <span>S/ {{ total.toFixed(2) }}</span>
                 </div>
             </div>
-        </div>
+            <div class="checkout-summary__assurance">
+                <span aria-hidden="true">✓</span>
+                <p><strong>Compra protegida</strong>Procesamos tus datos de forma segura.</p>
+            </div>
+        </aside>
     </section>
 
     <div id="myPaymentForm">
@@ -1262,3 +1275,461 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+.checkout-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(310px, 0.82fr);
+    gap: 24px;
+    width: min(100%, 1280px);
+    margin: 0 auto;
+    color: var(--sunka-ink);
+}
+
+.checkout-workspace {
+    min-width: 0;
+}
+
+.checkout-steps {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr auto;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 15px 22px;
+    border: 1px solid var(--sunka-sand);
+    border-radius: 13px;
+    background: rgba(255, 253, 248, 0.76);
+}
+
+.checkout-step {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--sunka-stone);
+    transition: color 0.2s ease;
+}
+
+.checkout-step.is-active,
+.checkout-step.is-done {
+    color: var(--sunka-forest);
+}
+
+.checkout-step__number {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid var(--sunka-sand);
+    border-radius: 50%;
+    background: var(--sunka-white);
+    font-size: 10px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.checkout-step__number.is-current {
+    border-color: var(--sunka-brass);
+    background: var(--sunka-brass);
+    color: var(--sunka-white);
+    box-shadow: 0 0 0 4px rgba(184, 138, 61, 0.12);
+}
+
+.checkout-step__number.is-complete {
+    border-color: var(--sunka-forest);
+    background: var(--sunka-forest);
+    color: var(--sunka-white);
+}
+
+.checkout-step__label {
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+}
+
+.checkout-step__line {
+    height: 1px;
+    margin: 0 14px;
+    background: var(--sunka-sand);
+    transition: background 0.2s ease;
+}
+
+.checkout-step__line.is-complete {
+    background: var(--sunka-forest);
+}
+
+.checkout-panels {
+    display: grid;
+    gap: 14px;
+}
+
+.checkout-card {
+    display: grid;
+    gap: 25px;
+    padding: 28px 30px 30px;
+    border: 1px solid var(--sunka-sand);
+    border-radius: 16px;
+    background: var(--sunka-white);
+    box-shadow: 0 12px 30px rgba(35, 29, 24, 0.05);
+}
+
+.checkout-card__heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--sunka-sand);
+}
+
+.checkout-card__heading > span {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 11px;
+    background: var(--sunka-forest);
+    color: var(--sunka-brass-light);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.checkout-card__heading p,
+.checkout-card__heading h2 {
+    margin: 0;
+}
+
+.checkout-card__heading p {
+    margin-bottom: 2px;
+    color: var(--sunka-stone);
+    font-size: 9px;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.checkout-card__heading h2 {
+    color: var(--sunka-forest);
+    font-size: 20px;
+    font-weight: 650;
+}
+
+.checkout-completed {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 18px;
+    border-left: 3px solid var(--sunka-brass);
+    border-radius: 0 10px 10px 0;
+    background: var(--sunka-cream);
+    color: #5f584f;
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.checkout-completed button {
+    color: var(--sunka-brass);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.checkout-summary {
+    position: sticky;
+    top: 24px;
+    overflow: hidden;
+    height: fit-content;
+    padding: 23px 24px 20px;
+    border-radius: 16px;
+    background: var(--sunka-forest);
+    color: var(--sunka-white);
+    box-shadow: 0 18px 38px rgba(13, 35, 23, 0.18);
+}
+
+.checkout-summary__heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 17px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.checkout-summary__heading p,
+.checkout-summary__heading h2 {
+    margin: 0;
+}
+
+.checkout-summary__heading p {
+    margin-bottom: 3px;
+    color: rgba(255, 253, 248, 0.54);
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.checkout-summary__heading h2 {
+    font-size: 16px;
+}
+
+.checkout-summary__heading > span {
+    padding: 6px 9px;
+    border: 1px solid rgba(212, 173, 96, 0.42);
+    border-radius: 999px;
+    color: var(--sunka-brass-light);
+    font-size: 8px;
+    white-space: nowrap;
+}
+
+.checkout-summary__items {
+    display: grid;
+    gap: 0;
+    max-height: 330px;
+    overflow-y: auto;
+    margin: 5px 0 18px;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+    scrollbar-width: thin;
+}
+
+.checkout-summary__item {
+    display: flex;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.checkout-summary__image {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 auto;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 8px;
+    background: var(--sunka-white);
+    object-fit: cover;
+}
+
+.checkout-summary__item p {
+    color: rgba(255, 253, 248, 0.72);
+}
+
+.checkout-summary__item p:first-child {
+    color: var(--sunka-white);
+}
+
+.checkout-totals {
+    display: grid;
+    gap: 9px;
+    color: rgba(255, 253, 248, 0.68);
+    font-size: 11px;
+}
+
+.checkout-totals > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.checkout-total {
+    align-items: center;
+    margin-top: 5px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--sunka-white);
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.checkout-total span:last-child {
+    color: var(--sunka-brass-light);
+    font-size: 23px;
+}
+
+.checkout-summary__assurance {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.checkout-summary__assurance > span {
+    display: grid;
+    width: 25px;
+    height: 25px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(212, 173, 96, 0.16);
+    color: var(--sunka-brass-light);
+    font-size: 11px;
+}
+
+.checkout-summary__assurance p,
+.checkout-summary__assurance strong {
+    display: block;
+    margin: 0;
+}
+
+.checkout-summary__assurance p {
+    color: rgba(255, 253, 248, 0.54);
+    font-size: 8px;
+}
+
+.checkout-summary__assurance strong {
+    margin-bottom: 1px;
+    color: rgba(255, 253, 248, 0.84);
+    font-size: 9px;
+}
+
+.checkout-success {
+    width: min(100%, 920px);
+    margin: 0 auto;
+    padding: 35px 0 80px;
+}
+
+.checkout-success__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 52px 30px;
+    border: 1px solid var(--sunka-sand);
+    border-radius: 18px;
+    background: var(--sunka-white);
+    text-align: center;
+    box-shadow: 0 18px 38px rgba(35, 29, 24, 0.08);
+}
+
+.checkout-card :deep(.label) {
+    margin-bottom: 7px;
+    color: var(--sunka-forest);
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+}
+
+.checkout-card :deep(.input),
+.checkout-card :deep(select),
+.checkout-card :deep(textarea) {
+    min-height: 46px;
+    border-color: var(--sunka-sand);
+    border-radius: 8px;
+    background: #fffefa;
+    color: var(--sunka-ink);
+    font-size: 12px;
+    box-shadow: none;
+}
+
+.checkout-card :deep(.input:focus),
+.checkout-card :deep(select:focus),
+.checkout-card :deep(textarea:focus) {
+    border-color: var(--sunka-brass);
+    --tw-ring-color: rgba(184, 138, 61, 0.14);
+}
+
+.checkout-card :deep(.radio),
+.checkout-card :deep(.checkbox) {
+    color: #665e54;
+    font-size: 11px;
+}
+
+.checkout-card :deep(.button) {
+    min-height: 43px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.checkout-card :deep(.button1) {
+    border-color: var(--sunka-brass);
+    background: var(--sunka-brass);
+    color: var(--sunka-white);
+}
+
+.checkout-card :deep(.button1:hover) {
+    background: #c69a50;
+}
+
+.checkout-card :deep(.button2) {
+    border-color: var(--sunka-sand);
+    color: var(--sunka-forest);
+}
+
+.checkout-card :deep(.input-error) {
+    color: #9f513e;
+    font-size: 10px;
+}
+
+@media (max-width: 980px) {
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-summary {
+        position: relative;
+        top: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .checkout-steps {
+        padding: 12px 13px;
+    }
+
+    .checkout-step {
+        justify-content: center;
+    }
+
+    .checkout-step__label {
+        display: none;
+    }
+
+    .checkout-step__line {
+        margin: 0 8px;
+    }
+
+    .checkout-card {
+        gap: 21px;
+        padding: 22px 18px 24px;
+    }
+
+    .checkout-card__heading {
+        padding-bottom: 15px;
+    }
+
+    .checkout-card__heading h2 {
+        font-size: 18px;
+    }
+
+    .checkout-card :deep(.grid.md\:grid-cols-2) {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-card :deep(.col-span-2) {
+        grid-column: span 1;
+    }
+
+    .checkout-card :deep(.flex.justify-between) {
+        gap: 12px;
+    }
+
+    .checkout-summary {
+        padding: 20px 18px;
+    }
+
+    .checkout-success {
+        padding-top: 16px;
+    }
+
+    .checkout-success__card {
+        padding: 38px 20px;
+    }
+}
+</style>
