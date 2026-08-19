@@ -41,7 +41,7 @@ const productos = formatProductos(res2.data)
                 <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 lg:gap-7">
                     {productos.map((producto) => (
                         <a
-                            href={`/producto/${producto.slug}`}
+                            href={`/productos/${producto.slug}`}
                             class="group block overflow-hidden rounded-[6px] border border-sunka-ink/14  shadow-[0_1px_0_rgba(9,8,6,0.05)] transition hover:border-sunka-brass/45"
                         >
                             <div class="aspect-[4/4] overflow-hidden bg-sunka-sand">

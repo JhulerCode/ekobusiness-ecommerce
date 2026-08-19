@@ -318,8 +318,13 @@ export default {
         },
         applyUrlFilters() {
             const params = new URLSearchParams(window.location.search)
-            const requestedLine = params.get('linea')
-            const line = this.lineas.find((item) => this.normalizeSlug(item.slug || item.nombre) === this.normalizeSlug(requestedLine || ''))
+            const requestedLine = this.normalizeSlug(params.get('linea') || '')
+            const line = requestedLine
+                ? this.lineas.find((item) => {
+                      const itemSlug = this.normalizeSlug(item.slug || item.nombre)
+                      return itemSlug === requestedLine || itemSlug.startsWith(requestedLine)
+                  })
+                : null
             if (line) this.filtroLineas = [line.id]
             const requestedMoment = this.normalizeSlug(params.get('momento') || '')
             if (momentosBySlug[requestedMoment]) this.selectedMoment = requestedMoment

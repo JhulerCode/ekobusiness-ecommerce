@@ -137,6 +137,9 @@ const relacionados = relatedResponses.flatMap((response) =>
 )
 
 const linea = producto.linea1?.nombre ?? ''
+const lineaTiendaHref = linea
+    ? `/tienda?linea=${encodeURIComponent(lineaConfig?.slug ?? linea)}`
+    : ''
 const origen = producto.origen ?? ''
 const precio = Number(producto.precio ?? 0).toFixed(2)
 const pageDescription = producto.descripcion_corta || producto.descripcion || producto.nombre
@@ -155,7 +158,19 @@ const sectionTitleClass =
                 class="flex flex-wrap gap-2 py-5 text-[11px] text-sunka-stone"
             >
                 <a href="/tienda" class="transition-colors hover:text-sunka-brass">Tienda</a>
-                {linea && <><span>/</span><span>{linea}</span></>}
+                {
+                    linea && (
+                        <>
+                            <span>/</span>
+                            <a
+                                href={lineaTiendaHref}
+                                class="transition-colors hover:text-sunka-brass"
+                            >
+                                {linea}
+                            </a>
+                        </>
+                    )
+                }
                 <span>/</span>
                 <span aria-current="page">{producto.nombre}</span>
             </nav>
@@ -454,7 +469,7 @@ const sectionTitleClass =
                             {relacionados.map((item) => (
                                 <a
                                     class="group flex h-full min-w-0 flex-col bg-sunka-cream px-5 pb-5 pt-5 shadow-[0_6px_16px_rgba(35,29,24,0.12)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(35,29,24,0.16)]"
-                                    href={`/producto/${item.slug}`}
+                                    href={`/productos/${item.slug}`}
                                 >
                                     <div class="grid aspect-[1.08] place-items-center overflow-hidden bg-sunka-cream">
                                         {item.foto ? (

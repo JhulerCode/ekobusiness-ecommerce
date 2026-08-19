@@ -7,6 +7,8 @@ import CartDrawer from '../components/CartDrawer.vue'
 import AuthModal from '../components/AuthModal.vue'
 import HeaderTopBar from '../components/HeaderTopBar.astro'
 import SearchIcon from '../assets/icons/icon-search.astro'
+import ChevronDownIcon from '../assets/icons/icon-chevron-down.astro'
+import { colecciones } from '../data/lineas.js'
 
 const leftNavLinks = [
     { nombre: 'Inicio', href: '/' },
@@ -17,8 +19,9 @@ const leftNavLinks = [
 ]
 
 const rightNavLinks = [
+    { nombre: 'Líneas', href: '#lineas', dropdown: true },
+    // { nombre: 'Crea tu blend', href: '/crea-tu-blend' },
     { nombre: 'Tienda', href: '/tienda' },
-    { nombre: 'Crea tu blend', href: '/crea-tu-blend' },
 ]
 
 const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
@@ -92,20 +95,100 @@ const headerMainClass = startsTransparent
             <div class="flex items-center justify-end gap-5 lg:gap-7">
                 <nav class="hidden items-center gap-7 lg:flex xl:gap-11">
                     {
-                        rightNavLinks.map((link) => (
-                            <a
-                                href={link.href}
-                                class="text-[12px] font-semibold uppercase tracking-[0.12em] text-current opacity-90 transition-colors duration-300 hover:text-sunka-brass-light hover:opacity-100"
-                            >
-                                {link.nombre}
-                            </a>
-                        ))
+                        rightNavLinks.map((link) =>
+                            link.dropdown ? (
+                                <button
+                                    id="lineas-menu-toggle"
+                                    type="button"
+                                    class="flex cursor-pointer items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-current opacity-90 transition-colors duration-300 hover:text-sunka-brass-light hover:opacity-100"
+                                    aria-expanded="false"
+                                    aria-controls="lineas-mega-menu"
+                                >
+                                    {link.nombre}
+                                    <ChevronDownIcon class="lineas-chevron transition-transform duration-300" />
+                                </button>
+                            ) : (
+                                <a
+                                    href={link.href}
+                                    class="text-[12px] font-semibold uppercase tracking-[0.12em] text-current opacity-90 transition-colors duration-300 hover:text-sunka-brass-light hover:opacity-100"
+                                >
+                                    {link.nombre}
+                                </a>
+                            ),
+                        )
                     }
                 </nav>
 
                 <div class="flex items-center gap-4 text-current lg:gap-5">
                     <AuthModal client:load />
                     <CartDrawer client:load />
+                </div>
+            </div>
+        </div>
+
+        <div
+            id="lineas-menu-backdrop"
+            class="pointer-events-none invisible absolute top-full left-0 z-0 hidden h-[calc(100vh-104px)] w-full bg-sunka-ink/10 opacity-0 backdrop-blur-[3px] transition-opacity duration-300 lg:block"
+            aria-hidden="true"
+        ></div>
+
+        <div
+            id="lineas-mega-menu"
+            class="pointer-events-none invisible absolute top-full left-0 z-10 hidden w-full -translate-y-2 border-t border-sunka-ink/10 bg-sunka-cream text-sunka-ink opacity-0 shadow-2xl transition-all duration-300 lg:block"
+            aria-hidden="true"
+        >
+            <div class="mx-auto max-w-7xl px-8 py-8 xl:py-10">
+                <div class="mb-6 flex items-end justify-between gap-8">
+                    <div>
+                        <p class="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-sunka-brass">
+                            Descubre nuestras líneas
+                        </p>
+                        <h2 class="font-heading text-2xl tracking-wide xl:text-3xl">
+                            Una infusion para cada momento.
+                        </h2>
+                    </div>
+                    <a
+                        href="/tienda"
+                        class="shrink-0 border-b border-sunka-ink/40 pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors hover:border-sunka-brass hover:text-sunka-brass"
+                    >
+                        Ver todos los productos
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-4 gap-5 xl:gap-7">
+                    {
+                        colecciones.map((linea) => (
+                            <a href={linea.href} class="group block" data-linea-link>
+                                <div class="mb-4 aspect-[4/3] overflow-hidden bg-sunka-ink/5">
+                                    <img
+                                        src={linea.imagen}
+                                        alt={linea.nombre}
+                                        class:list={[
+                                            'h-full w-full object-cover transition-transform duration-700 group-hover:scale-105',
+                                            linea.posicion,
+                                        ]}
+                                        loading="lazy"
+                                    />
+                                </div>
+                                <div class="flex items-start justify-between gap-3">
+                                    <div>
+                                        <h3 class="font-heading text-lg tracking-wide transition-colors group-hover:text-sunka-brass">
+                                            {linea.nombre}
+                                        </h3>
+                                        <p class="mt-1 text-[11px] uppercase tracking-[0.1em] text-sunka-ink/60">
+                                            {linea.detalle}
+                                        </p>
+                                    </div>
+                                    <span
+                                        class="mt-1 text-lg transition-transform duration-300 group-hover:translate-x-1"
+                                        aria-hidden="true"
+                                    >
+                                        &rarr;
+                                    </span>
+                                </div>
+                            </a>
+                        ))
+                    }
                 </div>
             </div>
         </div>
@@ -118,14 +201,44 @@ const headerMainClass = startsTransparent
 >
     <div class="flex flex-col gap-8 text-center">
         {
-            mobileNavLinks.map((link) => (
-                <a
-                    href={link.href}
-                    class="font-heading text-2xl uppercase tracking-[0.08em] text-sunka-ink transition-colors duration-300 hover:text-sunka-brass"
-                >
-                    {link.nombre}
-                </a>
-            ))
+            mobileNavLinks.map((link) =>
+                link.dropdown ? (
+                    <div>
+                        <button
+                            id="mobile-lineas-toggle"
+                            type="button"
+                            class="flex w-full items-center justify-center gap-2 font-heading text-2xl uppercase tracking-[0.08em] text-sunka-ink transition-colors duration-300 hover:text-sunka-brass"
+                            aria-expanded="false"
+                            aria-controls="mobile-lineas-list"
+                        >
+                            {link.nombre}
+                            <ChevronDownIcon class="mobile-lineas-chevron transition-transform duration-300" />
+                        </button>
+                        <div
+                            id="mobile-lineas-list"
+                            class="grid max-h-0 overflow-hidden opacity-0 transition-all duration-300"
+                        >
+                            <div class="flex flex-col gap-3 pt-5">
+                                {colecciones.map((linea) => (
+                                    <a
+                                        href={linea.href}
+                                        class="text-sm font-semibold uppercase tracking-[0.12em] text-sunka-ink/70 transition-colors hover:text-sunka-brass"
+                                    >
+                                        {linea.nombre}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <a
+                        href={link.href}
+                        class="font-heading text-2xl uppercase tracking-[0.08em] text-sunka-ink transition-colors duration-300 hover:text-sunka-brass"
+                    >
+                        {link.nombre}
+                    </a>
+                ),
+            )
         }
     </div>
 </div>
@@ -138,6 +251,13 @@ const headerMainClass = startsTransparent
     const iconClose = document.getElementById('icon-close')
     const logoWhite = document.getElementById('site-logo-white')
     const logoBlack = document.getElementById('site-logo-black')
+    const lineasToggle = document.getElementById('lineas-menu-toggle')
+    const lineasMegaMenu = document.getElementById('lineas-mega-menu')
+    const lineasMenuBackdrop = document.getElementById('lineas-menu-backdrop')
+    const lineasChevron = lineasToggle?.querySelector('.lineas-chevron')
+    const mobileLineasToggle = document.getElementById('mobile-lineas-toggle')
+    const mobileLineasList = document.getElementById('mobile-lineas-list')
+    const mobileLineasChevron = mobileLineasToggle?.querySelector('.mobile-lineas-chevron')
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/'
     const isTransparentHeaderPage =
         currentPath === '/' ||
@@ -149,6 +269,7 @@ const headerMainClass = startsTransparent
         currentPath === '/club'
 
     const setMenuOpen = (isOpen) => {
+        if (isOpen) setLineasMenuOpen(false)
         mobileMenu?.classList.toggle('translate-x-0', isOpen)
         mobileMenu?.classList.toggle('translate-x-full', !isOpen)
         iconMenu?.classList.toggle('hidden', isOpen)
@@ -171,8 +292,47 @@ const headerMainClass = startsTransparent
         if (!isOpen) updateHeaderBackground()
     }
 
+    const setLineasMenuOpen = (isOpen) => {
+        lineasMenuBackdrop?.classList.toggle('pointer-events-none', !isOpen)
+        lineasMenuBackdrop?.classList.toggle('invisible', !isOpen)
+        lineasMenuBackdrop?.classList.toggle('opacity-0', !isOpen)
+        lineasMenuBackdrop?.classList.toggle('opacity-100', isOpen)
+        lineasMegaMenu?.classList.toggle('pointer-events-none', !isOpen)
+        lineasMegaMenu?.classList.toggle('invisible', !isOpen)
+        lineasMegaMenu?.classList.toggle('-translate-y-2', !isOpen)
+        lineasMegaMenu?.classList.toggle('opacity-0', !isOpen)
+        lineasMegaMenu?.classList.toggle('translate-y-0', isOpen)
+        lineasMegaMenu?.classList.toggle('opacity-100', isOpen)
+        lineasMegaMenu?.setAttribute('aria-hidden', String(!isOpen))
+        lineasToggle?.setAttribute('aria-expanded', String(isOpen))
+        lineasChevron?.classList.toggle('rotate-180', isOpen)
+
+        if (isOpen) {
+            headerMain?.classList.add('bg-[#2b2b2b]/95', 'border-sunka-white/10', 'shadow-lg')
+            headerMain?.classList.remove(
+                'bg-transparent',
+                'bg-[#2b2b2b]/42',
+                'bg-[#2b2b2b]/58',
+                'border-transparent',
+            )
+        } else {
+            headerMain?.classList.remove('bg-[#2b2b2b]/95')
+            updateHeaderBackground()
+        }
+    }
+
+    const setMobileLineasOpen = (isOpen) => {
+        mobileLineasList?.classList.toggle('max-h-0', !isOpen)
+        mobileLineasList?.classList.toggle('opacity-0', !isOpen)
+        mobileLineasList?.classList.toggle('max-h-64', isOpen)
+        mobileLineasList?.classList.toggle('opacity-100', isOpen)
+        mobileLineasToggle?.setAttribute('aria-expanded', String(isOpen))
+        mobileLineasChevron?.classList.toggle('rotate-180', isOpen)
+    }
+
     const updateHeaderBackground = () => {
         if (mobileMenu?.classList.contains('translate-x-0')) return
+        if (lineasToggle?.getAttribute('aria-expanded') === 'true') return
 
         if (!isTransparentHeaderPage) {
             headerMain?.classList.add(
@@ -207,7 +367,43 @@ const headerMainClass = startsTransparent
         setMenuOpen(!isOpen)
     })
 
+    lineasToggle?.addEventListener('click', () => {
+        const isOpen = lineasToggle.getAttribute('aria-expanded') === 'true'
+        setLineasMenuOpen(!isOpen)
+    })
+
+    mobileLineasToggle?.addEventListener('click', () => {
+        const isOpen = mobileLineasToggle.getAttribute('aria-expanded') === 'true'
+        setMobileLineasOpen(!isOpen)
+    })
+
+    document.addEventListener('click', (event) => {
+        if (!(event.target instanceof Node)) return
+        if (lineasToggle?.contains(event.target) || lineasMegaMenu?.contains(event.target)) return
+        setLineasMenuOpen(false)
+    })
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return
+
+        if (lineasToggle?.getAttribute('aria-expanded') === 'true') {
+            setLineasMenuOpen(false)
+            lineasToggle.focus()
+        }
+    })
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth < 1024) setLineasMenuOpen(false)
+    })
+
+    document.querySelectorAll('[data-linea-link]').forEach((link) => {
+        link.addEventListener('click', () => setLineasMenuOpen(false))
+    })
+
     document.querySelectorAll('#mobile-menu a').forEach((link) => {
-        link.addEventListener('click', () => setMenuOpen(false))
+        link.addEventListener('click', () => {
+            setMobileLineasOpen(false)
+            setMenuOpen(false)
+        })
     })
 </script>

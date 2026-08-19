@@ -2,7 +2,7 @@
     <div
         class="group bg-white rounded-2xl overflow-hidden transition flex flex-col"
     >
-        <a :href="`/producto/${producto.slug}`">
+        <a :href="`/productos/${producto.slug}`">
             <div class="aspect-square overflow-hidden">
                 <img
                     :src="producto.foto"

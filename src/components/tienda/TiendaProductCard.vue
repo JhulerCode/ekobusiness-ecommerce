@@ -1,6 +1,6 @@
 <template>
     <article class="tienda-product-card group">
-        <a :href="`/producto/${producto.slug}`" class="block">
+        <a :href="`/productos/${producto.slug}`" class="block">
             <div class="relative aspect-[1.05] overflow-hidden bg-sunka-sand/35">
                 <img
                     :src="producto.foto"
