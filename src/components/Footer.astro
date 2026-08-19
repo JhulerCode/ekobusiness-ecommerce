@@ -5,13 +5,7 @@ import BrandFacebookIcon from '../assets/icons/brand-facebook.astro'
 import BrandInstagramIcon from '../assets/icons/brand-instagram.astro'
 import BrandWhatsappIcon from '../assets/icons/brand-whatsapp.astro'
 import BrandPinterestIcon from '../assets/icons/brand-pinterest.astro'
-import { get } from '../lib/api.js'
-
-const res = await get('sistema', {
-    qry: ['empresa'],
-})
-
-const empresa = res.data?.empresa ?? {}
+import empresa from '../data/company.js'
 
 const columnas = [
     {
@@ -47,8 +41,8 @@ const columnas = [
         titulo: 'Ayuda',
         links: [
             { texto: 'Envios', href: '/politica-de-despacho' },
-            { texto: 'Cambio y devoluciones', href: '/terminos-y-condiciones' },
-            { texto: 'Metodos de pago', href: '/faq' },
+            { texto: 'Términos y condiciones', href: '/terminos-y-condiciones' },
+            { texto: 'Política de privacidad', href: '/politica-de-privacidad' },
             { texto: 'Preguntas frecuentes', href: '/faq' },
             { texto: 'Consultar pedido', href: '/consulta-pedido' },
         ],

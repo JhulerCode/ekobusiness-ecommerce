@@ -2,14 +2,19 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArcoForm from '../components/ArcoForm.vue';
 import { get } from '../lib/api.js';
+import empresa from '../data/company.js';
 
 const res = await get('sistema', {
-    qry: ['empresa', 'documentos_identidad'],
+    qry: ['documentos_identidad'],
 });
 
 if (res.code == 0) {
-    var { empresa, documentos_identidad } = res.data;
+    var { documentos_identidad } = res.data;
 }
+
+const direccionPrincipal =
+    empresa.direcciones.find((direccion) => direccion.principal) ?? empresa.direcciones[0];
+const ubicacionPrincipal = direccionPrincipal.distrito ?? direccionPrincipal.ubigeo;
 ---
 
 <BaseLayout title="Derechos ARCO">
@@ -33,8 +38,8 @@ if (res.code == 0) {
                 >{empresa.ruc}</strong
             >, domiciliado en
             <strong
-                >{empresa.direcciones[0].direccion},
-                {empresa.direcciones[0].distrito}</strong
+                >{direccionPrincipal.direccion},
+                {ubicacionPrincipal}</strong
             >, en cumplimiento de lo dispuesto por la Ley Nº 29733, Ley de
             Protección de Datos Personales, y su Reglamento aprobado por el
             Decreto Supremo Nº 016-2024-JUS, pone a su disposición el presente

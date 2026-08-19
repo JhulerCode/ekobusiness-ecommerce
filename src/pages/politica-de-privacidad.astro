@@ -1,15 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import empresa from '../data/company.js';
 
-import { get } from '../lib/api.js';
-
-const res = await get('sistema', {
-    qry: ['empresa'],
-});
-
-if (res.code == 0) {
-    var { empresa } = res.data;
-}
+const direccionPrincipal =
+    empresa.direcciones.find((direccion) => direccion.principal) ?? empresa.direcciones[0];
+const ubicacionPrincipal = direccionPrincipal.distrito ?? direccionPrincipal.ubigeo;
 
 const lastUpdated = '20 de octubre de 2025';
 
@@ -131,8 +126,8 @@ const secciones = [
                 <p><strong>RUC:</strong> {empresa.ruc}</p>
                 <p>
                     <strong>Dirección:</strong>
-                    {empresa.direcciones[0].direccion},
-                    {empresa.direcciones[0].distrito}
+                    {direccionPrincipal.direccion},
+                    {ubicacionPrincipal}
                 </p>
                 <p>
                     <strong>Correo de contacto:</strong>

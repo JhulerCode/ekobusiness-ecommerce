@@ -2,10 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CheckoutForm from '../components/CheckoutForm.vue';
 import { get } from '../lib/api.js';
+import empresa from '../data/company.js';
 
 const res = await get('sistema', {
     qry: [
-        'empresa',
         'documentos_identidad',
         'entrega_tipos',
         'comprobante_tipos',
@@ -15,7 +15,6 @@ const res = await get('sistema', {
 
 if (res.code == 0) {
     var {
-        empresa,
         documentos_identidad,
         entrega_tipos,
         comprobante_tipos,

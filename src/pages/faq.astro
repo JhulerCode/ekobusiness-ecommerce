@@ -1,14 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { get } from '../lib/api.js';
-
-const res = await get('sistema', {
-    qry: ['empresa'],
-});
-
-if (res.code == 0) {
-    var { empresa } = res.data;
-}
+import empresa from '../data/company.js';
 
 const faqs = [
     {

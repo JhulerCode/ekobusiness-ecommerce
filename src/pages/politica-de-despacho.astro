@@ -1,14 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { get } from '../lib/api.js';
+import empresa from '../data/company.js';
 
-const res = await get('sistema', {
-    qry: ['empresa'],
-});
-
-if (res.code == 0) {
-    var { empresa } = res.data;
-}
+const direccionPrincipal =
+    empresa.direcciones.find((direccion) => direccion.principal) ?? empresa.direcciones[0];
+const ubicacionPrincipal = direccionPrincipal.distrito ?? direccionPrincipal.ubigeo;
 
 const lastUpdated = '20 de octubre de 2025';
 ---
@@ -41,9 +37,9 @@ const lastUpdated = '20 de octubre de 2025';
             <p>
                 Realiza tu compra a través de nuestra tienda online y acércate a
                 recoger personalmente en la dirección de {
-                    empresa.direcciones[0].direccion
+                    direccionPrincipal.direccion
                 },
-                {empresa.direcciones[0].distrito}. Este servicio es
+                {ubicacionPrincipal}. Este servicio es
                 completamente gratuito.
             </p>
             <br />
@@ -148,8 +144,8 @@ const lastUpdated = '20 de octubre de 2025';
                 costo original expresada en la página del checkout de la tienda
                 online, finalmente de no tener éxito en la entrega por ausencia
                 o dirección errónea, el cliente tendrá la opción de recoger en
-                la dirección de {empresa.direcciones[0].direccion},
-                {empresa.direcciones[0].distrito} comunicándose previamente para
+                la dirección de {direccionPrincipal.direccion},
+                {ubicacionPrincipal} comunicándose previamente para
                 tal efecto con el área de atención al cliente de la empresa.
             </p>
         </section>
