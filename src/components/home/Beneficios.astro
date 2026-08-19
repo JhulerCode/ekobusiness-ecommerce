@@ -1,104 +1,81 @@
 ---
-import truckIcon from '@/assets/icons/truck.svg'
-import seedlingIcon from '@/assets/icons/seedling.svg'
-import creditCardIcon from '@/assets/icons/credit-card.svg'
-import awardIcon from '@/assets/icons/award.svg'
+import LeafIcon from '@/assets/icons/icon-leaf.astro'
+import ShieldIcon from '@/assets/icons/icon-shield-check.astro'
+import HeartIcon from '@/assets/icons/icon-heart-origin.astro'
 ---
 
-<section class="bg-neutral-50 py-24 md:py-32">
-    <div class="max-w-7xl mx-auto px-6">
-        <!-- Encabezado -->
-        <div class="text-center mb-20 fade-up">
-            <h2 class="text-3xl md:text-5xl font-heading font-semibold text-gray-900">
-                La experiencia SUNKA
-            </h2>
-            <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                Cuidamos cada detalle para que tu momento de pausa comience desde el primer clic.
-            </p>
-        </div>
+<section class="bg-sunka-cream">
+    <div class="mx-auto max-w-7xl border-b border-sunka-sand/70 px-5 py-9 md:px-8 md:py-10">
+        <h2 class="text-center font-heading text-2xl font-medium tracking-[-0.02em] text-sunka-ink md:text-3xl">
+            Comprar también puede ser parte del ritual.
+        </h2>
 
-        <!-- Grid -->
-        <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
-            <!-- 1 -->
-            <div class="group text-center px-6 fade-up" style="transition-delay: 0.1s">
-                <div
-                    class="w-16 h-16 mx-auto flex items-center justify-center
-                    rounded-full bg-white shadow-sm
-                    transition-all duration-500
-                    group-hover:shadow-md group-hover:-translate-y-2"
-                >
-                    <img src={truckIcon.src} alt="Envío consciente" class="w-7 h-7 opacity-80" />
+        <div class="mt-8 grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10">
+            <article class="group flex items-start gap-3.5 fade-up" style="transition-delay: 0.1s">
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center text-sunka-olive">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="h-8 w-8 opacity-80"
+                        aria-hidden="true"
+                    >
+                        <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M5 17h-2v-11a1 1 0 0 1 1 -1h9v12m-4 0h6m4 0h2v-6h-8m0 -5h5l3 5" />
+                    </svg>
                 </div>
-
-                <h3 class="mt-6 font-heading text-lg font-semibold text-gray-900">
-                    Envío consciente
-                </h3>
-
-                <p class="mt-3 text-gray-600 leading-relaxed text-sm">
-                    Recibe tu pedido sin costo en compras mayores a
-                    <span class="font-semibold">S/30</span>, con empaques pensados para preservar
-                    cada aroma.
-                </p>
-            </div>
-
-            <!-- 2 -->
-            <div class="group text-center px-6 fade-up" style="transition-delay: 0.2s">
-                <div
-                    class="w-16 h-16 mx-auto flex items-center justify-center
-                    rounded-full bg-white shadow-sm
-                    transition-all duration-500
-                    group-hover:shadow-md group-hover:-translate-y-2"
-                >
-                    <img src={seedlingIcon.src} alt="Origen natural" class="w-7 h-7 opacity-80" />
+                <div>
+                    <h3 class="font-heading text-sm font-semibold leading-tight text-sunka-ink">
+                        Envío consciente
+                    </h3>
+                    <p class="mt-1.5 text-[11px] leading-[1.45] text-sunka-ink/65">
+                        Envío gratuito en compras mayores a S/ 30.
+                    </p>
                 </div>
+            </article>
 
-                <h3 class="mt-6 font-heading text-lg font-semibold text-gray-900">
-                    Origen natural
-                </h3>
-
-                <p class="mt-3 text-gray-600 leading-relaxed text-sm">
-                    Ingredientes seleccionados por su pureza, respetando su esencia y propiedades.
-                </p>
-            </div>
-
-            <!-- 3 -->
-            <div class="group text-center px-6 fade-up" style="transition-delay: 0.3s">
-                <div
-                    class="w-16 h-16 mx-auto flex items-center justify-center
-                    rounded-full bg-white shadow-sm
-                    transition-all duration-500
-                    group-hover:shadow-md group-hover:-translate-y-2"
-                >
-                    <img src={creditCardIcon.src} alt="Compra segura" class="w-7 h-7 opacity-80" />
+            <article class="group flex items-start gap-3.5 fade-up" style="transition-delay: 0.2s">
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center text-sunka-olive transition-transform duration-300 group-hover:-translate-y-1">
+                    <LeafIcon class="h-8 w-8" aria-hidden="true" />
                 </div>
-
-                <h3 class="mt-6 font-heading text-lg font-semibold text-gray-900">Compra segura</h3>
-
-                <p class="mt-3 text-gray-600 leading-relaxed text-sm">
-                    Transacciones protegidas y métodos confiables para una experiencia sin
-                    preocupaciones.
-                </p>
-            </div>
-
-            <!-- 4 -->
-            <div class="group text-center px-6 fade-up" style="transition-delay: 0.4s">
-                <div
-                    class="w-16 h-16 mx-auto flex items-center justify-center
-                    rounded-full bg-white shadow-sm
-                    transition-all duration-500
-                    group-hover:shadow-md group-hover:-translate-y-2"
-                >
-                    <img src={awardIcon.src} alt="Calidad garantizada" class="w-7 h-7 opacity-80" />
+                <div>
+                    <h3 class="font-heading text-sm font-semibold leading-tight text-sunka-ink">
+                        Selección natural
+                    </h3>
+                    <p class="mt-1.5 text-[11px] leading-[1.45] text-sunka-ink/65">
+                        Ingredientes seleccionados cuidadosamente.
+                    </p>
                 </div>
+            </article>
 
-                <h3 class="mt-6 font-heading text-lg font-semibold text-gray-900">
-                    Calidad ritual
-                </h3>
+            <article class="group flex items-start gap-3.5 fade-up" style="transition-delay: 0.3s">
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center text-sunka-olive transition-transform duration-300 group-hover:-translate-y-1">
+                    <ShieldIcon class="h-8 w-8" aria-hidden="true" />
+                </div>
+                <div>
+                    <h3 class="font-heading text-sm font-semibold leading-tight text-sunka-ink">Compra segura</h3>
+                    <p class="mt-1.5 text-[11px] leading-[1.45] text-sunka-ink/65">
+                        Métodos de pago confiables y proceso protegido.
+                    </p>
+                </div>
+            </article>
 
-                <p class="mt-3 text-gray-600 leading-relaxed text-sm">
-                    Cada mezcla es cuidadosamente evaluada para ofrecer equilibrio y consistencia.
-                </p>
-            </div>
+            <article class="group flex items-start gap-3.5 fade-up" style="transition-delay: 0.4s">
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center text-sunka-olive transition-transform duration-300 group-hover:-translate-y-1">
+                    <HeartIcon class="h-8 w-8" aria-hidden="true" />
+                </div>
+                <div>
+                    <h3 class="font-heading text-sm font-semibold leading-tight text-sunka-ink">Calidad SUNKA</h3>
+                    <p class="mt-1.5 text-[11px] leading-[1.45] text-sunka-ink/65">
+                        Cada mezcla elaborada bajo nuestros estándares de calidad ritual.
+                    </p>
+                </div>
+            </article>
         </div>
     </div>
 </section>

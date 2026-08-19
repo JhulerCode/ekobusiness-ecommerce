@@ -1,6 +1,6 @@
 <template>
     <section class="tienda-catalog bg-sunka-white">
-        <div class="mx-auto max-w-7xl px-5 pb-20 pt-10 md:px-8 md:pb-28 md:pt-14">
+        <div class="mx-auto max-w-7xl px-5 pb-14 pt-10 md:px-8 md:pb-16 md:pt-14">
             <div
                 ref="gridTop"
                 class="flex scroll-mt-24 flex-col gap-5 border-y border-sunka-ink/10 py-5 xl:flex-row xl:items-center xl:justify-between"
