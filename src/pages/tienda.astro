@@ -13,7 +13,7 @@ const qryProductos = {
         activo: { op: 'Es', val: true },
         is_ecommerce: { op: 'Es', val: true },
     },
-    cols: ['id', 'linea', 'ecommerce_data'],
+    cols: ['id', 'nombre', 'linea', 'ecommerce_data'],
     incl: ['linea1'],
 }
 const resProductos = await get('productos', { qry: qryProductos })

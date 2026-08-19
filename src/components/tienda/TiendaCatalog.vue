@@ -7,7 +7,6 @@
             >
                 <div class="flex flex-wrap items-center gap-2.5">
                     <span class="mr-2 text-xs font-medium text-sunka-ink/65">Filtrar por:</span>
-                    <span class="mr-2 text-xs text-sunka-ink/55">{{ productosFiltrados.length }} productos</span>
 
                     <label class="catalog-select">
                         <span class="sr-only">Momento</span>
@@ -61,6 +60,11 @@
                         <ChevronUp v-if="openDropdown === 'price'" class="catalog-select-icon" aria-hidden="true" />
                         <ChevronDown v-else class="catalog-select-icon" aria-hidden="true" />
                     </label>
+
+                    <label class="catalog-search">
+                        <span class="sr-only">Buscar por nombre</span>
+                        <input v-model="searchTerm" type="search" placeholder="Buscar por nombre" aria-label="Buscar por nombre" />
+                    </label>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -82,10 +86,7 @@
                             <ChevronDown v-else class="catalog-select-icon" aria-hidden="true" />
                         </span>
                     </label>
-                    <div class="hidden items-center gap-1 sm:flex" aria-hidden="true">
-                        <span class="catalog-view-button catalog-view-button-active">▦</span>
-                        <span class="catalog-view-button">☷</span>
-                    </div>
+                    <span class="text-xs text-sunka-ink/55">{{ productosFiltrados.length }} productos</span>
                 </div>
             </div>
 
@@ -98,6 +99,9 @@
                 </button>
                 <button v-if="priceRange" class="catalog-chip" @click="clearPrice">
                     {{ priceRangeLabel }} <span aria-hidden="true">×</span>
+                </button>
+                <button v-if="searchTerm" class="catalog-chip" @click="searchTerm = ''">
+                    “{{ searchTerm }}” <span aria-hidden="true">×</span>
                 </button>
                 <button class="ml-1 text-xs text-sunka-olive underline underline-offset-4" @click="clearAllFilters">
                     Limpiar filtros
@@ -169,6 +173,7 @@ export default {
             filtroLineas: [],
             selectedMoment: '',
             priceRange: '',
+            searchTerm: '',
             precioMin: null,
             precioMax: null,
             paginaActual: 1,
@@ -180,6 +185,10 @@ export default {
     computed: {
         productosFiltrados() {
             let resultado = [...this.productos]
+            const search = this.normalizeSearch(this.searchTerm)
+            if (search) {
+                resultado = resultado.filter((producto) => this.normalizeSearch(producto.nombre || producto.name).includes(search))
+            }
             if (this.filtroLineas.length) {
                 resultado = resultado.filter((producto) => this.filtroLineas.includes(producto.linea))
             }
@@ -192,8 +201,10 @@ export default {
             return resultado.sort((a, b) => {
                 if (this.orden === 'precio-asc') return Number(a.precio) - Number(b.precio)
                 if (this.orden === 'precio-desc') return Number(b.precio) - Number(a.precio)
-                if (this.orden === 'nombre-desc') return b.nombre.localeCompare(a.nombre)
-                return a.nombre.localeCompare(b.nombre)
+                const nombreA = this.normalizeSearch(a.nombre || a.name)
+                const nombreB = this.normalizeSearch(b.nombre || b.name)
+                if (this.orden === 'nombre-desc') return nombreB.localeCompare(nombreA)
+                return nombreA.localeCompare(nombreB)
             })
         },
         productosPaginados() {
@@ -221,7 +232,7 @@ export default {
             return this.productos.some((producto) => this.getProductMoments(producto).length)
         },
         hasActiveFilters() {
-            return Boolean(this.selectedMoment || this.filtroLineas.length || this.priceRange)
+            return Boolean(this.selectedMoment || this.filtroLineas.length || this.priceRange || this.searchTerm)
         },
         selectedMomentLabel() {
             return this.momentos.find((momento) => momento.slug === this.selectedMoment)?.titulo || this.selectedMoment
@@ -236,6 +247,7 @@ export default {
     watch: {
         selectedMoment: 'handleFilterChange',
         filtroLineas: 'handleFilterChange',
+        searchTerm: 'handleFilterChange',
         orden() {
             this.paginaActual = 1
         },
@@ -247,6 +259,9 @@ export default {
     methods: {
         normalizeSlug(value = '') {
             return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')
+        },
+        normalizeSearch(value = '') {
+            return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
         },
         getProductMoments(producto) {
             const values = []
@@ -288,6 +303,7 @@ export default {
         clearAllFilters() {
             this.filtroLineas = []
             this.selectedMoment = ''
+            this.searchTerm = ''
             this.clearPrice()
         },
         handleFilterChange() {
@@ -357,24 +373,29 @@ export default {
     outline: none;
 }
 
+.catalog-search {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(35, 29, 24, 0.16);
+    border-radius: 4px;
+    background: var(--sunka-white);
+}
+
+.catalog-search input {
+    width: 180px;
+    background: transparent;
+    padding: 9px 11px;
+    color: var(--sunka-ink);
+    font-size: 11px;
+    outline: none;
+}
+
+.catalog-search input::placeholder {
+    color: var(--sunka-stone);
+}
+
 .catalog-order {
     border-radius: 4px;
-}
-
-.catalog-view-button {
-    display: inline-flex;
-    height: 34px;
-    width: 34px;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(35, 29, 24, 0.12);
-    color: var(--sunka-stone);
-    font-size: 16px;
-}
-
-.catalog-view-button-active {
-    background: var(--sunka-cream);
-    color: var(--sunka-olive);
 }
 
 .catalog-chip {

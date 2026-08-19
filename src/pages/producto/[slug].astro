@@ -4,6 +4,7 @@ import BoxIcon from '@/assets/icons/icon-box.astro'
 import BotanicalMixIcon from '@/assets/icons/icon-botanical-mix.astro'
 import LeafIcon from '@/assets/icons/icon-leaf.astro'
 import { get, formatProductos } from '@/lib/api.js'
+import { getLineaByName } from '@/data/lineas.js'
 
 const { slug } = Astro.params
 
@@ -81,42 +82,28 @@ const hasPerfilSensorial = Boolean(
         momentos.length,
 )
 
-const diferenciales = Array.isArray(producto.diferenciales)
-    ? producto.diferenciales
-          .map((item, index) => {
-              if (Array.isArray(item)) {
-                  item = { titulo: item[0], descripcion: item[1], icono: item[2] }
-              }
-
-              const iconName = String(item?.icono ?? '').toLowerCase()
-              const icon = iconName.includes('origen')
-                  ? 'leaf'
-                  : iconName.includes('cámara') ||
-                      iconName.includes('camara') ||
-                      iconName.includes('infusi')
-                    ? 'layers'
-                    : iconName
-                      ? 'box'
-                      : ['leaf', 'layers', 'box'][index % 3]
-
-              return { ...item, icon }
-          })
-          .filter((item) => item?.titulo || item?.descripcion)
-    : []
+const lineaConfig = getLineaByName(producto.linea1?.nombre)
+const diferenciales = lineaConfig?.diferenciales ?? []
 
 const preparacion =
     producto.preparacion && typeof producto.preparacion === 'object'
         ? producto.preparacion
         : {}
-const pasosPreparacion = Array.isArray(preparacion.pasos)
-    ? preparacion.pasos
-          .map((paso) => {
-              if (Array.isArray(paso)) return { titulo: paso[0], descripcion: paso[1] }
-              return paso
-          })
-          .filter((paso) => paso?.titulo || paso?.descripcion)
-    : []
-const hasPreparacion = Boolean(pasosPreparacion.length || preparacion.maridaje)
+const pasosPreparacion = [
+    {
+        titulo: 'Calienta',
+        descripcion: 'Utiliza 200 ml de agua a 90–95 °C.',
+    },
+    {
+        titulo: 'Infusiona',
+        descripcion: 'Deja el saquito entre 3 y 5 minutos.',
+    },
+    {
+        titulo: 'Personaliza',
+        descripcion: 'Disfrútalo solo o con un toque de leche caliente.',
+    },
+]
+const hasPreparacion = true
 
 const relatedIds = Array.isArray(producto.productos_relacionados)
     ? [

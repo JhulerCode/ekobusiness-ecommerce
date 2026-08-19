@@ -41,6 +41,7 @@ export const lineas = [
     {
         slug: 'signature',
         title: 'Signature Black',
+        aliases: ['Signature Black'],
         seoTitle: 'Signature Black | Sunka Herbal Tea',
         eyebrow: 'Signature Black / Sunka x Mabroc',
         description:
@@ -97,7 +98,7 @@ export const lineas = [
             imageAlt: 'Coleccion Signature Black con taza servida',
             metrics: [
                 {
-                    titulo: '1.5 g',
+                    titulo: '2 g',
                     texto: 'mayor gramaje por filtrante',
                     icon: 'drop',
                     iconClass: 'scale-[0.86]',
@@ -110,7 +111,7 @@ export const lineas = [
                 },
                 {
                     titulo: 'ISO',
-                    texto: 'calidad consistente',
+                    texto: 'calidad 9001',
                     icon: 'shield',
                     iconClass: 'scale-[1.05]',
                 },
@@ -122,6 +123,23 @@ export const lineas = [
                 },
             ],
         },
+        diferenciales: [
+            {
+                titulo: 'Single Origin Sri Lanka',
+                descripcion: 'Hojas seleccionadas por su intensidad, aroma y consistencia.',
+                icon: 'leaf',
+            },
+            {
+                titulo: 'Doble cámara',
+                descripcion: 'Permite una mejor circulación del agua durante la infusión.',
+                icon: 'layers',
+            },
+            {
+                titulo: 'Aroma protegido',
+                descripcion: 'El empaque ayuda a conservar el perfil aromático del blend.',
+                icon: 'box',
+            },
+        ],
         idealPara: {
             label: 'Una linea para ti',
             title: 'Signature Black es para ti si...',
@@ -154,9 +172,11 @@ export const lineas = [
     {
         slug: 'piramidal',
         title: 'Piramidal Premium',
+        aliases: ['Piramidal Premium'],
         seoTitle: 'Piramidal Premium | Sunka Herbal Tea',
         eyebrow: 'Piramidal Premium / Infusiones en piramide',
-        heroTitle: 'Infusiones piramidales para transformar cada taza en una experiencia extraordinaria.',
+        heroTitle:
+            'Infusiones piramidales para transformar cada taza en una experiencia extraordinaria.',
         description:
             'Más espacio para que cada ingrediente libere plenamente sus aromas y sabores. Una infusión equilibrada, intensa y de calidad Premium.',
         heroImage: piramidal,
@@ -192,8 +212,53 @@ export const lineas = [
                 'Frente a los filtrantes convencionales, Sunka Premium reúne 2.5 g de hojas, frutas y especias en cortes visibles dentro de una malla piramidal compostable. Su mayor espacio permite que los ingredientes se expandan y liberen mejor sus aromas y sabores, logrando una infusión más compleja, definida y memorable.',
             image: piramidalDiferencia,
             imageAlt: 'Detalle linea Piramidal Premium',
-            metrics: defaultMetrics,
+            metrics: [
+                {
+                    titulo: '10',
+                    texto: 'sobres seleccionados',
+                    icon: 'box',
+                    iconClass: 'scale-[0.86]',
+                },
+                {
+                    titulo: 'Blend',
+                    texto: 'perfil balanceado',
+                    icon: 'leaf',
+                    iconClass: 'scale-[0.82]',
+                },
+                {
+                    titulo: 'Sostenibilidad',
+                    texto: 'malla compostable',
+                    icon: 'shield',
+                    iconClass: 'scale-[1.05]',
+                },
+                {
+                    titulo: 'Ritual',
+                    texto: 'listo para servir',
+                    icon: 'drop',
+                    iconClass: 'scale-[0.86]',
+                },
+            ],
         },
+        diferenciales: [
+            {
+                titulo: '2.5 g por pirámide',
+                descripcion:
+                    'Mayor gramaje para lograr una infusión más intensa, aromática y con mayor cuerpo.',
+                icon: 'leaf',
+            },
+            {
+                titulo: 'Malla piramidal compostable',
+                descripcion:
+                    'Brinda el espacio ideal para que los ingredientes se expandan y liberen plenamente su sabor.',
+                icon: 'layers',
+            },
+            {
+                titulo: 'Ingredientes naturales',
+                descripcion:
+                    'Una cuidada selección de hojas, frutas, flores y especias para crear blends equilibrados y expresivos.',
+                icon: 'box',
+            },
+        ],
         idealPara: {
             label: 'Una linea para ti',
             title: 'Piramidal Premium es para ti si...',
@@ -226,6 +291,7 @@ export const lineas = [
     {
         slug: 'luxury',
         title: 'Luxury Collection',
+        aliases: ['Luxury', 'Luxury Collection'],
         seoTitle: 'Luxury Collection | Sunka Herbal Tea',
         eyebrow: 'Luxury Collection / Ediciones especiales',
         heroTitle: 'Creaciones excepcionales para momentos que merecen ser recordados.',
@@ -264,8 +330,52 @@ export const lineas = [
                 'Más allá de un té premium convencional, Sunka Luxury reúne 3 g de ingredientes visibles en cada pirámide compostable, blends de mayor complejidad y una presentación creada para cautivar. Desde el primer encuentro hasta la última nota en taza, cada detalle transforma el té en una experiencia excepcional.',
             image: luxuryDiferencia,
             imageAlt: 'Detalle Luxury Collection',
-            metrics: defaultMetrics,
+            metrics: [
+                {
+                    titulo: '10',
+                    texto: 'sobres seleccionados',
+                    icon: 'box',
+                    iconClass: 'scale-[0.86]',
+                },
+                {
+                    titulo: 'Blend',
+                    texto: 'perfil balanceado',
+                    icon: 'leaf',
+                    iconClass: 'scale-[0.82]',
+                },
+                {
+                    titulo: 'Sostenibilidad',
+                    texto: 'malla compostable',
+                    icon: 'shield',
+                    iconClass: 'scale-[1.05]',
+                },
+                {
+                    titulo: 'Orgánico',
+                    texto: 'Sello USDA',
+                    icon: 'leaf',
+                    iconClass: 'scale-[0.82]',
+                },
+            ],
         },
+        diferenciales: [
+            {
+                titulo: '3 g de intensidad superior',
+                descripcion: 'Mayor gramaje para una infusión profunda, aromática y envolvente.',
+                icon: 'leaf',
+            },
+            {
+                titulo: 'Malla piramidal compostable',
+                descripcion:
+                    'Permite que cada ingrediente se expanda y revele plenamente sus aromas y matices.',
+                icon: 'layers',
+            },
+            {
+                titulo: 'Ingredientes excepcionales',
+                descripcion:
+                    'Una selección de hojas, frutas, flores y especias para crear blends refinados y memorables.',
+                icon: 'box',
+            },
+        ],
         idealPara: {
             label: 'Una linea para ti',
             title: 'Luxury Collection es para ti si...',
@@ -298,6 +408,7 @@ export const lineas = [
     {
         slug: 'tradicional',
         title: 'Tradicionales',
+        aliases: ['Tradicional', 'Tradicionales'],
         seoTitle: 'Tradicionales | Sunka Herbal Tea',
         eyebrow: 'Tradicionales / Sabores de siempre',
         heroTitle: 'El sabor natural que siempre quieres tener en casa.',
@@ -336,8 +447,53 @@ export const lineas = [
                 'Frente a una categoría que suele ofrecer las mismas opciones, Sunka Tradicional combina hierbas, frutas y especias para crear sabores definidos y una mayor variedad de infusiones. Alternativas naturales pensadas para acompañarte en cada momento del día.',
             image: tradicionalDiferencia,
             imageAlt: 'Detalle linea Tradicionales',
-            metrics: defaultMetrics,
+            metrics: [
+                {
+                    titulo: '20',
+                    texto: 'sobres seleccionados',
+                    icon: 'box',
+                    iconClass: 'scale-[0.86]',
+                },
+                {
+                    titulo: 'Blend',
+                    texto: 'perfil balanceado',
+                    icon: 'leaf',
+                    iconClass: 'scale-[0.82]',
+                },
+                {
+                    titulo: 'Origen',
+                    texto: 'Insumos naturales',
+                    icon: 'shield',
+                    iconClass: 'scale-[1.05]',
+                },
+                {
+                    titulo: 'Ritual',
+                    texto: 'listo para servir',
+                    icon: 'drop',
+                    iconClass: 'scale-[0.86]',
+                },
+            ],
         },
+        diferenciales: [
+            {
+                titulo: 'Productos de calidad',
+                descripcion:
+                    'Infusiones elaboradas con cuidado para ofrecer un sabor agradable y consistente en cada taza.',
+                icon: 'leaf',
+            },
+            {
+                titulo: 'Insumos naturales',
+                descripcion:
+                    'Una selección de hierbas, hojas, flores y especias para disfrutar todos los días.',
+                icon: 'layers',
+            },
+            {
+                titulo: 'Sin colorantes ni saborizantes',
+                descripcion:
+                    'El sabor y el aroma provienen naturalmente de los ingredientes de cada infusión.',
+                icon: 'box',
+            },
+        ],
         idealPara: {
             label: 'Una linea para ti',
             title: 'Tradicionales es para ti si...',
@@ -439,6 +595,22 @@ export const lineas = [
 
 export const lineasBySlug = Object.fromEntries(lineas.map((linea) => [linea.slug, linea]))
 
+const normalizeLineaName = (name = '') =>
+    name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase()
+
+export const lineasByName = Object.fromEntries(
+    lineas.flatMap((linea) =>
+        [...new Set([linea.title, ...(linea.aliases ?? [])])].map((name) => [
+            normalizeLineaName(name),
+            linea,
+        ]),
+    ),
+)
+
 const coleccionesOrder = ['signature', 'piramidal', 'luxury', 'tradicional']
 const coleccionesPosition = {
     signature: 'object-left',
@@ -462,3 +634,4 @@ export const colecciones = coleccionesOrder.map((slug) => {
 })
 
 export const getLineaBySlug = (slug) => lineasBySlug[slug]
+export const getLineaByName = (name) => lineasByName[normalizeLineaName(name)]
