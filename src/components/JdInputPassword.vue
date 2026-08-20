@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <label class="label" v-if="label">
+    <div class="sunka-field">
+        <label class="sunka-label" v-if="label">
             <span v-if="label">{{ label }}</span>
             <span v-if="nec" class="nec"> *</span>
         </label>
@@ -11,13 +11,14 @@
                 :placeholder="placeholder"
                 v-model="inputModel"
                 :maxlength="maxlength"
-                class="input"
+                class="sunka-control pr-11"
+                :aria-invalid="error ? 'true' : undefined"
             />
 
             <button
                 type="button"
                 @click="showPass"
-                class="absolute right-3 top-2 text-gray-500 cursor-pointer hover:text-black"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-sunka-stone cursor-pointer hover:text-sunka-ink"
             >
                 <EyeOpen v-if="ver_pass" />
                 <EyeCancel v-else />
@@ -26,7 +27,7 @@
 
         <div
             v-else
-            class="overflow-x-auto whitespace-nowrap no-scrollbar"
+            class="sunka-control is-disabled overflow-x-auto whitespace-nowrap no-scrollbar"
             :class="{ 'to-right-p': toRight }"
         >
             <template>
@@ -34,7 +35,7 @@
             </template>
         </div>
 
-        <p v-if="error" class="input-error">
+        <p v-if="error" class="sunka-error">
             {{ error }}
         </p>
     </div>

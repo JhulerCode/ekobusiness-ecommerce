@@ -1,5 +1,5 @@
 <template>
-    <section class="checkout-success" v-if="paymentSuccess == true">
+    <section class="checkout-success" v-if="paymentSuccess == true" v-bind="$attrs">
         <div
             class="checkout-success__card"
             v-if="form.pago_metodo == 'tarjeta'"
@@ -69,7 +69,7 @@
         </div>
     </section>
 
-    <section class="checkout-layout" v-else>
+    <section class="checkout-layout" v-else v-bind="$attrs">
         <!-- Columna izquierda: pasos -->
         <div class="checkout-workspace">
             <!-- Encabezado -->
@@ -193,7 +193,7 @@
                             <JdSelect
                                 label="Tipo de documento"
                                 :nec="true"
-                                :lista="documentos_identidad.filter((a) => a.id != '6')"
+                                :lista="documentos_identidad.filter((item) => Number(item.id) !== 6)"
                                 v-model="form.socio_datos.doc_tipo"
                                 :error="errors.doc_tipo"
                             />
@@ -226,18 +226,6 @@
                             </JdCheckBox>
                         </div>
 
-                        <!-- Botones -->
-                        <div class="flex justify-end">
-                            <JdButton
-                                text="Ir a la Entrega"
-                                @click="continuarEntrega"
-                                :loading="loadingContinuarEntrega"
-                            >
-                                <template v-slot:iRight>
-                                    <ArrowRight />
-                                </template>
-                            </JdButton>
-                        </div>
                     </div>
 
                     <!-- Resumen cuando ya se completó -->
@@ -388,21 +376,10 @@
                             />
                         </div>
 
-                        <!-- Botones -->
-                        <div class="flex justify-between">
+                        <div class="checkout-panel-back">
                             <JdButton text="Volver" tipo="2" @click="prevStep">
                                 <template v-slot:iLeft>
                                     <ArrowLeft />
-                                </template>
-                            </JdButton>
-
-                            <JdButton
-                                text="Ir al Pago"
-                                @click="continuarPago"
-                                :loading="loadingContinuarPago"
-                            >
-                                <template v-slot:iRight>
-                                    <ArrowRight />
                                 </template>
                             </JdButton>
                         </div>
@@ -545,7 +522,7 @@
                                     <div
                                         v-for="(card, i) in user.wallet"
                                         :key="i"
-                                        class="radio justify-between p-4 rounded-xl border border-gray-200"
+                                        class="radio justify-between border border-sunka-sand p-4"
                                         :class="{
                                             'bg-gray-50':
                                                 form.paymentMethodToken === card.paymentMethodToken,
@@ -585,7 +562,7 @@
 
                                     <!-- Nueva tarjeta -->
                                     <div
-                                        class="radio justify-between p-4 rounded-xl border border-gray-200"
+                                        class="radio justify-between border border-sunka-sand p-4"
                                         :class="{
                                             'bg-gray-50': form.paymentMethodToken === 'nueva',
                                         }"
@@ -661,25 +638,12 @@
                             </template>
                         </div>
 
-                        <!-- Botones -->
-                        <div class="flex justify-between">
+                        <div class="checkout-panel-back">
                             <JdButton text="Volver" tipo="2" @click="prevStep">
                                 <template v-slot:iLeft>
                                     <ArrowLeft />
                                 </template>
                             </JdButton>
-
-                            <div>
-                                <JdButton
-                                    text="Ir a pagar"
-                                    @click="pagar"
-                                    :loading="loadingPagar"
-                                />
-
-                                <p v-if="errors.general" class="input-error">
-                                    {{ errors.general }}
-                                </p>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -690,7 +654,6 @@
         <aside class="checkout-summary">
             <div class="checkout-summary__heading">
                 <div>
-                    <p>Tu selección</p>
                     <h2>Resumen del pedido</h2>
                 </div>
                 <span>{{ items.length }} {{ items.length === 1 ? 'producto' : 'productos' }}</span>
@@ -746,11 +709,56 @@
                     <span>S/ {{ total.toFixed(2) }}</span>
                 </div>
             </div>
-            <div class="checkout-summary__assurance">
-                <span aria-hidden="true">✓</span>
-                <p><strong>Compra protegida</strong>Procesamos tus datos de forma segura.</p>
+
+            <div class="checkout-summary__action-wrap">
+                <p v-if="errors.general" class="checkout-summary__error">
+                    {{ errors.general }}
+                </p>
+                <button
+                    type="button"
+                    class="checkout-summary__action"
+                    :disabled="summaryActionLoading"
+                    @click="summaryAction"
+                >
+                    <LoadingSpin
+                        v-if="summaryActionLoading"
+                        :rellenar="false"
+                        :shadowBack="false"
+                        scale="0.55"
+                    />
+                    <span class="checkout-summary__action-full">{{ summaryActionText }}</span>
+                    <span class="checkout-summary__action-mobile">
+                        {{ summaryActionMobileText }}
+                    </span>
+                    <span v-if="!summaryActionLoading">→</span>
+                </button>
             </div>
         </aside>
+
+        <div class="checkout-mobile-bar">
+            <p v-if="errors.general" class="checkout-mobile-bar__error">
+                {{ errors.general }}
+            </p>
+            <div class="checkout-mobile-bar__total">
+                <small>{{ summaryMobileLabel }}</small>
+                <strong>S/ {{ total.toFixed(2) }}</strong>
+            </div>
+            <button
+                type="button"
+                class="checkout-summary__action checkout-mobile-bar__action"
+                :disabled="summaryActionLoading"
+                @click="summaryAction"
+            >
+                <LoadingSpin
+                    v-if="summaryActionLoading"
+                    :rellenar="false"
+                    :shadowBack="false"
+                    scale="0.55"
+                />
+                <span>{{ summaryActionMobileText }}</span>
+                <span v-if="!summaryActionLoading">→</span>
+            </button>
+        </div>
     </section>
 
     <div id="myPaymentForm">
@@ -768,7 +776,6 @@
 
 <script>
 import ArrowLeft from '../assets/icons/arrow-left.vue'
-import ArrowRight from '../assets/icons/arrow-right.vue'
 import JdButton from '../components/JdButton.vue'
 import JdInput from '../components/JdInput.vue'
 import JdSelect from '../components/JdSelect.vue'
@@ -788,15 +795,16 @@ import qrYapeUrl from '../assets/qr-yape-eko-business.jpg?url'
 import yapeLogo from '../assets/icons/yape-logo.svg?url'
 
 import { Cart } from '../lib/cart.js'
+import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draft.js'
 import { urls, get, post, patch } from '../lib/api.js'
 import { genId } from '../lib/mine.js'
 
 import KRGlue from '@lyracom/embedded-form-glue'
 
 export default {
+    inheritAttrs: false,
     components: {
         ArrowLeft,
-        ArrowRight,
         JdButton,
         JdInput,
         JdSelect,
@@ -829,7 +837,7 @@ export default {
 
             form: {
                 socio_datos: {
-                    doc_tipo: 'DNI',
+                    doc_tipo: 1,
                 },
 
                 entrega_tipo: 'envio',
@@ -844,6 +852,8 @@ export default {
 
             ubigeos: [],
             ubigeosLoading: false,
+            draftReady: false,
+            draftSaveTimeout: null,
         }
     },
     computed: {
@@ -856,19 +866,69 @@ export default {
         total() {
             return this.subtotal + this.costoEnvio
         },
+        summaryActionText() {
+            if (this.step === 1) return 'Continuar: elegir entrega'
+            if (this.step === 2) return 'Continuar: elegir pago'
+            return 'Ir a pagar'
+        },
+        summaryActionMobileText() {
+            return this.step === 3 ? 'Ir a pagar' : 'Continuar'
+        },
+        summaryActionLoading() {
+            if (this.step === 1) return this.loadingContinuarEntrega
+            if (this.step === 2) return this.loadingContinuarPago
+            return this.loadingPagar
+        },
+        summaryMobileLabel() {
+            const products = `${this.items.length} ${
+                this.items.length === 1 ? 'producto' : 'productos'
+            }`
+            return `${products} · Paso ${this.step} de 3`
+        },
     },
-    mounted() {
+    watch: {
+        form: {
+            deep: true,
+            handler() {
+                this.scheduleDraftSave()
+            },
+        },
+        step() {
+            this.scheduleDraftSave()
+        },
+    },
+    async mounted() {
         this.injectarJsIzipay()
-        this.validateSession()
-
         this.items = Cart.get()
 
         if (this.items.length == 0) {
+            CheckoutDraft.clear()
             window.location.href = '/tienda'
             return
         }
+
+        await this.validateSession()
+        this.restoreDraft()
+        this.draftReady = true
+        this.saveDraft()
+    },
+    beforeUnmount() {
+        clearTimeout(this.draftSaveTimeout)
+        if (this.draftReady && !this.paymentSuccess) this.saveDraft()
     },
     methods: {
+        async summaryAction() {
+            if (this.summaryActionLoading) return
+            if (this.step === 1) {
+                await this.continuarEntrega()
+                return
+            }
+            if (this.step === 2) {
+                await this.continuarPago()
+                return
+            }
+            await this.pagar()
+        },
         injectarJsIzipay() {
             const script = document.createElement('script')
             script.src = 'https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/neon.js'
@@ -891,6 +951,95 @@ export default {
             this.form.socio_datos.doc_numero = this.user.doc_numero
             this.form.socio_datos.correo = this.user.correo
             this.form.socio_datos.telefono = this.user.telefono1
+        },
+
+        draftContext() {
+            return {
+                userId: this.user.id ? String(this.user.id) : 'guest',
+                cartSignature: createCheckoutCartSignature(this.items),
+            }
+        },
+        scheduleDraftSave() {
+            if (!this.draftReady || this.paymentSuccess) return
+            clearTimeout(this.draftSaveTimeout)
+            this.draftSaveTimeout = setTimeout(() => this.saveDraft(), 250)
+        },
+        saveDraft() {
+            if (!this.draftReady) return
+            CheckoutDraft.save({
+                ...this.draftContext(),
+                step: this.step,
+                form: this.form,
+            })
+        },
+        restoreDraft() {
+            const draft = CheckoutDraft.get(this.draftContext())
+            if (!draft?.form) return
+
+            const saved = draft.form
+            const validDocumentTypes = this.documentos_identidad
+                .filter((item) => Number(item.id) !== 6)
+                .map((item) => String(item.id))
+            const validDeliveryTypes = this.entrega_tipos.map((item) => String(item.id))
+            const validReceiptTypes = this.comprobante_tipos
+                .filter((item) => item.id !== 'NV')
+                .map((item) => String(item.id))
+            const validPaymentMethods = this.pago_metodos.map((item) => String(item.id))
+
+            Object.assign(this.form.socio_datos, saved.socio_datos || {}, { privacidad: false })
+
+            if (!validDocumentTypes.includes(String(this.form.socio_datos.doc_tipo))) {
+                this.form.socio_datos.doc_tipo = this.documentos_identidad.find(
+                    (item) => Number(item.id) !== 6,
+                )?.id
+            }
+
+            if (validDeliveryTypes.includes(String(saved.entrega_tipo))) {
+                this.form.entrega_tipo = saved.entrega_tipo
+            }
+
+            this.form.direccion_nombre = saved.direccion_nombre || ''
+            this.form.new_direccion = Boolean(saved.new_direccion)
+            this.form.entrega_ubigeo = saved.entrega_ubigeo ?? null
+            this.form.direccion_entrega = saved.direccion_entrega || ''
+            this.form.entrega_direccion_datos = {
+                ...this.form.entrega_direccion_datos,
+                ...(saved.entrega_direccion_datos || {}),
+            }
+
+            const savedAddressExists = (this.user.direcciones || []).some(
+                (item) => String(item.id) === String(saved.entrega_direccion_id),
+            )
+            this.form.entrega_direccion_id = savedAddressExists
+                ? saved.entrega_direccion_id
+                : null
+
+            const savedDate = saved.fecha_entrega
+            const now = new Date()
+            const today = [
+                now.getFullYear(),
+                String(now.getMonth() + 1).padStart(2, '0'),
+                String(now.getDate()).padStart(2, '0'),
+            ].join('-')
+            this.form.fecha_entrega = savedDate && savedDate >= today ? savedDate : null
+
+            if (this.form.entrega_direccion_datos.ubigeo1) {
+                this.ubigeos = [{ ...this.form.entrega_direccion_datos.ubigeo1 }]
+            }
+
+            if (validReceiptTypes.includes(String(saved.comprobante_tipo))) {
+                this.form.comprobante_tipo = saved.comprobante_tipo
+            }
+            this.form.comprobante_ruc = saved.comprobante_ruc || ''
+            this.form.comprobante_razon_social = saved.comprobante_razon_social || ''
+
+            if (validPaymentMethods.includes(String(saved.pago_metodo))) {
+                this.form.pago_metodo = saved.pago_metodo
+            }
+
+            this.form.paymentMethodToken = null
+            this.form.pago_id = ''
+            this.step = 1
         },
 
         validateForm1() {
@@ -1126,6 +1275,7 @@ export default {
                         this.form.id = res1.data.id
                         this.form.codigo = res.data.codigo
                         Cart.clear()
+                        CheckoutDraft.clear()
                         KR.closePopin()
 
                         window.scrollTo({
@@ -1159,6 +1309,7 @@ export default {
                 this.form.id = res.data.id
                 this.form.codigo = res.data.codigo
                 Cart.clear()
+                CheckoutDraft.clear()
 
                 window.scrollTo({
                     top: 0,
@@ -1185,8 +1336,11 @@ export default {
             setTimeout(() => {
                 const el = this.$refs[id]
                 if (el) {
-                    const offset = el.getBoundingClientRect().top + window.scrollY - 80
-                    window.scrollTo({ top: offset, behavior: 'smooth' })
+                    const header = document.getElementById('site-header-main')
+                    const headerBottom = header?.getBoundingClientRect().bottom || 0
+                    const safeOffset = headerBottom + 20
+                    const targetTop = el.getBoundingClientRect().top + window.scrollY - safeOffset
+                    window.scrollTo({ top: targetTop, behavior: 'smooth' })
                 }
             }, 100)
         },
@@ -1278,9 +1432,12 @@ export default {
 
 <style scoped>
 .checkout-layout {
+    --checkout-sticky-offset: 124px;
+
     display: grid;
-    grid-template-columns: minmax(0, 1.7fr) minmax(310px, 0.82fr);
-    gap: 24px;
+    grid-template-columns: minmax(0, 1fr) 370px;
+    align-items: start;
+    gap: 26px;
     width: min(100%, 1280px);
     margin: 0 auto;
     color: var(--sunka-ink);
@@ -1437,12 +1594,18 @@ export default {
     text-transform: uppercase;
 }
 
+.checkout-panel-back {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
 .checkout-summary {
     position: sticky;
-    top: 24px;
+    top: var(--checkout-sticky-offset);
     overflow: hidden;
     height: fit-content;
-    padding: 23px 24px 20px;
+    padding: 20px 24px 18px;
     border-radius: 16px;
     background: var(--sunka-forest);
     color: var(--sunka-white);
@@ -1454,8 +1617,6 @@ export default {
     align-items: flex-start;
     justify-content: space-between;
     gap: 14px;
-    padding-bottom: 17px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .checkout-summary__heading p,
@@ -1472,7 +1633,7 @@ export default {
 }
 
 .checkout-summary__heading h2 {
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .checkout-summary__heading > span {
@@ -1489,7 +1650,7 @@ export default {
     gap: 0;
     max-height: 330px;
     overflow-y: auto;
-    margin: 5px 0 18px;
+    margin: 17px 0 18px;
     scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
     scrollbar-width: thin;
 }
@@ -1543,7 +1704,7 @@ export default {
 }
 
 .checkout-total span:last-child {
-    color: var(--sunka-brass-light);
+    color: var(--sunka-white);
     font-size: 23px;
 }
 
@@ -1587,6 +1748,52 @@ export default {
     font-size: 9px;
 }
 
+.checkout-summary__action-wrap {
+    display: grid;
+    gap: 7px;
+    margin-top: 17px;
+}
+
+.checkout-summary__action {
+    display: inline-flex;
+    width: 100%;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid var(--sunka-brass);
+    border-radius: 8px;
+    padding: 0 18px;
+    background: var(--sunka-brass);
+    color: var(--sunka-white);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.18s ease;
+}
+
+.checkout-summary__action:hover:not(:disabled) {
+    background: #c69a50;
+}
+
+.checkout-summary__action:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.checkout-summary__error {
+    margin: 0;
+    color: #efc1b5;
+    font-size: 10px;
+    line-height: 1.35;
+    text-align: center;
+}
+
+.checkout-mobile-bar,
+.checkout-summary__action-mobile {
+    display: none;
+}
+
 .checkout-success {
     width: min(100%, 920px);
     margin: 0 auto;
@@ -1604,39 +1811,6 @@ export default {
     background: var(--sunka-white);
     text-align: center;
     box-shadow: 0 18px 38px rgba(35, 29, 24, 0.08);
-}
-
-.checkout-card :deep(.label) {
-    margin-bottom: 7px;
-    color: var(--sunka-forest);
-    font-size: 10px;
-    font-weight: 650;
-    letter-spacing: 0.02em;
-}
-
-.checkout-card :deep(.input),
-.checkout-card :deep(select),
-.checkout-card :deep(textarea) {
-    min-height: 46px;
-    border-color: var(--sunka-sand);
-    border-radius: 8px;
-    background: #fffefa;
-    color: var(--sunka-ink);
-    font-size: 12px;
-    box-shadow: none;
-}
-
-.checkout-card :deep(.input:focus),
-.checkout-card :deep(select:focus),
-.checkout-card :deep(textarea:focus) {
-    border-color: var(--sunka-brass);
-    --tw-ring-color: rgba(184, 138, 61, 0.14);
-}
-
-.checkout-card :deep(.radio),
-.checkout-card :deep(.checkbox) {
-    color: #665e54;
-    font-size: 11px;
 }
 
 .checkout-card :deep(.button) {
@@ -1662,11 +1836,6 @@ export default {
     color: var(--sunka-forest);
 }
 
-.checkout-card :deep(.input-error) {
-    color: #9f513e;
-    font-size: 10px;
-}
-
 @media (max-width: 980px) {
     .checkout-layout {
         grid-template-columns: 1fr;
@@ -1675,6 +1844,81 @@ export default {
     .checkout-summary {
         position: relative;
         top: auto;
+    }
+}
+
+@media (min-width: 981px) and (max-width: 1023px) {
+    .checkout-layout {
+        --checkout-sticky-offset: 108px;
+    }
+}
+
+@media (max-width: 720px) {
+    .checkout-layout {
+        padding-bottom: 0;
+    }
+
+    .checkout-summary > .checkout-summary__action-wrap {
+        display: none;
+    }
+
+    .checkout-panel-back :deep(.button) {
+        width: 100%;
+    }
+
+    .checkout-mobile-bar {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 30;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+        border: 1px solid var(--sunka-sand);
+        border-bottom: 0;
+        border-radius: 14px 14px 0 0;
+        background: var(--sunka-white);
+        color: var(--sunka-ink);
+        box-shadow: 0 -8px 24px rgba(13, 35, 23, 0.14);
+    }
+
+    .checkout-mobile-bar__error {
+        grid-column: 1 / -1;
+        margin: 0;
+        color: var(--sunka-danger);
+        font-size: 9px;
+        text-align: center;
+    }
+
+    .checkout-mobile-bar__total {
+        display: grid;
+        min-width: 0;
+        gap: 2px;
+    }
+
+    .checkout-mobile-bar__total small {
+        overflow: hidden;
+        color: var(--sunka-stone);
+        font-size: 8px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .checkout-mobile-bar__total strong {
+        color: var(--sunka-forest);
+        font-size: 19px;
+    }
+
+    .checkout-mobile-bar__action {
+        width: auto;
+        min-width: 132px;
+        min-height: 44px;
+        padding: 0 16px;
+        white-space: nowrap;
+        box-shadow: none;
     }
 }
 
@@ -1718,10 +1962,6 @@ export default {
 
     .checkout-card :deep(.flex.justify-between) {
         gap: 12px;
-    }
-
-    .checkout-summary {
-        padding: 20px 18px;
     }
 
     .checkout-success {

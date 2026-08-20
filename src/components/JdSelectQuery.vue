@@ -1,7 +1,7 @@
 <template>
-    <div @click="handleControlClick">
+    <div class="sunka-field" @click="handleControlClick">
         <div class="flex justify-between items-center gap-2">
-            <label class="label" v-if="label">
+            <label class="sunka-label" v-if="label">
                 <span v-if="label">{{ label }}</span>
                 <span v-if="nec">*</span>
             </label>
@@ -19,29 +19,41 @@
         <template v-if="!disabled">
             <!-- Texto mostrado -->
             <div
-                class="relative input overflow-x-auto whitespace-nowrap no-scrollbar"
+                class="sunka-control relative overflow-x-auto whitespace-nowrap no-scrollbar"
+                :class="{ 'is-open': isVisible }"
                 v-if="inputModel"
                 :title="setMostrar()"
                 ref="right"
+                tabindex="0"
+                role="combobox"
+                :aria-expanded="isVisible"
+                :aria-invalid="error ? 'true' : undefined"
+                @keydown.enter.prevent="openList"
+                @keydown.space.prevent="openList"
+                @keydown.down.prevent="openList"
             >
                 {{ setMostrar() }}
             </div>
 
             <input
                 type="search"
-                class="input"
+                class="sunka-control"
+                :class="{ 'is-open': isVisible }"
                 v-model="txtBuscar"
                 @input="handleInput()"
                 :placeholder="placeholder"
                 v-else
                 ref="right"
+                role="combobox"
+                :aria-expanded="isVisible"
+                :aria-invalid="error ? 'true' : undefined"
             />
 
             <!-- Lista desplegable -->
             <div
                 v-if="isVisible"
                 ref="lista-box"
-                class="absolute z-30 bg-white shadow-lg border border-gray-300 w-full"
+                class="absolute z-30 bg-sunka-white shadow-lg border border-sunka-sand w-full"
             >
                 <LoadingSpin
                     borderRadius="0.2rem"
@@ -64,7 +76,7 @@
                         v-for="(a, i) in lista"
                         :key="i"
                         @click="elegir(a[id])"
-                        class="px-2 py-1 cursor-pointer hover:bg-gray-100 rounded-md"
+                        class="px-2 py-1 cursor-pointer hover:bg-sunka-cream"
                     >
                         {{ a[mostrar] }}
                     </li>
@@ -74,13 +86,13 @@
 
         <div
             v-else
-            class="whitespace-nowrap overflow-x-auto no-scrollbar"
+            class="sunka-control is-disabled whitespace-nowrap overflow-x-auto no-scrollbar"
             :title="mostrarValor"
         >
             {{ mostrarValor ? mostrarValor : '-' }}
         </div>
 
-        <p v-if="error" class="input-error">
+        <p v-if="error" class="sunka-error">
             {{ error }}
         </p>
     </div>
@@ -129,7 +141,7 @@ export default {
     },
     methods: {
         handleControlClick(event) {
-            if (this.disabled || !event.target.closest?.('.input')) return;
+            if (this.disabled || !event.target.closest?.('.sunka-control')) return;
 
             this.openList();
         },

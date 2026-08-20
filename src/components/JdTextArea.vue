@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <label class="label" v-if="label">
+    <div class="sunka-field">
+        <label class="sunka-label" v-if="label">
             <span v-if="label">{{ label }}</span>
             <span v-if="nec" class="nec"> *</span>
         </label>
@@ -9,14 +9,15 @@
             v-if="!disabled"
             :placeholder="placeholder"
             v-model="inputModel"
-            class="input resize-none"
+            class="sunka-control resize-none"
+            :aria-invalid="error ? 'true' : undefined"
         ></textarea>
 
-        <div v-else>
+        <div v-else class="sunka-control is-disabled">
             {{ inputModel }}
         </div>
 
-        <p v-if="error" class="input-error">
+        <p v-if="error" class="sunka-error">
             {{ error }}
         </p>
     </div>

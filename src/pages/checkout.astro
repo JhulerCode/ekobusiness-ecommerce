@@ -14,6 +14,8 @@ const res = await get('sistema', {
     ],
 })
 
+console.log('Checkout data:', res.data)
+
 if (res.code == 0) {
     var {
         documentos_identidad,
@@ -28,17 +30,44 @@ if (res.code == 0) {
     title="Finaliza tu compra | SUNKA Herbal Tea"
     description="Completa tus datos de entrega y elige tu método de pago para finalizar tu compra SUNKA."
 >
-    <section class="checkout-hero">
-        <div class="checkout-hero__image" aria-hidden="true">
-            <img src={checkoutHero.src} alt="" />
+    <section
+        class="relative min-h-[480px] w-full overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[430px]"
+    >
+        <div class="absolute inset-0" aria-hidden="true">
+            <img
+                src={checkoutHero.src}
+                alt=""
+                class="checkout-hero-image h-full w-full object-cover object-center"
+            />
+            <div
+                class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.98)_34%,rgba(9,8,6,.82)_58%,rgba(9,8,6,.18)_100%)] md:bg-[linear-gradient(90deg,rgba(9,8,6,1)_0%,rgba(9,8,6,.92)_42%,rgba(9,8,6,.46)_68%,rgba(9,8,6,.12)_100%)]"
+            ></div>
         </div>
-        <div class="checkout-hero__shade" aria-hidden="true"></div>
 
-        <div class="checkout-hero__content">
-            <a href="/tienda" class="checkout-back">← Volver a la tienda</a>
-            <p>Tu ritual, a un paso</p>
-            <h1>Finaliza tu compra</h1>
-            <span>Completa tus datos con tranquilidad. Tu pedido está reservado mientras avanzas.</span>
+        <div
+            class="relative z-10 mx-auto flex min-h-[480px] max-w-7xl items-start px-5 pt-28 md:min-h-[430px] md:items-center md:px-8 md:pt-24"
+        >
+            <div class="max-w-2xl">
+                <a
+                    href="/tienda"
+                    class="mb-6 inline-flex text-xs text-sunka-white/68 transition-colors hover:text-sunka-brass-light"
+                >
+                    ← Volver a la tienda
+                </a>
+                <p
+                    class="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-sunka-brass-light/90"
+                >
+                    Tu ritual, a un paso
+                </p>
+                <h1
+                    class="max-w-xl font-heading text-3xl font-semibold leading-[1.05] text-sunka-white md:text-5xl"
+                >
+                    Finaliza tu compra
+                </h1>
+                <p class="mt-6 max-w-md text-base leading-relaxed text-sunka-white/88 md:text-lg">
+                    Completa tus datos con tranquilidad. Tu pedido está reservado mientras avanzas.
+                </p>
+            </div>
         </div>
     </section>
 
@@ -55,76 +84,8 @@ if (res.code == 0) {
 </BaseLayout>
 
 <style>
-    .checkout-hero {
-        position: relative;
-        min-height: 350px;
-        overflow: hidden;
-        background: var(--sunka-ink);
-        color: var(--sunka-white);
-    }
-
-    .checkout-hero__image,
-    .checkout-hero__shade {
-        position: absolute;
-        inset: 0;
-    }
-
-    .checkout-hero__image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center 58%;
-        animation: checkoutHeroZoom 14s ease-in-out infinite alternate;
-    }
-
-    .checkout-hero__shade {
-        background: linear-gradient(90deg, rgba(9, 8, 6, 0.98) 0%, rgba(9, 8, 6, 0.88) 40%, rgba(9, 8, 6, 0.2) 100%);
-    }
-
-    .checkout-hero__content {
-        position: relative;
-        z-index: 1;
-        width: min(100%, 1280px);
-        margin: 0 auto;
-        padding: 112px 32px 62px;
-    }
-
-    .checkout-back {
-        display: inline-flex;
-        margin-bottom: 25px;
-        color: rgba(255, 253, 248, 0.68);
-        font-size: 12px;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    .checkout-back:hover {
-        color: var(--sunka-brass-light);
-    }
-
-    .checkout-hero__content p {
-        margin: 0 0 10px;
-        color: var(--sunka-brass-light);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.26em;
-        text-transform: uppercase;
-    }
-
-    .checkout-hero__content h1 {
-        margin: 0;
-        font-family: var(--font-heading);
-        font-size: clamp(34px, 5vw, 54px);
-        line-height: 1.05;
-    }
-
-    .checkout-hero__content span {
-        display: block;
-        max-width: 520px;
-        margin-top: 16px;
-        color: rgba(255, 253, 248, 0.78);
-        font-size: 15px;
-        line-height: 1.6;
+    .checkout-hero-image {
+        animation: checkoutHeroZoom 12s ease-in-out infinite alternate;
     }
 
     .checkout-page {
@@ -134,19 +95,14 @@ if (res.code == 0) {
 
     @keyframes checkoutHeroZoom {
         from { transform: scale(1); }
-        to { transform: scale(1.05); }
+        to { transform: scale(1.06); }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .checkout-hero__image img { animation: none; }
+        .checkout-hero-image { animation: none; }
     }
 
-    @media (max-width: 640px) {
-        .checkout-hero { min-height: 330px; }
-        .checkout-hero__shade {
-            background: linear-gradient(180deg, rgba(9, 8, 6, 0.98) 0%, rgba(9, 8, 6, 0.82) 62%, rgba(9, 8, 6, 0.38) 100%);
-        }
-        .checkout-hero__content { padding: 100px 20px 48px; }
-        .checkout-page { padding: 16px 12px 88px; }
+    @media (max-width: 720px) {
+        .checkout-page { padding: 16px 12px 48px; }
     }
 </style>

@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <label class="label" v-if="label">
+    <div class="sunka-field">
+        <label class="sunka-label" v-if="label">
             <span v-if="label">{{ label }}</span>
             <span v-if="nec" class="nec"> *</span>
         </label>
@@ -10,8 +10,9 @@
             :type="type"
             :placeholder="placeholder"
             v-model="inputModel"
-            class="input"
+            class="sunka-control"
             :class="{ 'to-right': toRight }"
+            :aria-invalid="error ? 'true' : undefined"
             :maxlength="maxlength"
             :number_min="number_min"
             :number_max="number_max"
@@ -19,7 +20,7 @@
 
         <div
             v-else
-            class="overflow-x-auto whitespace-nowrap no-scrollbar"
+            class="sunka-control is-disabled overflow-x-auto whitespace-nowrap no-scrollbar"
             :class="{ 'to-right-p': toRight }"
         >
             <template
@@ -39,7 +40,7 @@
             </template>
         </div>
 
-        <p v-if="error" class="input-error">
+        <p v-if="error" class="sunka-error">
             {{ error }}
         </p>
     </div>
@@ -62,6 +63,7 @@ export default {
 
         number_min: { type: [String, Number], default: null },
         number_max: { type: [String, Number], default: null },
+        modelModifiers: { type: Object, default: () => ({}) },
     },
     computed: {
         inputModel: {
@@ -69,7 +71,10 @@ export default {
                 return this.modelValue;
             },
             set(newValue) {
-                this.$emit('update:modelValue', newValue);
+                let value = newValue;
+                if (this.modelModifiers.trim && typeof value === 'string') value = value.trim();
+                if (this.modelModifiers.number) value = Number(value);
+                this.$emit('update:modelValue', value);
             },
         },
     },

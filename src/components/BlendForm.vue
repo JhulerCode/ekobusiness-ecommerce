@@ -1,33 +1,36 @@
 <template>
     <div class="blend-builder">
-        <nav
-            ref="stepsNav"
-            class="blend-steps"
-            aria-label="Progreso de creación del blend"
-        >
-            <template v-for="(step, index) in steps" :key="step.id">
-                <button
-                    type="button"
-                    class="blend-step"
-                    :class="{ 'is-active': pasoActual === step.id, 'is-done': isStepDone(step.id) }"
-                    :disabled="!canVisitStep(step.id)"
-                    @click="goToStep(step.id)"
-                >
-                    <span class="blend-step__number">{{
-                        isStepDone(step.id) ? '✓' : step.number
-                    }}</span>
-                    <span class="blend-step__title">{{ step.title }}</span>
-                </button>
-                <span
-                    v-if="index < steps.length - 1"
-                    class="blend-step__line"
-                    aria-hidden="true"
-                ></span>
-            </template>
-        </nav>
-
         <div class="blend-layout">
-            <section class="blend-config-card">
+            <div class="blend-workspace">
+                <nav
+                    ref="stepsNav"
+                    class="blend-steps"
+                    aria-label="Progreso de creación del blend"
+                >
+                    <template v-for="(step, index) in steps" :key="step.id">
+                        <button
+                            type="button"
+                            class="blend-step"
+                            :class="{
+                                'is-active': pasoActual === step.id,
+                                'is-done': isStepDone(step.id),
+                            }"
+                            :disabled="!canVisitStep(step.id)"
+                            @click="goToStep(step.id)"
+                        >
+                            <span class="blend-step__number">{{ step.id }}</span>
+                            <span class="blend-step__title">{{ step.title }}</span>
+                        </button>
+                        <span
+                            v-if="index < steps.length - 1"
+                            class="blend-step__line"
+                            :class="{ 'is-complete': pasoActual > step.id }"
+                            aria-hidden="true"
+                        ></span>
+                    </template>
+                </nav>
+
+                <section class="blend-config-card">
                 <header class="blend-config-head">
                     <div>
                         <h1>Construye tu mezcla</h1>
@@ -381,20 +384,20 @@
                         </div>
                         <span class="blend-panel-count">Opcional</span>
                     </div>
-                    <label class="blend-field"
-                        ><span>Nombre del blend</span
-                        ><input
-                            v-model.trim="blend.etiqueta"
-                            maxlength="32"
-                            placeholder="Ej. Atardecer cítrico"
-                    /></label>
-                    <label class="blend-field"
-                        ><span>Preparado para</span
-                        ><input
-                            v-model.trim="blend.preparadoPara"
-                            maxlength="32"
-                            placeholder="Ej. Sebastián"
-                    /></label>
+                    <JdInput
+                        class="blend-field"
+                        label="Nombre del blend"
+                        v-model.trim="blend.etiqueta"
+                        maxlength="32"
+                        placeholder="Ej. Atardecer cítrico"
+                    />
+                    <JdInput
+                        class="blend-field"
+                        label="Preparado para"
+                        v-model.trim="blend.preparadoPara"
+                        maxlength="32"
+                        placeholder="Ej. Sebastián"
+                    />
                     <p class="blend-label-note">
                         Tu etiqueta se imprimirá en el empaque seleccionado. Puedes continuar sin
                         personalizarla.
@@ -405,7 +408,8 @@
                         </button>
                     </div>
                 </div>
-            </section>
+                </section>
+            </div>
 
             <aside class="blend-summary-card">
                 <div class="blend-summary-head">
@@ -498,10 +502,6 @@
                         <span>Total</span><b>S/ {{ money(costoTotal) }}</b>
                     </div>
                 </div>
-                <div class="blend-mobile-summary">
-                    <small>Blend {{ formatSummary }} · {{ empaqueSummary }}</small>
-                    <strong>S/ {{ money(costoTotal) }}</strong>
-                </div>
                 <button
                     type="button"
                     class="blend-summary-action"
@@ -513,6 +513,22 @@
                     <span>→</span>
                 </button>
             </aside>
+
+            <div class="blend-mobile-bar">
+                <div class="blend-mobile-bar__total">
+                    <small>Blend {{ formatSummary }} · {{ empaqueSummary }}</small>
+                    <strong>S/ {{ money(costoTotal) }}</strong>
+                </div>
+                <button
+                    type="button"
+                    class="blend-summary-action blend-mobile-bar__action"
+                    :disabled="pasoActual >= 2 && !isIngredientsComplete"
+                    @click="summaryAction"
+                >
+                    <span>{{ summaryActionMobileText }}</span>
+                    <span>→</span>
+                </button>
+            </div>
         </div>
 
         <transition name="fade">
@@ -527,9 +543,11 @@
 import { Blend } from '../lib/blend.js'
 import { Cart } from '../lib/cart.js'
 import logoSunka from '../assets/logo-sunka-black.webp'
+import JdInput from './JdInput.vue'
 
 export default {
     name: 'BlendForm',
+    components: { JdInput },
     props: {
         empaques: { type: Array, default: () => [] },
         formatos: { type: Array, default: () => [] },
@@ -561,9 +579,9 @@ export default {
             showToast: false,
             timeOutCloseToast: null,
             steps: [
-                { id: 1, number: '01', title: 'Formato' },
-                { id: 2, number: '02', title: 'Ingredientes' },
-                { id: 3, number: '03', title: 'Personaliza' },
+                { id: 1, title: 'Formato' },
+                { id: 2, title: 'Ingredientes' },
+                { id: 3, title: 'Personaliza' },
             ],
         }
     },
@@ -823,9 +841,11 @@ export default {
             this.$nextTick(() => {
                 const el = this.$refs.stepsNav
                 if (!el) return
-                const offset = 140
+                const header = document.getElementById('site-header-main')
+                const headerBottom = header?.getBoundingClientRect().bottom || 0
+                const safeOffset = headerBottom + 20
                 window.scrollTo({
-                    top: el.getBoundingClientRect().top + window.pageYOffset - offset,
+                    top: el.getBoundingClientRect().top + window.pageYOffset - safeOffset,
                     behavior: 'smooth',
                 })
             })
@@ -1039,6 +1059,10 @@ export default {
     flex: 1;
     margin: 0 18px;
     background: rgba(35, 29, 24, 0.14);
+    transition: background 0.2s ease;
+}
+.blend-step__line.is-complete {
+    background: var(--sunka-forest);
 }
 .blend-step.is-active {
     color: var(--sunka-forest);
@@ -1056,10 +1080,15 @@ export default {
     background: var(--sunka-forest);
 }
 .blend-layout {
+    --blend-sticky-offset: 124px;
+
     display: grid;
     grid-template-columns: minmax(0, 1fr) 370px;
     align-items: start;
     gap: 26px;
+}
+.blend-workspace {
+    min-width: 0;
 }
 .blend-config-card {
     overflow: hidden;
@@ -1694,26 +1723,7 @@ export default {
     min-height: 310px;
 }
 .blend-field {
-    display: grid;
-    gap: 7px;
     margin-top: 29px;
-    color: var(--sunka-forest);
-    font-size: 11px;
-    font-weight: 700;
-}
-.blend-field input {
-    min-height: 48px;
-    border: 1px solid var(--sunka-sand);
-    border-radius: 0;
-    padding: 0 13px;
-    color: var(--sunka-ink);
-    font: inherit;
-    font-weight: 400;
-    outline: none;
-}
-.blend-field input:focus {
-    border-color: var(--sunka-brass);
-    box-shadow: 0 0 0 3px rgba(184, 138, 61, 0.12);
 }
 .blend-label-note {
     margin-top: 11px;
@@ -1732,7 +1742,7 @@ export default {
 }
 .blend-summary-card {
     position: sticky;
-    top: 24px;
+    top: var(--blend-sticky-offset);
     overflow: hidden;
     padding: 20px 24px 18px;
     border-radius: 16px;
@@ -2009,7 +2019,7 @@ export default {
     background: var(--sunka-brass);
     color: var(--sunka-white);
 }
-.blend-mobile-summary,
+.blend-mobile-bar,
 .blend-summary-action-mobile {
     display: none;
 }
@@ -2050,6 +2060,11 @@ export default {
     .blend-summary-card {
         position: relative;
         top: auto;
+    }
+}
+@media (min-width: 981px) and (max-width: 1023px) {
+    .blend-layout {
+        --blend-sticky-offset: 108px;
     }
 }
 @media (max-width: 720px) {
@@ -2109,10 +2124,10 @@ export default {
         flex-wrap: wrap;
         gap: 5px 15px;
     }
-    .blend-builder {
-        padding-bottom: 104px;
+    .blend-summary-card > .blend-summary-action {
+        display: none;
     }
-    .blend-summary-card {
+    .blend-mobile-bar {
         position: fixed;
         right: 0;
         bottom: 0;
@@ -2130,43 +2145,29 @@ export default {
         color: var(--sunka-ink);
         box-shadow: 0 -8px 24px rgba(13, 35, 23, 0.14);
     }
-    .blend-summary-head,
-    .blend-product-preview,
-    .blend-summary-meta,
-    .blend-summary-section,
-    .blend-price-lines,
-    .blend-summary-footnote {
-        display: none;
-    }
-    .blend-mobile-summary {
+    .blend-mobile-bar__total {
         display: grid;
         min-width: 0;
         gap: 2px;
     }
-    .blend-mobile-summary small {
+    .blend-mobile-bar__total small {
         overflow: hidden;
         color: var(--sunka-stone);
         font-size: 8px;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-    .blend-mobile-summary strong {
+    .blend-mobile-bar__total strong {
         color: var(--sunka-forest);
         font-size: 19px;
     }
-    .blend-summary-action {
+    .blend-mobile-bar__action {
         width: auto;
         min-width: 132px;
         min-height: 44px;
         margin-top: 0;
         padding: 0 16px;
         white-space: nowrap;
-    }
-    .blend-summary-action-full {
-        display: none;
-    }
-    .blend-summary-action-mobile {
-        display: inline;
     }
 }
 @media (max-width: 460px) {
@@ -2176,9 +2177,6 @@ export default {
     }
     .blend-format-pill {
         width: 100%;
-    }
-    .blend-summary-card {
-        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
     }
     .blend-product-preview {
         padding: 10px;

@@ -1,145 +1,70 @@
 <template>
-    <div>
-        <div class="flex justify-between items-center gap-2">
-            <label v-if="label" class="label">
+    <div class="sunka-field">
+        <div class="flex items-center justify-between gap-2">
+            <label v-if="label" class="sunka-label">
                 <span>{{ label }}</span>
-                <span v-if="nec">*</span>
+                <span v-if="nec" class="nec">*</span>
             </label>
 
             <div v-if="!disabled" class="flex items-center gap-2">
-                <i
+                <button
                     v-if="loaded"
-                    class="fa-solid fa-rotate-right cursor-pointer hover:text-gray-900"
+                    type="button"
+                    class="cursor-pointer text-sunka-stone hover:text-sunka-ink"
                     title="Recargar"
-                    @click.stop="reload()"
-                    >R</i
+                    aria-label="Recargar opciones"
+                    @click="reload"
                 >
-                <Xmark
-                    v-if="inputModel"
-                    class="w-4 h-4 cursor-pointer"
-                    @click.stop="setNull()"
-                />
+                    R
+                </button>
+                <button
+                    v-if="hasValue"
+                    type="button"
+                    class="cursor-pointer text-sunka-stone hover:text-sunka-ink"
+                    title="Limpiar selección"
+                    aria-label="Limpiar selección"
+                    @click="setNull"
+                >
+                    <Xmark class="h-4 w-4" />
+                </button>
             </div>
         </div>
 
-        <div v-if="!disabled" class="relative z-40">
-            <div
-                ref="right"
-                class="relative input overflow-x-auto whitespace-nowrap no-scrollbar cursor-pointer"
-                @click="toogleList"
-                :title="mostrarValor"
-            >
-                {{ mostrarValor ? mostrarValor : '-' }}
-
-                <div class="absolute right-2 top-3">
-                    <ChevronUp v-if="isVisible" class="w-4 h-4 text-gray-400" />
-                    <ChevronDown v-else class="w-4 h-4 text-gray-400" />
-                </div>
-            </div>
-
-            <!-- Lista desplegable -->
-            <div
-                v-if="isVisible"
-                ref="lista-box"
-                class="absolute bg-white shadow-lg border border-gray-300 w-full"
-            >
-                <input
-                    v-if="lista.length > 10"
-                    type="search"
-                    placeholder="Buscar..."
-                    v-model="txtBuscar"
-                    class="w-full mb-2 border border-gray-300 rounded-md px-2 py-1 text-sm"
-                />
-
-                <!-- Lista simple -->
-                <ul v-if="!groupBy" class="max-h-52 overflow-y-auto text-sm">
-                    <li
-                        v-if="lista.length === 0"
-                        class="px-2 py-1 text-gray-400"
-                    >
-                        Sin datos
-                    </li>
-
-                    <li
-                        v-else-if="listaFiltrada.length === 0"
-                        class="px-2 py-1 text-gray-400"
-                    >
-                        Sin resultados
-                    </li>
-
-                    <li
-                        v-else
-                        v-for="(a, i) in listaFiltrada"
-                        :key="i"
-                        @click="elegir(a[id])"
-                        :class="[
-                            'px-2 py-1 cursor-pointer hover:bg-gray-100 rounded-md',
-                            inputModel == a[id]
-                                ? 'text-blue-600 font-semibold'
-                                : '',
-                        ]"
-                    >
-                        {{ getNestedProp(a, mostrar) }}
-                    </li>
-                </ul>
-
-                <!-- Lista agrupada -->
-                <ul v-else class="max-h-52 overflow-y-auto text-sm">
-                    <li
-                        v-for="(group, groupName) in listaAgrupada"
-                        :key="groupName"
-                        class="mb-1"
-                    >
-                        <ul>
-                            <li
-                                class="px-2 py-1 font-semibold text-gray-500 cursor-default"
-                            >
-                                {{ groupName }}
-                            </li>
-                            <li
-                                v-for="(a, i) in group"
-                                :key="i"
-                                @click="elegir(a[id])"
-                                :class="[
-                                    'ml-2 px-2 py-1 cursor-pointer hover:bg-gray-100 rounded-md',
-                                    inputModel == a[id]
-                                        ? 'text-blue-600 font-semibold'
-                                        : '',
-                                ]"
-                            >
-                                {{ getNestedProp(a, mostrar) }}
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div
-            v-else
-            class="whitespace-nowrap overflow-x-auto no-scrollbar"
-            :title="mostrarValor"
+        <select
+            v-model="inputModel"
+            class="sunka-control cursor-pointer"
+            :disabled="disabled"
+            :aria-invalid="error ? 'true' : undefined"
+            @change="emitSelection"
         >
-            {{ mostrarValor ? mostrarValor : '-' }}
-        </div>
+            <option :value="null">{{ placeholder || 'Selecciona una opción' }}</option>
 
-        <p v-if="error" class="input-error">
+            <option v-for="item in opcionesSimples" :key="item[id]" :value="item[id]">
+                {{ getNestedProp(item, mostrar) }}
+            </option>
+
+            <optgroup
+                v-for="(group, groupName) in opcionesAgrupadas"
+                :key="groupName"
+                :label="groupName"
+            >
+                <option v-for="item in group" :key="item[id]" :value="item[id]">
+                    {{ getNestedProp(item, mostrar) }}
+                </option>
+            </optgroup>
+        </select>
+
+        <p v-if="error" class="sunka-error">
             {{ error }}
         </p>
     </div>
 </template>
 
 <script>
-import Xmark from '../assets/icons/xmark.vue';
-import ChevronUp from '../assets/icons/chevron-up.vue';
-import ChevronDown from '../assets/icons/chevron-down.vue';
+import Xmark from '../assets/icons/xmark.vue'
 
 export default {
-    components: {
-        Xmark,
-        ChevronUp,
-        ChevronDown,
-    },
+    components: { Xmark },
     props: {
         modelValue: [String, Number, Boolean],
         label: String,
@@ -157,133 +82,52 @@ export default {
     computed: {
         inputModel: {
             get() {
-                return this.modelValue;
+                return this.modelValue
             },
             set(newValue) {
-                this.$emit('update:modelValue', newValue);
+                this.$emit('update:modelValue', newValue)
             },
         },
-        mostrarValor() {
-            if (
+        hasValue() {
+            return (
                 this.inputModel !== null &&
                 this.inputModel !== undefined &&
                 this.inputModel !== ''
-            ) {
-                const send = this.lista.find(
-                    (a) => a[this.id] == this.inputModel
-                );
-                if (send) {
-                    return this.getNestedProp(send, this.mostrar);
-                }
-            }
-            return '';
+            )
         },
-        listaFiltrada() {
-            if (!this.txtBuscar) return this.lista;
-            const textoBuscado = this.normalizarTexto(this.txtBuscar);
-            return this.lista.filter((a) => {
-                const valor = this.getNestedProp(a, this.mostrar);
-                return this.normalizarTexto(valor).includes(textoBuscado);
-            });
+        opcionesSimples() {
+            return this.groupBy ? [] : this.lista
         },
-        listaAgrupada() {
-            if (!this.groupBy) return {};
-            const grouped = this.listaFiltrada.reduce((acc, item) => {
-                const groupName = item[this.groupBy] || 'Sin agrupar';
-                if (!acc[groupName]) acc[groupName] = [];
-                acc[groupName].push(item);
-                return acc;
-            }, {});
-            return grouped;
+        opcionesAgrupadas() {
+            if (!this.groupBy) return {}
+
+            return this.lista.reduce((groups, item) => {
+                const groupName = this.getNestedProp(item, this.groupBy) || 'Sin agrupar'
+                if (!groups[groupName]) groups[groupName] = []
+                groups[groupName].push(item)
+                return groups
+            }, {})
         },
-    },
-    data: () => ({
-        isVisible: false,
-        txtBuscar: '',
-    }),
-    mounted() {
-        this.init(this.inputModel);
     },
     methods: {
-        handleClickOutside(event) {
-            const el = this.$refs['lista-box'];
-            if (el && !el.contains(event.target)) this.ocultar();
-        },
-        handleEscapeKey(event) {
-            if (event.key === 'Escape' || event.keyCode === 27) this.ocultar();
-        },
-        toogleList() {
-            if (this.disabled) return;
-            this.isVisible = !this.isVisible;
-
-            if (this.isVisible) {
-                // this.$nextTick(() => {
-                //     const rect = this.$refs.right.getBoundingClientRect();
-                //     const el = this.$refs['lista-box'];
-                //     el.style.top = `${rect.bottom + window.scrollY}px`;
-                //     el.style.left = `${rect.left + window.scrollX}px`;
-                //     el.style.width = `${rect.width}px`;
-                // });
-
-                setTimeout(() => {
-                    document.addEventListener('click', this.handleClickOutside);
-                    window.addEventListener('keydown', this.handleEscapeKey);
-                }, 0);
-            } else {
-                this.ocultar();
-            }
-        },
-        ocultar() {
-            this.isVisible = false;
-            this.txtBuscar = '';
-            document.removeEventListener('click', this.handleClickOutside);
-            window.removeEventListener('keydown', this.handleEscapeKey);
-        },
-        init(id) {
-            if (id !== null && id !== undefined) {
-                if (this.lista.length > 0) {
-                    this.inputModel = id;
-                } else {
-                    const inter = setInterval(() => {
-                        if (this.lista.length > 0) {
-                            this.inputModel = id;
-                            clearInterval(inter);
-                        }
-                    }, 100);
-                }
-            }
-        },
-        elegir(id) {
-            const isChanged = id !== this.inputModel;
-            this.inputModel = id;
-            if (isChanged) {
-                this.$emit(
-                    'elegir',
-                    this.lista.find((a) => a[this.id] == id)
-                );
-            }
-            this.ocultar();
+        emitSelection(event) {
+            const selectedId = event.target.value
+            this.$emit(
+                'elegir',
+                this.lista.find((item) => item[this.id] == selectedId) || null,
+            )
         },
         setNull() {
-            this.inputModel = null;
-            this.$emit('elegir', null);
+            this.inputModel = null
+            this.$emit('elegir', null)
         },
-        getNestedProp(obj, prop) {
-            const result = prop
-                .split('.')
-                .reduce((acc, part) => acc?.[part], obj);
-            return result === undefined || result === null ? '' : result;
-        },
-        normalizarTexto(texto) {
-            return texto
-                .toString()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase();
+        getNestedProp(object, path) {
+            const result = path.split('.').reduce((value, part) => value?.[part], object)
+            return result === undefined || result === null ? '' : result
         },
         reload() {
-            this.$emit('reload');
+            this.$emit('reload')
         },
     },
-};
+}
 </script>

@@ -86,6 +86,10 @@ export async function get(endpoint, params = {}, user_token) {
         return { code: 401, msg: res.msg }
     }
 
+    if (response.ok && res.code === undefined && Object.hasOwn(res, 'data')) {
+        return { ...res, code: 0 }
+    }
+
     if (res.code == -1) jmsg('error', 'Algo salió mal')
 
     if (res.code > 0) jmsg('error', res.msg)

@@ -76,6 +76,7 @@
 
 <script>
 import { urls, get } from "../lib/api.js";
+import { CheckoutDraft } from "../lib/checkout-draft.js";
 import AccountPanelPerfil from "./AccountPanelPerfil.vue";
 import AccountPanelDirecciones from "./AccountPanelDirecciones.vue";
 import AccountPanelPagoMetodos from "./AccountPanelPagoMetodos.vue";
@@ -135,6 +136,7 @@ export default {
         },
         logout() {
             localStorage.removeItem("token");
+            CheckoutDraft.clear();
             window.location.href = "/";
             this.user = null;
         },

@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <label class="label" v-if="label">
+    <div class="sunka-field">
+        <label class="sunka-label" v-if="label">
             <span v-if="label">{{ label }}</span>
             <span v-if="nec" class="nec"> *</span>
         </label>
@@ -10,11 +10,11 @@
                 v-for="a in lista"
                 :key="a.id"
                 :class="[
-                    'radio',
-                    withBorder ? 'border border-gray-300 rounded-xl p-4' : '',
+                    'sunka-choice',
+                    withBorder ? 'border border-sunka-sand p-4' : '',
                 ]"
             >
-                <input v-model="inputModel" type="radio" :value="a.id" />
+                <input v-model="inputModel" type="radio" :value="a.id" :disabled="disabled" />
 
                 <span class="text-left">
                     <template v-if="a.descripcion">
@@ -28,7 +28,7 @@
             </label>
         </div>
 
-        <p v-if="error" class="input-error">
+        <p v-if="error" class="sunka-error">
             {{ error }}
         </p>
     </div>

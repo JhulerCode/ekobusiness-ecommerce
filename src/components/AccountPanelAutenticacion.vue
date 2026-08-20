@@ -162,6 +162,7 @@ import JdInputPassword from "../components/JdInputPassword.vue";
 import JdLoading from "../components/LoadingSpin.vue";
 import JdButton from "../components/JdButton.vue";
 import { urls, post, delet } from "../lib/api.js";
+import { CheckoutDraft } from "../lib/checkout-draft.js";
 
 export default {
     components: {
@@ -356,6 +357,7 @@ export default {
                 this.closeQuestion();
 
                 localStorage.removeItem("token");
+                CheckoutDraft.clear();
                 window.location.href = "/";
                 this.user = null;
             }
