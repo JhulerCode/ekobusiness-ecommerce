@@ -23,7 +23,7 @@
                     </p>
 
                     <a
-                        :href="`/pedido/${a.id}?account=true`"
+                        :href="`/pedidos/${a.id}?account=true`"
                         class="text-sm text-blue-600 hover:underline cursor-pointer"
                     >
                         Ver detalles

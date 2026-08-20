@@ -14,8 +14,6 @@ const res = await get('sistema', {
     ],
 })
 
-console.log('Checkout data:', res.data)
-
 if (res.code == 0) {
     var {
         documentos_identidad,
@@ -31,6 +29,7 @@ if (res.code == 0) {
     description="Completa tus datos de entrega y elige tu método de pago para finalizar tu compra SUNKA."
 >
     <section
+        data-checkout-hero
         class="relative min-h-[480px] w-full overflow-hidden bg-sunka-ink text-sunka-white md:min-h-[430px]"
     >
         <div class="absolute inset-0" aria-hidden="true">
@@ -47,7 +46,7 @@ if (res.code == 0) {
         <div
             class="relative z-10 mx-auto flex min-h-[480px] max-w-7xl items-start px-5 pt-28 md:min-h-[430px] md:items-center md:px-8 md:pt-24"
         >
-            <div class="max-w-2xl">
+            <div class="max-w-2xl" data-checkout-progress>
                 <a
                     href="/tienda"
                     class="mb-6 inline-flex text-xs text-sunka-white/68 transition-colors hover:text-sunka-brass-light"
@@ -68,6 +67,25 @@ if (res.code == 0) {
                     Completa tus datos con tranquilidad. Tu pedido está reservado mientras avanzas.
                 </p>
             </div>
+
+            <div class="hidden max-w-2xl" data-checkout-success>
+                <p
+                    class="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-sunka-brass-light/90"
+                >
+                    Pedido recibido
+                </p>
+                <h1
+                    class="max-w-xl font-heading text-3xl font-semibold leading-[1.05] text-sunka-white md:text-5xl"
+                >
+                    Gracias por elegir SUNKA
+                </h1>
+                <!-- <p
+                    class="mt-6 max-w-lg text-base leading-relaxed text-sunka-white/88 md:text-lg"
+                    data-checkout-success-description
+                >
+                    Recibimos tu pedido correctamente y te enviaremos sus detalles por correo.
+                </p> -->
+            </div>
         </div>
     </section>
 
@@ -82,6 +100,26 @@ if (res.code == 0) {
         />
     </main>
 </BaseLayout>
+
+<script>
+    const progressContent = document.querySelector('[data-checkout-progress]')
+    const successContent = document.querySelector('[data-checkout-success]')
+    const successDescription = document.querySelector('[data-checkout-success-description]')
+
+    window.addEventListener('checkout:success', (event) => {
+        const paymentMethod = event.detail?.paymentMethod
+
+        progressContent?.classList.add('hidden')
+        successContent?.classList.remove('hidden')
+
+        if (successDescription) {
+            successDescription.textContent =
+                paymentMethod === 'yape'
+                    ? 'Recibimos tu pedido y verificaremos el pago realizado por Yape a la brevedad.'
+                    : 'Tu pago fue confirmado y tu pedido ya está siendo preparado con mucho cuidado.'
+        }
+    })
+</script>
 
 <style>
     .checkout-hero-image {

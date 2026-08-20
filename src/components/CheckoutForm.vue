@@ -1,72 +1,50 @@
 <template>
     <section class="checkout-success" v-if="paymentSuccess == true" v-bind="$attrs">
-        <div
-            class="checkout-success__card"
-            v-if="form.pago_metodo == 'tarjeta'"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-20 h-20 text-green-500 mb-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2l4 -4m6 2a9 9 0 1 1 -18 0a9 9 0 0 1 18 0z"
-                />
-            </svg>
+        <article class="checkout-success__card">
+            <div class="checkout-success__icon" aria-hidden="true">✓</div>
 
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">¡Pago confirmado!</h2>
-
-            <p class="text-gray-600 mb-6 max-w-md">
-                Tu pago ha sido procesado exitosamente. En unos momentos recibirás un correo con los
-                detalles de tu compra.
+            <p class="checkout-success__eyebrow">
+                {{ form.pago_metodo === 'yape' ? 'Pedido recibido' : 'Pago confirmado' }}
             </p>
 
-            <div class="flex gap-4">
-                <a href="/" class="button button2"> Ir al inicio </a>
-                <a :href="`/pedido/${form.id}`" class="button button1"> Ver mi pedido </a>
-            </div>
-        </div>
-
-        <div
-            class="checkout-success__card"
-            v-if="form.pago_metodo == 'yape'"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-20 h-20 text-green-500 mb-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2l4 -4m6 2a9 9 0 1 1 -18 0a9 9 0 0 1 18 0z"
-                />
-            </svg>
-
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-                ¡Pedido Nro {{ form.codigo }} recibido!
+            <h2>
+                {{
+                    form.pago_metodo === 'yape'
+                        ? 'Tu pedido fue recibido'
+                        : 'Tu compra está confirmada'
+                }}
             </h2>
 
-            <p class="text-gray-600 mb-6 max-w-md">
-                Hemos recibido tu pedido exitosamente. En unos momentos recibirás un correo con los
-                detalles de tu pedido. <br /><br />
-                Está pendiente de confirmar el pago realizado por Yape, nuestro equipo validará la
-                operación en breve.
+            <p class="checkout-success__lead">
+                {{
+                    form.pago_metodo === 'yape'
+                        ? 'En unos momentos recibirás un correo con todos los detalles de tu pedido.'
+                        : 'Procesamos tu pago correctamente. En unos momentos recibirás un correo con los detalles de tu compra.'
+                }}
             </p>
 
-            <div class="flex gap-4">
-                <a href="/" class="button button2"> Ir al inicio </a>
-                <a :href="`/pedido/${form.id}`" class="button button1"> Ver estado del pedido </a>
+            <div v-if="form.codigo" class="checkout-success__order">
+                <span>Número de pedido</span>
+                <strong>{{ form.codigo }}</strong>
             </div>
-        </div>
+
+            <div v-if="form.pago_metodo === 'yape'" class="checkout-success__notice">
+                <span>Pago por validar</span>
+                <p>
+                    Nuestro equipo verificará el pago realizado por Yape y actualizará el estado de
+                    tu pedido a la brevedad.
+                </p>
+            </div>
+
+            <div class="checkout-success__actions">
+                <a :href="`/pedidos/${form.id}`" class="checkout-success__action is-primary">
+                    {{ form.pago_metodo === 'yape' ? 'Ver estado del pedido' : 'Ver mi pedido' }}
+                </a>
+                <a href="/tienda" class="checkout-success__action is-secondary">
+                    Seguir comprando
+                </a>
+            </div>
+        </article>
     </section>
 
     <section class="checkout-layout" v-else v-bind="$attrs">
@@ -595,7 +573,7 @@
                                 </p>
 
                                 <div
-                                    class="flex flex-col items-center gap-4 md:flex-row md:justify-between bg-[#742284] rounded-md p-4"
+                                    class="flex flex-col items-center gap-4 md:flex-row md:justify-center bg-[#742284] rounded-md p-4"
                                 >
                                     <img
                                         :src="qrYapeUrl"
@@ -846,6 +824,7 @@ export default {
                 comprobante_tipo: '03',
 
                 pago_metodo: 'tarjeta',
+                paymentMethodToken: 'nueva',
             },
             errors: {},
             items: [],
@@ -869,10 +848,12 @@ export default {
         summaryActionText() {
             if (this.step === 1) return 'Continuar: elegir entrega'
             if (this.step === 2) return 'Continuar: elegir pago'
+            if (this.form.pago_metodo === 'yape') return 'Procesar compra'
             return 'Ir a pagar'
         },
         summaryActionMobileText() {
-            return this.step === 3 ? 'Ir a pagar' : 'Continuar'
+            if (this.step !== 3) return 'Continuar'
+            return this.form.pago_metodo === 'yape' ? 'Procesar compra' : 'Ir a pagar'
         },
         summaryActionLoading() {
             if (this.step === 1) return this.loadingContinuarEntrega
@@ -895,6 +876,15 @@ export default {
         },
         step() {
             this.scheduleDraftSave()
+        },
+        paymentSuccess(value) {
+            if (!value) return
+
+            window.dispatchEvent(
+                new CustomEvent('checkout:success', {
+                    detail: { paymentMethod: this.form.pago_metodo },
+                }),
+            )
         },
     },
     async mounted() {
@@ -1179,6 +1169,7 @@ export default {
                 }
             }
 
+            this.selectDefaultPaymentMethod()
             this.step = 3
             this.scrollToForm('seccionForm3')
         },
@@ -1410,7 +1401,46 @@ export default {
 
             if (res.code == 0) {
                 this.user.wallet = res.data.tokens
+                this.selectDefaultPaymentMethod()
             }
+        },
+
+        selectDefaultPaymentMethod() {
+            if (!this.user.id) {
+                this.form.paymentMethodToken = 'nueva'
+                return
+            }
+
+            const cards = this.user.wallet || []
+            const selectedCardExists = cards.some(
+                (card) => card.paymentMethodToken === this.form.paymentMethodToken,
+            )
+
+            if (selectedCardExists) return
+
+            if (cards.length === 1) {
+                this.form.paymentMethodToken = cards[0].paymentMethodToken
+                return
+            }
+
+            const favoriteCard = cards.find((card) => {
+                const favorite =
+                    card.favorite ??
+                    card.isFavorite ??
+                    card.is_favorite ??
+                    card.default ??
+                    card.isDefault
+
+                return (
+                    favorite === true ||
+                    favorite === 1 ||
+                    favorite === '1' ||
+                    favorite === 'true'
+                )
+            })
+
+            this.form.paymentMethodToken =
+                favoriteCard?.paymentMethodToken || cards[0]?.paymentMethodToken || 'nueva'
         },
 
         getCardBrandIcon(brand) {
@@ -1795,22 +1825,194 @@ export default {
 }
 
 .checkout-success {
-    width: min(100%, 920px);
+    width: min(100%, 840px);
     margin: 0 auto;
-    padding: 35px 0 80px;
+    padding: 42px 0 88px;
 }
 
 .checkout-success__card {
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 52px 30px;
+    padding: 58px 64px 54px;
     border: 1px solid var(--sunka-sand);
     border-radius: 18px;
     background: var(--sunka-white);
+    color: var(--sunka-ink);
     text-align: center;
-    box-shadow: 0 18px 38px rgba(35, 29, 24, 0.08);
+    box-shadow: 0 22px 50px rgba(35, 29, 24, 0.09);
+}
+
+.checkout-success__card::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 4px;
+    background: var(--sunka-brass);
+    content: '';
+}
+
+.checkout-success__card::after {
+    position: absolute;
+    top: -120px;
+    right: -110px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: rgba(184, 138, 61, 0.06);
+    content: '';
+}
+
+.checkout-success__icon {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 60px;
+    height: 60px;
+    place-items: center;
+    margin-bottom: 22px;
+    border-radius: 50%;
+    background: var(--sunka-forest);
+    color: var(--sunka-brass-light);
+    font-size: 27px;
+    box-shadow: 0 0 0 8px rgba(22, 62, 40, 0.07);
+}
+
+.checkout-success__eyebrow {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 10px;
+    color: var(--sunka-brass);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.checkout-success__card h2 {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: var(--sunka-forest);
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 650;
+    line-height: 1.1;
+}
+
+.checkout-success__lead {
+    position: relative;
+    z-index: 1;
+    max-width: 540px;
+    margin: 18px 0 0;
+    color: var(--sunka-stone);
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.checkout-success__order {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 4px;
+    width: min(100%, 520px);
+    margin-top: 28px;
+    padding: 16px 20px;
+    border: 1px solid var(--sunka-sand);
+    border-radius: 10px;
+    background: var(--sunka-cream);
+}
+
+.checkout-success__order span {
+    color: var(--sunka-stone);
+    font-size: 9px;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.checkout-success__order strong {
+    overflow-wrap: anywhere;
+    color: var(--sunka-forest);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.checkout-success__notice {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 520px);
+    margin-top: 16px;
+    padding: 16px 18px;
+    border-left: 3px solid var(--sunka-brass);
+    border-radius: 0 9px 9px 0;
+    background: rgba(184, 138, 61, 0.08);
+    text-align: left;
+}
+
+.checkout-success__notice span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--sunka-brass);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.checkout-success__notice p {
+    margin: 0;
+    color: var(--sunka-stone);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.checkout-success__actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.checkout-success__action {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+    border-radius: 8px;
+    padding: 0 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    transition: 0.18s ease;
+}
+
+.checkout-success__action.is-primary {
+    border-color: var(--sunka-brass);
+    background: var(--sunka-brass);
+    color: var(--sunka-white);
+}
+
+.checkout-success__action.is-primary:hover {
+    background: #c69a50;
+}
+
+.checkout-success__action.is-secondary {
+    border-color: var(--sunka-sand);
+    background: transparent;
+    color: var(--sunka-forest);
+}
+
+.checkout-success__action.is-secondary:hover {
+    border-color: var(--sunka-forest);
 }
 
 .checkout-card :deep(.button) {
@@ -1969,7 +2171,16 @@ export default {
     }
 
     .checkout-success__card {
-        padding: 38px 20px;
+        padding: 42px 20px 36px;
+    }
+
+    .checkout-success__actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .checkout-success__action {
+        width: 100%;
     }
 }
 </style>

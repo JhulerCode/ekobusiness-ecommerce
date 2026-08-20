@@ -1,0 +1,17 @@
+---
+const { label, wide = false, breakable = false } = Astro.props
+---
+
+<div class:list={[wide && 'sm:col-span-2']}>
+    <dt class="text-[9px] font-semibold uppercase tracking-[0.12em] text-sunka-stone">
+        {label}
+    </dt>
+    <dd
+        class:list={[
+            'mt-1.5 text-sm leading-relaxed text-sunka-ink',
+            breakable && 'break-all',
+        ]}
+    >
+        <slot />
+    </dd>
+</div>

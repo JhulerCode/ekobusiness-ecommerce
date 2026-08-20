@@ -78,7 +78,7 @@ export default {
                 this.error = res.msg;
             } else if (res.code == 0) {
                 if (res.data.length > 0) {
-                    window.location.href = `/pedido/${res.data[0].id}`;
+                    window.location.href = `/pedidos/${res.data[0].id}`;
                 } else {
                     this.error = "El pedido no existe.";
                 }

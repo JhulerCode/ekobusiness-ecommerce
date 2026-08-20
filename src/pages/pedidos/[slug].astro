@@ -1,0 +1,379 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+// import Beneficios from '@/components/home/Beneficios.astro'
+import OrderDetail from '@/components/pedidos/OrderDetail.astro'
+import OrderSectionTitle from '@/components/pedidos/OrderSectionTitle.astro'
+import GhostIcon from '@/assets/icons/ghost.vue'
+import { urls, get } from '@/lib/api.js'
+import { redondear, formatDate, formatDateTime } from '@/lib/mine.js'
+
+const params = Astro.url.searchParams
+const isAccount = params.get('account') === 'true'
+const { slug } = Astro.params
+
+const orderQuery = {
+    incl: ['socio1', 'moneda1', 'socio_pedido_items', 'createdBy1'],
+    iccl: {
+        socio1: { cols: ['doc_numero', 'contactos', 'direcciones', 'pago_condicion'] },
+        socio_pedido_items: { incl: ['articulo1'] },
+        createdBy1: { cols: ['cargo', 'telefono'] },
+    },
+}
+
+const orderResponse = await get(
+    `${urls.socio_pedidos}/uno/${slug}?qry=${encodeURIComponent(JSON.stringify(orderQuery))}`,
+)
+const pedido = orderResponse.code === 0 ? orderResponse.data || null : null
+let etapas = []
+
+if (pedido) {
+    const systemResponse = await get('sistema', {
+        qry: [
+            'socio_pedidos_etapas',
+            'entrega_tipos',
+            'pago_metodos',
+            'comprobante_tipos',
+        ],
+    })
+
+    if (systemResponse.code === 0) {
+        etapas = (systemResponse.data.socio_pedidos_etapas || []).map((etapa) => ({
+            ...etapa,
+            fecha: (pedido.etapas || []).find((item) => item.id == etapa.id)?.fecha || null,
+        }))
+    }
+}
+
+const orderState = pedido?.estado1?.nombre || ''
+const lastCompletedStageIndex = etapas.reduce(
+    (lastIndex, etapa, index) => (etapa.fecha ? index : lastIndex),
+    -1,
+)
+const orderItems = pedido?.socio_pedido_items || []
+const currencySymbol = pedido?.moneda1?.simbolo || 'S/ '
+const orderTitle = pedido ? `Pedido ${pedido.codigo} | SUNKA Herbal Tea` : 'Pedido no encontrado'
+---
+
+<BaseLayout title={orderTitle}>
+    {
+        pedido ? (
+            <>
+                <section class="relative min-h-[350px] overflow-hidden bg-sunka-forest text-sunka-white">
+                    <div
+                        class="absolute -right-24 top-16 h-80 w-80 rounded-full border border-sunka-brass/15"
+                        aria-hidden="true"
+                    />
+                    <div
+                        class="absolute -right-4 top-36 h-44 w-44 rounded-full bg-sunka-brass/5"
+                        aria-hidden="true"
+                    />
+                    <div class="relative mx-auto flex min-h-[350px] max-w-7xl items-end px-5 pb-20 pt-32 md:px-8 md:pb-24">
+                        <div class="max-w-3xl">
+                            <a
+                                href={isAccount ? '/account#pedidos' : '/consulta-pedido'}
+                                class="mb-7 inline-flex items-center gap-2 text-[11px] text-sunka-white/60 transition-colors hover:text-sunka-brass-light"
+                            >
+                                <span aria-hidden="true">←</span>
+                                {isAccount ? 'Volver a mis pedidos' : 'Consultar otro pedido'}
+                            </a>
+
+                            <div class="mb-4 flex flex-wrap items-center gap-3">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                                    Seguimiento de compra
+                                </p>
+                                <span
+                                    class:list={[
+                                        'rounded-full border px-3 py-1 text-[9px] font-bold uppercase tracking-[0.12em]',
+                                        orderState === 'CERRADO'
+                                            ? 'border-sunka-olive/50 bg-sunka-olive/20 text-sunka-white'
+                                            : 'border-sunka-brass/40 bg-sunka-brass/10 text-sunka-brass-light',
+                                    ]}
+                                >
+                                    {orderState}
+                                </span>
+                            </div>
+
+                            <h1 class="font-heading text-3xl font-semibold leading-tight md:text-5xl">
+                                Pedido <span class="break-all text-sunka-brass-light">#{pedido.codigo}</span>
+                            </h1>
+                            <p class="mt-5 max-w-xl text-sm leading-relaxed text-sunka-white/65 md:text-base">
+                                Revisa los detalles de tu compra y acompaña cada etapa hasta recibir
+                                tu ritual SUNKA.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <main class="bg-sunka-cream pb-20">
+                    <div class="relative z-10 mx-auto -mt-10 max-w-7xl px-5 md:px-8">
+                        <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+                            <section class="overflow-hidden rounded-2xl border border-sunka-sand bg-sunka-white shadow-[0_18px_45px_rgba(35,29,24,0.07)]">
+                                <header class="flex flex-col gap-4 border-b border-sunka-sand px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-9">
+                                    <div>
+                                        <p class="text-[9px] font-semibold uppercase tracking-[0.18em] text-sunka-brass">
+                                            Resumen del pedido
+                                        </p>
+                                        <h2 class="mt-2 font-heading text-2xl font-semibold text-sunka-forest">
+                                            Detalles de tu compra
+                                        </h2>
+                                    </div>
+                                    <div class="sm:text-right">
+                                        <span class="block text-[9px] uppercase tracking-[0.14em] text-sunka-stone">
+                                            Fecha del pedido
+                                        </span>
+                                        <strong class="mt-1 block text-sm font-semibold text-sunka-ink">
+                                            {formatDate(pedido.fecha)}
+                                        </strong>
+                                    </div>
+                                </header>
+
+                                <div class="divide-y divide-sunka-sand px-6 md:px-9">
+                                    <section class="py-7">
+                                        <OrderSectionTitle number="01" title="Información de contacto" />
+                                        <dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                                            <OrderDetail label="Cliente">
+                                                {pedido.socio_datos?.nombres}{' '}
+                                                {pedido.socio_datos?.apellidos}
+                                            </OrderDetail>
+                                            <OrderDetail label="Correo" breakable>
+                                                {pedido.socio_datos?.correo}
+                                            </OrderDetail>
+                                            <OrderDetail label="Documento">
+                                                {pedido.socio_datos?.doc_tipo1?.nombre}{' '}
+                                                {pedido.socio_datos?.doc_numero}
+                                            </OrderDetail>
+                                            <OrderDetail label="Teléfono">
+                                                {pedido.socio_datos?.telefono}
+                                            </OrderDetail>
+                                        </dl>
+                                    </section>
+
+                                    <section class="py-7">
+                                        <OrderSectionTitle number="02" title="Entrega" />
+                                        <dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                                            <OrderDetail label="Modalidad">
+                                                {pedido.entrega_tipo1?.nombre}
+                                            </OrderDetail>
+                                            {pedido.entrega_tipo === 'envio' ? (
+                                                <>
+                                                    <OrderDetail label="Costo de envío">
+                                                        {currencySymbol}
+                                                        {redondear(pedido.entrega_costo || 0)}
+                                                    </OrderDetail>
+                                                    <OrderDetail label="Dirección" wide>
+                                                        {pedido.direccion_entrega}
+                                                        {pedido.entrega_direccion_datos?.numero &&
+                                                            ` · Nro. ${pedido.entrega_direccion_datos.numero}`}
+                                                        {pedido.entrega_direccion_datos?.piso &&
+                                                            ` · Piso ${pedido.entrega_direccion_datos.piso}`}
+                                                    </OrderDetail>
+                                                    <OrderDetail label="Distrito">
+                                                        {pedido.entrega_direccion_datos?.ubigeo1?.nombre}
+                                                    </OrderDetail>
+                                                    <OrderDetail label="Referencia">
+                                                        {pedido.entrega_direccion_datos?.referencia || '—'}
+                                                    </OrderDetail>
+                                                </>
+                                            ) : (
+                                                <OrderDetail label="Fecha de retiro">
+                                                    {formatDate(pedido.fecha_entrega)}
+                                                </OrderDetail>
+                                            )}
+                                        </dl>
+                                    </section>
+
+                                    <section class="py-7">
+                                        <OrderSectionTitle number="03" title="Pago y comprobante" />
+                                        <dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                                            <OrderDetail label="Comprobante">
+                                                {pedido.comprobante_tipo1?.nombre}
+                                            </OrderDetail>
+                                            <OrderDetail label="Método de pago">
+                                                {pedido.pago_metodo1?.nombre}
+                                            </OrderDetail>
+                                            {pedido.comprobante_tipo === '01' && (
+                                                <>
+                                                    <OrderDetail label="RUC">
+                                                        {pedido.comprobante_ruc}
+                                                    </OrderDetail>
+                                                    <OrderDetail label="Razón social">
+                                                        {pedido.comprobante_razon_social}
+                                                    </OrderDetail>
+                                                </>
+                                            )}
+                                        </dl>
+                                    </section>
+
+                                    <section class="py-7">
+                                        <OrderSectionTitle number="04" title="Productos" />
+                                        <div class="divide-y divide-sunka-sand">
+                                            {orderItems.map((item) => {
+                                                const imageUrl =
+                                                    item.articulo1?.ecommerce_data?.fotos?.[0]?.url
+
+                                                return (
+                                                    <article class="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
+                                                        {imageUrl ? (
+                                                            <img
+                                                                src={imageUrl}
+                                                                loading="lazy"
+                                                                alt={item.nombre || 'Producto SUNKA'}
+                                                                class="h-20 w-20 shrink-0 rounded-xl border border-sunka-sand bg-sunka-cream object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div class="grid h-20 w-20 shrink-0 place-items-center rounded-xl border border-sunka-sand bg-sunka-cream text-[10px] font-bold tracking-[0.12em] text-sunka-brass">
+                                                                SUNKA
+                                                            </div>
+                                                        )}
+                                                        <div class="min-w-0 flex-1">
+                                                            <h4 class="font-heading text-base font-semibold text-sunka-ink">
+                                                                {item.nombre}
+                                                            </h4>
+                                                            <p class="mt-1 text-[11px] text-sunka-stone">
+                                                                Cantidad: {item.cantidad}
+                                                            </p>
+                                                        </div>
+                                                        <strong class="shrink-0 text-sm font-semibold text-sunka-forest">
+                                                            S/ {(item.pu * item.cantidad).toFixed(2)}
+                                                        </strong>
+                                                    </article>
+                                                )
+                                            })}
+                                        </div>
+
+                                        <div class="mt-7 flex items-center justify-between rounded-xl bg-sunka-forest px-5 py-4 text-sunka-white">
+                                            <div>
+                                                <span class="block text-[9px] uppercase tracking-[0.14em] text-sunka-white/55">
+                                                    Total del pedido
+                                                </span>
+                                                <p class="mt-1 text-[11px] text-sunka-white/65">
+                                                    Incluye costo de envío
+                                                </p>
+                                            </div>
+                                            <strong class="font-heading text-2xl font-semibold text-sunka-brass-light">
+                                                {currencySymbol}
+                                                {redondear(pedido.monto)}
+                                            </strong>
+                                        </div>
+                                    </section>
+                                </div>
+                            </section>
+
+                            <div class="lg:sticky lg:top-28">
+                                <aside class="overflow-hidden rounded-2xl border border-sunka-sand bg-sunka-white shadow-[0_18px_45px_rgba(35,29,24,0.07)]">
+                                    <header class="border-b border-sunka-sand px-6 py-6">
+                                        <p class="text-[9px] font-semibold uppercase tracking-[0.18em] text-sunka-brass">
+                                            Estado actual
+                                        </p>
+                                        <h2 class="mt-2 font-heading text-2xl font-semibold text-sunka-forest">
+                                            Seguimiento
+                                        </h2>
+                                    </header>
+
+                                    <ol class="px-6 py-7">
+                                        {etapas.map((etapa, index) => {
+                                            const completed = Boolean(etapa.fecha)
+                                            const current = index === lastCompletedStageIndex
+
+                                            return (
+                                                <li class="relative grid grid-cols-[28px_1fr] gap-3 pb-8 last:pb-0">
+                                                    {index < etapas.length - 1 && (
+                                                        <span
+                                                            class:list={[
+                                                                'absolute left-[6px] top-4 h-[calc(100%-4px)] w-px',
+                                                                completed
+                                                                    ? 'bg-sunka-brass/45'
+                                                                    : 'bg-sunka-sand',
+                                                            ]}
+                                                            aria-hidden="true"
+                                                        />
+                                                    )}
+                                                    <span
+                                                        class:list={[
+                                                            'relative z-10 mt-1 block h-[13px] w-[13px] rounded-full border-2',
+                                                            completed
+                                                                ? 'border-sunka-brass bg-sunka-brass shadow-[0_0_0_5px_rgba(184,138,61,0.1)]'
+                                                                : 'border-sunka-sand bg-sunka-white',
+                                                        ]}
+                                                        aria-hidden="true"
+                                                    />
+                                                    <div>
+                                                        <div class="flex items-center justify-between gap-3">
+                                                            <h3
+                                                                class:list={[
+                                                                    'text-sm font-semibold',
+                                                                    completed
+                                                                        ? 'text-sunka-forest'
+                                                                        : 'text-sunka-stone',
+                                                                ]}
+                                                            >
+                                                                {etapa.nombre}
+                                                            </h3>
+                                                            {current && (
+                                                                <span class="rounded-full bg-sunka-brass/10 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.1em] text-sunka-brass">
+                                                                    Actual
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        {completed && (
+                                                            <>
+                                                                <p class="mt-2 text-[11px] leading-relaxed text-sunka-ink/60">
+                                                                    {etapa.descripcion}
+                                                                </p>
+                                                                <time class="mt-2 block text-[10px] text-sunka-stone">
+                                                                    {formatDateTime(etapa.fecha)}
+                                                                </time>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </li>
+                                            )
+                                        })}
+                                    </ol>
+                                </aside>
+
+                                <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                                    <a
+                                        href={isAccount ? '/account#pedidos' : '/consulta-pedido'}
+                                        class="inline-flex min-h-12 items-center justify-center rounded-lg border border-sunka-sand bg-sunka-white px-5 text-[11px] font-bold text-sunka-forest transition-colors hover:border-sunka-forest"
+                                    >
+                                        {isAccount ? 'Ver mis pedidos' : 'Consultar otro pedido'}
+                                    </a>
+                                    <a
+                                        href="/tienda"
+                                        class="inline-flex min-h-12 items-center justify-center rounded-lg border border-sunka-brass bg-sunka-brass px-5 text-[11px] font-bold text-sunka-white transition-colors hover:bg-[#c69a50]"
+                                    >
+                                        Volver a la tienda
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </>
+        ) : (
+            <main class="grid min-h-[620px] place-items-center bg-sunka-cream px-5 pb-20 pt-36 text-center">
+                <div class="max-w-md">
+                    <GhostIcon class="mx-auto h-28 w-28 text-sunka-stone/60" />
+                    <p class="mt-6 text-[10px] font-semibold uppercase tracking-[0.18em] text-sunka-brass">
+                        Pedido no encontrado
+                    </p>
+                    <h1 class="mt-3 font-heading text-3xl font-semibold text-sunka-forest">
+                        No encontramos este pedido
+                    </h1>
+                    <p class="mt-4 text-sm leading-relaxed text-sunka-stone">
+                        Verifica el enlace o realiza una nueva consulta con los datos de tu compra.
+                    </p>
+                    <a
+                        href="/consulta-pedido"
+                        class="mt-7 inline-flex min-h-12 items-center justify-center rounded-lg bg-sunka-brass px-6 text-[11px] font-bold text-sunka-white"
+                    >
+                        Consultar un pedido
+                    </a>
+                </div>
+            </main>
+        )
+    }
+
+    <!-- <Beneficios /> -->
+</BaseLayout>
