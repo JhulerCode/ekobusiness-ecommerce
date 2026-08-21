@@ -2,17 +2,15 @@ export const host = import.meta.env.PUBLIC_API_URL
 
 export const urls = {
     account: `${host}/ecommerce/account`,
-    arco: `${host}/ecommerce/arco`,
     auth: `${host}/ecommerce/auth`,
-    categorias: `${host}/ecommerce/categorias`,
-    insumos: `${host}/ecommerce/insumos`,
+    productos: `${host}/ecommerce/productos`,
+    arco: `${host}/ecommerce/arco`,
     izipay: `${host}/ecommerce/izipay`,
     libro_reclamos: `${host}/ecommerce/libro-reclamos`,
-    lineas: `${host}/ecommerce/lineas`,
-    newsletter: `${host}/ecommerce/newsletter`,
-    productos: `${host}/ecommerce/productos`,
-    sistema: `${host}/ecommerce/sistema`,
     socio_pedidos: `${host}/ecommerce/pedidos`,
+    newsletter: `${host}/ecommerce/newsletter`,
+
+    sistema: `${host}/ecommerce/sistema`,
     ubigeos: `${host}/ecommerce/ubigeos`,
 }
 
@@ -202,23 +200,6 @@ export async function delet(endpoint, item, ms) {
 }
 
 
-
-export function formatLineas(datos = []) {
-    return datos.map((a) => ({
-        ...a,
-        foto: a.fotos && a.fotos.length > 0 ? a.fotos[0].url : null,
-        video: a.fotos && a.fotos.length > 0 ? a.fotos[1].url : null,
-        slug: a.nombre.toLowerCase().replace(/\s+/g, "-"),
-    }))
-}
-
-export function formatCategorias(datos = []) {
-    return datos.map((a) => ({
-        ...a,
-        foto: a.fotos && a.fotos.length > 0 ? a.fotos[0].url : null,
-        slug: a.nombre.toLowerCase().replace(/\s+/g, "-"),
-    }))
-}
 
 export function formatProductos(datos = []) {
     return datos.map((prod) => {
