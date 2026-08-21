@@ -37,7 +37,7 @@
             </div>
 
             <div class="checkout-success__actions">
-                <a :href="`/pedidos/${form.id}`" class="checkout-success__action is-primary">
+                <a :href="orderDetailUrl" class="checkout-success__action is-primary">
                     {{ form.pago_metodo === 'yape' ? 'Ver estado del pedido' : 'Ver mi pedido' }}
                 </a>
                 <a href="/tienda" class="checkout-success__action is-secondary">
@@ -836,6 +836,10 @@ export default {
         }
     },
     computed: {
+        orderDetailUrl() {
+            if (!this.form.id || !this.form.access_token) return '/consulta-pedido'
+            return `/pedidos/${this.form.id}?access_token=${encodeURIComponent(this.form.access_token)}`
+        },
         subtotal() {
             return this.items.reduce((acc, item) => acc + item.pu * item.cantidad, 0)
         },
@@ -1223,12 +1227,16 @@ export default {
             const send = {
                 monto: this.total.toFixed(2),
                 correo: this.form.socio_datos.correo,
-                user_id: this.user.id,
                 paymentMethodToken: this.form.paymentMethodToken,
             }
 
             this.loadingPagar = true
-            const res = await post(`${urls.izipay}/create-payment`, send)
+            const res = await post(
+                `${urls.izipay}/create-payment`,
+                send,
+                undefined,
+                localStorage.getItem('token'),
+            )
             this.loadingPagar = false
 
             if (res.code == 1) {
@@ -1253,10 +1261,15 @@ export default {
                 await KR.onSubmit(async (paymentData) => {
                     this.shapeDatos()
 
-                    const res1 = await post(`${urls.izipay}/validate-payment`, {
-                        paymentData,
-                        socio_pedido: this.form,
-                    })
+                    const res1 = await post(
+                        `${urls.izipay}/validate-payment`,
+                        {
+                            paymentData,
+                            socio_pedido: this.form,
+                        },
+                        undefined,
+                        localStorage.getItem('token'),
+                    )
 
                     if (res1.code > 0) {
                         KR.closePopin()
@@ -1264,7 +1277,8 @@ export default {
                     } else if (res1.code == 0) {
                         this.paymentSuccess = true
                         this.form.id = res1.data.id
-                        this.form.codigo = res.data.codigo
+                        this.form.access_token = res1.data.access_token
+                        this.form.codigo = res1.data.codigo
                         Cart.clear()
                         CheckoutDraft.clear()
                         KR.closePopin()
@@ -1287,7 +1301,12 @@ export default {
             this.shapeDatos()
 
             this.loadingPagar = true
-            const res = await post('socio_pedidos', this.form)
+            const res = await post(
+                'socio_pedidos',
+                this.form,
+                undefined,
+                localStorage.getItem('token'),
+            )
             this.loadingPagar = false
 
             if (res.code < 0) {
@@ -1298,6 +1317,7 @@ export default {
             } else if (res.code == 0) {
                 this.paymentSuccess = true
                 this.form.id = res.data.id
+                this.form.access_token = res.data.access_token
                 this.form.codigo = res.data.codigo
                 Cart.clear()
                 CheckoutDraft.clear()

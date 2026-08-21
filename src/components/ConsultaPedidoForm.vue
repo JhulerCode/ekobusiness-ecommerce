@@ -6,8 +6,7 @@
             <p>Encuentra tu compra</p>
             <h2>Consulta tu pedido</h2>
             <span>
-                Ingresa el número que recibiste en el correo de confirmación para ver su estado y
-                todos los detalles.
+                Ingresa el número del pedido y el código de seis dígitos que recibiste por correo.
             </span>
         </header>
 
@@ -21,7 +20,16 @@
                 maxlength="30"
             />
 
-            <p class="order-lookup__hint">Está formado por los dígitos indicados en tu pedido.</p>
+            <JdInput
+                label="Código de consulta"
+                :nec="true"
+                v-model="codigoConsulta"
+                placeholder="Ejemplo: 482193"
+                :error="codigoConsultaError"
+                maxlength="6"
+            />
+
+            <p class="order-lookup__hint">Encontrarás ambos códigos en el correo de confirmación.</p>
 
             <button type="submit" class="order-lookup__button" :disabled="loading">
                 <LoadingSpin
@@ -33,6 +41,29 @@
                 <span>{{ loading ? 'Buscando pedido' : 'Consultar pedido' }}</span>
                 <span v-if="!loading" aria-hidden="true">→</span>
             </button>
+
+            <button
+                type="button"
+                class="order-lookup__resend-toggle"
+                @click="showResend = !showResend"
+            >
+                No tengo mi código de consulta
+            </button>
+
+            <div v-if="showResend" class="order-lookup__resend">
+                <JdInput
+                    label="Correo de la compra"
+                    type="email"
+                    v-model="correo"
+                    placeholder="tu@correo.com"
+                    :error="correoError"
+                    maxlength="254"
+                />
+                <button type="button" :disabled="resendLoading" @click="reenviarCodigo">
+                    {{ resendLoading ? 'Enviando' : 'Enviar un código nuevo' }}
+                </button>
+                <p v-if="resendMessage">{{ resendMessage }}</p>
+            </div>
         </form>
 
         <footer>
@@ -49,7 +80,7 @@
 <script>
 import JdInput from './JdInput.vue'
 import LoadingSpin from './LoadingSpin.vue'
-import { get } from '../lib/api.js'
+import { post, urls } from '../lib/api.js'
 
 export default {
     components: {
@@ -62,39 +93,74 @@ export default {
     data() {
         return {
             codigo: '',
+            codigoConsulta: '',
+            correo: '',
             error: '',
+            codigoConsultaError: '',
+            correoError: '',
             loading: false,
+            resendLoading: false,
+            resendMessage: '',
+            showResend: false,
         }
     },
     methods: {
         async consultarPedido() {
             this.error = ''
+            this.codigoConsultaError = ''
             if (!this.codigo.trim()) {
                 this.error = 'Por favor, ingresa un número de pedido.'
-                return
             }
-
-            const qry = {
-                fltr: { codigo: { op: 'Es', val: this.codigo.trim() } },
-                cols: ['codigo'],
+            if (!/^\d{6}$/.test(this.codigoConsulta.trim())) {
+                this.codigoConsultaError = 'Ingresa el código de seis dígitos.'
             }
+            if (this.error || this.codigoConsultaError) return
 
             this.loading = true
-            const res = await get('socio_pedidos', { qry })
+            const res = await post(
+                `${urls.socio_pedidos}/consulta`,
+                {
+                    codigo: this.codigo.trim(),
+                    codigo_consulta: this.codigoConsulta.trim(),
+                },
+                false,
+            )
             this.loading = false
 
             if (res.code < 0) {
                 this.error = 'Algo salió mal.'
-            }
-            if (res.code > 0) {
+            } else if (res.code > 0) {
                 this.error = res.msg
             } else if (res.code == 0) {
-                if (res.data.length > 0) {
-                    window.location.href = `/pedidos/${res.data[0].id}`
-                } else {
-                    this.error = 'El pedido no existe.'
-                }
+                const accessToken = encodeURIComponent(res.data.access_token)
+                window.location.href = `/pedidos/${res.data.id}?access_token=${accessToken}`
             }
+        },
+        async reenviarCodigo() {
+            this.error = ''
+            this.correoError = ''
+            this.resendMessage = ''
+
+            if (!this.codigo.trim()) {
+                this.error = 'Por favor, ingresa un número de pedido.'
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.correo.trim())) {
+                this.correoError = 'Ingresa el correo utilizado en la compra.'
+            }
+            if (this.error || this.correoError) return
+
+            this.resendLoading = true
+            const res = await post(
+                `${urls.socio_pedidos}/consulta/reenviar`,
+                { codigo: this.codigo.trim(), correo: this.correo.trim() },
+                false,
+            )
+            this.resendLoading = false
+
+            this.resendMessage =
+                res.code === 0
+                    ? res.msg
+                    : res.msg || 'No se pudo procesar la solicitud. Inténtalo más tarde.'
         },
     },
 }
@@ -188,6 +254,10 @@ export default {
     margin-top: 26px;
 }
 
+.order-lookup__form :deep(.sunka-field + .sunka-field) {
+    margin-top: 16px;
+}
+
 .order-lookup__hint {
     margin: 8px 0 0;
     color: var(--sunka-stone);
@@ -219,6 +289,47 @@ export default {
 .order-lookup__button:disabled {
     cursor: not-allowed;
     opacity: 0.65;
+}
+
+.order-lookup__resend-toggle {
+    display: block;
+    margin: 15px auto 0;
+    color: var(--sunka-brass);
+    font-size: 10px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.order-lookup__resend {
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid var(--sunka-sand);
+    border-radius: 10px;
+    background: var(--sunka-cream);
+}
+
+.order-lookup__resend button {
+    width: 100%;
+    min-height: 42px;
+    margin-top: 12px;
+    border-radius: 8px;
+    background: var(--sunka-forest);
+    color: var(--sunka-white);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.order-lookup__resend button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.order-lookup__resend > p {
+    margin: 10px 0 0;
+    color: var(--sunka-stone);
+    font-size: 10px;
+    line-height: 1.5;
 }
 
 .order-lookup footer {

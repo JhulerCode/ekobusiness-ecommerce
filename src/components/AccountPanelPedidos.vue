@@ -22,12 +22,14 @@
                         {{ a.entrega_tipo1.nombre }} | {{ a.pago_metodo1.nombre }}
                     </p>
 
-                    <a
-                        :href="`/pedidos/${a.id}?account=true`"
+                    <button
+                        type="button"
+                        :disabled="openingOrderId === a.id"
+                        @click="openPedido(a.id)"
                         class="text-sm text-blue-600 hover:underline cursor-pointer"
                     >
-                        Ver detalles
-                    </a>
+                        {{ openingOrderId === a.id ? 'Abriendo...' : 'Ver detalles' }}
+                    </button>
                 </div>
 
                 <div class="flex flex-col text-right">
@@ -52,13 +54,15 @@
         <div v-else class="text-gray-600 text-center">
             <p>No tienes pedidos registrados.</p>
         </div>
+
+        <p v-if="error" class="mt-4 text-sm text-red-700">{{ error }}</p>
     </div>
 </template>
 
 <script>
 import JdButton from "../components/JdButton.vue";
 
-import { get } from "../lib/api.js";
+import { get, post, urls } from "../lib/api.js";
 
 export default {
     components: {
@@ -71,6 +75,8 @@ export default {
     data() {
         return {
             loading: false,
+            openingOrderId: null,
+            error: '',
         };
     },
     mounted() {
@@ -80,28 +86,32 @@ export default {
     },
     methods: {
         async loadPedidos() {
-            const qry = {
-                cols: [
-                    "fecha",
-                    "codigo",
-                    "pago_metodo",
-                    "entrega_tipo",
-                    "monto",
-                    "moneda",
-                    "estado",
-                ],
-                fltr: {
-                    socio: { op: "Es", val: this.user.id },
-                },
-            };
-
             this.loading = true;
-            const res = await get("socio_pedidos", { qry }, localStorage.getItem("token"));
+            const res = await get("socio_pedidos", {}, localStorage.getItem("token"));
             this.loading = false;
 
             if (res.code !== 0) return;
 
             this.user.pedidos = res.data;
+        },
+        async openPedido(id) {
+            this.error = ''
+            this.openingOrderId = id
+            const res = await post(
+                `${urls.socio_pedidos}/${id}/access`,
+                {},
+                false,
+                localStorage.getItem('token'),
+            )
+            this.openingOrderId = null
+
+            if (res.code !== 0) {
+                this.error = res.msg || 'No se pudo abrir el pedido.'
+                return
+            }
+
+            const accessToken = encodeURIComponent(res.data.access_token)
+            window.location.href = `/pedidos/${id}?account=true&access_token=${accessToken}`
         },
     },
 };

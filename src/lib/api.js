@@ -77,28 +77,33 @@ export async function get(endpoint, params = {}, user_token) {
     }
 
     const res = await response.json()
+    const responseMetadata = {
+        http_status: response.status,
+        retry_after: response.headers.get('retry-after'),
+        rate_limit_reset: response.headers.get('ratelimit-reset'),
+    }
 
     if (response.status == 401) {
-        localStorage.removeItem('token')
+        if (typeof localStorage !== 'undefined') localStorage.removeItem('token')
         jmsg('error', res.msg)
-        return { code: 401, msg: res.msg }
+        return { code: 401, msg: res.msg, ...responseMetadata }
     }
 
     if (res.code == -1) jmsg('error', 'Algo salió mal')
 
     if (res.code > 0) jmsg('error', res.msg)
 
-    return res
+    return { ...res, ...responseMetadata }
 }
 
-export async function post(endpoint, item, ms) {
+export async function post(endpoint, item, ms, userToken) {
     const link = endpoint.includes('http') ? endpoint : urls[endpoint]
     let response
 
     try {
         response = await fetch(link, {
             method: 'POST',
-            headers: setHeaders(item, item.user_token),
+            headers: setHeaders(item, userToken),
             body: item.is_form_data ? setFormData(item) : JSON.stringify(item),
         })
     } catch (error) {
@@ -109,7 +114,7 @@ export async function post(endpoint, item, ms) {
     const res = await response.json()
 
     if (response.status == 401) {
-        localStorage.removeItem('token')
+        if (typeof localStorage !== 'undefined') localStorage.removeItem('token')
         jmsg('error', res.msg)
         return { code: 401, msg: res.msg }
     }
@@ -145,7 +150,7 @@ export async function patch(endpoint, item, ms) {
     const res = await response.json()
 
     if (response.status == 401) {
-        localStorage.removeItem('token')
+        if (typeof localStorage !== 'undefined') localStorage.removeItem('token')
         jmsg('error', res.msg)
         return { code: 401, msg: res.msg }
     }
@@ -181,7 +186,7 @@ export async function delet(endpoint, item, ms) {
     const res = await response.json()
 
     if (response.status == 401) {
-        localStorage.removeItem('token')
+        if (typeof localStorage !== 'undefined') localStorage.removeItem('token')
         jmsg('error', res.msg)
         return { code: 401, msg: res.msg }
     }

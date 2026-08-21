@@ -222,12 +222,16 @@ export default {
 
         async sendCodigoVerificacion() {
             const send = {
-                user_token: localStorage.getItem("token"),
                 correo: this.user.correo,
             };
 
             this.loading = true;
-            const res = await post(`${urls.account}/send-codigo`, send);
+            const res = await post(
+                `${urls.account}/send-codigo`,
+                send,
+                undefined,
+                localStorage.getItem("token"),
+            );
             this.loading = false;
 
             if (res.code < 0) {
@@ -262,13 +266,17 @@ export default {
             if (!this.validateForm1()) return;
 
             const send = {
-                user_token: localStorage.getItem("token"),
                 correo: this.user.correo,
                 codigo_verificacion: this.form.codigo_verificacion,
             };
 
             this.loading = true;
-            const res = await post(`${urls.account}/verify-codigo`, send);
+            const res = await post(
+                `${urls.account}/verify-codigo`,
+                send,
+                undefined,
+                localStorage.getItem("token"),
+            );
             this.loading = false;
 
             if (res.code < 0) {
@@ -299,7 +307,6 @@ export default {
             return {
                 id: this.user.id,
                 contrasena: this.form.contrasena,
-                user_token: localStorage.getItem("token"),
             };
         },
         async actualizarContrasena() {
@@ -308,7 +315,12 @@ export default {
             const send = this.shapeDatos();
 
             this.loading = true;
-            const res = await post(`${urls.account}/update-password`, send);
+            const res = await post(
+                `${urls.account}/update-password`,
+                send,
+                undefined,
+                localStorage.getItem("token"),
+            );
             this.loading = false;
 
             if (res.code < 0) {

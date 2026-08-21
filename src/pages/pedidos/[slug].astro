@@ -4,26 +4,95 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import OrderDetail from '@/components/pedidos/OrderDetail.astro'
 import OrderSectionTitle from '@/components/pedidos/OrderSectionTitle.astro'
 import GhostIcon from '@/assets/icons/ghost.vue'
+import ShieldIcon from '@/assets/icons/icon-shield-check.astro'
 import { urls, get } from '@/lib/api.js'
 import { redondear, formatDate, formatDateTime } from '@/lib/mine.js'
 
 const params = Astro.url.searchParams
 const isAccount = params.get('account') === 'true'
+const accessToken = params.get('access_token') || ''
 const { slug } = Astro.params
 
-const orderQuery = {
-    incl: ['socio1', 'moneda1', 'socio_pedido_items', 'createdBy1'],
-    iccl: {
-        socio1: { cols: ['doc_numero', 'contactos', 'direcciones', 'pago_condicion'] },
-        socio_pedido_items: { incl: ['articulo1'] },
-        createdBy1: { cols: ['cargo', 'telefono'] },
+Astro.response.headers.set('Cache-Control', 'private, no-store')
+
+const orderResponse = accessToken
+    ? await get(
+          `${urls.socio_pedidos}/uno/${slug}?access_token=${encodeURIComponent(accessToken)}`,
+      )
+    : { code: 1, data: null, http_status: 401 }
+const pedido = orderResponse.code === 0 ? orderResponse.data || null : null
+const responseStatus = Number(orderResponse.http_status)
+const retryAfterSeconds = Number(orderResponse.retry_after || orderResponse.rate_limit_reset)
+const retryAfterMinutes = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+    ? Math.max(1, Math.ceil(retryAfterSeconds / 60))
+    : null
+
+const errorByStatus = {
+    401: {
+        eyebrow: 'Acceso no válido',
+        title: 'Este enlace no está disponible',
+        description:
+            'El enlace es incorrecto o ha vencido. Vuelve a consultar tu pedido con el número de compra y tu código de seis dígitos.',
+        action: 'Consultar nuevamente',
+        href: '/consulta-pedido',
+    },
+    404: {
+        eyebrow: 'Pedido no encontrado',
+        title: 'No encontramos este pedido',
+        description: 'Verifica el enlace o realiza una nueva consulta con los datos de tu compra.',
+        action: 'Consultar un pedido',
+        href: '/consulta-pedido',
+    },
+    429: {
+        eyebrow: 'Demasiadas consultas',
+        title: 'Hagamos una pausa',
+        description: retryAfterMinutes
+            ? `Has realizado varias consultas en poco tiempo. Inténtalo nuevamente en aproximadamente ${retryAfterMinutes} ${retryAfterMinutes === 1 ? 'minuto' : 'minutos'}.`
+            : 'Has realizado varias consultas en poco tiempo. Inténtalo nuevamente dentro de unos minutos.',
+        action: 'Volver a la tienda',
+        href: '/tienda',
+    },
+    500: {
+        eyebrow: 'Servicio no disponible',
+        title: 'No pudimos abrir tu pedido',
+        description: 'Ocurrió un inconveniente temporal. Inténtalo nuevamente dentro de unos minutos.',
+        action: 'Volver a la tienda',
+        href: '/tienda',
+    },
+    503: {
+        eyebrow: 'Servicio no disponible',
+        title: 'No pudimos conectar con el servicio',
+        description: 'Inténtalo nuevamente dentro de unos minutos.',
+        action: 'Volver a la tienda',
+        href: '/tienda',
     },
 }
 
-const orderResponse = await get(
-    `${urls.socio_pedidos}/uno/${slug}?qry=${encodeURIComponent(JSON.stringify(orderQuery))}`,
-)
-const pedido = orderResponse.code === 0 ? orderResponse.data || null : null
+const errorStatus = !pedido
+    ? [401, 404, 429, 500, 503].includes(responseStatus)
+        ? responseStatus
+        : orderResponse.code === -2
+          ? 503
+          : 404
+    : null
+const orderError = errorStatus ? errorByStatus[errorStatus] : null
+
+if (orderError) {
+    const statusTextByStatus = {
+        401: 'Unauthorized',
+        404: 'Not Found',
+        429: 'Too Many Requests',
+        500: 'Internal Server Error',
+        503: 'Service Unavailable',
+    }
+
+    Astro.response.status = errorStatus
+    Astro.response.statusText = statusTextByStatus[errorStatus]
+
+    if (errorStatus === 429 && Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+        Astro.response.headers.set('Retry-After', String(Math.ceil(retryAfterSeconds)))
+    }
+}
 let etapas = []
 
 if (pedido) {
@@ -51,10 +120,12 @@ const lastCompletedStageIndex = etapas.reduce(
 )
 const orderItems = pedido?.socio_pedido_items || []
 const currencySymbol = pedido?.moneda1?.simbolo || 'S/ '
-const orderTitle = pedido ? `Pedido ${pedido.codigo} | SUNKA Herbal Tea` : 'Pedido no encontrado'
+const orderTitle = pedido
+    ? `Pedido ${pedido.codigo} | SUNKA Herbal Tea`
+    : `${orderError?.title || 'Pedido no encontrado'} | SUNKA Herbal Tea`
 ---
 
-<BaseLayout title={orderTitle}>
+<BaseLayout title={orderTitle} referrerPolicy="no-referrer">
     {
         pedido ? (
             <>
@@ -354,21 +425,27 @@ const orderTitle = pedido ? `Pedido ${pedido.codigo} | SUNKA Herbal Tea` : 'Pedi
         ) : (
             <main class="grid min-h-[620px] place-items-center bg-sunka-cream px-5 pb-20 pt-36 text-center">
                 <div class="max-w-md">
-                    <GhostIcon class="mx-auto h-28 w-28 text-sunka-stone/60" />
+                    {errorStatus === 429 || errorStatus === 401 ? (
+                        <span class="mx-auto grid h-24 w-24 place-items-center rounded-full border border-sunka-brass/25 bg-sunka-brass/10 text-sunka-brass">
+                            <ShieldIcon class="h-11 w-11" />
+                        </span>
+                    ) : (
+                        <GhostIcon class="mx-auto h-28 w-28 text-sunka-stone/60" />
+                    )}
                     <p class="mt-6 text-[10px] font-semibold uppercase tracking-[0.18em] text-sunka-brass">
-                        Pedido no encontrado
+                        {orderError?.eyebrow}
                     </p>
                     <h1 class="mt-3 font-heading text-3xl font-semibold text-sunka-forest">
-                        No encontramos este pedido
+                        {orderError?.title}
                     </h1>
                     <p class="mt-4 text-sm leading-relaxed text-sunka-stone">
-                        Verifica el enlace o realiza una nueva consulta con los datos de tu compra.
+                        {orderError?.description}
                     </p>
                     <a
-                        href="/consulta-pedido"
+                        href={orderError?.href}
                         class="mt-7 inline-flex min-h-12 items-center justify-center rounded-lg bg-sunka-brass px-6 text-[11px] font-bold text-sunka-white"
                     >
-                        Consultar un pedido
+                        {orderError?.action}
                     </a>
                 </div>
             </main>
