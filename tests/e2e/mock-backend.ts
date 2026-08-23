@@ -112,13 +112,23 @@ createServer((request, response) => {
     } else if (url.pathname === '/api/integration/v1/payments/izipay/form-token') {
         response.writeHead(201)
         response.end(JSON.stringify({
-            data: { formToken: 'form-token', checkout_intent_id: 'intent-1', orderId: 'payment-order-1' },
+            data: {
+                formToken: 'form-token', checkout_intent_id: 'intent-1',
+                checkout_access_token: 'checkout-access', orderId: 'payment-order-1',
+                amount: 1000, currency: 'PEN', expires_at: '2026-08-23T00:00:00.000Z',
+            },
         }))
     } else if (url.pathname === '/api/integration/v1/payments/izipay/validate') {
         response.writeHead(201)
         response.end(JSON.stringify({
-            data: { id: 'payment-order-1', codigo: 'SUNKA-PAY', access_token: 'payment-access' },
+            data: { status: 'completed', id: 'payment-order-1', codigo: 'SUNKA-PAY', access_token: 'payment-access' },
         }))
+    } else if (url.pathname === '/api/integration/v1/payments/izipay/intents/intent-1/status') {
+        const authorized = request.headers['x-checkout-access'] === 'checkout-access'
+        response.writeHead(authorized ? 200 : 401)
+        response.end(JSON.stringify(authorized
+            ? { data: { status: 'completed', id: 'payment-order-1', codigo: 'SUNKA-PAY', access_token: 'payment-access' } }
+            : { type: 'urn:itd:integration:problem:payments:checkout-access-invalid', title: 'Acceso inválido', status: 401, detail: 'Acceso inválido.', instance: 'urn:itd:integration:request:e2e' }))
     } else {
         response.writeHead(404)
         response.setHeader('content-type', 'application/problem+json')

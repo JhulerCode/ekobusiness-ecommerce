@@ -100,11 +100,36 @@ test('crea y valida un checkout intent sin exponer credenciales', async ({ page 
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ paymentData: {}, checkout_intent_id: created.data.checkout_intent_id }),
         }).then((response) => response.json())
-        return { created, validated }
+        return { created, validated, cookies: document.cookie }
     })
 
     expect(result.created.data.formToken).toBe('form-token')
+    expect(result.created.data.checkout_access_token).toBeUndefined()
+    expect(result.validated.data.status).toBe('completed')
     expect(result.validated.data.redirect_url).toBe('/pedidos/payment-order-1')
     expect(JSON.stringify(result)).not.toContain('payment-access')
     expect(JSON.stringify(result)).not.toContain('itd_')
+    expect(result.cookies).not.toContain('sunka_checkout_')
+})
+
+test('recupera un pago desde la cookie del intento sin repetir el cobro', async ({ page }) => {
+    await page.goto('/')
+    const result = await page.evaluate(async () => {
+        const created = await fetch('/api/izipay/create-payment', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                correo: 'cliente@example.com', paymentMethodToken: 'nueva',
+                socio_pedido: { socio_datos: {}, socio_pedido_items: [] },
+            }),
+        }).then((response) => response.json())
+        const recovered = await fetch(`/api/izipay/intents/${created.data.checkout_intent_id}`)
+            .then((response) => response.json())
+        return { created, recovered }
+    })
+
+    expect(result.recovered.data.status).toBe('completed')
+    expect(result.recovered.data.redirect_url).toBe('/pedidos/payment-order-1')
+    expect(JSON.stringify(result)).not.toContain('checkout-access')
+    expect(JSON.stringify(result)).not.toContain('payment-access')
 })

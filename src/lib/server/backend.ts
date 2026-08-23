@@ -9,6 +9,7 @@ interface BackendRequestOptions {
     body?: BodyInit | null
     token?: string
     orderToken?: string
+    checkoutToken?: string
     clientIp?: string
     headers?: HeadersInit
 }
@@ -78,6 +79,7 @@ export async function backendRequest<T = unknown>(
     if (options.clientIp) headers.set('x-client-ip', options.clientIp)
     if (options.token) headers.set('authorization', `Bearer ${options.token}`)
     if (options.orderToken) headers.set('x-order-access', options.orderToken)
+    if (options.checkoutToken) headers.set('x-checkout-access', options.checkoutToken)
     if (options.body && !(options.body instanceof FormData) && !headers.has('content-type')) {
         headers.set('content-type', 'application/json')
     }
@@ -179,7 +181,11 @@ export async function requestWithSession<T = unknown>(
         token: accessToken,
     }
     let result = await backendRequest<T>(path, requestOptions)
-    if (result.status !== 401) return result
+    const isCustomerSessionFailure = !result.ok && result.status === 401 && [
+        'urn:itd:integration:problem:middleware:invalid-customer-session',
+        'urn:itd:integration:problem:customers:invalid-session',
+    ].includes(result.problem.type)
+    if (!isCustomerSessionFailure) return result
 
     const refreshToken = context.cookies.get(REFRESH_COOKIE)?.value
     if (!refreshToken) {
@@ -227,4 +233,23 @@ export function setOrderCookie(context: APIContext, id: string, token: string, m
         ...cookieOptions(maxAge),
         path: `/pedidos/${encodeURIComponent(id)}`,
     })
+}
+
+export function checkoutCookieName(id: string) {
+    return `sunka_checkout_${id.replace(/[^a-zA-Z0-9_-]/g, '')}`
+}
+
+export function setCheckoutCookie(context: APIContext, id: string, token: string) {
+    context.cookies.set(checkoutCookieName(id), token, {
+        ...cookieOptions(24 * 60 * 60),
+        path: '/api/izipay',
+    })
+}
+
+export function getCheckoutCookie(context: APIContext, id: string) {
+    return context.cookies.get(checkoutCookieName(id))?.value
+}
+
+export function clearCheckoutCookie(context: APIContext, id: string) {
+    context.cookies.delete(checkoutCookieName(id), { path: '/api/izipay' })
 }

@@ -834,6 +834,11 @@ export default defineComponent({
             ubigeosLoading: false,
             draftReady: false,
             draftSaveTimeout: null,
+            izipayKR: null,
+            izipaySubmitRegistered: false,
+            activePaymentIntent: null,
+            paymentVerifying: false,
+            paymentOutcomeUncertain: false,
         }
     },
     computed: {
@@ -1210,15 +1215,32 @@ export default defineComponent({
             }
         },
         async pagar() {
+            if (this.loadingPagar || this.paymentVerifying) return
             if (!this.validarForm3()) return
 
             if (this.form.pago_metodo == 'tarjeta') {
-                this.pagarConTarjeta()
+                await this.pagarConTarjeta()
             } else if (this.form.pago_metodo == 'yape') {
-                this.pagarConYape()
+                await this.pagarConYape()
             }
         },
         async pagarConTarjeta() {
+            if (this.activePaymentIntent?.KR) {
+                if (this.paymentOutcomeUncertain) {
+                    this.loadingPagar = true
+                    try {
+                        const recovered = await this.pollPaymentStatus(this.activePaymentIntent.id)
+                        if (recovered?.ok && recovered.data?.status === 'completed') {
+                            this.completeCardPayment(recovered)
+                        } else {
+                            this.errors.general = 'Tu pago sigue en verificación. No realices un segundo pago.'
+                        }
+                    } finally { this.loadingPagar = false }
+                    return
+                }
+                await this.activePaymentIntent.KR.openPopin()
+                return
+            }
             this.shapeDatos()
             const send = {
                 correo: this.form.socio_datos.correo,
@@ -1227,70 +1249,112 @@ export default defineComponent({
             }
 
             this.loadingPagar = true
-            const res = await post(
-                `${urls.izipay}/create-payment`,
-                send,
-                undefined,
-            )
-            this.loadingPagar = false
-
-            if (!res.ok) {
-                this.errors.general = res.problem.detail
-            } else {
+            this.errors.general = ''
+            try {
+                const res = await post(`${urls.izipay}/create-payment`, send, undefined)
+                if (!res.ok) {
+                    this.errors.general = res.problem.detail
+                    return
+                }
                 this.form.codigo = res.data.orderId
-                this.loadingPagar = true
                 const endpoint = 'https://api.micuentaweb.pe'
                 const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY
+                if (!publicKey?.trim()) throw new Error('IZIPAY_PUBLIC_KEY_MISSING')
 
                 const { KR } = await KRGlue.loadLibrary(endpoint, publicKey)
+                this.izipayKR = KR
+                this.activePaymentIntent = { id: res.data.checkout_intent_id, KR }
 
                 await KR.setFormConfig({
                     formToken: res.data.formToken,
                     'kr-language': 'es-PE',
                 })
 
-                await KR.onFormCreated(() => {
-                    this.loadingPagar = false
-                })
-
-                await KR.onSubmit(async (paymentData) => {
-                    this.shapeDatos()
-
-                    const res1 = await post(
-                        `${urls.izipay}/validate-payment`,
-                        {
-                            paymentData,
-                            checkout_intent_id: res.data.checkout_intent_id,
-                        },
-                        undefined,
-                    )
-
-                    if (!res1.ok) {
-                        KR.closePopin()
-                        this.errors.general = res1.problem.detail
-                    } else {
-                        this.paymentSuccess = true
-                        this.form.id = res1.data.id
-                        this.form.redirect_url = res1.data.redirect_url
-                        this.form.codigo = res1.data.codigo
-                        this.errors.general = res1.warnings?.[0]?.detail || ''
-                        Cart.clear()
-                        CheckoutDraft.clear()
-                        KR.closePopin()
-
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth',
-                        })
-                    }
-
-                    return false
-                })
+                if (!this.izipaySubmitRegistered) {
+                    await KR.onSubmit(async (paymentData: Record<string, unknown>) => {
+                        const intentId = this.activePaymentIntent?.id
+                        if (!intentId || this.paymentVerifying) return false
+                        this.paymentVerifying = true
+                        this.loadingPagar = true
+                        this.errors.general = 'Estamos verificando tu pago. No cierres esta página.'
+                        try {
+                            const result = await this.validateCardPayment(paymentData, intentId)
+                            if (result?.ok && result.data?.status === 'completed') {
+                                this.completeCardPayment(result)
+                                await KR.closePopin()
+                            } else if (result?.ok && result.data?.status === 'manual_review') {
+                                this.paymentOutcomeUncertain = true
+                                this.errors.general = 'Tu pago requiere verificación. No vuelvas a pagar; nos pondremos en contacto contigo.'
+                                await KR.closePopin()
+                            } else {
+                                this.paymentOutcomeUncertain = true
+                                this.errors.general = result?.ok
+                                    ? 'Estamos verificando tu pago. No realices un segundo pago.'
+                                    : result?.problem?.detail || 'Estamos verificando tu pago. No realices un segundo pago.'
+                                await KR.closePopin()
+                            }
+                        } finally {
+                            this.paymentVerifying = false
+                            this.loadingPagar = false
+                        }
+                        return false
+                    })
+                    this.izipaySubmitRegistered = true
+                }
 
                 await KR.renderElements('#myPaymentForm')
-
                 await KR.openPopin()
+            } catch (error) {
+                console.error('No se pudo abrir el formulario de Izipay.', error)
+                this.errors.general = 'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
+                this.activePaymentIntent = null
+                this.paymentOutcomeUncertain = false
+                this.izipayKR = null
+                this.izipaySubmitRegistered = false
+            } finally {
+                this.loadingPagar = false
             }
+        },
+        async validateCardPayment(paymentData: Record<string, unknown>, intentId: string) {
+            const body = { paymentData, checkout_intent_id: intentId }
+            let result = await post(`${urls.izipay}/validate-payment`, body, undefined)
+            if (!result.ok && result.status === 503) {
+                await this.wait(500)
+                result = await post(`${urls.izipay}/validate-payment`, body, undefined)
+            }
+            if (result.ok && result.data?.status === 'completed') return result
+            if (result.ok && result.data?.status === 'manual_review') return result
+            if (result.status === 202 || (!result.ok && result.status >= 500)) {
+                return this.pollPaymentStatus(intentId)
+            }
+            return result
+        },
+        async pollPaymentStatus(intentId: string) {
+            let lastResult = null
+            for (let attempt = 0; attempt < 15; attempt += 1) {
+                await this.wait(1000)
+                lastResult = await get(`/api/izipay/intents/${encodeURIComponent(intentId)}`)
+                if (lastResult.ok && ['completed', 'manual_review'].includes(lastResult.data?.status)) {
+                    return lastResult
+                }
+                if (!lastResult.ok && ![502, 503].includes(lastResult.status)) return lastResult
+            }
+            return lastResult
+        },
+        wait(milliseconds: number) {
+            return new Promise((resolve) => setTimeout(resolve, milliseconds))
+        },
+        completeCardPayment(result) {
+            this.paymentSuccess = true
+            this.form.id = result.data.id
+            this.form.redirect_url = result.data.redirect_url
+            this.form.codigo = result.data.codigo
+            this.errors.general = result.warnings?.[0]?.detail || ''
+            this.activePaymentIntent = null
+            this.paymentOutcomeUncertain = false
+            Cart.clear()
+            CheckoutDraft.clear()
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         },
         async pagarConYape() {
             this.shapeDatos()

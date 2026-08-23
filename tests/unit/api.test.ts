@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { formatProductos } from '@/lib/api'
 import { orderLookupSchema, signInSchema } from '@/lib/api-schemas'
 import { assertSameOrigin, failure, json } from '@/lib/server/bff'
-import { orderCookieName } from '@/lib/server/backend'
+import { checkoutCookieName, orderCookieName } from '@/lib/server/backend'
 import { integrationPublicPath } from '@/lib/server/public-api'
 
 describe('contratos del ecommerce', () => {
@@ -55,6 +55,7 @@ describe('contratos del ecommerce', () => {
 
     it('sanea el identificador usado en cookies de pedidos', () => {
         expect(orderCookieName('order/../../1')).toBe('sunka_order_order1')
+        expect(checkoutCookieName('intent/../../1')).toBe('sunka_checkout_intent1')
     })
 
     it('traduce qry heredado a parámetros fijos de integración', () => {
