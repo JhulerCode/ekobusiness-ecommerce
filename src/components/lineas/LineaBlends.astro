@@ -1,5 +1,7 @@
 ---
-const { linea } = Astro.props
+const { linea } = Astro.props as {
+    linea: Record<string, any> & { blends: Array<Record<string, any>> }
+}
 ---
 
 <section id="blends" class="bg-sunka-cream py-9 text-sunka-ink md:py-11">

@@ -1,4 +1,11 @@
-export const momentos = [
+export interface Momento {
+    slug: string
+    titulo: string
+    icon: string
+    aliases: string[]
+}
+
+export const momentos: Momento[] = [
     {
         slug: 'manana',
         titulo: 'Para empezar el dia',
@@ -43,11 +50,11 @@ export const momentos = [
     },
 ]
 
-export const momentosBySlug = Object.fromEntries(
+export const momentosBySlug: Record<string, Momento> = Object.fromEntries(
     momentos.map((momento) => [momento.slug, momento]),
 )
 
-export const getMomentoBySlug = (slug) => momentosBySlug[slug]
+export const getMomentoBySlug = (slug: string) => momentosBySlug[slug]
 
-export const getMomentosBySlugs = (slugs) =>
-    slugs.map(getMomentoBySlug).filter(Boolean)
+export const getMomentosBySlugs = (slugs: string[]) =>
+    slugs.map(getMomentoBySlug).filter((item): item is Momento => Boolean(item))

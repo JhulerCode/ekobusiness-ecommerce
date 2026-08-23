@@ -60,10 +60,11 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import Xmark from '../assets/icons/xmark.vue'
 
-export default {
+export default defineComponent({
     components: { Xmark },
     props: {
         modelValue: [String, Number, Boolean],
@@ -129,5 +130,5 @@ export default {
             this.$emit('reload')
         },
     },
-}
+})
 </script>

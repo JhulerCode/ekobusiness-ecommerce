@@ -2,8 +2,8 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import CheckoutForm from '@/components/CheckoutForm.vue'
 import checkoutHero from '@/assets/home/blend.webp'
-import { get } from '@/lib/api.js'
-import empresa from '@/data/company.js'
+import { serverGet as get } from '@/lib/server/public-api'
+import empresa from '@/data/company'
 
 const res = await get('sistema', {
     qry: [
@@ -14,14 +14,12 @@ const res = await get('sistema', {
     ],
 })
 
-if (res.code == 0) {
-    var {
-        documentos_identidad,
-        entrega_tipos,
-        comprobante_tipos,
-        pago_metodos,
-    } = res.data
-}
+const {
+    documentos_identidad = [],
+    entrega_tipos = [],
+    comprobante_tipos = [],
+    pago_metodos = [],
+} = res.ok ? res.data || {} : {}
 ---
 
 <BaseLayout
@@ -107,7 +105,7 @@ if (res.code == 0) {
     const successDescription = document.querySelector('[data-checkout-success-description]')
 
     window.addEventListener('checkout:success', (event) => {
-        const paymentMethod = event.detail?.paymentMethod
+        const paymentMethod = (event as CustomEvent<{ paymentMethod?: string }>).detail?.paymentMethod
 
         progressContent?.classList.add('hidden')
         successContent?.classList.remove('hidden')

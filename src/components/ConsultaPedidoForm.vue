@@ -77,12 +77,13 @@
     </article>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import JdInput from './JdInput.vue'
 import LoadingSpin from './LoadingSpin.vue'
-import { post, urls } from '../lib/api.js'
+import { post, urls } from '../lib/api'
 
-export default {
+export default defineComponent({
     components: {
         JdInput,
         LoadingSpin,
@@ -127,13 +128,10 @@ export default {
             )
             this.loading = false
 
-            if (res.code < 0) {
-                this.error = 'Algo salió mal.'
-            } else if (res.code > 0) {
-                this.error = res.msg
-            } else if (res.code == 0) {
-                const accessToken = encodeURIComponent(res.data.access_token)
-                window.location.href = `/pedidos/${res.data.id}?access_token=${accessToken}`
+            if (!res.ok) {
+                this.error = res.problem.detail
+            } else {
+                window.location.href = res.data.redirect_url
             }
         },
         async reenviarCodigo() {
@@ -157,13 +155,12 @@ export default {
             )
             this.resendLoading = false
 
-            this.resendMessage =
-                res.code === 0
-                    ? res.msg
-                    : res.msg || 'No se pudo procesar la solicitud. Inténtalo más tarde.'
+            this.resendMessage = res.ok
+                ? res.data?.message
+                : res.problem.detail || 'No se pudo procesar la solicitud. Inténtalo más tarde.'
         },
     },
-}
+})
 </script>
 
 <style scoped>

@@ -8,6 +8,7 @@ export default {
     ecommerce_url: 'https://www.sunka.pe',
     facebook_url: 'https://www.facebook.com/SunkaTea',
     instagram_url: 'https://www.instagram.com/sunka.pe',
+    pinterest_url: '',
     whatsapp_ventas: '+51 999 888 777',
     whatsapp_ventas_url: 'https://wa.me/51999888777',
 

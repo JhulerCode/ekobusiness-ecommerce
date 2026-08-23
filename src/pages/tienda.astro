@@ -4,8 +4,9 @@ import TiendaCatalog from '@/components/tienda/TiendaCatalog.vue'
 import Beneficios from '@/components/home/Beneficios.astro'
 import bannerTienda from '@/assets/banner1.webp'
 import originImage from '@/assets/origen/andes.webp'
-import { get, formatProductos } from '@/lib/api.js'
-import { momentos } from '@/data/momentos.js'
+import { formatProductos } from '@/lib/api'
+import { serverGet as get } from '@/lib/server/public-api'
+import { momentos } from '@/data/momentos'
 
 //--- Load productos ---//
 const qryProductos = {
@@ -17,7 +18,7 @@ const qryProductos = {
     incl: ['linea1'],
 }
 const resProductos = await get('productos', { qry: qryProductos })
-const productos = formatProductos(resProductos.data)
+const productos = formatProductos(resProductos.ok ? resProductos.data : [])
 
 //--- Set líneas ---//
 const lineas = []

@@ -752,7 +752,8 @@
     <LoadingSpin v-if="loading" />
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import ArrowLeft from '../assets/icons/arrow-left.vue'
 import JdButton from '../components/JdButton.vue'
 import JdInput from '../components/JdInput.vue'
@@ -772,14 +773,14 @@ import genericUrl from '../assets/icons/card-generic.svg?url'
 import qrYapeUrl from '../assets/qr-yape-eko-business.jpg?url'
 import yapeLogo from '../assets/icons/yape-logo.svg?url'
 
-import { Cart } from '../lib/cart.js'
-import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draft.js'
-import { urls, get, post, patch } from '../lib/api.js'
-import { genId } from '../lib/mine.js'
+import { Cart } from '../lib/cart'
+import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draft'
+import { urls, get, post, patch } from '../lib/api'
+import { genId } from '../lib/mine'
 
 import KRGlue from '@lyracom/embedded-form-glue'
 
-export default {
+export default defineComponent({
     inheritAttrs: false,
     components: {
         ArrowLeft,
@@ -837,8 +838,7 @@ export default {
     },
     computed: {
         orderDetailUrl() {
-            if (!this.form.id || !this.form.access_token) return '/consulta-pedido'
-            return `/pedidos/${this.form.id}?access_token=${encodeURIComponent(this.form.access_token)}`
+            return this.form.redirect_url || '/consulta-pedido'
         },
         subtotal() {
             return this.items.reduce((acc, item) => acc + item.pu * item.cantidad, 0)
@@ -929,14 +929,11 @@ export default {
             document.head.appendChild(script)
         },
         async validateSession() {
-            const user_token = localStorage.getItem('token')
-            if (!user_token) return
-
             this.loading = true
-            const res = await get(`${urls.account}/login`, null, user_token)
+            const res = await get(`${urls.account}/session`)
             this.loading = false
 
-            if (res.code != 0) return
+            if (!res.ok) return
 
             this.user = res.data
             this.form.socio_datos.nombres = this.user.nombres
@@ -1063,7 +1060,6 @@ export default {
                     id: this.user.id,
                     tipo: 2,
                     comes_from: 'ecommerce',
-                    user_token: localStorage.getItem('token'),
                     nombres: this.form.socio_datos.nombres,
                     doc_tipo: this.form.socio_datos.doc_tipo,
                     doc_numero: this.form.socio_datos.doc_numero,
@@ -1156,13 +1152,12 @@ export default {
                         id: this.user.id,
                         tipo: 2,
                         comes_from: 'ecommerce',
-                        user_token: localStorage.getItem('token'),
                         direcciones,
                     }
                     this.loadingContinuarPago = true
                     const res = await patch('account', send)
                     this.loadingContinuarPago = false
-                    if (res.code == 0) {
+                    if (res.ok) {
                         this.user.direcciones = res.data.direcciones
                         this.form.new_direccion = false
                         this.form.entrega_direccion_id = newDireccionId
@@ -1224,10 +1219,11 @@ export default {
             }
         },
         async pagarConTarjeta() {
+            this.shapeDatos()
             const send = {
-                monto: this.total.toFixed(2),
                 correo: this.form.socio_datos.correo,
                 paymentMethodToken: this.form.paymentMethodToken,
+                socio_pedido: this.form,
             }
 
             this.loadingPagar = true
@@ -1235,14 +1231,13 @@ export default {
                 `${urls.izipay}/create-payment`,
                 send,
                 undefined,
-                localStorage.getItem('token'),
             )
             this.loadingPagar = false
 
-            if (res.code == 1) {
-                this.errors.general = res.msg
-            } else if (res.code == 0) {
-                this.form.codigo = res.orderId
+            if (!res.ok) {
+                this.errors.general = res.problem.detail
+            } else {
+                this.form.codigo = res.data.orderId
                 this.loadingPagar = true
                 const endpoint = 'https://api.micuentaweb.pe'
                 const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY
@@ -1265,20 +1260,20 @@ export default {
                         `${urls.izipay}/validate-payment`,
                         {
                             paymentData,
-                            socio_pedido: this.form,
+                            checkout_intent_id: res.data.checkout_intent_id,
                         },
                         undefined,
-                        localStorage.getItem('token'),
                     )
 
-                    if (res1.code > 0) {
+                    if (!res1.ok) {
                         KR.closePopin()
-                        this.errors.general = res1.msg
-                    } else if (res1.code == 0) {
+                        this.errors.general = res1.problem.detail
+                    } else {
                         this.paymentSuccess = true
                         this.form.id = res1.data.id
-                        this.form.access_token = res1.data.access_token
+                        this.form.redirect_url = res1.data.redirect_url
                         this.form.codigo = res1.data.codigo
+                        this.errors.general = res1.warnings?.[0]?.detail || ''
                         Cart.clear()
                         CheckoutDraft.clear()
                         KR.closePopin()
@@ -1302,23 +1297,20 @@ export default {
 
             this.loadingPagar = true
             const res = await post(
-                'socio_pedidos',
+                urls.socio_pedidos,
                 this.form,
                 undefined,
-                localStorage.getItem('token'),
             )
             this.loadingPagar = false
 
-            if (res.code < 0) {
-                this.errors.general = 'Algo salió mal'
-            }
-            if (res.code > 0) {
-                this.errors.general = res.msg
-            } else if (res.code == 0) {
+            if (!res.ok) {
+                this.errors.general = res.problem.detail
+            } else {
                 this.paymentSuccess = true
                 this.form.id = res.data.id
-                this.form.access_token = res.data.access_token
+                this.form.redirect_url = res.data.redirect_url
                 this.form.codigo = res.data.codigo
+                this.errors.general = res.warnings?.[0]?.detail || ''
                 Cart.clear()
                 CheckoutDraft.clear()
 
@@ -1370,10 +1362,10 @@ export default {
             }
 
             this.ubigeosLoading = true
-            const res = await get('ubigeos', { qry }, localStorage.getItem('token'))
+            const res = await get('ubigeos', { qry })
             this.ubigeosLoading = false
 
-            if (res.code !== 0) return
+            if (!res.ok) return
 
             this.ubigeos = res.data
         },
@@ -1415,11 +1407,10 @@ export default {
             const res = await get(
                 `${urls.account}/customer-wallet/${this.user.id}`,
                 null,
-                localStorage.getItem('token'),
             )
             this.loading = false
 
-            if (res.code == 0) {
+            if (res.ok) {
                 this.user.wallet = res.data.tokens
                 this.selectDefaultPaymentMethod()
             }
@@ -1477,7 +1468,7 @@ export default {
             return map[b] || genericUrl
         },
     },
-}
+})
 </script>
 
 <style scoped>

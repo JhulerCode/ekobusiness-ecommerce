@@ -1,4 +1,10 @@
-const CART_KEY = 'sunka_cart';
+const CART_KEY = 'sunka_cart'
+
+export interface CartItem extends Record<string, any> {
+    articulo: string | number
+    cantidad: number
+    pu: number
+}
 
 export const Cart = {
     get() {
@@ -6,14 +12,14 @@ export const Cart = {
         return data ? JSON.parse(data) : [];
     },
 
-    save(cart) {
+    save(cart: CartItem[]) {
         localStorage.setItem(CART_KEY, JSON.stringify(cart));
         window.dispatchEvent(new CustomEvent('cart-updated', { detail: cart }));
     },
 
-    add(producto) {
+    add(producto: Record<string, any>) {
         const cart = this.get();
-        const existing = cart.find(p => p.articulo === producto.articulo);
+        const existing = cart.find((item: CartItem) => item.articulo === producto.articulo)
 
         if (existing) {
             existing.cantidad += Number(producto.cantidad);
@@ -40,8 +46,8 @@ export const Cart = {
         this.save(cart);
     },
 
-    remove(articulo) {
-        const cart = this.get().filter(p => p.articulo !== articulo);
+    remove(articulo: string | number) {
+        const cart = this.get().filter((item: CartItem) => item.articulo !== articulo)
         this.save(cart);
     },
 
@@ -50,6 +56,6 @@ export const Cart = {
     },
 
     count() {
-        return this.get().reduce((sum, p) => sum + Number(p.cantidad), 0);
+        return this.get().reduce((sum: number, item: CartItem) => sum + Number(item.cantidad), 0)
     }
 };

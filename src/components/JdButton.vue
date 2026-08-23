@@ -16,10 +16,11 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import LoadingSpin from '../components/LoadingSpin.vue';
 
-export default {
+export default defineComponent({
     components: {
         LoadingSpin,
     },
@@ -29,5 +30,5 @@ export default {
         title: String,
         tipo: { type: [String, Number], default: 1 },
     },
-};
+})
 </script>

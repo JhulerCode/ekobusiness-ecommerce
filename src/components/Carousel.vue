@@ -48,11 +48,12 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import ArrowLeft from '../assets/icons/chevron-left.vue'
 import ArrowRight from '../assets/icons/chevron-right.vue'
 
-export default {
+export default defineComponent({
     components: {
         ArrowLeft,
         ArrowRight,
@@ -166,7 +167,7 @@ export default {
             this.initInterval()
         },
     },
-}
+})
 </script>
 
 <style scoped>

@@ -11,15 +11,16 @@
     </Carousel>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import Carousel from './Carousel.vue'
 import Producto from './Producto.vue'
 
-export default {
+export default defineComponent({
     name: 'ProductosCarousel',
     components: { Carousel, Producto },
     props: {
         productos: { type: Array, default: () => [] },
     },
-}
+})
 </script>

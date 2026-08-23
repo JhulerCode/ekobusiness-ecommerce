@@ -32,7 +32,7 @@ const { title = 'Mi Tienda', referrerPolicy } = Astro.props
         <!-- IZIPAY END -->
 
         <!-- RECAPTCHA BEGIN -->
-        <script src="https://www.google.com/recaptcha/api.js?hl=es" async defer></script>
+        <script is:inline src="https://www.google.com/recaptcha/api.js?hl=es" async defer></script>
         <!-- RECAPTCHA END -->
         <script>
             const observer = new IntersectionObserver(

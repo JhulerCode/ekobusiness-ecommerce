@@ -342,14 +342,15 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import Producto from '@/components/Producto.vue';
 import Ghost from '@/assets/icons/ghost.vue';
 import ChevronLeft from '@/assets/icons/chevron-left.vue';
 import ChevronRight from '@/assets/icons/chevron-right.vue';
-import { momentosBySlug } from '@/data/momentos.js';
+import { momentosBySlug } from '@/data/momentos';
 
-export default {
+export default defineComponent({
     components: {
         Producto,
         Ghost,
@@ -660,7 +661,7 @@ export default {
             this.precioMax = null;
         },
     },
-};
+})
 </script>
 
 <style scoped>

@@ -42,14 +42,15 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import JdInput from '../components/JdInput.vue'
 import JdSelect from '../components/JdSelect.vue'
 import JdLoading from '../components/LoadingSpin.vue'
 import JdButton from '../components/JdButton.vue'
-import { urls, get, patch } from '../lib/api.js'
+import { urls, get, patch } from '../lib/api'
 
-export default {
+export default defineComponent({
     components: {
         JdInput,
         JdSelect,
@@ -88,7 +89,6 @@ export default {
                 telefono1,
                 tipo: 2,
                 comes_from: 'ecommerce',
-                user_token: localStorage.getItem('token'),
             }
         },
         async actualizar() {
@@ -101,10 +101,10 @@ export default {
             const res = await patch('account', send)
             this.loading = false
 
-            if (res.code == 0) {
+            if (res.ok) {
                 this.editing = false
             }
         },
     },
-}
+})
 </script>

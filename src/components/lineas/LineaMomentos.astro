@@ -4,9 +4,11 @@ import BriefcaseIcon from '@/assets/icons/icon-briefcase.astro'
 import LeafIcon from '@/assets/icons/icon-leaf.astro'
 import MoonIcon from '@/assets/icons/icon-moon.astro'
 
-const { linea } = Astro.props
+const { linea } = Astro.props as {
+    linea: Record<string, any> & { momentos: Array<Record<string, any>> }
+}
 
-const icons = {
+const icons: Record<string, any> = {
     sun: SunIcon,
     briefcase: BriefcaseIcon,
     leaf: LeafIcon,

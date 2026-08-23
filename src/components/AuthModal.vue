@@ -81,7 +81,8 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import UserIcon from '../assets/icons/user.vue'
 
 import JdInput from '../components/JdInput.vue'
@@ -91,9 +92,9 @@ import JdButton from '../components/JdButton.vue'
 import EyeOpen from '../assets/icons/eye-open.vue'
 import EyeCancel from '../assets/icons/eye-cancel.vue'
 import Xmark from '../assets/icons/xmark.vue'
-import { urls, post, get } from '../lib/api.js'
+import { urls, post, get } from '../lib/api'
 
-export default {
+export default defineComponent({
     name: 'AuthModal',
     components: {
         UserIcon,
@@ -164,14 +165,11 @@ export default {
                 const res = await post(`${urls.auth}/signin`, this.form)
                 this.isLoading = false
 
-                if (res.code < 0) {
-                    this.errors.general = 'Algo salió mal'
-                } else if (res.code > 0) {
-                    this.errors.general = res.msg
-                } else if (res.code == 0) {
+                if (!res.ok) {
+                    this.errors.general = res.problem.detail
+                } else {
                     this.user = { correo: this.form.correo }
                     localStorage.setItem('login-correo', this.form.correo)
-                    localStorage.setItem('token', res.token)
                     this.closeModal()
                     window.location.reload()
                     // window.location.href = '/account';
@@ -180,25 +178,23 @@ export default {
                 const res = await post(`${urls.auth}/register`, this.form)
                 this.isLoading = false
 
-                if (res.code == 1) {
-                    this.errors.correo = res.msg
-                } else if (res.code == 0) {
+                if (!res.ok) {
+                    if (res.problem.type.endsWith(':already-exists')) {
+                        this.errors.correo = res.problem.detail
+                    } else {
+                        this.errors.general = res.problem.detail
+                    }
+                } else {
                     this.user = { correo: this.form.correo }
-                    localStorage.setItem('token', res.token)
                     this.closeModal()
                     window.location.href = '/account'
                 }
             }
         },
         async validateSession() {
-            const user_token = localStorage.getItem('token')
-
-            if (user_token) {
-                const res = await get(`${urls.account}/login`, null, user_token)
-
-                if (res.code == 0) {
-                    this.user = res.data
-                }
+            const res = await get(`${urls.account}/session`)
+            if (res.ok) {
+                this.user = res.data
             }
         },
     },
@@ -212,7 +208,7 @@ export default {
             return this.user.correo ? this.user.correo.split('@')[0] : ''
         },
     },
-}
+})
 </script>
 
 <style scoped>

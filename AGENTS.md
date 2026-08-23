@@ -6,13 +6,13 @@ Guidance for AI coding agents working in this repository. Read this before makin
 
 E-commerce storefront for **SUNKA Herbal Tea** (Peruvian herbal tea brand). It is an
 [Astro](https://astro.build) site (SSR) with **Vue 3** islands and **Tailwind CSS v4**, deployed to
-**Vercel**. The storefront talks to an external REST API (an IT ERP backend) through a thin wrapper
-in `src/lib/api.js`.
+**Vercel**. Astro acts as a BFF: browser code calls same-origin `/api/*` routes, while server-only
+code talks to the ERP through `src/lib/server/backend.ts`.
 
 - All user-facing copy is **Spanish (es-PE)**.
 - Prices are in Peruvian Soles and rendered as `S/ {valor}`.
 - Dates/locale use `es-PE`.
-- There is **no TypeScript** anywhere: source is plain `.js`, `.astro`, and `.vue`.
+- TypeScript is strict. All Vue scripts use `lang="ts"` and Options API with `defineComponent`.
 
 ## Tech Stack
 
@@ -20,6 +20,7 @@ in `src/lib/api.js`.
 - **Vue 3** — Options API components mounted as islands with `client:load`.
 - **Tailwind CSS 4** — via `@tailwindcss/vite`; theme tokens defined in `src/styles/global.css` using the `@theme` directive.
 - **pnpm** — the package manager (see `packageManager` in `package.json`). Never use npm/yarn.
+- **Vitest + Playwright** — unit/contract tests and browser flows.
 
 ## Commands
 
@@ -29,17 +30,19 @@ All commands run from the repo root with pnpm:
 pnpm install        # install dependencies
 pnpm dev            # start dev server (default http://localhost:4321)
 pnpm build          # production build (SSR, outputs to dist/)
+pnpm typecheck      # Astro/TypeScript diagnostics
+pnpm test           # Vitest suite
+pnpm test:e2e       # Playwright suite
+pnpm verify         # typecheck + unit tests + build
 pnpm preview        # preview the production build locally
 pnpm astro -- --help # Astro CLI help
 ```
 
-- **Tests:** there are no tests and no test framework configured. Do not invent a test runner; run
-  `pnpm build` to verify your changes compile.
+- Add unit tests under `tests/unit` and browser flows under `tests/e2e`.
 - **Lint/format:** there is **no ESLint, Biome, or lint script**. Formatting is defined by
   `.prettierrc.json` + `.editorconfig` (see below). Run `pnpm build` to validate.
-- **Typecheck:** `pnpm astro check` requires `@astrojs/check`/`typescript`, which are NOT installed.
-  Rely on `pnpm build` instead.
-- Local development expects the backend API at the URL in `.env` (`PUBLIC_API_URL`, currently
+- **Typecheck:** run `pnpm typecheck`; all changes must keep strict diagnostics at zero errors.
+- Local development expects the backend API at the private URL in `.env` (`API_URL`, usually
   `http://localhost:4000`). Pages that call the API will return empty data / rewrite to `/404`
   without it.
 
@@ -59,7 +62,8 @@ src/
     *.vue          #   interactive islands (cart, auth, forms, etc.)
   data/            # static site data (lineas.js, momentos.js)
   layouts/         # BaseLayout.astro (used by every page)
-  lib/             # client-side logic + API wrapper
+  lib/             # typed client logic, schemas, and server-only backend client
+  pages/api/       # explicit BFF endpoints
   pages/           # routes; [slug].astro files are dynamic routes
   styles/          # global.css (Tailwind theme + global utilities)
 ```
@@ -89,8 +93,7 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
   `import BaseLayout from '@/layouts/BaseLayout.astro'`.
 - Relative imports are acceptable within the same folder or for in-page scripts (e.g.
   `import { Cart } from '../../lib/cart.js'` inside a `<script>` tag).
-- Always include the explicit file extension for `.js` imports (`from '@/lib/api.js'`); `.astro` and
-  `.vue` extensions are optional but conventionally included.
+- Use extensionless imports for `.ts`; `.astro` and `.vue` extensions remain conventional.
 - Imports come first in the frontmatter, then constants/logic.
 
 ### Language & Naming
@@ -108,10 +111,9 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
 - Every page imports `BaseLayout` and passes `title` (and `description`) props:
   `<BaseLayout title={`X | SUNKA Herbal Tea`}>`.
 - Dynamic pages read `Astro.params`, e.g. `const { slug } = Astro.params`.
-- Data fetching happens in the frontmatter with top-level `await` using `get(...)` from `@/lib/api.js`.
+- Server data fetching uses `serverGet` or `backendRequest`; never call browser helpers from SSR.
 - When a record is missing, return early with `Astro.rewrite('/404')` (never a hard error).
-- Normalize fetched records with the helpers in `src/lib/api.js` (`formatProductos`, `formatLineas`,
-  `formatCategorias`) before passing them to components.
+- Normalize fetched products with `formatProductos` from `src/lib/api.ts` before passing them to components.
 - Pass data to Vue islands via props and mount with `client:load`
   (`<TiendaGrid client:load productos={productos} lineas={lineas} />`).
 - Interactive DOM wiring for static pages goes in a page-level `<script>` and is driven by
@@ -133,27 +135,26 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
   `export const lineas`, `export const lineasBySlug`, `export const getLineaBySlug = (slug) => lineasBySlug[slug]`.
 - Reference imported assets, not hardcoded URLs.
 
-### API Layer & Error Handling
+### API Layer, BFF & Error Handling
 
-- Use `src/lib/api.js`: `get(endpoint, { qry }, user_token)`, `post`, `patch`, `delet`, with
-  endpoint keys from the `urls` map (`'productos'`, `'lineas'`, `'categorias'`, `'newsletter'`, ...).
-- Queries use the ERP filter shape:
+- Vue uses `src/lib/api.ts` and only same-origin `/api/*` endpoints. Astro SSR uses the server-only
+  client. Never expose `API_URL`, `ERP_API_KEY`, `X-API-Key`, or authorization headers.
+- Browser compatibility queries may use the legacy filter shape, but Astro translates them to fixed integration parameters:
   ```js
   { fltr: { activo: { op: 'Es', val: true }, is_ecommerce: { op: 'Es', val: true } }, cols: [...], incl: [...] }
   ```
-- Every response is `{ code, msg, data }`: `code === 0` = success, `code > 0` = error with `msg`,
-  `code === -1` = generic failure, HTTP `401` = session expired (clears `token` from localStorage).
-- Check `res.code != 0` for errors and surface `res.msg` to the user; wrap `await` in `try/catch`
-  with a user-friendly Spanish fallback message and always reset `loading` in `finally`.
+- Successful responses use `{ data, meta?, warnings? }`; errors use RFC 9457 Problem Details with
+  `application/problem+json`. Client helpers return the discriminated `ApiResult<T>` type.
+- Check `result.ok`; use `result.problem.type` for behavior and `result.problem.detail` for safe
+  user-facing text. HTTP `401` means the HttpOnly session expired. Always reset `loading`.
 - Keep validation (email regex, required fields) in the component before submitting.
 - The wrapper already `console.log`s messages via `jmsg`; do not duplicate logging.
-- Auth token is stored in `localStorage` under `token` and sent as `Authorization: Bearer <token>`.
+- Authentication is cookie-based and HttpOnly. Never store or read auth/order tokens in browser code.
 
 ### Environment Variables
 
-- Client-exposed vars must be prefixed with `PUBLIC_` (Astro rule). Current vars (see `.env`,
-  gitignored): `PUBLIC_API_URL`, `PUBLIC_IZIPAY_PUBLIC_KEY`, `RECAPTCHA_SITE_KEY`.
-- API base is `PUBLIC_API_URL` + `/ecommerce/...`. Never hardcode URLs or leak secrets.
+- Private vars are `API_URL` and `ERP_API_KEY`.
+- Browser vars are `PUBLIC_IZIPAY_PUBLIC_KEY` and `PUBLIC_RECAPTCHA_SITE_KEY`.
 
 ### Styling & Tailwind
 

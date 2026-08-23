@@ -3,8 +3,9 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import BoxIcon from '@/assets/icons/icon-box.astro'
 import BotanicalMixIcon from '@/assets/icons/icon-botanical-mix.astro'
 import LeafIcon from '@/assets/icons/icon-leaf.astro'
-import { get, formatProductos } from '@/lib/api.js'
-import { getLineaByName } from '@/data/lineas.js'
+import { formatProductos } from '@/lib/api'
+import { serverGet as get } from '@/lib/server/public-api'
+import { getLineaByName } from '@/data/lineas'
 
 const { slug } = Astro.params
 
@@ -19,11 +20,11 @@ const productQuery = {
 }
 
 const productResponse = await get('productos', { qry: productQuery })
-const producto = formatProductos(productResponse?.data ?? [])[0]
+const producto = formatProductos(productResponse.ok ? productResponse.data ?? [] : [])[0]
 
 if (!producto) return Astro.rewrite('/404')
 
-const normalizeTextList = (value) => {
+const normalizeTextList = (value: unknown): string[] => {
     if (!Array.isArray(value)) return []
 
     return value
@@ -35,7 +36,7 @@ const normalizeTextList = (value) => {
         .filter(Boolean)
 }
 
-const normalizePairs = (value) => {
+const normalizePairs = (value: unknown): Array<{ label: string; value: string }> => {
     if (!Array.isArray(value)) return []
 
     return value
@@ -48,7 +49,10 @@ const normalizePairs = (value) => {
                 value: item.value ?? item.valor ?? item.descripcion,
             }
         })
-        .filter((item) => item?.label && item?.value !== undefined && item?.value !== null)
+        .filter(
+            (item): item is { label: string; value: string } =>
+                Boolean(item?.label && item?.value !== undefined && item?.value !== null),
+        )
 }
 
 const fotos = Array.isArray(producto.fotos) ? producto.fotos.filter((foto) => foto?.url) : []
@@ -83,7 +87,7 @@ const hasPerfilSensorial = Boolean(
 )
 
 const lineaConfig = getLineaByName(producto.linea1?.nombre)
-const diferenciales = lineaConfig?.diferenciales ?? []
+const diferenciales: Array<Record<string, any>> = lineaConfig?.diferenciales ?? []
 
 const preparacion =
     producto.preparacion && typeof producto.preparacion === 'object' ? producto.preparacion : {}
@@ -107,8 +111,8 @@ const relatedIds = Array.isArray(producto.productos_relacionados)
     ? [
           ...new Set(
               producto.productos_relacionados
-                  .map((item) => item?.id)
-                  .filter((id) => id && id !== producto.id),
+                  .map((item: Record<string, any>) => item?.id)
+                  .filter((id: string) => id && id !== producto.id),
           ),
       ].slice(0, 3)
     : []
@@ -125,17 +129,16 @@ const relatedResponses = await get('productos', {
     },
 })
 const relatedById = new Map(
-    formatProductos(relatedResponses.data ?? []).map((item) => [String(item.id), item]),
+    formatProductos(relatedResponses.ok ? relatedResponses.data ?? [] : []).map((item) => [String(item.id), item]),
 )
 const relacionados = relatedIds
     .map((id) => relatedById.get(String(id)))
-    .filter(Boolean)
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
 
 const linea = producto.linea1?.nombre ?? ''
 const lineaTiendaHref = linea
     ? `/tienda?linea=${encodeURIComponent(lineaConfig?.slug ?? linea)}`
     : ''
-const origen = producto.origen ?? ''
 const precio = Number(producto.precio ?? 0).toFixed(2)
 const pageDescription = producto.descripcion_corta || producto.descripcion || producto.nombre
 const cartProduct = JSON.stringify(producto)
@@ -553,7 +556,7 @@ const sectionTitleClass =
 </BaseLayout>
 
 <script>
-    import { Cart } from '../../lib/cart.js'
+    import { Cart } from '../../lib/cart'
 
     document.querySelectorAll('[data-gallery]').forEach((gallery) => {
         const mainImage = gallery.querySelector('[data-gallery-main]')
@@ -576,7 +579,7 @@ const sectionTitleClass =
         const message = purchase.querySelector('[data-cart-message]')
         if (!(input instanceof HTMLInputElement)) return
 
-        const setQuantity = (quantity) => {
+        const setQuantity = (quantity: number) => {
             input.value = String(Math.max(1, quantity))
         }
 

@@ -2,18 +2,20 @@ const CHECKOUT_DRAFT_KEY = 'sunka_checkout_draft'
 const CHECKOUT_DRAFT_VERSION = 1
 const CHECKOUT_DRAFT_MAX_AGE = 2 * 60 * 60 * 1000
 
-function stableStringify(value) {
+type DraftRecord = Record<string, any>
+
+function stableStringify(value: unknown): string {
     if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`
     if (value && typeof value === 'object') {
         return `{${Object.keys(value)
             .sort()
-            .map((key) => `${JSON.stringify(key)}:${stableStringify(value[key])}`)
+            .map((key) => `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`)
             .join(',')}}`
     }
     return JSON.stringify(value)
 }
 
-function hash(value) {
+function hash(value: string) {
     let result = 2166136261
     for (let index = 0; index < value.length; index++) {
         result ^= value.charCodeAt(index)
@@ -22,7 +24,7 @@ function hash(value) {
     return (result >>> 0).toString(36)
 }
 
-function allowedForm(form) {
+function allowedForm(form: DraftRecord) {
     return {
         socio_datos: {
             correo: form.socio_datos?.correo || '',
@@ -51,9 +53,9 @@ function allowedForm(form) {
     }
 }
 
-export function createCheckoutCartSignature(items) {
+export function createCheckoutCartSignature(items: DraftRecord[]) {
     const cart = items
-        .map((item) => ({
+        .map((item: DraftRecord) => ({
             articulo: item.articulo,
             cantidad: Number(item.cantidad || 0),
             pu: Number(item.pu || 0),
@@ -65,7 +67,7 @@ export function createCheckoutCartSignature(items) {
 }
 
 export const CheckoutDraft = {
-    get({ userId, cartSignature }) {
+    get({ userId, cartSignature }: { userId: string | null; cartSignature: string }) {
         try {
             const raw = sessionStorage.getItem(CHECKOUT_DRAFT_KEY)
             if (!raw) return null
@@ -89,7 +91,7 @@ export const CheckoutDraft = {
         }
     },
 
-    save({ userId, cartSignature, step, form }) {
+    save({ userId, cartSignature, step, form }: { userId: string | null; cartSignature: string; step: number; form: DraftRecord }) {
         try {
             sessionStorage.setItem(
                 CHECKOUT_DRAFT_KEY,

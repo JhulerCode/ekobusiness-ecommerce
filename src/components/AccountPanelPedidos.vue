@@ -59,12 +59,13 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import JdButton from "../components/JdButton.vue";
 
-import { get, post, urls } from "../lib/api.js";
+import { get, post, urls } from "../lib/api";
 
-export default {
+export default defineComponent({
     components: {
         JdButton,
     },
@@ -87,10 +88,10 @@ export default {
     methods: {
         async loadPedidos() {
             this.loading = true;
-            const res = await get("socio_pedidos", {}, localStorage.getItem("token"));
+            const res = await get('socio_pedidos')
             this.loading = false;
 
-            if (res.code !== 0) return;
+            if (!res.ok) return;
 
             this.user.pedidos = res.data;
         },
@@ -101,18 +102,16 @@ export default {
                 `${urls.socio_pedidos}/${id}/access`,
                 {},
                 false,
-                localStorage.getItem('token'),
             )
             this.openingOrderId = null
 
-            if (res.code !== 0) {
-                this.error = res.msg || 'No se pudo abrir el pedido.'
+            if (!res.ok) {
+                this.error = res.problem.detail || 'No se pudo abrir el pedido.'
                 return
             }
 
-            const accessToken = encodeURIComponent(res.data.access_token)
-            window.location.href = `/pedidos/${id}?account=true&access_token=${accessToken}`
+            window.location.href = res.data.redirect_url
         },
     },
-};
+})
 </script>

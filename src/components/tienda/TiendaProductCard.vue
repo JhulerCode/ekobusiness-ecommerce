@@ -46,11 +46,12 @@
     </article>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import ShoppingCartPlus from '@/assets/icons/shopping-cart-plus.vue'
-import { Cart } from '@/lib/cart.js'
+import { Cart } from '@/lib/cart'
 
-export default {
+export default defineComponent({
     name: 'TiendaProductCard',
     components: { ShoppingCartPlus },
     props: {
@@ -87,7 +88,7 @@ export default {
             }, 2500)
         },
     },
-}
+})
 </script>
 
 <style scoped>

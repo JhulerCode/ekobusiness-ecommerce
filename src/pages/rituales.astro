@@ -342,22 +342,28 @@ const articles = [
 </BaseLayout>
 
 <script>
-    const fields = {
-        label: document.getElementById('moment-label'),
-        eyebrow: document.getElementById('moment-eyebrow'),
-        name: document.getElementById('moment-name'),
-        copy: document.getElementById('moment-copy'),
-        product: document.getElementById('moment-product'),
-        notes: document.getElementById('moment-notes'),
-        productLink: document.getElementById('moment-product-link'),
-        image: document.getElementById('moment-image'),
-        content: document.getElementById('moment-content'),
+    const requiredElement = <T extends HTMLElement>(id: string) => {
+        const element = document.getElementById(id)
+        if (!element) throw new Error(`Elemento requerido no encontrado: ${id}`)
+        return element as T
     }
 
-    let contentTimer
-    let imageTimer
+    const fields = {
+        label: requiredElement<HTMLElement>('moment-label'),
+        eyebrow: requiredElement<HTMLElement>('moment-eyebrow'),
+        name: requiredElement<HTMLElement>('moment-name'),
+        copy: requiredElement<HTMLElement>('moment-copy'),
+        product: requiredElement<HTMLElement>('moment-product'),
+        notes: requiredElement<HTMLElement>('moment-notes'),
+        productLink: requiredElement<HTMLAnchorElement>('moment-product-link'),
+        image: requiredElement<HTMLImageElement>('moment-image'),
+        content: requiredElement<HTMLElement>('moment-content'),
+    }
 
-    document.querySelectorAll('[data-moment]').forEach((button) => {
+    let contentTimer: number | undefined
+    let imageTimer: number | undefined
+
+    document.querySelectorAll<HTMLElement>('[data-moment]').forEach((button) => {
         button.addEventListener('click', () => {
             if (button.classList.contains('is-active')) return
 
@@ -371,21 +377,21 @@ const articles = [
             window.clearTimeout(contentTimer)
             fields.content.classList.add('is-changing')
             contentTimer = window.setTimeout(() => {
-                fields.label.textContent = button.dataset.label
-                fields.eyebrow.textContent = button.dataset.eyebrow
-                fields.name.textContent = button.dataset.name
-                fields.copy.textContent = button.dataset.copy
-                fields.product.textContent = button.dataset.product
-                fields.notes.textContent = button.dataset.notes
-                fields.productLink.setAttribute('href', button.dataset.productHref)
+                fields.label.textContent = button.dataset.label ?? ''
+                fields.eyebrow.textContent = button.dataset.eyebrow ?? ''
+                fields.name.textContent = button.dataset.name ?? ''
+                fields.copy.textContent = button.dataset.copy ?? ''
+                fields.product.textContent = button.dataset.product ?? ''
+                fields.notes.textContent = button.dataset.notes ?? ''
+                fields.productLink.setAttribute('href', button.dataset.productHref ?? '#')
                 fields.content.classList.remove('is-changing')
             }, 150)
 
             window.clearTimeout(imageTimer)
             fields.image.classList.add('is-changing')
             imageTimer = window.setTimeout(() => {
-                fields.image.setAttribute('src', button.dataset.image)
-                fields.image.setAttribute('alt', button.dataset.alt)
+                fields.image.setAttribute('src', button.dataset.image ?? '')
+                fields.image.setAttribute('alt', button.dataset.alt ?? '')
                 fields.image.classList.remove('is-changing')
             }, 220)
         })

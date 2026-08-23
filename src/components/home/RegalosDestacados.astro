@@ -1,5 +1,6 @@
 ---
-import { get, formatProductos } from '@/lib/api.js'
+import { formatProductos } from '@/lib/api'
+import { serverGet as get } from '@/lib/server/public-api'
 
 const qry2 = {
     fltr: {
@@ -10,7 +11,7 @@ const qry2 = {
 }
 
 const res2 = await get('productos', { qry: qry2 })
-const productos = formatProductos(res2.data)
+const productos = formatProductos(res2.ok ? res2.data : [])
     .filter((producto) => producto.is_destacado)
     .slice(0, 6)
 ---

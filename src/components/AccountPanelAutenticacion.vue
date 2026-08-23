@@ -156,15 +156,16 @@
     </transition>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import JdInput from "../components/JdInput.vue";
 import JdInputPassword from "../components/JdInputPassword.vue";
 import JdLoading from "../components/LoadingSpin.vue";
 import JdButton from "../components/JdButton.vue";
-import { urls, post, delet } from "../lib/api.js";
-import { CheckoutDraft } from "../lib/checkout-draft.js";
+import { urls, post, delet } from "../lib/api";
+import { CheckoutDraft } from "../lib/checkout-draft";
 
-export default {
+export default defineComponent({
     components: {
         JdInput,
         JdInputPassword,
@@ -230,15 +231,12 @@ export default {
                 `${urls.account}/send-codigo`,
                 send,
                 undefined,
-                localStorage.getItem("token"),
             );
             this.loading = false;
 
-            if (res.code < 0) {
-                this.errors.general = "Algo salió mal";
-            } else if (res.code > 0) {
-                this.errors.general = res.msg;
-            } else if (res.code == 0) {
+            if (!res.ok) {
+                this.errors.general = res.problem.detail;
+            } else {
                 this.codigo_enviado = true;
                 this.showEnviarCodigo = false;
 
@@ -275,15 +273,12 @@ export default {
                 `${urls.account}/verify-codigo`,
                 send,
                 undefined,
-                localStorage.getItem("token"),
             );
             this.loading = false;
 
-            if (res.code < 0) {
-                this.errors.general = "Algo salió mal";
-            } else if (res.code > 0) {
-                this.errors.general = res.msg;
-            } else if (res.code == 0) {
+            if (!res.ok) {
+                this.errors.general = res.problem.detail;
+            } else {
                 this.pestana = 2;
             }
         },
@@ -319,13 +314,12 @@ export default {
                 `${urls.account}/update-password`,
                 send,
                 undefined,
-                localStorage.getItem("token"),
             );
             this.loading = false;
 
-            if (res.code < 0) {
-                this.errors.general = "Algo salió mal";
-            } else if (res.code == 0) {
+            if (!res.ok) {
+                this.errors.general = res.problem.detail;
+            } else {
                 this.editing = false;
                 this.form = {};
                 this.errors = {};
@@ -353,7 +347,6 @@ export default {
         },
         async eliminar() {
             const send = {
-                user_token: localStorage.getItem("token"),
                 id: this.user.id,
             };
 
@@ -361,19 +354,16 @@ export default {
             const res = await delet("account", send);
             this.loadingDelete = false;
 
-            if (res.code < 0) {
-                this.errors.eliminar = "Algo salió mal";
-            } else if (res.code > 0) {
-                this.errors.eliminar = res.data;
-            } else if (res.code == 0) {
+            if (!res.ok) {
+                this.errors.eliminar = res.problem.detail;
+            } else {
                 this.closeQuestion();
 
-                localStorage.removeItem("token");
                 CheckoutDraft.clear();
                 window.location.href = "/";
                 this.user = null;
             }
         },
     },
-};
+})
 </script>

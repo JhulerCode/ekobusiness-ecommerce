@@ -12,7 +12,7 @@ import BotanicalBranchIcon from '@/assets/icons/icon-botanical-branch.astro'
 import proposito1 from '@/assets/origen/proposito1.webp'
 import proposito2 from '@/assets/origen/proposito2.webp'
 import proposito3 from '@/assets/origen/proposito3.webp'
-import { colecciones } from '@/data/lineas.js'
+import { colecciones } from '@/data/lineas'
 
 const principles = [
     [
@@ -164,7 +164,7 @@ const principles = [
             </div>
             <div class="mt-10 grid gap-5 md:mt-12 md:grid-cols-3">
                 {
-                    principles.map((item, index) => (
+                    principles.map((item) => (
                         <article class="flex min-h-[285px] flex-col items-center rounded-[20px] border border-sunka-brass/35 bg-[#fffdf8]/90 px-5 py-7 text-center shadow-[0_12px_28px_rgba(73,48,17,.11)] fade-up lg:min-h-[305px] lg:px-6">
                             <>
                                 <span class="flex h-20 w-20 items-center justify-center rounded-full border border-sunka-brass/55 text-sunka-brass">

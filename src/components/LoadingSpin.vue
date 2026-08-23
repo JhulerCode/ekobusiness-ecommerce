@@ -23,13 +23,14 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
     props: {
         text: { type: String, default: '' },
         rellenar: { type: Boolean, default: true },
         shadowBack: { type: Boolean, default: true },
         scale: { type: [String, Number], default: 1 },
     },
-};
+})
 </script>

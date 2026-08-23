@@ -176,7 +176,8 @@
     </transition>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import JdInput from '../components/JdInput.vue';
 import JdTextArea from '../components/JdTextArea.vue';
 import JdSelectQuery from '../components/JdSelectQuery.vue';
@@ -187,10 +188,10 @@ import Trash from '../assets/icons/trash.vue';
 import Star from '../assets/icons/star.vue';
 import LoadingSpin from './LoadingSpin.vue';
 
-import { urls, get, patch } from '../lib/api.js';
-import { genId } from '../lib/mine.js';
+import { urls, get, patch } from '../lib/api';
+import { genId } from '../lib/mine';
 
-export default {
+export default defineComponent({
     components: {
         JdInput,
         JdTextArea,
@@ -255,12 +256,11 @@ export default {
             this.ubigeosLoading = true;
             const res = await get(
                 'ubigeos',
-                { qry },
-                localStorage.getItem('token')
+                { qry }
             );
             this.ubigeosLoading = false;
 
-            if (res.code !== 0) return;
+            if (!res.ok) return;
 
             this.ubigeos = res.data;
         },
@@ -288,7 +288,6 @@ export default {
                 direcciones,
                 tipo: 2,
                 comes_from: 'ecommerce',
-                user_token: localStorage.getItem('token'),
             };
         },
         async grabar() {
@@ -309,7 +308,7 @@ export default {
             const res = await patch('account', send);
             this.loadingCreate = false;
 
-            if (res.code == 0) {
+            if (res.ok) {
                 this.closeModal();
                 this.user.direcciones = res.data.direcciones;
             }
@@ -326,7 +325,7 @@ export default {
             const res = await patch('account', send);
             this.loadingDelete = false;
 
-            if (res.code == 0) {
+            if (res.ok) {
                 this.user.direcciones = res.data.direcciones;
                 this.closeQuestion();
             }
@@ -344,10 +343,10 @@ export default {
             const res = await patch('account', send);
             this.loadingSetPrincipal = false;
 
-            if (res.code == 0) {
+            if (res.ok) {
                 this.user.direcciones = res.data.direcciones;
             }
         },
     },
-};
+})
 </script>

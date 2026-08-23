@@ -195,11 +195,12 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import ShoppingCart from '@/assets/icons/shopping-cart-plus.vue'
-import { Cart } from '@/lib/cart.js'
+import { Cart } from '@/lib/cart'
 
-export default {
+export default defineComponent({
     name: 'CartDrawer',
     components: { ShoppingCart },
     data() {
@@ -293,7 +294,7 @@ export default {
             window.location.href = '/checkout'
         },
     },
-}
+})
 </script>
 
 <style scoped>

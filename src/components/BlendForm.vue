@@ -539,13 +539,14 @@
     </div>
 </template>
 
-<script>
-import { Blend } from '../lib/blend.js'
-import { Cart } from '../lib/cart.js'
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { Blend } from '../lib/blend'
+import { Cart } from '../lib/cart'
 import logoSunka from '../assets/logo-sunka-black.webp'
 import JdInput from './JdInput.vue'
 
-export default {
+export default defineComponent({
     name: 'BlendForm',
     components: { JdInput },
     props: {
@@ -1008,7 +1009,7 @@ export default {
             Blend.clear()
         },
     },
-}
+})
 </script>
 
 <style>

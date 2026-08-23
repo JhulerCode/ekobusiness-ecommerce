@@ -98,11 +98,12 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import LoadingSpin from './LoadingSpin.vue';
 import Xmark from '../assets/icons/xmark.vue';
 
-export default {
+export default defineComponent({
     components: {
         LoadingSpin,
         Xmark,
@@ -248,5 +249,5 @@ export default {
             this.$emit('search', this.txtBuscar);
         },
     },
-};
+})
 </script>

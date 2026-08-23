@@ -10,10 +10,14 @@ import PersonalPackIcon from '@/assets/icons/icon-personal-pack.astro'
 import ThreeLeafSproutIcon from '@/assets/icons/icon-three-leaf-sprout.astro'
 import BotanicalBranchIcon from '@/assets/icons/icon-botanical-branch.astro'
 
-const { linea } = Astro.props
+const { linea } = Astro.props as {
+    linea: Record<string, any> & {
+        idealPara: Record<string, any> & { points: Array<Record<string, any>> }
+    }
+}
 const ideal = linea.idealPara
 
-const icons = {
+const icons: Record<string, any> = {
     leaf: LeafIcon,
     botanical: BotanicalIcon,
     ritual: RitualIcon,

@@ -27,13 +27,14 @@
     </transition>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import ShoppingCartPlus from '../assets/icons/shopping-cart-plus.vue';
 import JdInput from '../components/JdInput.vue';
 
-import { Cart } from '../../src/lib/cart.js';
+import { Cart } from '../../src/lib/cart';
 
-export default {
+export default defineComponent({
     components: {
         ShoppingCartPlus,
         JdInput,
@@ -59,7 +60,7 @@ export default {
             }, 2500);
         },
     },
-};
+})
 </script>
 
 <style scoped>

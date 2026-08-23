@@ -1,5 +1,7 @@
 const BLEND_KEY = "sunka_blend";
 
+type BlendRecord = Record<string, any>
+
 function emptyBlend() {
     return {
         pasoActual: 1,
@@ -44,30 +46,35 @@ export const Blend = {
         }
     },
 
-    save(blend) {
+    save(blend: BlendRecord) {
         localStorage.setItem(BLEND_KEY, JSON.stringify(blend));
     },
 
-    updatePrices(hierbasBase, complementos, frutas, especias) {
+    updatePrices(
+        hierbasBase: BlendRecord[],
+        complementos: BlendRecord[],
+        frutas: BlendRecord[],
+        especias: BlendRecord[],
+    ) {
         const blend = this.get();
 
         if (blend.hierbaBase1) {
-            const i = hierbasBase.find(a => a.id == blend.hierbaBase)
+            const i = hierbasBase.find((item) => item.id == blend.hierbaBase)
             blend.hierbaBase1 = i ? { ...blend.hierbaBase1, ...i, precio: i.precio } : blend.hierbaBase1
         }
 
         for (const a of blend.complementos) {
-            const i = complementos.find(b => b.id == a.id)
+            const i = complementos.find((item) => item.id == a.id)
             Object.assign(a, i || {}, { precio: i ? i.precio : null })
         }
 
         for (const a of blend.frutas) {
-            const i = frutas.find(b => b.id == a.id)
+            const i = frutas.find((item) => item.id == a.id)
             Object.assign(a, i || {}, { precio: i ? i.precio : null })
         }
 
         for (const a of blend.especias) {
-            const i = especias.find(b => b.id == a.id)
+            const i = especias.find((item) => item.id == a.id)
             Object.assign(a, i || {}, { precio: i ? i.precio : null })
         }
 

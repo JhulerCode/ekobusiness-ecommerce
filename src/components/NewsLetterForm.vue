@@ -124,10 +124,11 @@
     </form>
 </template>
 
-<script>
-import { post } from '../lib/api.js'
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { post } from '../lib/api'
 
-export default {
+export default defineComponent({
     name: 'NewsletterForm',
     props: {
         theme: {
@@ -185,9 +186,11 @@ export default {
             try {
                 const res = await post('newsletter', { correo: this.email }, 'Correo')
                 this.showMsg = true
-                this.resMsg = res.msg
+                this.resMsg = res.ok
+                    ? res.warnings?.[0]?.detail || 'Suscripción registrada correctamente.'
+                    : res.problem.detail
 
-                if (res.code != 0) return
+                if (!res.ok) return
 
                 this.success = true
                 this.email = ''
@@ -207,5 +210,5 @@ export default {
             }
         },
     },
-}
+})
 </script>

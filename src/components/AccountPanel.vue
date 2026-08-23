@@ -74,16 +74,17 @@
     </div>
 </template>
 
-<script>
-import { urls, get } from "../lib/api.js";
-import { CheckoutDraft } from "../lib/checkout-draft.js";
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { urls, get, post } from '../lib/api'
+import { CheckoutDraft } from "../lib/checkout-draft";
 import AccountPanelPerfil from "./AccountPanelPerfil.vue";
 import AccountPanelDirecciones from "./AccountPanelDirecciones.vue";
 import AccountPanelPagoMetodos from "./AccountPanelPagoMetodos.vue";
 import AccountPanelPedidos from "./AccountPanelPedidos.vue";
 import AccountPanelAutenticacion from "./AccountPanelAutenticacion.vue";
 
-export default {
+export default defineComponent({
     components: {
         AccountPanelPerfil,
         AccountPanelDirecciones,
@@ -128,17 +129,14 @@ export default {
     },
     methods: {
         async validateSession() {
-            const user_token = localStorage.getItem("token");
-            if (user_token) {
-                const res = await get(`${urls.account}/login`, null, user_token);
-                if (res.code == 0) this.user = res.data;
-            }
+            const res = await get(`${urls.account}/session`)
+            if (res.ok) this.user = res.data
         },
-        logout() {
-            localStorage.removeItem("token");
-            CheckoutDraft.clear();
-            window.location.href = "/";
-            this.user = null;
+        async logout() {
+            await post(`${urls.auth}/logout`, {}, false)
+            CheckoutDraft.clear()
+            window.location.href = '/'
+            this.user = null
         },
 
         //--- Direcciones ---//
@@ -160,5 +158,5 @@ export default {
             this.user.direcciones[index].principal = true;
         },
     },
-};
+})
 </script>

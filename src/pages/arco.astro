@@ -1,16 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArcoForm from '../components/ArcoForm.vue';
-import { get } from '../lib/api.js';
-import empresa from '../data/company.js';
+import { serverGet as get } from '@/lib/server/public-api'
+import empresa from '../data/company';
 
 const res = await get('sistema', {
     qry: ['documentos_identidad'],
 });
 
-if (res.code == 0) {
-    var { documentos_identidad } = res.data;
-}
+const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : [];
 
 const direccionPrincipal =
     empresa.direcciones.find((direccion) => direccion.principal) ?? empresa.direcciones[0];

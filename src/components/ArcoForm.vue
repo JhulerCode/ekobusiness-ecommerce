@@ -230,13 +230,14 @@
     </div>
 </template>
 
-<script>
-import { post } from '../lib/api.js';
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { post } from '../lib/api';
 import JdInput from '../components/JdInput.vue';
 import JdSelect from './JdSelect.vue';
 import JdRadio from '../components/JdRadio.vue';
 
-export default {
+export default defineComponent({
     name: 'ArcoForm',
     components: {
         JdInput,
@@ -248,7 +249,7 @@ export default {
     },
     data() {
         return {
-            siteKey: import.meta.env.RECAPTCHA_SITE_KEY,
+            siteKey: import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY,
             recaptchaContainer: null,
             widgetId: null,
 
@@ -386,10 +387,12 @@ export default {
 
             try {
                 const res = await post('arco', this.form);
-                this.resMsg = res.msg;
+                this.resMsg = res.ok
+                    ? res.warnings?.[0]?.detail || ''
+                    : res.problem.detail;
                 this.loading = false;
 
-                if (res.code == 0) {
+                if (res.ok) {
                     this.enviado = true;
 
                     // ✅ Reset del widget visual
@@ -490,5 +493,5 @@ export default {
             }
         },
     },
-};
+})
 </script>

@@ -5,29 +5,33 @@ import OrderDetail from '@/components/pedidos/OrderDetail.astro'
 import OrderSectionTitle from '@/components/pedidos/OrderSectionTitle.astro'
 import GhostIcon from '@/assets/icons/ghost.vue'
 import ShieldIcon from '@/assets/icons/icon-shield-check.astro'
-import { urls, get } from '@/lib/api.js'
-import { redondear, formatDate, formatDateTime } from '@/lib/mine.js'
+import { backendRequest, getClientIp, orderCookieName } from '@/lib/server/backend'
+import { serverGet as get } from '@/lib/server/public-api'
+import { redondear, formatDate, formatDateTime } from '@/lib/mine'
 
 const params = Astro.url.searchParams
 const isAccount = params.get('account') === 'true'
-const accessToken = params.get('access_token') || ''
 const { slug } = Astro.params
 
 Astro.response.headers.set('Cache-Control', 'private, no-store')
 
-const orderResponse = accessToken
-    ? await get(
-          `${urls.socio_pedidos}/uno/${slug}?access_token=${encodeURIComponent(accessToken)}`,
-      )
-    : { code: 1, data: null, http_status: 401 }
-const pedido = orderResponse.code === 0 ? orderResponse.data || null : null
-const responseStatus = Number(orderResponse.http_status)
-const retryAfterSeconds = Number(orderResponse.retry_after || orderResponse.rate_limit_reset)
+const accessToken = slug ? Astro.cookies.get(orderCookieName(slug))?.value : undefined
+const orderResult = accessToken
+    ? await backendRequest<Record<string, any>>(`orders/${encodeURIComponent(slug || '')}`, {
+          orderToken: accessToken,
+          clientIp: getClientIp(Astro.request),
+      })
+    : null
+const pedido: Record<string, any> | null = orderResult?.ok ? orderResult.data || null : null
+const responseStatus = orderResult?.status || 401
+const retryAfterSeconds = Number(
+    orderResult?.headers.get('retry-after') || orderResult?.headers.get('ratelimit-reset'),
+)
 const retryAfterMinutes = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
     ? Math.max(1, Math.ceil(retryAfterSeconds / 60))
     : null
 
-const errorByStatus = {
+const errorByStatus: Record<number, Record<string, string>> = {
     401: {
         eyebrow: 'Acceso no válido',
         title: 'Este enlace no está disponible',
@@ -68,17 +72,15 @@ const errorByStatus = {
     },
 }
 
-const errorStatus = !pedido
+const errorStatus: number | null = !pedido
     ? [401, 404, 429, 500, 503].includes(responseStatus)
         ? responseStatus
-        : orderResponse.code === -2
-          ? 503
-          : 404
+        : 404
     : null
 const orderError = errorStatus ? errorByStatus[errorStatus] : null
 
-if (orderError) {
-    const statusTextByStatus = {
+if (orderError && errorStatus !== null) {
+    const statusTextByStatus: Record<number, string> = {
         401: 'Unauthorized',
         404: 'Not Found',
         429: 'Too Many Requests',
@@ -93,7 +95,7 @@ if (orderError) {
         Astro.response.headers.set('Retry-After', String(Math.ceil(retryAfterSeconds)))
     }
 }
-let etapas = []
+let etapas: Array<Record<string, any>> = []
 
 if (pedido) {
     const systemResponse = await get('sistema', {
@@ -105,20 +107,21 @@ if (pedido) {
         ],
     })
 
-    if (systemResponse.code === 0) {
-        etapas = (systemResponse.data.socio_pedidos_etapas || []).map((etapa) => ({
+    if (systemResponse.ok) {
+        etapas = (systemResponse.data?.socio_pedidos_etapas || []).map((etapa: Record<string, any>) => ({
             ...etapa,
-            fecha: (pedido.etapas || []).find((item) => item.id == etapa.id)?.fecha || null,
+            fecha: (pedido.etapas || []).find((item: Record<string, any>) => item.id == etapa.id)?.fecha || null,
         }))
     }
 }
 
 const orderState = pedido?.estado1?.nombre || ''
 const lastCompletedStageIndex = etapas.reduce(
-    (lastIndex, etapa, index) => (etapa.fecha ? index : lastIndex),
+    (lastIndex: number, etapa: Record<string, any>, index: number) =>
+        etapa.fecha ? index : lastIndex,
     -1,
 )
-const orderItems = pedido?.socio_pedido_items || []
+const orderItems: Array<Record<string, any>> = pedido?.socio_pedido_items || []
 const currencySymbol = pedido?.moneda1?.simbolo || 'S/ '
 const orderTitle = pedido
     ? `Pedido ${pedido.codigo} | SUNKA Herbal Tea`

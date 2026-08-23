@@ -62,7 +62,8 @@
     </transition>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import JdButton from "../components/JdButton.vue";
 import Trash from "../assets/icons/trash.vue";
 
@@ -71,9 +72,9 @@ import mastercardUrl from "../assets/icons/mastercard.svg?url";
 import dinersUrl from "../assets/icons/diners-club.svg?url";
 import amexUrl from "../assets/icons/american-express.svg?url";
 
-import { urls, get, delet } from "../lib/api.js";
+import { urls, get, delet } from "../lib/api";
 
-export default {
+export default defineComponent({
     components: {
         JdButton,
         Trash,
@@ -109,12 +110,11 @@ export default {
             this.loading = true;
             const res = await get(
                 `${urls.account}/customer-wallet/${this.user.id}`,
-                null,
-                localStorage.getItem("token")
+                null
             );
             this.loading = false;
 
-            if (res.code == 0) {
+            if (res.ok) {
                 this.user.wallet = res.data.tokens;
             }
         },
@@ -144,19 +144,18 @@ export default {
         async eliminar() {
             const send = {
                 id: this.toDelete,
-                token: localStorage.getItem("token"),
             };
 
             this.loadingDelete = true;
             const res = await delet(`${urls.izipay}/tarjeta`, send);
             this.loadingDelete = false;
 
-            if (res.code == 0) {
+            if (res.ok) {
                 const i = this.user.wallet.findIndex((a) => a.id == this.toDelete);
                 this.user.wallet.splice(i, 1);
                 this.closeQuestion();
             }
         },
     },
-};
+})
 </script>

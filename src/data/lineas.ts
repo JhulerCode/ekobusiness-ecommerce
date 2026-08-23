@@ -2,13 +2,12 @@ import signature from '@/assets/home/lineas/signature.webp'
 import piramidal from '@/assets/home/lineas/piramidal.webp'
 import luxury from '@/assets/home/lineas/luxury.webp'
 import tradicional from '@/assets/home/lineas/tradicional.webp'
-import granel from '@/assets/home/lineas/granel.webp'
 import signatureDiferencia from '@/assets/lines/signature/diferencia.webp'
 import piramidalDiferencia from '@/assets/lines/premium/diferencia.webp'
 import luxuryDiferencia from '@/assets/lines/luxury/diferencia.webp'
 import tradicionalDiferencia from '@/assets/lines/tradicional/diferencia.webp'
 import preparacion from '@/assets/lines/luxury/preparacion.webp'
-import { getMomentosBySlugs } from '@/data/momentos.js'
+import { getMomentosBySlugs } from '@/data/momentos'
 
 const defaultMomentos = getMomentosBySlugs(['manana', 'oficina', 'despues-de-comer', 'noche'])
 
@@ -30,14 +29,7 @@ const defaultPreparacionSteps = [
     },
 ]
 
-const defaultMetrics = [
-    { titulo: '20', texto: 'sobres seleccionados', icon: 'box', iconClass: 'scale-[0.86]' },
-    { titulo: 'Blend', texto: 'perfil balanceado', icon: 'leaf', iconClass: 'scale-[0.82]' },
-    { titulo: 'ISO', texto: 'calidad consistente', icon: 'shield', iconClass: 'scale-[1.05]' },
-    { titulo: 'Ritual', texto: 'listo para servir', icon: 'drop', iconClass: 'scale-[0.86]' },
-]
-
-export const lineas = [
+export const lineas: Array<Record<string, any>> = [
     {
         slug: 'signature',
         title: 'Signature Black',
@@ -595,7 +587,7 @@ export const lineas = [
 
 export const lineasBySlug = Object.fromEntries(lineas.map((linea) => [linea.slug, linea]))
 
-const normalizeLineaName = (name = '') =>
+const normalizeLineaName = (name: string = '') =>
     name
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
@@ -612,7 +604,7 @@ export const lineasByName = Object.fromEntries(
 )
 
 const coleccionesOrder = ['signature', 'piramidal', 'luxury', 'tradicional']
-const coleccionesPosition = {
+const coleccionesPosition: Record<string, string> = {
     signature: 'object-left',
     piramidal: 'object-bottom',
     luxury: 'object-top',
@@ -633,5 +625,5 @@ export const colecciones = coleccionesOrder.map((slug) => {
     }
 })
 
-export const getLineaBySlug = (slug) => lineasBySlug[slug]
-export const getLineaByName = (name) => lineasByName[normalizeLineaName(name)]
+export const getLineaBySlug = (slug: string) => lineasBySlug[slug]
+export const getLineaByName = (name: string) => lineasByName[normalizeLineaName(name)]

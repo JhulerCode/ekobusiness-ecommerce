@@ -39,8 +39,9 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
     props: {
         producto: { type: Object, required: true, default: () => ({}) },
     },
@@ -71,7 +72,7 @@ export default {
             this.imgStyle.transformOrigin = 'center center';
         },
     },
-};
+})
 </script>
 
 <style scoped>

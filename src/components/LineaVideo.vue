@@ -15,8 +15,9 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
     name: "LineaVideo",
     props: {
         videoUrl: { type: String, required: true },
@@ -107,7 +108,7 @@ export default {
             this.blobUrl = null;
         }
     },
-};
+})
 </script>
 
 <style scoped>

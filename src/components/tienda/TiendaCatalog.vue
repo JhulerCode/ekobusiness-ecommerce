@@ -151,15 +151,16 @@
     </section>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import TiendaProductCard from '@/components/tienda/TiendaProductCard.vue'
-import { momentosBySlug } from '@/data/momentos.js'
+import { momentosBySlug } from '@/data/momentos'
 import ChevronDown from '@/assets/icons/chevron-down.vue'
 import ChevronLeft from '@/assets/icons/chevron-left.vue'
 import ChevronRight from '@/assets/icons/chevron-right.vue'
 import ChevronUp from '@/assets/icons/chevron-up.vue'
 
-export default {
+export default defineComponent({
     name: 'TiendaCatalog',
     components: { TiendaProductCard, ChevronDown, ChevronLeft, ChevronRight, ChevronUp },
     props: {
@@ -330,7 +331,7 @@ export default {
             if (momentosBySlug[requestedMoment]) this.selectedMoment = requestedMoment
         },
     },
-}
+})
 </script>
 
 <style scoped>

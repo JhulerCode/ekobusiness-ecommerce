@@ -1,0 +1,133 @@
+import { createServer } from 'node:http'
+
+const systemData = {
+    documentos_identidad: [],
+    entrega_tipos: [],
+    pago_metodos: [],
+    comprobante_tipos: [],
+    socio_pedidos_etapas: [],
+}
+
+createServer((request, response) => {
+    if (request.headers['x-api-key'] !== 'itd_0000000000000000.e2e-integration-secret-00000000000000000000') {
+        response.writeHead(401, { 'content-type': 'application/problem+json' })
+        response.end(JSON.stringify({
+            type: 'urn:itd:integration:problem:middleware:invalid-api-key',
+            title: 'API key inválida',
+            status: 401,
+            detail: 'La credencial de integración no es válida.',
+            instance: 'urn:itd:integration:request:e2e',
+        }))
+        return
+    }
+
+    const url = new URL(request.url || '/', 'http://127.0.0.1:4011')
+    response.setHeader('content-type', 'application/json')
+    if (url.pathname === '/api/integration/v1/catalog/products') {
+        response.end(JSON.stringify({ data: [] }))
+    } else if (url.pathname === '/api/integration/v1/reference-data') {
+        response.end(JSON.stringify({ data: systemData }))
+    } else if (url.pathname === '/api/integration/v1/forms/newsletter') {
+        response.writeHead(201)
+        response.end(JSON.stringify({ data: { id: 'newsletter-1' } }))
+    } else if (url.pathname === '/api/integration/v1/customers/auth/signin') {
+        response.end(
+            JSON.stringify({
+                data: {
+                    user: { id: 'user-1', correo: 'cliente@example.com', activo: true },
+                    access_token: 'access-mock',
+                    refresh_token: 'refresh-mock',
+                },
+            }),
+        )
+    } else if (url.pathname === '/api/integration/v1/customers/auth/refresh') {
+        const authenticated = true
+        response.writeHead(200)
+        response.end(
+            JSON.stringify(
+                authenticated
+                    ? { data: { access_token: 'access-mock' } }
+                    : {
+                          type: 'urn:itd:integration:problem:customers:invalid-session',
+                          title: 'Sesión inválida',
+                          status: 401,
+                          detail: 'La sesión no es válida o ha vencido.',
+                          instance: 'urn:itd:integration:request:e2e',
+                      },
+            ),
+        )
+    } else if (url.pathname === '/api/integration/v1/customers/auth/logout') {
+        response.writeHead(204)
+        response.end()
+    } else if (url.pathname === '/api/integration/v1/customers/me') {
+        const authenticated = request.headers.authorization === 'Bearer access-mock'
+        response.writeHead(authenticated ? 200 : 401)
+        response.end(
+            JSON.stringify(
+                authenticated
+                    ? { data: { id: 'user-1', correo: 'cliente@example.com' } }
+                    : {
+                          type: 'urn:itd:integration:problem:customers:invalid-session',
+                          title: 'Sesión inválida',
+                          status: 401,
+                          detail: 'La sesión no es válida o ha vencido.',
+                          instance: 'urn:itd:integration:request:e2e',
+                      },
+            ),
+        )
+    } else if (url.pathname === '/api/integration/v1/orders/lookup') {
+        response.end(
+            JSON.stringify({ data: { id: 'order-1', access_token: 'order-token' } }),
+        )
+    } else if (url.pathname === '/api/integration/v1/orders/order-1') {
+        const authorized = request.headers['x-order-access'] === 'order-token'
+        response.writeHead(authorized ? 200 : 401)
+        response.end(
+            JSON.stringify(
+                authorized
+                    ? {
+                          data: {
+                              codigo: 'SUNKA-1',
+                              fecha: '2026-08-22',
+                              monto: 25,
+                              estado1: { nombre: 'RECIBIDO' },
+                              moneda1: { simbolo: 'S/ ' },
+                              socio_datos: {},
+                              entrega_tipo1: {},
+                              comprobante_tipo1: {},
+                              pago_metodo1: {},
+                              socio_pedido_items: [],
+                              etapas: [],
+                          },
+                      }
+                    : {
+                          type: 'urn:itd:integration:problem:orders:order-access-invalid',
+                          title: 'Acceso al pedido inválido',
+                          status: 401,
+                          detail: 'El acceso al pedido no es válido o ha vencido.',
+                          instance: 'urn:itd:integration:request:e2e',
+                      },
+            ),
+        )
+    } else if (url.pathname === '/api/integration/v1/payments/izipay/form-token') {
+        response.writeHead(201)
+        response.end(JSON.stringify({
+            data: { formToken: 'form-token', checkout_intent_id: 'intent-1', orderId: 'payment-order-1' },
+        }))
+    } else if (url.pathname === '/api/integration/v1/payments/izipay/validate') {
+        response.writeHead(201)
+        response.end(JSON.stringify({
+            data: { id: 'payment-order-1', codigo: 'SUNKA-PAY', access_token: 'payment-access' },
+        }))
+    } else {
+        response.writeHead(404)
+        response.setHeader('content-type', 'application/problem+json')
+        response.end(JSON.stringify({
+            type: 'urn:itd:integration:problem:middleware:not-found',
+            title: 'No encontrado',
+            status: 404,
+            detail: 'No encontrado.',
+            instance: 'urn:itd:integration:request:e2e',
+        }))
+    }
+}).listen(4011, '127.0.0.1')

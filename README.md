@@ -1,46 +1,43 @@
-# Astro Starter Kit: Basics
+# SUNKA Ecommerce
+
+Tienda SSR construida con Astro 5, Vue 3, TypeScript estricto y Tailwind CSS 4. Astro funciona como Backend for Frontend (BFF): el navegador consume exclusivamente rutas del mismo origen bajo `/api/*` y el BFF se comunica con `/api/integration/v1/*` del ERP.
+
+## Desarrollo
+
+1. Copia `.env.example` a `.env` y configura las variables.
+2. Crea la integración y su clave con el comando `integration-keys` del backend.
+3. Inicia Express en `http://localhost:4000` y luego ejecuta `pnpm dev`.
+
+Producción exige una API key activa con los scopes usados por la tienda.
+
+## Variables
+
+- `API_URL`: URL privada de Express; nunca se publica en el bundle.
+- `ERP_API_KEY`: credencial privada de esta aplicación; identifica empresa y scopes.
+- `PUBLIC_IZIPAY_PUBLIC_KEY`: clave pública usada por el SDK de pagos.
+- `PUBLIC_RECAPTCHA_SITE_KEY`: site key pública de reCAPTCHA.
+
+`PUBLIC_API_URL` ya no se utiliza.
+
+## Comandos
 
 ```sh
-pnpm create astro@latest -- --template basics
+pnpm dev
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+pnpm build
+pnpm verify
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+La primera ejecución E2E requiere `pnpm exec playwright install chromium`.
 
-## 🚀 Project Structure
+## Seguridad y despliegue
 
-Inside of your Astro project, you'll see the following folders and files:
+- Access y refresh tokens se almacenan en cookies `HttpOnly`, `SameSite=Lax` y `Secure` en producción.
+- Los tokens temporales de pedido se guardan en cookies con scope por pedido y no aparecen en URLs.
+- Las rutas mutables del BFF validan `Origin`; las entradas sensibles se validan con Zod.
+- El IPN de Izipay entra directamente a Express en `/api/integration/v1/payments/izipay/ipn` y valida su firma.
+- Catálogo, sistema y ubigeos permiten caché pública corta. Cuenta, pedidos y pagos son `no-store`.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
-
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Antes de producción, ejecutar `pnpm verify`, `pnpm test:e2e` y smoke tests reales de signin, refresh, ARCO multipart, libro de reclamaciones, Yape, tarjeta, IPN y consulta de pedido.

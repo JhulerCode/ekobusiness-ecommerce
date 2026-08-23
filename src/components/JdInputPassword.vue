@@ -41,11 +41,12 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import EyeOpen from '../assets/icons/eye-open.vue';
 import EyeCancel from '../assets/icons/eye-cancel.vue';
 
-export default {
+export default defineComponent({
     components: {
         EyeOpen,
         EyeCancel,
@@ -82,5 +83,5 @@ export default {
             this.tipo_input = this.ver_pass ? 'text' : 'password';
         },
     },
-};
+})
 </script>

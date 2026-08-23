@@ -6,11 +6,16 @@ import XmakIcon from '../assets/icons/xmark.astro'
 import CartDrawer from '../components/CartDrawer.vue'
 import AuthModal from '../components/AuthModal.vue'
 import HeaderTopBar from '../components/HeaderTopBar.astro'
-import SearchIcon from '../assets/icons/icon-search.astro'
 import ChevronDownIcon from '../assets/icons/icon-chevron-down.astro'
-import { colecciones } from '../data/lineas.js'
+import { colecciones } from '../data/lineas'
 
-const leftNavLinks = [
+interface NavLink {
+    nombre: string
+    href: string
+    dropdown?: boolean
+}
+
+const leftNavLinks: NavLink[] = [
     { nombre: 'Inicio', href: '/' },
     { nombre: 'Origen', href: '/origen' },
     { nombre: 'Rituales', href: '/rituales' },
@@ -18,7 +23,7 @@ const leftNavLinks = [
     // { nombre: 'Regalos', href: '/tienda' },
 ]
 
-const rightNavLinks = [
+const rightNavLinks: NavLink[] = [
     { nombre: 'Líneas', href: '#lineas', dropdown: true },
     // { nombre: 'Crea tu blend', href: '/crea-tu-blend' },
     { nombre: 'Tienda', href: '/tienda' },
@@ -270,7 +275,7 @@ const headerMainClass = startsTransparent
         currentPath === '/origen' ||
         currentPath === '/club'
 
-    const setMenuOpen = (isOpen) => {
+    const setMenuOpen = (isOpen: boolean) => {
         if (isOpen) setLineasMenuOpen(false)
         mobileMenu?.classList.toggle('translate-x-0', isOpen)
         mobileMenu?.classList.toggle('translate-x-full', !isOpen)
@@ -294,7 +299,7 @@ const headerMainClass = startsTransparent
         if (!isOpen) updateHeaderBackground()
     }
 
-    const setLineasMenuOpen = (isOpen) => {
+    const setLineasMenuOpen = (isOpen: boolean) => {
         lineasMenuBackdrop?.classList.toggle('pointer-events-none', !isOpen)
         lineasMenuBackdrop?.classList.toggle('invisible', !isOpen)
         lineasMenuBackdrop?.classList.toggle('opacity-0', !isOpen)
@@ -323,7 +328,7 @@ const headerMainClass = startsTransparent
         }
     }
 
-    const setMobileLineasOpen = (isOpen) => {
+    const setMobileLineasOpen = (isOpen: boolean) => {
         mobileLineasList?.classList.toggle('max-h-0', !isOpen)
         mobileLineasList?.classList.toggle('opacity-0', !isOpen)
         mobileLineasList?.classList.toggle('max-h-64', isOpen)

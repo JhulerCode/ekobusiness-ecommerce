@@ -7,16 +7,16 @@ import LineaIdealParaTi from '@/components/lineas/LineaIdealParaTi.astro'
 import LineaDiferencia from '@/components/lineas/LineaDiferencia.astro'
 import LineaPreparacion from '@/components/lineas/LineaPreparacion.astro'
 import { getLineaBySlug } from '@/data/lineas'
-import { get } from '@/lib/api.js'
+import { serverGet as get } from '@/lib/server/public-api'
 
-const lineaConfig = getLineaBySlug(Astro.params.slug)
+const lineaConfig = getLineaBySlug(Astro.params.slug || '')
 
 if (!lineaConfig) {
     return Astro.rewrite('/404')
 }
 
 const productosDestacadosIds = lineaConfig.productosDestacadosIds ?? []
-let productosDestacados = []
+let productosDestacados: Array<Record<string, any>> = []
 
 if (productosDestacadosIds.length > 0) {
     const productosQuery = {
@@ -30,13 +30,15 @@ if (productosDestacadosIds.length > 0) {
 
     const productosResponse = await get('productos', { qry: productosQuery })
     const productosById = new Map(
-        (productosResponse?.data ?? []).map((producto) => [producto.id, producto]),
+        (productosResponse.ok ? productosResponse.data ?? [] : []).map(
+            (producto: Record<string, any>) => [producto.id, producto],
+        ),
     )
 
     productosDestacados = productosDestacadosIds
-        .map((id) => productosById.get(id))
+        .map((id: string) => productosById.get(id))
         .filter(Boolean)
-        .map((producto) => {
+        .map((producto: Record<string, any>) => {
             const ecommerceData = producto.ecommerce_data ?? {}
             const fotoPrincipal = ecommerceData.fotos?.[0]
 

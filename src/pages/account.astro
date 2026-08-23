@@ -1,15 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccountPanel from '../components/AccountPanel.vue';
-import { get } from '../lib/api.js';
+import { serverGet as get } from '@/lib/server/public-api'
 
 const res = await get('sistema', {
     qry: ['documentos_identidad'],
 });
 
-if (res.code == 0) {
-    var { documentos_identidad } = res.data;
-}
+const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : [];
 ---
 
 <BaseLayout title="Mi cuenta">

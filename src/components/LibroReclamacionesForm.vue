@@ -136,8 +136,9 @@
     </div>
 </template>
 
-<script>
-import { post } from "../lib/api.js";
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { post } from "../lib/api";
 import JdInput from "./JdInput.vue";
 import JdTextArea from "./JdTextArea.vue";
 import JdSelect from "./JdSelect.vue";
@@ -145,7 +146,7 @@ import JdCheckBox from "./JdCheckBox.vue";
 import JdRadio from "./JdRadio.vue";
 import JdButton from "./JdButton.vue";
 
-export default {
+export default defineComponent({
     components: {
         JdInput,
         JdTextArea,
@@ -217,12 +218,10 @@ export default {
             const res = await post("libro_reclamos", this.form);
             this.loading = false;
 
-            if (res.code < 0) {
-                this.errors.general = "Algo salió mal";
-            } else if (res.code > 0) {
-                this.errors.general = res.msg;
-            }
-            if (res.code == 0) {
+            if (!res.ok) {
+                this.errors.general = res.problem.detail;
+            } else {
+                this.errors.general = res.warnings?.[0]?.detail || '';
                 this.enviado = true;
 
                 window.scrollTo({
@@ -232,5 +231,5 @@ export default {
             }
         },
     },
-};
+})
 </script>
