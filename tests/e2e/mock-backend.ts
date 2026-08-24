@@ -119,9 +119,9 @@ createServer((request, response) => {
             },
         }))
     } else if (url.pathname === '/api/integration/v1/payments/izipay/validate') {
-        response.writeHead(201)
+        response.writeHead(202)
         response.end(JSON.stringify({
-            data: { status: 'completed', id: 'payment-order-1', codigo: 'SUNKA-PAY', access_token: 'payment-access' },
+            data: { status: 'processing', checkout_intent_id: 'intent-1' },
         }))
     } else if (url.pathname === '/api/integration/v1/payments/izipay/intents/intent-1/status') {
         const authorized = request.headers['x-checkout-access'] === 'checkout-access'

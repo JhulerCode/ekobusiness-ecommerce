@@ -83,7 +83,7 @@ test('abre un pedido sin incluir access_token en la URL', async ({ page }) => {
     await expect(page.getByText('#SUNKA-1')).toBeVisible()
 })
 
-test('crea y valida un checkout intent sin exponer credenciales', async ({ page }) => {
+test('espera la confirmación IPN antes de completar un checkout intent', async ({ page }) => {
     await page.goto('/')
     const result = await page.evaluate(async () => {
         const created = await fetch('/api/izipay/create-payment', {
@@ -100,13 +100,17 @@ test('crea y valida un checkout intent sin exponer credenciales', async ({ page 
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ paymentData: {}, checkout_intent_id: created.data.checkout_intent_id }),
         }).then((response) => response.json())
-        return { created, validated, cookies: document.cookie }
+        const confirmed = await fetch(`/api/izipay/intents/${created.data.checkout_intent_id}`)
+            .then((response) => response.json())
+        return { created, validated, confirmed, cookies: document.cookie }
     })
 
     expect(result.created.data.formToken).toBe('form-token')
     expect(result.created.data.checkout_access_token).toBeUndefined()
-    expect(result.validated.data.status).toBe('completed')
-    expect(result.validated.data.redirect_url).toBe('/pedidos/payment-order-1')
+    expect(result.validated.data.status).toBe('processing')
+    expect(result.validated.data.redirect_url).toBeUndefined()
+    expect(result.confirmed.data.status).toBe('completed')
+    expect(result.confirmed.data.redirect_url).toBe('/pedidos/payment-order-1')
     expect(JSON.stringify(result)).not.toContain('payment-access')
     expect(JSON.stringify(result)).not.toContain('itd_')
     expect(result.cookies).not.toContain('sunka_checkout_')

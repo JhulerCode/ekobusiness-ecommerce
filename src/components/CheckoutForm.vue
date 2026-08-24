@@ -1276,7 +1276,7 @@ export default defineComponent({
                         if (!intentId || this.paymentVerifying) return false
                         this.paymentVerifying = true
                         this.loadingPagar = true
-                        this.errors.general = 'Estamos verificando tu pago. No cierres esta página.'
+                        this.errors.general = 'Pago recibido. Esperando confirmación de Izipay.'
                         try {
                             const result = await this.validateCardPayment(paymentData, intentId)
                             if (result?.ok && result.data?.status === 'completed') {
@@ -1289,8 +1289,8 @@ export default defineComponent({
                             } else {
                                 this.paymentOutcomeUncertain = true
                                 this.errors.general = result?.ok
-                                    ? 'Estamos verificando tu pago. No realices un segundo pago.'
-                                    : result?.problem?.detail || 'Estamos verificando tu pago. No realices un segundo pago.'
+                                    ? 'Izipay aún está confirmando tu pago. No realices un segundo pago.'
+                                    : result?.problem?.detail || 'Izipay aún está confirmando tu pago. No realices un segundo pago.'
                                 await KR.closePopin()
                             }
                         } finally {
