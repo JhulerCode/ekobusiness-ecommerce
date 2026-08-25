@@ -115,6 +115,8 @@ createServer((request, response) => {
             data: {
                 formToken: 'form-token', checkout_intent_id: 'intent-1',
                 checkout_access_token: 'checkout-access', orderId: 'payment-order-1',
+                lookup_code: '123456',
+                order_id: 'payment-order-id-1', order_access_token: 'pending-order-access',
                 amount: 1000, currency: 'PEN', expires_at: '2026-08-23T00:00:00.000Z',
             },
         }))

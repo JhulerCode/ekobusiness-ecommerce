@@ -123,6 +123,19 @@ const lastCompletedStageIndex = etapas.reduce(
 )
 const orderItems: Array<Record<string, any>> = pedido?.socio_pedido_items || []
 const currencySymbol = pedido?.moneda1?.simbolo || 'S/ '
+const paymentStateLabels: Record<string, string> = {
+    awaiting_payment: 'Pendiente de pago',
+    awaiting_confirmation: 'En verificación',
+    paid: 'Confirmado',
+    payment_failed: 'No confirmado',
+    manual_review: 'Revisión manual',
+    pending: 'Pendiente',
+}
+const paymentState = pedido?.pagado
+    ? 'Confirmado'
+    : paymentStateLabels[pedido?.pago_estado] || 'En verificación'
+const paymentFailed = pedido?.pago_estado === 'payment_failed'
+const paymentReview = pedido?.pago_estado === 'manual_review'
 const orderTitle = pedido
     ? `Pedido ${pedido.codigo} | SUNKA Herbal Tea`
     : `${orderError?.title || 'Pedido no encontrado'} | SUNKA Herbal Tea`
@@ -180,6 +193,23 @@ const orderTitle = pedido
 
                 <main class="bg-sunka-cream pb-20">
                     <div class="relative z-10 mx-auto -mt-10 max-w-7xl px-5 md:px-8">
+                        {pedido.pago_metodo === 'tarjeta' && !pedido.pagado && (
+                            <aside class="mb-6 rounded-2xl border border-sunka-brass/35 bg-[#fff8e8] px-6 py-5 text-sunka-ink shadow-[0_12px_35px_rgba(35,29,24,0.06)]">
+                                <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-sunka-brass">
+                                    {paymentFailed ? 'Pago no confirmado' : paymentReview ? 'Revisión manual' : 'Pago en verificación'}
+                                </p>
+                                <h2 class="mt-2 font-heading text-xl font-semibold text-sunka-forest">
+                                    {paymentFailed ? 'Conservamos tu pedido' : 'Tu pedido fue registrado correctamente'}
+                                </h2>
+                                <p class="mt-2 max-w-3xl text-sm leading-relaxed text-sunka-stone">
+                                    {paymentFailed
+                                        ? 'Izipay informó que el pago no fue confirmado. Solicita ayuda antes de intentar otro pago para este pedido.'
+                                        : paymentReview
+                                          ? 'El pago necesita una revisión adicional. No realices otro pago; te avisaremos cuando tengamos el resultado.'
+                                          : 'Estamos esperando la confirmación segura de Izipay. No realices otro pago para este pedido; actualizaremos esta vista cuando tengamos el resultado.'}
+                                </p>
+                            </aside>
+                        )}
                         <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
                             <section class="overflow-hidden rounded-2xl border border-sunka-sand bg-sunka-white shadow-[0_18px_45px_rgba(35,29,24,0.07)]">
                                 <header class="flex flex-col gap-4 border-b border-sunka-sand px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-9">
@@ -264,6 +294,9 @@ const orderTitle = pedido
                                             </OrderDetail>
                                             <OrderDetail label="Método de pago">
                                                 {pedido.pago_metodo1?.nombre}
+                                            </OrderDetail>
+                                            <OrderDetail label="Estado del pago">
+                                                {paymentState}
                                             </OrderDetail>
                                             {pedido.comprobante_tipo === '01' && (
                                                 <>

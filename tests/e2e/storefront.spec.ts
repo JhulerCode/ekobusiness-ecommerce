@@ -107,6 +107,8 @@ test('espera la confirmación IPN antes de completar un checkout intent', async 
 
     expect(result.created.data.formToken).toBe('form-token')
     expect(result.created.data.checkout_access_token).toBeUndefined()
+    expect(result.created.data.order_access_token).toBeUndefined()
+    expect(result.created.data.redirect_url).toBe('/pedidos/payment-order-id-1')
     expect(result.validated.data.status).toBe('processing')
     expect(result.validated.data.redirect_url).toBeUndefined()
     expect(result.confirmed.data.status).toBe('completed')

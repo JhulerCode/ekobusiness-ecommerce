@@ -1,4 +1,18 @@
 <template>
+    <div
+        v-if="paymentVerifying"
+        class="payment-verification-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="payment-verification-title"
+    >
+        <article class="payment-verification-overlay__card">
+            <span class="payment-verification-overlay__spinner" aria-hidden="true"></span>
+            <h2 id="payment-verification-title">Confirmando tu pago</h2>
+            <p>Estamos esperando la notificación segura de Izipay. No cierres ni recargues esta página.</p>
+        </article>
+    </div>
+
     <section class="checkout-success" v-if="paymentSuccess == true" v-bind="$attrs">
         <article class="checkout-success__card">
             <div class="checkout-success__icon" aria-hidden="true">✓</div>
@@ -42,6 +56,42 @@
                 </a>
                 <a href="/tienda" class="checkout-success__action is-secondary">
                     Seguir comprando
+                </a>
+            </div>
+        </article>
+    </section>
+
+    <section class="checkout-success" v-else-if="paymentPending" v-bind="$attrs">
+        <article class="checkout-success__card">
+            <div class="checkout-success__icon is-pending" aria-hidden="true">…</div>
+            <p class="checkout-success__eyebrow">
+                {{ paymentPendingFailed ? 'Pago no confirmado' : 'Pago en verificación' }}
+            </p>
+            <h2>{{ paymentPendingFailed ? 'Conservamos tu pedido' : 'Tu pedido fue registrado' }}</h2>
+            <p class="checkout-success__lead">
+                {{ pendingPaymentMessage }}
+            </p>
+            <div v-if="form.codigo" class="checkout-success__order">
+                <span>Número de pedido</span>
+                <strong>{{ form.codigo }}</strong>
+            </div>
+            <div v-if="paymentLookupCode" class="checkout-success__order">
+                <span>Código de consulta</span>
+                <strong>{{ paymentLookupCode }}</strong>
+            </div>
+            <div class="checkout-success__notice">
+                <span>Tu pedido está seguro</span>
+                <p>
+                    Puedes cerrar esta página y consultar el estado con el número y código enviados
+                    a tu correo.
+                </p>
+            </div>
+            <div class="checkout-success__actions">
+                <a :href="orderDetailUrl" class="checkout-success__action is-primary">
+                    Ver estado del pedido
+                </a>
+                <a href="/tienda" class="checkout-success__action is-secondary">
+                    Volver a la tienda
                 </a>
             </div>
         </article>
@@ -809,6 +859,10 @@ export default defineComponent({
             user: {},
             step: 1,
             paymentSuccess: false,
+            paymentPending: false,
+            paymentPendingFailed: false,
+            pendingPaymentMessage: '',
+            paymentLookupCode: '',
             loadingContinuarEntrega: false,
             loadingContinuarPago: false,
             loadingPagar: false,
@@ -839,6 +893,8 @@ export default defineComponent({
             activePaymentIntent: null,
             paymentVerifying: false,
             paymentOutcomeUncertain: false,
+            pendingStatusTimer: null,
+            pendingStatusAttempts: 0,
         }
     },
     computed: {
@@ -913,7 +969,8 @@ export default defineComponent({
     },
     beforeUnmount() {
         clearTimeout(this.draftSaveTimeout)
-        if (this.draftReady && !this.paymentSuccess) this.saveDraft()
+        clearTimeout(this.pendingStatusTimer)
+        if (this.draftReady && !this.paymentSuccess && !this.paymentPending) this.saveDraft()
     },
     methods: {
         async summaryAction() {
@@ -1257,6 +1314,9 @@ export default defineComponent({
                     return
                 }
                 this.form.codigo = res.data.orderId
+                this.form.id = res.data.order_id
+                this.form.redirect_url = res.data.redirect_url
+                this.paymentLookupCode = res.data.lookup_code
                 const endpoint = 'https://api.micuentaweb.pe'
                 const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY
                 if (!publicKey?.trim()) throw new Error('IZIPAY_PUBLIC_KEY_MISSING')
@@ -1282,15 +1342,23 @@ export default defineComponent({
                             if (result?.ok && result.data?.status === 'completed') {
                                 this.completeCardPayment(result)
                                 await KR.closePopin()
+                            } else if (result?.ok && result.data?.status === 'payment_failed') {
+                                this.showPendingCardPayment('Izipay informó que el pago no fue confirmado.')
+                                this.paymentPendingFailed = true
+                                this.pendingPaymentMessage = 'Izipay informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                                clearTimeout(this.pendingStatusTimer)
+                                await KR.closePopin()
                             } else if (result?.ok && result.data?.status === 'manual_review') {
-                                this.paymentOutcomeUncertain = true
-                                this.errors.general = 'Tu pago requiere verificación. No vuelvas a pagar; nos pondremos en contacto contigo.'
+                                this.showPendingCardPayment(
+                                    'Tu pago requiere una revisión adicional. No realices otro pago.',
+                                )
                                 await KR.closePopin()
                             } else {
-                                this.paymentOutcomeUncertain = true
-                                this.errors.general = result?.ok
-                                    ? 'Izipay aún está confirmando tu pago. No realices un segundo pago.'
-                                    : result?.problem?.detail || 'Izipay aún está confirmando tu pago. No realices un segundo pago.'
+                                this.showPendingCardPayment(
+                                    result?.ok
+                                        ? 'Izipay aún está confirmando tu pago.'
+                                        : result?.problem?.detail || 'Izipay aún está confirmando tu pago.',
+                                )
                                 await KR.closePopin()
                             }
                         } finally {
@@ -1323,7 +1391,7 @@ export default defineComponent({
                 result = await post(`${urls.izipay}/validate-payment`, body, undefined)
             }
             if (result.ok && result.data?.status === 'completed') return result
-            if (result.ok && result.data?.status === 'manual_review') return result
+            if (result.ok && ['payment_failed', 'manual_review'].includes(result.data?.status)) return result
             if (result.status === 202 || (!result.ok && result.status >= 500)) {
                 return this.pollPaymentStatus(intentId)
             }
@@ -1334,7 +1402,10 @@ export default defineComponent({
             for (let attempt = 0; attempt < 15; attempt += 1) {
                 await this.wait(1000)
                 lastResult = await get(`/api/izipay/intents/${encodeURIComponent(intentId)}`)
-                if (lastResult.ok && ['completed', 'manual_review'].includes(lastResult.data?.status)) {
+                if (
+                    lastResult.ok &&
+                    ['completed', 'payment_failed', 'manual_review'].includes(lastResult.data?.status)
+                ) {
                     return lastResult
                 }
                 if (!lastResult.ok && ![502, 503].includes(lastResult.status)) return lastResult
@@ -1346,15 +1417,58 @@ export default defineComponent({
         },
         completeCardPayment(result) {
             this.paymentSuccess = true
+            this.paymentPending = false
+            this.paymentPendingFailed = false
             this.form.id = result.data.id
             this.form.redirect_url = result.data.redirect_url
             this.form.codigo = result.data.codigo
             this.errors.general = result.warnings?.[0]?.detail || ''
             this.activePaymentIntent = null
             this.paymentOutcomeUncertain = false
+            this.pendingStatusAttempts = 0
+            clearTimeout(this.pendingStatusTimer)
             Cart.clear()
             CheckoutDraft.clear()
             window.scrollTo({ top: 0, behavior: 'smooth' })
+        },
+        showPendingCardPayment(message) {
+            this.paymentPending = true
+            this.paymentPendingFailed = false
+            this.pendingPaymentMessage = `${message} No realices otro pago para este pedido. Te enviaremos un correo cuando tengamos el resultado.`
+            this.paymentOutcomeUncertain = true
+            this.errors.general = message
+            Cart.clear()
+            CheckoutDraft.clear()
+            this.pendingStatusAttempts = 0
+            this.schedulePendingStatusCheck()
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        },
+        schedulePendingStatusCheck() {
+            clearTimeout(this.pendingStatusTimer)
+            if (
+                !this.activePaymentIntent?.id || this.paymentSuccess ||
+                this.pendingStatusAttempts >= 60
+            ) return
+            this.pendingStatusTimer = window.setTimeout(async () => {
+                this.pendingStatusAttempts += 1
+                const result = await get(
+                    `/api/izipay/intents/${encodeURIComponent(this.activePaymentIntent.id)}`,
+                )
+                if (result.ok && result.data?.status === 'completed') {
+                    this.completeCardPayment(result)
+                    return
+                }
+                if (result.ok && result.data?.status === 'manual_review') {
+                    this.pendingPaymentMessage = 'Tu pago requiere una revisión adicional. Conservamos el pedido y te avisaremos cuando tengamos el resultado.'
+                    return
+                }
+                if (result.ok && result.data?.status === 'payment_failed') {
+                    this.paymentPendingFailed = true
+                    this.pendingPaymentMessage = 'Izipay informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                    return
+                }
+                this.schedulePendingStatusCheck()
+            }, 5000)
         },
         async pagarConYape() {
             this.shapeDatos()
@@ -1536,6 +1650,59 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.payment-verification-overlay {
+    position: fixed;
+    z-index: 10000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgb(26 48 40 / 78%);
+    backdrop-filter: blur(6px);
+}
+
+.payment-verification-overlay__card {
+    width: min(100%, 430px);
+    padding: 36px 30px;
+    border: 1px solid var(--sunka-sand);
+    border-radius: 20px;
+    background: var(--sunka-white);
+    box-shadow: 0 24px 70px rgb(20 36 30 / 28%);
+    text-align: center;
+}
+
+.payment-verification-overlay__card h2 {
+    margin-top: 20px;
+    color: var(--sunka-forest);
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.payment-verification-overlay__card p {
+    margin-top: 12px;
+    color: var(--sunka-stone);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.payment-verification-overlay__spinner {
+    display: block;
+    width: 44px;
+    height: 44px;
+    margin: 0 auto;
+    border: 3px solid var(--sunka-sand);
+    border-top-color: var(--sunka-brass);
+    border-radius: 999px;
+    animation: payment-verification-spin 0.8s linear infinite;
+}
+
+@keyframes payment-verification-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .checkout-layout {
     --checkout-sticky-offset: 124px;
 
@@ -1955,6 +2122,12 @@ export default defineComponent({
     color: var(--sunka-brass-light);
     font-size: 27px;
     box-shadow: 0 0 0 8px rgba(22, 62, 40, 0.07);
+}
+
+.checkout-success__icon.is-pending {
+    border-color: rgb(184 138 61 / 35%);
+    background: rgb(184 138 61 / 12%);
+    color: var(--sunka-brass);
 }
 
 .checkout-success__eyebrow {

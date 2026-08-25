@@ -11,7 +11,7 @@ export const GET: APIRoute = async (context) => {
     const checkoutToken = getCheckoutCookie(context, parsed.data)
     if (!checkoutToken) return json(failure(401, 'checkout-access-invalid', 'Acceso al pago inválido', 'El acceso al intento de pago no es válido o ha vencido.'))
     const result = await requestWithOptionalSession<{
-        status?: 'processing' | 'manual_review' | 'completed'
+        status?: 'processing' | 'payment_failed' | 'manual_review' | 'completed'
         checkout_intent_id?: string
         id?: string
         codigo?: string
