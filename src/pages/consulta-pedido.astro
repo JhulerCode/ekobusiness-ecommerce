@@ -35,72 +35,15 @@ import empresa from '@/data/company'
                 </h1>
                 <p class="mt-5 max-w-xl text-sm leading-relaxed text-sunka-white/65 md:text-base">
                     Consulta el avance de tu compra y revisa todos sus detalles desde un solo lugar.
-                    Solo necesitas el número que enviamos a tu correo.
+                    Solo tú puedes acceder a los datos asociados a tu compra.
                 </p>
             </div>
         </div>
     </section>
 
     <main class="bg-sunka-cream pb-20">
-        <div class="relative z-10 mx-auto -mt-10 max-w-7xl px-5 md:px-8">
-            <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-                <ConsultaPedidoForm client:load />
-
-                <aside class="overflow-hidden rounded-2xl border border-sunka-sand bg-sunka-white shadow-[0_18px_45px_rgba(35,29,24,0.07)] lg:sticky lg:top-28">
-                    <header class="border-b border-sunka-sand px-6 py-6">
-                        <p class="text-[9px] font-semibold uppercase tracking-[0.18em] text-sunka-brass">
-                            Antes de empezar
-                        </p>
-                        <h2 class="mt-2 font-heading text-2xl font-semibold text-sunka-forest">
-                            Encuentra tu compra
-                        </h2>
-                    </header>
-
-                    <ol class="px-6 py-7">
-                        <li class="relative grid grid-cols-[28px_1fr] gap-3 pb-8">
-                            <span class="absolute left-[6px] top-4 h-[calc(100%-4px)] w-px bg-sunka-brass/35" aria-hidden="true"></span>
-                            <span class="relative z-10 mt-1 block h-[13px] w-[13px] rounded-full border-2 border-sunka-brass bg-sunka-brass shadow-[0_0_0_5px_rgba(184,138,61,0.1)]" aria-hidden="true"></span>
-                            <div>
-                                <h3 class="text-sm font-semibold text-sunka-forest">Ten tus códigos a mano</h3>
-                                <p class="mt-2 text-[11px] leading-relaxed text-sunka-ink/60">
-                                    Los encontrarás en el correo de confirmación de tu compra.
-                                </p>
-                            </div>
-                        </li>
-                        <li class="relative grid grid-cols-[28px_1fr] gap-3 pb-8">
-                            <span class="absolute left-[6px] top-4 h-[calc(100%-4px)] w-px bg-sunka-brass/35" aria-hidden="true"></span>
-                            <span class="relative z-10 mt-1 block h-[13px] w-[13px] rounded-full border-2 border-sunka-brass bg-sunka-brass shadow-[0_0_0_5px_rgba(184,138,61,0.1)]" aria-hidden="true"></span>
-                            <div>
-                                <h3 class="text-sm font-semibold text-sunka-forest">Consulta inmediata</h3>
-                                <p class="mt-2 text-[11px] leading-relaxed text-sunka-ink/60">
-                                    Revisa el estado actual y cada etapa de tu pedido.
-                                </p>
-                            </div>
-                        </li>
-                        <li class="relative grid grid-cols-[28px_1fr] gap-3">
-                            <span class="relative z-10 mt-1 block h-[13px] w-[13px] rounded-full border-2 border-sunka-brass bg-sunka-brass shadow-[0_0_0_5px_rgba(184,138,61,0.1)]" aria-hidden="true"></span>
-                            <div>
-                                <h3 class="text-sm font-semibold text-sunka-forest">Información segura</h3>
-                                <p class="mt-2 text-[11px] leading-relaxed text-sunka-ink/60">
-                                    Solo tú puedes acceder a los datos asociados a tu compra.
-                                </p>
-                            </div>
-                        </li>
-                    </ol>
-
-                    <div class="border-t border-sunka-sand bg-sunka-cream/55 px-6 py-5">
-                        <p class="text-[9px] font-semibold uppercase tracking-[0.14em] text-sunka-stone">
-                            ¿Necesitas ayuda?
-                        </p>
-                        <a
-                            href={`mailto:${empresa.email_ventas}`}
-                            class="mt-2 block break-all text-sm font-semibold text-sunka-brass transition-colors hover:text-sunka-forest"
-                        >
-                            {empresa.email_ventas}
-                        </a>
-                    </div>
-                </aside>
-            </div>
+        <div class="relative z-10 mx-auto -mt-10 max-w-3xl px-5 md:px-8">
+            <ConsultaPedidoForm client:load empresa={empresa} />
         </div>
     </main>
 </BaseLayout>

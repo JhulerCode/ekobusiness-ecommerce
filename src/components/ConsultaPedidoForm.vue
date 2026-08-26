@@ -10,11 +10,18 @@
                 Identifica tu pedido
             </h2>
             <p class="mt-2 max-w-2xl text-sm leading-relaxed text-sunka-stone">
-                Ingresa el número del pedido y el código de seis dígitos que recibiste por correo.
+                {{
+                    showResend
+                        ? 'Ingresa el número de pedido y el correo utilizado al realizar la compra.'
+                        : 'Ingresa el número del pedido y el código de seis dígitos que recibiste por correo.'
+                }}
             </p>
         </header>
 
-        <form class="grid gap-5 px-6 py-7 sm:grid-cols-2 md:px-9 md:py-8" @submit.prevent="consultarPedido">
+        <form
+            class="grid gap-5 px-6 py-7 sm:grid-cols-2 md:px-9 md:py-8"
+            @submit.prevent="showResend ? reenviarCodigo() : consultarPedido()"
+        >
             <JdInput
                 label="Número de pedido"
                 :nec="true"
@@ -22,9 +29,11 @@
                 placeholder="Ejemplo: 1762018452516211"
                 :error="error"
                 maxlength="30"
+                :class="{ 'sm:col-span-2': showResend }"
             />
 
             <JdInput
+                v-if="!showResend"
                 label="Código de consulta"
                 :nec="true"
                 v-model="codigoConsulta"
@@ -33,11 +42,8 @@
                 maxlength="6"
             />
 
-            <p class="text-[10px] leading-relaxed text-sunka-stone sm:col-span-2">
-                Encontrarás ambos códigos en el correo de confirmación de tu compra.
-            </p>
-
             <button
+                v-if="!showResend"
                 type="submit"
                 class="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-sunka-brass bg-sunka-brass px-5 text-[11px] font-bold text-sunka-white transition-colors hover:bg-[#c69a50] disabled:cursor-not-allowed disabled:opacity-65 sm:col-span-2"
                 :disabled="loading"
@@ -55,9 +61,9 @@
             <button
                 type="button"
                 class="mx-auto cursor-pointer border-b border-sunka-brass/50 pb-0.5 text-[10px] font-semibold text-sunka-brass transition-colors hover:border-sunka-forest hover:text-sunka-forest sm:col-span-2"
-                @click="showResend = !showResend"
+                @click="toggleResendMode"
             >
-                No tengo mi código de consulta
+                {{ showResend ? 'Ya tengo mi código de consulta' : 'No tengo mi código de consulta' }}
             </button>
 
             <div
@@ -89,6 +95,19 @@
             </div>
         </form>
 
+        <footer
+            class="border-t border-sunka-sand bg-sunka-cream/55 px-6 py-5 text-center md:px-9"
+        >
+            <p class="text-[9px] font-semibold uppercase tracking-[0.14em] text-sunka-stone">
+                ¿Necesitas ayuda?
+            </p>
+            <a
+                :href="`mailto:${empresa.email_ventas}`"
+                class="mt-1.5 inline-block break-all text-sm font-semibold text-sunka-brass transition-colors hover:text-sunka-forest"
+            >
+                {{ empresa.email_ventas }}
+            </a>
+        </footer>
     </article>
 </template>
 
@@ -102,6 +121,9 @@ export default defineComponent({
     components: {
         JdInput,
         LoadingSpin,
+    },
+    props: {
+        empresa: { type: Object, default: () => ({}) },
     },
     data() {
         return {
@@ -170,6 +192,12 @@ export default defineComponent({
             this.resendMessage = res.ok
                 ? res.data?.message
                 : res.problem.detail || 'No se pudo procesar la solicitud. Inténtalo más tarde.'
+        },
+        toggleResendMode() {
+            this.showResend = !this.showResend
+            this.codigoConsultaError = ''
+            this.correoError = ''
+            this.resendMessage = ''
         },
     },
 })
