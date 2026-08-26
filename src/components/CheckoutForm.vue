@@ -1535,6 +1535,7 @@ export default defineComponent({
             const qry = {
                 fltr: {
                     distrito: { op: 'Contiene', val: txtBuscar },
+                    provincia: { op: 'Es', val: 'Lima' },
                 },
                 cols: ['departamento', 'provincia', 'distrito', 'nombre'],
             }
