@@ -50,7 +50,7 @@
             />
 
             <!-- Lista desplegable -->
-            <Teleport to="body">
+            <Teleport v-if="isMounted" to="body">
                 <div
                     v-if="isVisible"
                     ref="lista-box"
@@ -135,11 +135,13 @@ export default defineComponent({
         },
     },
     data: () => ({
+        isMounted: false,
         isVisible: false,
         txtBuscar: '',
         searchTimeOut: null,
     }),
     mounted() {
+        this.isMounted = true
         this.init(this.inputModel);
     },
     beforeUnmount() {

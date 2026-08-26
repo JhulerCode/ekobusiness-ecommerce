@@ -89,7 +89,7 @@
     </div>
 
     <!-- Modal simple para agregar dirección -->
-    <Teleport to="body">
+    <Teleport v-if="isMounted" to="body">
         <transition name="fade">
             <div v-if="showAddModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-sunka-ink/70 p-4 backdrop-blur-sm" @click.self="closeModal">
             <div class="flex max-h-[calc(100dvh-2rem)] w-full max-w-2xl flex-col overflow-hidden border border-sunka-sand bg-sunka-white text-sunka-ink shadow-2xl">
@@ -175,7 +175,7 @@
         </transition>
     </Teleport>
 
-    <Teleport to="body">
+    <Teleport v-if="isMounted" to="body">
         <transition name="fade">
             <div v-if="showQuestion" class="fixed inset-0 z-[110] flex items-center justify-center bg-sunka-ink/70 p-4 backdrop-blur-sm" @click.self="closeQuestion">
             <div class="w-full max-w-md border border-sunka-sand bg-sunka-white shadow-2xl">
@@ -233,6 +233,7 @@ export default defineComponent({
     },
     data() {
         return {
+            isMounted: false,
             showAddModal: false,
             showQuestion: false,
             loadingCreate: false,
@@ -243,6 +244,9 @@ export default defineComponent({
             ubigeos: [],
             ubigeosLoading: false,
         };
+    },
+    mounted() {
+        this.isMounted = true
     },
     methods: {
         openModal() {

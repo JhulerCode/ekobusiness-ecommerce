@@ -23,7 +23,7 @@
             </button>
         </div>
 
-        <Teleport to="body">
+        <Teleport v-if="isMounted" to="body">
             <transition name="auth-modal">
                 <div
                     v-if="isOpen"
@@ -164,6 +164,7 @@ export default defineComponent({
     data() {
         return {
             isOpen: false,
+            isMounted: false,
             isLogin: true,
             form: {
                 correo: '',
@@ -260,6 +261,7 @@ export default defineComponent({
         },
     },
     mounted() {
+        this.isMounted = true
         const correoStored = localStorage.getItem('login-correo')
         if (correoStored) this.form.correo = correoStored
         if (!['authenticated', 'guest'].includes(this.sessionStatus)) this.validateSession()
