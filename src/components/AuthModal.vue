@@ -7,7 +7,10 @@
                 class="flex items-center gap-2 text-current transition-colors duration-300 hover:text-sunka-brass-light"
             >
                 <UserIcon />
-                <span class="hidden text-[11px] font-semibold uppercase tracking-[0.1em] xl:inline">
+                <span
+                    class="hidden max-w-36 truncate text-[11px] font-semibold uppercase tracking-[0.1em] xl:inline-block"
+                    :title="userName"
+                >
                     Hola, {{ userName }}
                 </span>
             </a>
@@ -268,7 +271,15 @@ export default defineComponent({
     },
     computed: {
         userName() {
-            return this.user.correo ? this.user.correo.split('@')[0] : ''
+            const nombres = typeof this.user.nombres === 'string'
+                ? this.user.nombres.trim()
+                : ''
+            if (nombres) return nombres
+
+            const correo = typeof this.user.correo === 'string'
+                ? this.user.correo.trim()
+                : ''
+            return correo.split('@')[0]
         },
     },
 })
