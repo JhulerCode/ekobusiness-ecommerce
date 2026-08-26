@@ -23,12 +23,13 @@
             </button>
         </div>
 
-        <transition name="auth-modal">
-            <div
-                v-if="isOpen"
-                class="fixed inset-0 z-[100] flex items-center justify-center bg-sunka-ink/70 p-4 backdrop-blur-sm sm:p-6"
-                @click.self="closeModal"
-            >
+        <Teleport to="body">
+            <transition name="auth-modal">
+                <div
+                    v-if="isOpen"
+                    class="fixed inset-0 z-[200] flex items-center justify-center bg-sunka-ink/70 p-4 backdrop-blur-sm sm:p-6"
+                    @click.self="closeModal"
+                >
                 <section
                     class="flex max-h-[calc(100dvh-2rem)] w-full max-w-[480px] flex-col overflow-hidden border border-sunka-sand bg-sunka-white text-sunka-ink shadow-[0_28px_80px_rgba(9,8,6,0.32)] sm:max-h-[calc(100dvh-3rem)]"
                     role="dialog"
@@ -126,8 +127,9 @@
                         </form>
                     </main>
                 </section>
-            </div>
-        </transition>
+                </div>
+            </transition>
+        </Teleport>
     </div>
 </template>
 
