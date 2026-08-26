@@ -1,40 +1,54 @@
 <template>
-    <div class="flex justify-between mb-4">
-        <h2 class="text-xl font-semibold">
-            {{ headText }}
-        </h2>
+    <div class="mb-8 flex flex-col gap-5 border-b border-sunka-sand pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-sunka-brass">
+                Métodos guardados
+            </p>
+            <h2 class="mt-2 font-heading text-2xl font-semibold text-sunka-forest">
+                {{ headText }}
+            </h2>
+            <p class="mt-1 text-sm text-sunka-stone">Administra las tarjetas asociadas a tu cuenta.</p>
+        </div>
 
-        <JdButton text="Recargar" tipo="2" :loading="loading" @click="getCustomerWallet" />
+        <JdButton
+            text="Actualizar"
+            tipo="2"
+            :loading="loading"
+            @click="getCustomerWallet"
+            class="!h-10 !rounded-none !border-sunka-sand !px-5 !py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-sunka-forest"
+        />
     </div>
 
-    <div v-if="user.wallet && user.wallet.length > 0" class="space-y-4">
+    <div v-if="user.wallet && user.wallet.length > 0" class="grid gap-4 xl:grid-cols-2">
         <div
             v-for="(a, i) in user.wallet"
             :key="i"
-            class="flex justify-between items-start bg-gray-50 p-4 rounded-xl border border-gray-200"
+            class="flex min-h-32 items-start justify-between gap-5 border border-sunka-sand bg-sunka-white p-5 transition-colors hover:bg-sunka-cream/50 sm:p-6"
         >
-            <div class="flex items-center gap-3">
+            <div class="flex min-w-0 items-center gap-4">
+                <div class="grid h-12 w-16 shrink-0 place-items-center border border-sunka-sand bg-sunka-cream">
                 <img
                     :src="getCardBrandIcon(a.tokenDetails.effectiveBrand)"
-                    class="w-8 h-8"
-                    alt="card brand"
+                    class="max-h-8 w-10 object-contain"
+                    :alt="a.tokenDetails.effectiveBrand || 'Tarjeta'"
                 />
+                </div>
 
                 <div>
-                    <p class="font-medium text-gray-800">{{ a.tokenDetails.pan }}</p>
+                    <p class="font-heading text-base font-semibold tracking-wide text-sunka-forest">{{ a.tokenDetails.pan }}</p>
 
-                    <p class="text-sm text-gray-600">
+                    <p class="mt-1 text-xs uppercase tracking-[0.1em] text-sunka-stone">
                         <!-- {{ tarjeta_tipos.find((t) => t.id == a.doc_tipo).nombre }} | Expira el -->
                         Expira el {{ a.tokenDetails.expiryMonth }}/{{ a.tokenDetails.expiryYear }}
                     </p>
                 </div>
             </div>
 
-            <div class="flex flex-col space-y-2">
+            <div class="flex shrink-0 flex-col gap-2">
                 <button
                     @click="openQuestion(a.paymentMethodToken)"
                     title="Eliminar"
-                    class="text-sm text-red-500 cursor-pointer"
+                    class="flex h-9 w-9 cursor-pointer items-center justify-center border border-sunka-sand text-sunka-stone transition-colors hover:border-[var(--sunka-danger)] hover:text-[var(--sunka-danger)]"
                 >
                     <Trash />
                 </button>
@@ -42,20 +56,23 @@
         </div>
     </div>
 
-    <div v-else class="text-gray-600 text-center">
-        <p>No tienes medios de pago registrados.</p>
+    <div v-else class="border border-dashed border-sunka-sand bg-sunka-cream/45 px-5 py-12 text-center">
+        <p class="font-heading text-lg font-semibold text-sunka-forest">No tienes medios de pago guardados</p>
+        <p class="mt-1 text-sm text-sunka-stone">Las tarjetas que decidas guardar aparecerán aquí.</p>
     </div>
 
     <transition name="fade">
-        <div v-if="showQuestion" class="modal">
-            <div class="center">
-                <main>
-                    <p>¿Está seguro de eliminar?</p>
+        <div v-if="showQuestion" class="fixed inset-0 z-[110] flex items-center justify-center bg-sunka-ink/70 p-4 backdrop-blur-sm" @click.self="closeQuestion">
+            <div class="w-full max-w-md border border-sunka-sand bg-sunka-white shadow-2xl">
+                <main class="px-7 py-8">
+                    <p class="text-[9px] font-semibold uppercase tracking-[0.22em] text-[var(--sunka-danger)]">Confirmar acción</p>
+                    <p class="mt-2 font-heading text-xl font-semibold text-sunka-forest">¿Deseas eliminar esta tarjeta?</p>
+                    <p class="mt-2 text-sm text-sunka-stone">Dejará de estar disponible para próximas compras.</p>
                 </main>
 
-                <footer>
-                    <JdButton text="NO" tipo="2" @click="closeQuestion" />
-                    <JdButton text="SI" :loading="loadingDelete" @click="eliminar" />
+                <footer class="flex justify-end gap-2 border-t border-sunka-sand bg-sunka-cream/50 px-7 py-4">
+                    <JdButton text="Cancelar" tipo="2" @click="closeQuestion" class="!rounded-none !border-sunka-sand" />
+                    <JdButton text="Eliminar" :loading="loadingDelete" @click="eliminar" class="!rounded-none !border-[var(--sunka-danger)] !bg-[var(--sunka-danger)] text-sunka-white" />
                 </footer>
             </div>
         </div>

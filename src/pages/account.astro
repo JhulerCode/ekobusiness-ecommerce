@@ -1,24 +1,54 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import AccountPanel from '../components/AccountPanel.vue';
+import BaseLayout from '../layouts/BaseLayout.astro'
+import AccountPanel from '../components/AccountPanel.vue'
 import { serverGet as get } from '@/lib/server/public-api'
 
 const res = await get('sistema', {
     qry: ['documentos_identidad'],
-});
+})
 
-const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : [];
+const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : []
+const session = Astro.locals.session || { status: 'guest' }
 ---
 
-<BaseLayout title="Mi cuenta">
-    <!-- <section class=" mx-auto px-16 py-16 bg-gray-50">
-        <AccountPanel client:load />
-    </section> -->
-    <main class="w-full bg-gray-50 py-12 sm:py-16 lg:py-20">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16">
+<BaseLayout
+    title="Mi cuenta | SUNKA Herbal Tea"
+    description="Gestiona tu perfil, direcciones, pedidos y preferencias de tu cuenta SUNKA."
+>
+    <main class="min-h-screen bg-sunka-cream text-sunka-ink">
+        <section class="relative min-h-[350px] overflow-hidden bg-sunka-forest text-sunka-white">
+            <div
+                class="absolute -right-24 top-16 h-80 w-80 rounded-full border border-sunka-brass/15"
+                aria-hidden="true"
+            ></div>
+            <div
+                class="absolute -right-4 top-36 h-44 w-44 rounded-full bg-sunka-brass/5"
+                aria-hidden="true"
+            ></div>
+
+            <div
+                class="relative mx-auto flex min-h-[350px] max-w-7xl items-end px-5 pb-20 pt-32 md:px-8 md:pb-24"
+            >
+                <div class="max-w-3xl">
+                    <p class="mb-4 text-[10px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
+                        Tu espacio SUNKA
+                    </p>
+                    <h1 class="font-heading text-3xl font-semibold leading-tight md:text-5xl">
+                        Mi cuenta
+                    </h1>
+                    <p class="mt-5 max-w-xl text-sm leading-relaxed text-sunka-white/65 md:text-base">
+                        Administra tus datos personales, direcciones, pedidos y seguridad desde un solo lugar.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <div class="relative z-10 mx-auto -mt-10 max-w-7xl px-5 pb-20 md:px-8">
             <AccountPanel
                 client:load
                 documentos_identidad={documentos_identidad}
+                initialUser={session.user}
+                initialSessionStatus={session.status}
             />
         </div>
     </main>

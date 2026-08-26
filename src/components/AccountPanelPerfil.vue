@@ -1,22 +1,35 @@
 <template>
     <div>
-        <div class="flex justify-between mb-4">
-            <h2 class="text-xl font-semibold">
-                {{ headText }}
-            </h2>
+        <div class="mb-8 flex flex-col gap-5 border-b border-sunka-sand pb-6 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-sunka-brass">
+                    Información personal
+                </p>
+                <h2 class="mt-2 font-heading text-2xl font-semibold text-sunka-forest">
+                    {{ headText }}
+                </h2>
+                <p class="mt-1 text-sm text-sunka-stone">Mantén actualizados tus datos de contacto.</p>
+            </div>
 
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
                 <JdButton
                     :text="editing ? 'Cancelar' : 'Editar'"
                     :tipo="editing ? 2 : 1"
                     @click="editing = !editing"
+                    class="!h-10 !rounded-none !border-sunka-ink !px-5 !py-2 text-[10px] font-semibold uppercase tracking-[0.14em]"
                 />
 
-                <JdButton text="Actualizar" :loading="loading" @click="actualizar" v-if="editing" />
+                <JdButton
+                    v-if="editing"
+                    text="Guardar cambios"
+                    :loading="loading"
+                    @click="actualizar"
+                    class="!h-10 !rounded-none !border-sunka-ink !bg-sunka-ink !px-5 !py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-sunka-white"
+                />
             </div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-4">
+        <div class="grid gap-5 md:grid-cols-2 md:gap-x-7 md:gap-y-6">
             <JdInput label="Nombres" v-model="user.nombres" :disabled="!editing" />
 
             <JdSelect
@@ -33,7 +46,7 @@
             <div>
                 <JdInput label="Correo" v-model="user.correo" :disabled="true" />
 
-                <p class="text-xs text-gray-400 mt-2" v-if="editing">
+                <p class="mt-2 text-xs leading-relaxed text-sunka-stone" v-if="editing">
                     Por tu seguridad, no es posible cambiar tu correo. Si quieres usar otro, crea
                     una nueva cuenta.
                 </p>

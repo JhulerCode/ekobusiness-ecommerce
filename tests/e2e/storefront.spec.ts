@@ -49,6 +49,18 @@ test('mantiene la sesión en cookies HttpOnly y no expone el token', async ({ pa
     expect((await page.request.get('/api/account/session')).status()).toBe(401)
 })
 
+test('renderiza la cuenta autenticada desde el servidor sin mostrar el estado de invitado', async ({ page }) => {
+    await page.goto('/')
+    const response = await page.request.post('/api/auth/signin', {
+        data: { correo: 'cliente@example.com', contrasena: 'secreto123' },
+    })
+    expect(response.status()).toBe(200)
+
+    await page.goto('/account')
+    await expect(page.getByRole('heading', { name: 'Hola, cliente' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'No has iniciado sesión' })).toHaveCount(0)
+})
+
 test('renueva una sesión vencida una sola vez', async ({ context, page }) => {
     await context.addCookies([
         { name: 'sunka_access', value: 'expired', url: 'http://127.0.0.1:4322', httpOnly: true },

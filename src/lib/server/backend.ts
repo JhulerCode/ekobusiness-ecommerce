@@ -16,6 +16,11 @@ interface BackendRequestOptions {
 
 export type BackendResult<T = unknown> = ApiResult<T> & { headers: Headers }
 
+export interface SessionState {
+    status: 'authenticated' | 'guest' | 'error'
+    user?: Record<string, unknown>
+}
+
 const cookieOptions = (maxAge: number) => ({
     httpOnly: true,
     maxAge,
@@ -173,24 +178,25 @@ export async function requestWithSession<T = unknown>(
     options: Omit<BackendRequestOptions, 'token'> = {},
 ): Promise<BackendResult<T>> {
     const accessToken = context.cookies.get(ACCESS_COOKIE)?.value
-    if (!accessToken) return sessionProblem('Inicia sesión para continuar.')
-
     const requestOptions = {
         ...options,
         clientIp: options.clientIp || getClientIp(context.request),
-        token: accessToken,
     }
-    let result = await backendRequest<T>(path, requestOptions)
-    const isCustomerSessionFailure = !result.ok && result.status === 401 && [
-        'urn:itd:integration:problem:middleware:invalid-customer-session',
-        'urn:itd:integration:problem:customers:invalid-session',
-    ].includes(result.problem.type)
-    if (!isCustomerSessionFailure) return result
+    let result: BackendResult<T> | undefined
+
+    if (accessToken) {
+        result = await backendRequest<T>(path, { ...requestOptions, token: accessToken })
+        const isCustomerSessionFailure = !result.ok && result.status === 401 && [
+            'urn:itd:integration:problem:middleware:invalid-customer-session',
+            'urn:itd:integration:problem:customers:invalid-session',
+        ].includes(result.problem.type)
+        if (!isCustomerSessionFailure) return result
+    }
 
     const refreshToken = context.cookies.get(REFRESH_COOKIE)?.value
     if (!refreshToken) {
         clearSessionCookies(context)
-        return result
+        return result || sessionProblem('Inicia sesión para continuar.')
     }
 
     const refreshed = await backendRequest<{ access_token?: string }>('customers/auth/refresh', {
@@ -198,10 +204,29 @@ export async function requestWithSession<T = unknown>(
         body: JSON.stringify({ refresh_token: refreshToken }),
         clientIp: requestOptions.clientIp,
     })
-    const nextToken = refreshed.ok ? refreshed.data?.access_token : undefined
+    if (!refreshed.ok) {
+        if (refreshed.status === 401) clearSessionCookies(context)
+        return {
+            ok: false,
+            status: refreshed.status,
+            problem: refreshed.problem,
+            headers: refreshed.headers,
+        }
+    }
+
+    const nextToken = refreshed.data?.access_token
     if (!nextToken) {
-        clearSessionCookies(context)
-        return sessionProblem('La sesión ha vencido.')
+        return {
+            ok: false,
+            status: 502,
+            problem: genericProblem(
+                502,
+                'upstream-contract-error',
+                'Respuesta no válida',
+                'El servicio devolvió una respuesta no válida.',
+            ),
+            headers: refreshed.headers,
+        }
     }
 
     setAccessCookie(context, nextToken)
@@ -215,13 +240,24 @@ export async function requestWithOptionalSession<T = unknown>(
     path: string,
     options: Omit<BackendRequestOptions, 'token'> = {},
 ) {
-    if (!context.cookies.has(ACCESS_COOKIE)) {
+    if (!context.cookies.has(ACCESS_COOKIE) && !context.cookies.has(REFRESH_COOKIE)) {
         return backendRequest<T>(path, {
             ...options,
             clientIp: options.clientIp || getClientIp(context.request),
         })
     }
     return requestWithSession<T>(context, path, options)
+}
+
+export async function resolveSession(context: APIContext): Promise<SessionState> {
+    if (!context.cookies.has(ACCESS_COOKIE) && !context.cookies.has(REFRESH_COOKIE)) {
+        return { status: 'guest' }
+    }
+
+    const result = await requestWithSession<Record<string, unknown>>(context, 'customers/me')
+    if (result.ok) return { status: 'authenticated', user: result.data }
+    if (result.status === 401) return { status: 'guest' }
+    return { status: 'error' }
 }
 
 export function orderCookieName(id: string) {

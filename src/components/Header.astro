@@ -30,6 +30,7 @@ const rightNavLinks: NavLink[] = [
 ]
 
 const mobileNavLinks = [...leftNavLinks, ...rightNavLinks]
+const { session = { status: 'guest' } } = Astro.props
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
 const startsTransparent =
     currentPath === '/' ||
@@ -126,7 +127,11 @@ const headerMainClass = startsTransparent
                 </nav>
 
                 <div class="flex items-center gap-4 text-current lg:gap-5">
-                    <AuthModal client:load />
+                    <AuthModal
+                        client:load
+                        initialUser={session.user}
+                        initialSessionStatus={session.status}
+                    />
                     <CartDrawer client:load />
                 </div>
             </div>

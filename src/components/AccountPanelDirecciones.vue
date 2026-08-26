@@ -1,28 +1,47 @@
 <template>
     <div>
-        <div class="flex justify-between mb-4">
-            <h2 class="text-xl font-semibold">
-                {{ headText }}
-            </h2>
+        <div class="mb-8 flex flex-col gap-5 border-b border-sunka-sand pb-6 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-sunka-brass">
+                    Lugares de entrega
+                </p>
+                <h2 class="mt-2 font-heading text-2xl font-semibold text-sunka-forest">
+                    {{ headText }}
+                </h2>
+                <p class="mt-1 text-sm text-sunka-stone">Guarda tus direcciones para agilizar tus compras.</p>
+            </div>
 
-            <button @click="openModal" class="button button1">Agregar</button>
+            <button
+                @click="openModal"
+                class="h-10 cursor-pointer border border-sunka-ink bg-sunka-ink px-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-sunka-white transition-colors hover:bg-sunka-forest"
+            >
+                Agregar dirección
+            </button>
         </div>
 
         <div
             v-if="user.direcciones && user.direcciones.length > 0"
-            class="space-y-4"
+            class="grid gap-4 xl:grid-cols-2"
         >
             <div
                 v-for="(dir, i) in user.direcciones"
                 :key="i"
-                class="flex justify-between items-start bg-gray-50 p-4 rounded-xl border border-gray-200"
+                class="flex min-h-44 justify-between gap-5 border border-sunka-sand bg-sunka-white p-5 transition-colors hover:bg-sunka-cream/50 sm:p-6"
             >
-                <div>
-                    <p class="font-medium text-gray-800">
+                <div class="min-w-0">
+                    <div class="mb-3 flex flex-wrap items-center gap-2">
+                    <p class="font-heading text-lg font-semibold text-sunka-forest">
                         {{ dir.nombre }}
                     </p>
+                    <span
+                        v-if="dir.principal"
+                        class="border border-sunka-brass/40 bg-sunka-cream px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.15em] text-sunka-brass"
+                    >
+                        Principal
+                    </span>
+                    </div>
 
-                    <p class="text-sm text-gray-600">
+                    <p class="text-sm leading-relaxed text-sunka-ink/75">
                         {{ dir.direccion }}
                         <template v-if="dir.numero">
                             Nro: {{ dir.numero }}
@@ -32,29 +51,21 @@
                         </template>
                     </p>
 
-                    <p class="text-sm text-gray-600" v-if="dir.ubigeo1">
+                    <p class="mt-1 text-sm leading-relaxed text-sunka-stone" v-if="dir.ubigeo1">
                         {{ dir.ubigeo1.distrito }}, {{ dir.ubigeo1.provincia }},
                         {{ dir.ubigeo1.departamento }}
                     </p>
 
-                    <p class="text-sm text-gray-600">
+                    <p v-if="dir.referencia" class="mt-3 text-xs leading-relaxed text-sunka-stone">
                         Referencia: {{ dir.referencia }}
-                        <template v-if="dir.principal">
-                            |
-                            <span
-                                class="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-lg"
-                            >
-                                Principal
-                            </span>
-                        </template>
                     </p>
                 </div>
 
-                <div class="flex flex-col space-y-2">
+                <div class="flex shrink-0 flex-col gap-2">
                     <button
                         @click="openQuestion(i)"
                         title="Eliminar"
-                        class="text-sm text-red-500 cursor-pointer"
+                        class="flex h-9 w-9 cursor-pointer items-center justify-center border border-sunka-sand text-sunka-stone transition-colors hover:border-[var(--sunka-danger)] hover:text-[var(--sunka-danger)]"
                     >
                         <Trash />
                     </button>
@@ -62,7 +73,7 @@
                         v-if="!dir.principal"
                         @click="setPrincipal(i)"
                         title="Marcar como principal"
-                        class="text-sm text-gray-700 cursor-pointer"
+                        class="flex h-9 w-9 cursor-pointer items-center justify-center border border-sunka-sand text-sunka-stone transition-colors hover:border-sunka-brass hover:text-sunka-brass"
                     >
                         <Star />
                         <LoadingSpin v-if="loadingSetPrincipal" />
@@ -71,31 +82,37 @@
             </div>
         </div>
 
-        <div v-else class="text-gray-600 text-center">
-            <p>No tienes direcciones registradas.</p>
+        <div v-else class="border border-dashed border-sunka-sand bg-sunka-cream/45 px-5 py-12 text-center">
+            <p class="font-heading text-lg font-semibold text-sunka-forest">Aún no tienes direcciones</p>
+            <p class="mt-1 text-sm text-sunka-stone">Agrega una dirección para tus próximas entregas.</p>
         </div>
     </div>
 
     <!-- Modal simple para agregar dirección -->
-    <transition name="fade">
-        <div v-if="showAddModal" class="modal">
-            <div class="center">
-                <header>
-                    <h3>Nueva dirección</h3>
+    <Teleport to="body">
+        <transition name="fade">
+            <div v-if="showAddModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-sunka-ink/70 p-4 backdrop-blur-sm" @click.self="closeModal">
+            <div class="flex max-h-[calc(100dvh-2rem)] w-full max-w-2xl flex-col overflow-hidden border border-sunka-sand bg-sunka-white text-sunka-ink shadow-2xl">
+                <header class="flex items-start justify-between border-b border-sunka-sand bg-sunka-cream px-6 py-6 sm:px-8">
+                    <div>
+                        <p class="text-[9px] font-semibold uppercase tracking-[0.22em] text-sunka-brass">Lugares de entrega</p>
+                        <h3 class="mt-2 font-heading text-2xl font-semibold text-sunka-forest">Nueva dirección</h3>
+                    </div>
 
-                    <button @click="closeModal">
+                    <button @click="closeModal" class="flex h-9 w-9 cursor-pointer items-center justify-center border border-sunka-sand text-sunka-stone transition-colors hover:border-sunka-brass hover:text-sunka-ink" aria-label="Cerrar">
                         <Xmark />
                     </button>
                 </header>
 
-                <main>
-                    <div class="grid md:grid-cols-2 gap-4">
+                <main class="overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
+                    <div class="grid gap-5 md:grid-cols-2">
                         <JdInput
                             label="Nombre"
                             placeholder="Ej. Casa, Trabajo"
                             :nec="true"
                             v-model="form.nombre"
                             :error="errors.nombre"
+                            class="col-span-2 md:col-span-1"
                         />
 
                         <JdInput
@@ -145,35 +162,42 @@
                     </div>
                 </main>
 
-                <footer>
+                <footer class="flex justify-end border-t border-sunka-sand bg-sunka-cream/50 px-6 py-4 sm:px-8">
                     <JdButton
                         text="Guardar"
                         :loading="loadingCreate"
                         @click="grabar"
+                        class="!h-11 !rounded-none !border-sunka-ink !bg-sunka-ink !px-6 !py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-sunka-white"
                     />
                 </footer>
             </div>
-        </div>
-    </transition>
+            </div>
+        </transition>
+    </Teleport>
 
-    <transition name="fade">
-        <div v-if="showQuestion" class="modal">
-            <div class="center">
-                <main>
-                    <p>¿Está seguro de eliminar?</p>
+    <Teleport to="body">
+        <transition name="fade">
+            <div v-if="showQuestion" class="fixed inset-0 z-[110] flex items-center justify-center bg-sunka-ink/70 p-4 backdrop-blur-sm" @click.self="closeQuestion">
+            <div class="w-full max-w-md border border-sunka-sand bg-sunka-white shadow-2xl">
+                <main class="px-7 py-8">
+                    <p class="text-[9px] font-semibold uppercase tracking-[0.22em] text-[var(--sunka-danger)]">Confirmar acción</p>
+                    <p class="mt-2 font-heading text-xl font-semibold text-sunka-forest">¿Deseas eliminar esta dirección?</p>
+                    <p class="mt-2 text-sm text-sunka-stone">Esta acción no se puede deshacer.</p>
                 </main>
 
-                <footer>
-                    <JdButton text="NO" tipo="2" @click="closeQuestion" />
+                <footer class="flex justify-end gap-2 border-t border-sunka-sand bg-sunka-cream/50 px-7 py-4">
+                    <JdButton text="Cancelar" tipo="2" @click="closeQuestion" class="!rounded-none !border-sunka-sand" />
                     <JdButton
-                        text="SI"
+                        text="Eliminar"
                         :loading="loadingDelete"
                         @click="eliminar"
+                        class="!rounded-none !border-[var(--sunka-danger)] !bg-[var(--sunka-danger)] text-sunka-white"
                     />
                 </footer>
             </div>
-        </div>
-    </transition>
+            </div>
+        </transition>
+    </Teleport>
 </template>
 
 <script lang="ts">

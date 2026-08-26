@@ -53,7 +53,7 @@ const { title = 'Mi Tienda', referrerPolicy } = Astro.props
     </head>
 
     <body>
-        <Header />
+        <Header session={Astro.locals.session} />
 
         <main>
             <slot />
