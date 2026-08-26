@@ -397,9 +397,7 @@ export default defineComponent({
                 );
             }
 
-            // Los momentos son tags de selección múltiple por producto. Mientras la
-            // API no entregue tags, se conserva la colección de la línea como fallback.
-            if (this.selectedMoment && this.hasMomentMetadata) {
+            if (this.selectedMoment) {
                 resultado = resultado.filter((p) =>
                     this.productMatchesMoment(p, this.selectedMoment)
                 );
@@ -486,9 +484,6 @@ export default defineComponent({
             if (this.precioMin != null && this.precioMin !== '') count++;
             if (this.precioMax != null && this.precioMax !== '') count++;
             return count;
-        },
-        hasMomentMetadata() {
-            return this.productos.some((producto) => this.getProductMoments(producto).length > 0);
         },
     },
     watch: {
@@ -594,6 +589,8 @@ export default defineComponent({
         },
         getProductMoments(producto) {
             const sources = [
+                producto.perfil_sensorial?.momentos,
+                producto.ecommerce_data?.perfil_sensorial?.momentos,
                 producto.momentos,
                 producto.momento,
                 producto.tags,

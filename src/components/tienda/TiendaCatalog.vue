@@ -86,7 +86,9 @@
                             <ChevronDown v-else class="catalog-select-icon" aria-hidden="true" />
                         </span>
                     </label>
-                    <span class="text-xs text-sunka-ink/55">{{ productosFiltrados.length }} productos</span>
+                    <span class="text-xs text-sunka-ink/55">
+                        {{ productosPaginados.length }}/{{ productosFiltrados.length }} productos
+                    </span>
                 </div>
             </div>
 
@@ -193,7 +195,7 @@ export default defineComponent({
             if (this.filtroLineas.length) {
                 resultado = resultado.filter((producto) => this.filtroLineas.includes(producto.linea))
             }
-            if (this.selectedMoment && this.hasMomentMetadata) {
+            if (this.selectedMoment) {
                 resultado = resultado.filter((producto) => this.productMatchesMoment(producto, this.selectedMoment))
             }
             if (this.precioMin != null) resultado = resultado.filter((producto) => Number(producto.precio) >= this.precioMin)
@@ -228,9 +230,6 @@ export default defineComponent({
             if (actual < total - 2) paginas.push('...')
             paginas.push(total)
             return paginas
-        },
-        hasMomentMetadata() {
-            return this.productos.some((producto) => this.getProductMoments(producto).length)
         },
         hasActiveFilters() {
             return Boolean(this.selectedMoment || this.filtroLineas.length || this.priceRange || this.searchTerm)
@@ -275,7 +274,16 @@ export default defineComponent({
                     if (slug) values.push(slug)
                 })
             }
-            ;[producto.momentos, producto.momento, producto.tags, producto.etiquetas].forEach(append)
+            ;[
+                producto.perfil_sensorial?.momentos,
+                producto.ecommerce_data?.perfil_sensorial?.momentos,
+                producto.momentos,
+                producto.momento,
+                producto.tags,
+                producto.tags1,
+                producto.etiquetas,
+                producto.etiquetas1,
+            ].forEach(append)
             return [...new Set(values)]
         },
         productMatchesMoment(producto, moment) {
