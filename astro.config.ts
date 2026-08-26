@@ -9,5 +9,10 @@ export default defineConfig({
     integrations: [vue()],
     vite: {
         plugins: [tailwindcss()],
+        optimizeDeps: {
+            // Se carga bajo demanda en el paso de pago; precalcularla al iniciar
+            // evita que Vite descubra una versión nueva a mitad del checkout.
+            include: ['@lyracom/embedded-form-glue'],
+        },
     },
 })

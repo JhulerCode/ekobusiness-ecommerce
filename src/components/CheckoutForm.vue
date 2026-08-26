@@ -828,8 +828,6 @@ import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draf
 import { urls, get, post, patch } from '../lib/api'
 import { genId } from '../lib/mine'
 
-import KRGlue from '@lyracom/embedded-form-glue'
-
 export default defineComponent({
     inheritAttrs: false,
     components: {
@@ -1040,6 +1038,19 @@ export default defineComponent({
             const validPaymentMethods = this.pago_metodos.map((item) => String(item.id))
 
             Object.assign(this.form.socio_datos, saved.socio_datos || {}, { privacidad: false })
+
+            // Los datos de la cuenta son la fuente de verdad para un usuario autenticado.
+            // Un borrador del mismo usuario solo debe restaurar el resto del checkout.
+            if (this.user.id) {
+                Object.assign(this.form.socio_datos, {
+                    nombres: this.user.nombres,
+                    apellidos: this.user.apellidos,
+                    doc_tipo: this.user.doc_tipo,
+                    doc_numero: this.user.doc_numero,
+                    correo: this.user.correo,
+                    telefono: this.user.telefono1,
+                })
+            }
 
             if (!validDocumentTypes.includes(String(this.form.socio_datos.doc_tipo))) {
                 this.form.socio_datos.doc_tipo = this.documentos_identidad.find(
@@ -1308,6 +1319,9 @@ export default defineComponent({
             this.loadingPagar = true
             this.errors.general = ''
             try {
+                // Resolver el cliente antes de crear el intento de pago evita dejar
+                // pedidos incompletos si el módulo local no pudiera cargarse.
+                const { default: KRGlue } = await import('@lyracom/embedded-form-glue')
                 const res = await post(`${urls.izipay}/create-payment`, send, undefined)
                 if (!res.ok) {
                     this.errors.general = res.problem.detail
