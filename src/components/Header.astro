@@ -49,7 +49,7 @@ const headerMainClass = startsTransparent
 <header id="site-header" class="relative z-50 w-full text-sunka-white">
     <div class="h-7" aria-hidden="true"></div>
     <div class="fixed top-0 left-0 z-[60] w-full">
-        <HeaderTopBar />
+        <HeaderTopBar isClubMember={session.status === 'authenticated'} />
     </div>
 
     <div id="site-header-main" class:list={[headerMainClass, 'text-sunka-white']}>
@@ -132,7 +132,10 @@ const headerMainClass = startsTransparent
                         initialUser={session.user}
                         initialSessionStatus={session.status}
                     />
-                    <CartDrawer client:load />
+                    <CartDrawer
+                        client:load
+                        initialSessionStatus={session.status}
+                    />
                 </div>
             </div>
         </div>

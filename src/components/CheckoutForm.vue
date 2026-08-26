@@ -730,6 +730,22 @@
                     </span>
                 </div>
 
+                <div v-if="promotionQuote.matchedPromotions.length" class="checkout-promotion">
+                    <span>Promoción</span>
+                    <strong>{{ promotionQuote.matchedPromotions[0].name }}</strong>
+                </div>
+                <div v-if="promotionQuote.benefits.length" class="checkout-promotion">
+                    <span>Beneficio</span>
+                    <strong>1 caja sorpresa</strong>
+                </div>
+                <p
+                    v-if="form.entrega_tipo === 'envio' && !promotionQuote.hasFreeShipping"
+                    class="checkout-shipping-progress"
+                >
+                    Te faltan S/ {{ promotionQuote.missingForFreeShipping.toFixed(2) }} para obtener
+                    envío gratis{{ user.id ? ' Club' : '' }}.
+                </p>
+
                 <div
                     class="checkout-total"
                 >
@@ -825,6 +841,7 @@ import yapeLogo from '../assets/icons/yape-logo.svg?url'
 
 import { Cart } from '../lib/cart'
 import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draft'
+import { evaluateCheckoutPromotions } from '../lib/checkout-promotions'
 import { urls, get, post, patch } from '../lib/api'
 import { genId } from '../lib/mine'
 
@@ -902,8 +919,14 @@ export default defineComponent({
         subtotal() {
             return this.items.reduce((acc, item) => acc + item.pu * item.cantidad, 0)
         },
+        promotionQuote() {
+            return evaluateCheckoutPromotions(this.items, {
+                isClubMember: Boolean(this.user.id),
+                deliveryType: this.form.entrega_tipo,
+            })
+        },
         costoEnvio() {
-            return this.form.entrega_tipo === 'envio' ? 10 : 0
+            return this.promotionQuote.deliveryCost
         },
         total() {
             return this.subtotal + this.costoEnvio
@@ -952,7 +975,7 @@ export default defineComponent({
     },
     async mounted() {
         this.injectarJsIzipay()
-        this.items = Cart.get()
+        this.items = await Cart.hydrateMetadata()
 
         if (this.items.length == 0) {
             CheckoutDraft.clear()
@@ -1167,6 +1190,12 @@ export default defineComponent({
 
                 if (!this.form.entrega_ubigeo)
                     this.errors.entrega_ubigeo = 'Este campo es obligatorio.'
+                if (
+                    this.form.entrega_direccion_datos.ubigeo1 &&
+                    this.form.entrega_direccion_datos.ubigeo1.provincia !== 'Lima'
+                ) {
+                    this.errors.entrega_ubigeo = 'Solo realizamos envíos a Lima Metropolitana.'
+                }
                 if (!this.form.direccion_entrega)
                     this.errors.direccion_entrega = 'Este campo es obligatorio.'
                 if (!this.form.entrega_direccion_datos.referencia)
@@ -1277,6 +1306,7 @@ export default defineComponent({
 
             this.form.socio_pedido_items = this.items
             this.form.entrega_costo = this.costoEnvio
+            this.form.beneficios = this.promotionQuote.benefits
 
             if (this.form.pago_metodo == 'yape') {
                 this.form.codigo = genId()
@@ -1978,6 +2008,22 @@ export default defineComponent({
     display: flex;
     justify-content: space-between;
     gap: 16px;
+}
+
+.checkout-promotion {
+    color: var(--sunka-brass-light);
+}
+
+.checkout-promotion strong {
+    color: var(--sunka-white);
+    text-align: right;
+}
+
+.checkout-shipping-progress {
+    margin: 2px 0 0;
+    color: rgba(255, 253, 248, 0.72);
+    font-size: 10px;
+    line-height: 1.5;
 }
 
 .checkout-total {

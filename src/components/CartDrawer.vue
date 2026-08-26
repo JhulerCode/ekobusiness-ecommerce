@@ -161,6 +161,24 @@
                         </div>
 
                         <footer class="shrink-0 border-t border-sunka-sand bg-sunka-white px-5 py-5 sm:px-8 sm:py-6">
+                            <div class="mb-4 border-l-2 border-sunka-brass bg-sunka-cream px-4 py-3 text-xs leading-5 text-sunka-stone">
+                                <p v-if="promotionQuote.hasFreeShipping" class="font-semibold text-sunka-forest">
+                                    Envío gratis obtenido
+                                    <span v-if="promotionQuote.matchedPromotions.length">
+                                        · {{ promotionQuote.matchedPromotions[0].name }}
+                                    </span>
+                                </p>
+                                <p v-else>
+                                    Te faltan {{ formatCurrency(promotionQuote.missingForFreeShipping) }}
+                                    para obtener envío gratis.
+                                </p>
+                                <p v-if="promotionQuote.benefits.length" class="mt-1 font-semibold text-sunka-forest">
+                                    Tu compra incluye 1 caja sorpresa.
+                                </p>
+                                <p v-else-if="!isClubMember" class="mt-1">
+                                    Inicia sesión y accede al envío gratis Club desde S/ 65.
+                                </p>
+                            </div>
                             <div class="space-y-2 text-sm text-sunka-stone">
                                 <div class="flex justify-between">
                                     <span>Subtotal</span>
@@ -199,10 +217,14 @@
 import { defineComponent } from 'vue'
 import ShoppingCart from '@/assets/icons/shopping-cart-plus.vue'
 import { Cart } from '@/lib/cart'
+import { evaluateCheckoutPromotions } from '@/lib/checkout-promotions'
 
 export default defineComponent({
     name: 'CartDrawer',
     components: { ShoppingCart },
+    props: {
+        initialSessionStatus: { type: String, default: 'guest' },
+    },
     data() {
         return {
             isMounted: false,
@@ -229,8 +251,16 @@ export default defineComponent({
                 0,
             )
         },
+        isClubMember() {
+            return this.initialSessionStatus === 'authenticated'
+        },
+        promotionQuote() {
+            return evaluateCheckoutPromotions(this.items, {
+                isClubMember: this.isClubMember,
+            })
+        },
     },
-    mounted() {
+    async mounted() {
         this.isMounted = true
         this.load()
         this.onCartUpdated = (event) => {
@@ -238,6 +268,7 @@ export default defineComponent({
         }
         window.addEventListener('cart-updated', this.onCartUpdated)
         window.addEventListener('keydown', this.handleKeydown)
+        this.items = await Cart.hydrateMetadata()
     },
     beforeUnmount() {
         window.removeEventListener('cart-updated', this.onCartUpdated)

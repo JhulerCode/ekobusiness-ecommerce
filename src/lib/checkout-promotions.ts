@@ -1,0 +1,164 @@
+export const STANDARD_DELIVERY_COST = 10
+export const GENERAL_FREE_SHIPPING_MINIMUM = 75
+export const CLUB_FREE_SHIPPING_MINIMUM = 65
+
+type PromotionItem = Record<string, any> & {
+    cantidad?: number
+    pu?: number
+}
+
+type Requirement = {
+    line: string
+    presentation: number
+    quantity: number
+}
+
+type PromotionRule = {
+    key: string
+    name: string
+    audience: 'general' | 'club'
+    requirements: Requirement[]
+    mysteryBox?: boolean
+}
+
+const rules: PromotionRule[] = [
+    { key: 'tradicional-general', name: 'Pack Tradicional', audience: 'general', requirements: [
+        { line: 'tradicional', presentation: 50, quantity: 3 },
+        { line: 'tradicional', presentation: 20, quantity: 2 },
+    ] },
+    { key: 'signature-general', name: 'Pack Signature', audience: 'general', requirements: [
+        { line: 'signature-black', presentation: 20, quantity: 5 },
+    ] },
+    { key: 'piramidal-general', name: 'Pack Piramidal', audience: 'general', requirements: [
+        { line: 'piramidal-premium', presentation: 10, quantity: 4 },
+    ] },
+    { key: 'luxury-general', name: 'Pack Luxury', audience: 'general', requirements: [
+        { line: 'luxury', presentation: 10, quantity: 3 },
+    ] },
+    { key: 'escalera-sunka', name: 'Escalera SUNKA', audience: 'general', requirements: [
+        { line: 'tradicional', presentation: 20, quantity: 2 },
+        { line: 'signature-black', presentation: 20, quantity: 1 },
+        { line: 'piramidal-premium', presentation: 10, quantity: 1 },
+        { line: 'luxury', presentation: 10, quantity: 1 },
+    ] },
+    { key: 'seleccion-especial', name: 'Selección especial', audience: 'general', requirements: [
+        { line: 'signature-black', presentation: 20, quantity: 1 },
+        { line: 'piramidal-premium', presentation: 10, quantity: 2 },
+        { line: 'luxury', presentation: 10, quantity: 1 },
+    ] },
+    { key: 'descubre-sunka', name: 'Descubre SUNKA', audience: 'general', requirements: [
+        { line: 'tradicional', presentation: 50, quantity: 1 },
+        { line: 'signature-black', presentation: 20, quantity: 1 },
+        { line: 'piramidal-premium', presentation: 10, quantity: 1 },
+        { line: 'luxury', presentation: 10, quantity: 1 },
+    ] },
+    { key: 'tradicional-club', name: 'Pack Tradicional Club', audience: 'club', requirements: [
+        { line: 'tradicional', presentation: 50, quantity: 3 },
+        { line: 'tradicional', presentation: 20, quantity: 2 },
+    ] },
+    { key: 'signature-club', name: 'Pack Signature Club', audience: 'club', requirements: [
+        { line: 'signature-black', presentation: 20, quantity: 5 },
+    ] },
+    { key: 'piramidal-club', name: 'Pack Piramidal Club', audience: 'club', mysteryBox: true, requirements: [
+        { line: 'piramidal-premium', presentation: 10, quantity: 4 },
+    ] },
+    { key: 'luxury-club', name: 'Pack Luxury Club', audience: 'club', mysteryBox: true, requirements: [
+        { line: 'luxury', presentation: 10, quantity: 3 },
+    ] },
+    { key: 'welcome-club', name: 'Welcome to the Club', audience: 'club', requirements: [
+        { line: 'tradicional', presentation: 50, quantity: 1 },
+        { line: 'signature-black', presentation: 20, quantity: 1 },
+        { line: 'piramidal-premium', presentation: 10, quantity: 1 },
+        { line: 'luxury', presentation: 10, quantity: 1 },
+    ] },
+    { key: 'flexday', name: 'Flexday', audience: 'club', requirements: [
+        { line: 'tradicional', presentation: 20, quantity: 2 },
+        { line: 'tradicional', presentation: 50, quantity: 1 },
+        { line: 'signature-black', presentation: 20, quantity: 1 },
+        { line: 'piramidal-premium', presentation: 10, quantity: 1 },
+    ] },
+    { key: 'signature-premium', name: 'Signature & Premium', audience: 'club', mysteryBox: true, requirements: [
+        { line: 'signature-black', presentation: 20, quantity: 3 },
+        { line: 'piramidal-premium', presentation: 10, quantity: 2 },
+    ] },
+    { key: 'premium-luxury', name: 'Premium & Luxury', audience: 'club', mysteryBox: true, requirements: [
+        { line: 'piramidal-premium', presentation: 10, quantity: 3 },
+        { line: 'luxury', presentation: 10, quantity: 1 },
+    ] },
+    { key: 'luxury-moment', name: 'Luxury Moment', audience: 'club', mysteryBox: true, requirements: [
+        { line: 'luxury', presentation: 10, quantity: 2 },
+        { line: 'piramidal-premium', presentation: 10, quantity: 1 },
+    ] },
+]
+
+function normalizeSlug(value: unknown) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+}
+
+export function getProductLine(item: PromotionItem) {
+    return normalizeSlug(item.linea_nombre || item.linea1?.nombre || item.lineName)
+}
+
+export function getProductPresentation(item: PromotionItem) {
+    const presentation = item.presentacion || item.ecommerce_data?.presentacion || []
+    const sachets = Array.isArray(presentation)
+        ? presentation.find((entry) => normalizeSlug(entry?.label) === 'saquitos')
+        : null
+    const value = Number(sachets?.value)
+    return Number.isFinite(value) ? value : null
+}
+
+export function evaluateCheckoutPromotions(
+    items: PromotionItem[],
+    { isClubMember = false, deliveryType = 'envio' } = {},
+) {
+    const subtotal = items.reduce(
+        (sum, item) => sum + Number(item.pu || 0) * Number(item.cantidad || 0),
+        0,
+    )
+    const quantities = new Map<string, number>()
+    for (const item of items) {
+        const line = getProductLine(item)
+        const presentation = getProductPresentation(item)
+        if (!line || presentation == null) continue
+        const key = `${line}:${presentation}`
+        quantities.set(key, (quantities.get(key) || 0) + Number(item.cantidad || 0))
+    }
+
+    const audience = isClubMember ? 'club' : 'general'
+    const matchedPromotions = rules.filter(
+        (rule) => rule.audience === audience && rule.requirements.every(
+            (requirement) =>
+                (quantities.get(`${requirement.line}:${requirement.presentation}`) || 0) >=
+                requirement.quantity,
+        ),
+    )
+    const freeShippingMinimum = isClubMember
+        ? CLUB_FREE_SHIPPING_MINIMUM
+        : GENERAL_FREE_SHIPPING_MINIMUM
+    const freeShippingByAmount = subtotal >= freeShippingMinimum
+    const freeShippingByPromotion = matchedPromotions.length > 0
+    const deliveryCost = deliveryType === 'envio' && !freeShippingByAmount && !freeShippingByPromotion
+        ? STANDARD_DELIVERY_COST
+        : 0
+    const hasMysteryBox = matchedPromotions.some((promotion) => promotion.mysteryBox)
+
+    return {
+        subtotal,
+        deliveryCost,
+        total: subtotal + deliveryCost,
+        freeShippingMinimum,
+        missingForFreeShipping: Math.max(0, freeShippingMinimum - subtotal),
+        hasFreeShipping: deliveryType !== 'envio' || deliveryCost === 0,
+        matchedPromotions,
+        benefits: hasMysteryBox
+            ? [{ type: 'caja_sorpresa', label: 'Caja sorpresa', quantity: 1 }]
+            : [],
+    }
+}
