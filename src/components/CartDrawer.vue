@@ -176,7 +176,7 @@
                                     Tu compra incluye 1 caja sorpresa.
                                 </p>
                                 <p v-else-if="!isClubMember" class="mt-1">
-                                    Inicia sesión y accede al envío gratis Club desde S/ 65.
+                                    Inicia sesión y obtén envío gratis en compras desde S/ 65.
                                 </p>
                             </div>
                             <div class="space-y-2 text-sm text-sunka-stone">

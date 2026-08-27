@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { evaluateCheckoutPromotions } from '../../src/lib/checkout-promotions'
+import {
+    CHECKOUT_PROMOTION_RULES,
+    evaluateCheckoutPromotions,
+    getPromotionRequirementText,
+    getPromotionShopHref,
+} from '../../src/lib/checkout-promotions'
 import { buildAuthoritativeCheckout } from '../../src/lib/server/checkout-quote'
 
 function item(line: string, presentation: number, quantity: number, price = 1) {
@@ -12,6 +17,18 @@ function item(line: string, presentation: number, quantity: number, price = 1) {
 }
 
 describe('promociones del checkout', () => {
+    it('expone el mismo catálogo usado por el checkout para comunicar las condiciones', () => {
+        const promotion = CHECKOUT_PROMOTION_RULES.find((rule) => rule.key === 'luxury-moment')
+
+        expect(promotion).toBeDefined()
+        expect(getPromotionRequirementText(promotion!)).toBe(
+            '2 cajas Luxury de 10 saquitos y 1 caja Piramidal Premium de 10 saquitos',
+        )
+        expect(getPromotionShopHref(promotion!)).toBe(
+            '/tienda?linea=luxury,piramidal-premium',
+        )
+    })
+
     it('aplica los mínimos de envío gratis para público general y Club', () => {
         expect(evaluateCheckoutPromotions([item('Tradicional', 20, 1, 74.99)]).deliveryCost).toBe(10)
         expect(evaluateCheckoutPromotions([item('Tradicional', 20, 1, 75)]).deliveryCost).toBe(0)
@@ -24,7 +41,7 @@ describe('promociones del checkout', () => {
         const quote = evaluateCheckoutPromotions([item('Tradicional', 20, 1, 75)])
         expect(quote.appliedPromotions).toEqual([{
             key: 'free-shipping-general',
-            name: 'Envío gratis desde S/ 75',
+            name: 'Envío gratis por compras desde S/ 75',
             benefits: [{ type: 'envio_gratis', label: 'Envío gratis' }],
         }])
     })

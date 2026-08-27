@@ -8,27 +8,27 @@ type PromotionItem = Record<string, any> & {
     pu?: number
 }
 
-type Requirement = {
+export type PromotionRequirement = {
     line: string
     presentation: number
     quantity: number
 }
 
-type PromotionRule = {
+export type PromotionRule = {
     key: string
     name: string
     audience: 'general' | 'club'
-    requirements: Requirement[]
+    requirements: PromotionRequirement[]
     mysteryBox?: boolean
 }
 
-type PromotionBenefit = {
+export type PromotionBenefit = {
     type: 'envio_gratis' | 'caja_sorpresa'
     label: string
     quantity?: number
 }
 
-const rules: PromotionRule[] = [
+export const CHECKOUT_PROMOTION_RULES: PromotionRule[] = [
     {
         key: 'tradicional-general',
         name: 'Pack Tradicional',
@@ -171,6 +171,43 @@ const rules: PromotionRule[] = [
     },
 ]
 
+const lineLabels: Record<string, string> = {
+    tradicional: 'Tradicional',
+    'signature-black': 'Signature',
+    'piramidal-premium': 'Piramidal Premium',
+    luxury: 'Luxury',
+}
+
+function joinRequirementTexts(values: string[]) {
+    if (values.length <= 1) return values[0] || ''
+    return `${values.slice(0, -1).join(', ')} y ${values.at(-1)}`
+}
+
+export function getPromotionRequirementText(rule: PromotionRule) {
+    return joinRequirementTexts(rule.requirements.map((requirement) => {
+        const boxes = requirement.quantity === 1 ? 'caja' : 'cajas'
+        return `${requirement.quantity} ${boxes} ${lineLabels[requirement.line] || requirement.line} de ${requirement.presentation} saquitos`
+    }))
+}
+
+export function getPromotionBenefits(rule: PromotionRule): PromotionBenefit[] {
+    return [
+        { type: 'envio_gratis', label: 'Envío gratis' },
+        ...(rule.mysteryBox
+            ? [{ type: 'caja_sorpresa', label: 'Caja sorpresa', quantity: 1 } satisfies PromotionBenefit]
+            : []),
+    ]
+}
+
+export function getPromotionShopHref(rule: PromotionRule) {
+    const lines = [...new Set(rule.requirements.map((requirement) => requirement.line))]
+    return `/tienda?linea=${lines.map(encodeURIComponent).join(',')}`
+}
+
+export function isMixedPromotion(rule: PromotionRule) {
+    return new Set(rule.requirements.map((requirement) => requirement.line)).size > 1
+}
+
 function normalizeSlug(value: unknown) {
     return String(value || '')
         .normalize('NFD')
@@ -212,7 +249,7 @@ export function evaluateCheckoutPromotions(
     }
 
     const audience = isClubMember ? 'club' : 'general'
-    const eligiblePromotions = rules.filter(
+    const eligiblePromotions = CHECKOUT_PROMOTION_RULES.filter(
         (rule) =>
             rule.audience === audience &&
             rule.requirements.every(
@@ -260,25 +297,16 @@ export function evaluateCheckoutPromotions(
                       {
                           key: selectedPromotion.key,
                           name: selectedPromotion.name,
-                          benefits: [
-                              { type: 'envio_gratis', label: 'Envío gratis' },
-                              ...(selectedPromotion.mysteryBox
-                                  ? [
-                                        {
-                                            type: 'caja_sorpresa',
-                                            label: 'Caja sorpresa',
-                                            quantity: 1,
-                                        } satisfies PromotionBenefit,
-                                    ]
-                                  : []),
-                          ] satisfies PromotionBenefit[],
+                          benefits: getPromotionBenefits(selectedPromotion),
                       },
                   ]
                 : freeShippingByAmount
                   ? [
                         {
                             key: isClubMember ? 'free-shipping-club' : 'free-shipping-general',
-                            name: `Envío gratis desde S/ ${freeShippingMinimum}`,
+                            name: isClubMember
+                                ? `Envío gratis Club por compras desde S/ ${freeShippingMinimum}`
+                                : `Envío gratis por compras desde S/ ${freeShippingMinimum}`,
                             benefits: [
                                 { type: 'envio_gratis', label: 'Envío gratis' },
                             ] satisfies PromotionBenefit[],

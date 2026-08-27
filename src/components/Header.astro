@@ -40,7 +40,8 @@ const startsTransparent =
     currentPath === '/checkout' ||
     currentPath === '/rituales' ||
     currentPath === '/origen' ||
-    currentPath === '/club'
+    currentPath === '/club' ||
+    currentPath === '/promociones'
 const headerMainClass = startsTransparent
     ? 'fixed top-7 left-0 z-50 w-full border-b border-transparent bg-transparent transition-all duration-500'
     : 'fixed top-7 left-0 z-50 w-full border-b border-sunka-white/10 bg-[#2b2b2b]/42 transition-all duration-500'
@@ -281,7 +282,8 @@ const headerMainClass = startsTransparent
         currentPath === '/checkout' ||
         currentPath === '/rituales' ||
         currentPath === '/origen' ||
-        currentPath === '/club'
+        currentPath === '/club' ||
+        currentPath === '/promociones'
 
     const setMenuOpen = (isOpen: boolean) => {
         if (isOpen) setLineasMenuOpen(false)

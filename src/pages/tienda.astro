@@ -77,6 +77,28 @@ const momentosOrdenados = [...momentos].sort((a, b) => collator.compare(a.titulo
         </div>
     </section>
 
+    <section class="bg-[#fff8e8]">
+        <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-6 md:flex-row md:items-center md:justify-between md:px-8">
+            <div>
+                <p class="text-[9px] font-bold uppercase tracking-[0.18em] text-sunka-brass">
+                    Promociones vigentes
+                </p>
+                <h2 class="mt-2 font-heading text-xl font-semibold text-sunka-forest md:text-2xl">
+                    Combina líneas, obtén envío gratis y descubre beneficios Club.
+                </h2>
+                <p class="mt-1 text-xs leading-relaxed text-sunka-stone">
+                    Las cantidades son mínimas y puedes elegir diferentes productos participantes.
+                </p>
+            </div>
+            <a
+                href="/promociones"
+                class="inline-flex shrink-0 items-center gap-2 text-xs font-bold text-sunka-forest transition-colors hover:text-sunka-brass"
+            >
+                Conocer promociones <span aria-hidden="true">→</span>
+            </a>
+        </div>
+    </section>
+
     <TiendaCatalog
         client:load
         productos={productos}

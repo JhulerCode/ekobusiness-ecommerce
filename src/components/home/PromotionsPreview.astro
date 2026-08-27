@@ -1,0 +1,70 @@
+---
+import {
+    CHECKOUT_PROMOTION_RULES,
+    CLUB_FREE_SHIPPING_MINIMUM,
+    GENERAL_FREE_SHIPPING_MINIMUM,
+} from '@/lib/checkout-promotions'
+import BoxIcon from '@/assets/icons/icon-box.astro'
+import GiftIcon from '@/assets/icons/icon-gift.astro'
+import UsersIcon from '@/assets/icons/icon-users.astro'
+
+const generalPromotions = CHECKOUT_PROMOTION_RULES.filter((rule) => rule.audience === 'general')
+const clubPromotions = CHECKOUT_PROMOTION_RULES.filter((rule) => rule.audience === 'club')
+---
+
+<section class="bg-sunka-cream py-8 md:py-10">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+        <div class="mb-6 text-center md:mb-8">
+            <h2 class="font-heading text-2xl font-semibold leading-tight text-sunka-ink md:text-3xl">
+                Promociones SUNKA
+            </h2>
+            <p class="mt-1 text-sm text-sunka-ink/70">
+                Combina tus favoritos y accede a envío gratis y beneficios especiales.
+            </p>
+            <a
+                href="/promociones"
+                class="mt-3 inline-flex items-center gap-2 text-sm font-medium text-sunka-forest transition-colors hover:text-sunka-brass"
+            >
+                Ver todas las promociones <span aria-hidden="true">→</span>
+            </a>
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-3">
+            <article class="rounded-md border border-sunka-sand bg-sunka-white p-5 md:p-6">
+                <span class="flex h-12 w-12 items-center justify-center rounded-full bg-sunka-sand/70 text-sunka-forest">
+                    <BoxIcon class="h-6 w-6" aria-hidden="true" />
+                </span>
+                <h3 class="mt-3 font-heading text-lg font-semibold text-sunka-forest">
+                    Compra desde S/ {GENERAL_FREE_SHIPPING_MINIMUM} y recibe envío gratis
+                </h3>
+                <p class="mt-2 text-sm leading-relaxed text-sunka-stone">
+                    Beneficio disponible para todos los pedidos con entrega en Lima Metropolitana.
+                </p>
+            </article>
+            <article class="rounded-md border border-sunka-brass/35 bg-[#fff8e8] p-5 md:p-6">
+                <span class="flex h-12 w-12 items-center justify-center rounded-full bg-sunka-brass/15 text-sunka-brass">
+                    <UsersIcon class="h-6 w-6" aria-hidden="true" />
+                </span>
+                <h3 class="mt-3 font-heading text-lg font-semibold text-sunka-forest">
+                    Envío gratis Club desde S/ {CLUB_FREE_SHIPPING_MINIMUM}
+                </h3>
+                <p class="mt-2 text-sm leading-relaxed text-sunka-stone">
+                    Crea una cuenta gratuita e inicia sesión antes de comprar. No existe ningún
+                    costo de membresía.
+                </p>
+            </article>
+            <article class="rounded-md border border-sunka-sand bg-sunka-forest p-5 text-sunka-white md:p-6">
+                <span class="flex h-12 w-12 items-center justify-center rounded-full bg-sunka-white/10 text-sunka-brass-light">
+                    <GiftIcon class="h-6 w-6" aria-hidden="true" />
+                </span>
+                <h3 class="mt-3 font-heading text-lg font-semibold">
+                    {generalPromotions.length + clubPromotions.length} combinaciones vigentes
+                </h3>
+                <p class="mt-2 text-sm leading-relaxed text-sunka-white/65">
+                    Packs por línea y selecciones surtidas; algunas promociones Club incluyen caja
+                    sorpresa.
+                </p>
+            </article>
+        </div>
+    </div>
+</section>

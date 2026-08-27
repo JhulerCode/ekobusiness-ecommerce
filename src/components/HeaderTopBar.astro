@@ -3,14 +3,13 @@ const { isClubMember = false } = Astro.props
 ---
 
 <div class="bg-sunka-ink text-[11px] tracking-wide text-sunka-white/85">
-    <div class="mx-auto grid h-7 max-w-7xl grid-cols-3 items-center px-5 md:px-8">
-        <p class="justify-self-start">Envios a Lima metropolitana</p>
-        <p class="hidden justify-self-center text-center md:block">
-            Envío gratis desde S/{isClubMember ? '65 para Club Sunka' : '75'}
-        </p>
-        <button class="hidden items-center gap-1 justify-self-end text-sunka-white/80 md:flex">
-            Peru
-            <!-- <ChevronDownIcon /> -->
-        </button>
+    <div class="mx-auto flex h-7 max-w-7xl items-center justify-center px-5 md:grid md:grid-cols-3 md:px-8">
+        <p class="hidden justify-self-start md:block">Envíos a Lima Metropolitana</p>
+        <a href="/promociones" class="justify-self-center text-center transition-colors hover:text-sunka-brass-light">
+            {isClubMember
+                ? 'Compra S/ 65 o más y recibe envío gratis como miembro Club'
+                : 'Envío gratis desde S/ 75 · Con una cuenta, desde S/ 65'}
+        </a>
+        <p class="hidden justify-self-end md:block">Perú</p>
     </div>
 </div>

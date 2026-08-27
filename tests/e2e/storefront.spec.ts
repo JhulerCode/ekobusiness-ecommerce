@@ -49,6 +49,15 @@ test('mantiene la sesión en cookies HttpOnly y no expone el token', async ({ pa
     expect((await page.request.get('/api/account/session')).status()).toBe(401)
 })
 
+test('publica las promociones y sus condiciones desde el mismo catálogo', async ({ page }) => {
+    await page.goto('/promociones')
+    await expect(page).toHaveTitle(/Promociones.*SUNKA/i)
+    await expect(page.getByRole('heading', { name: 'Promociones generales' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Promociones Club' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Luxury Moment' })).toBeVisible()
+    await expect(page.getByText('Caja sorpresa').first()).toBeVisible()
+})
+
 test('renderiza la cuenta autenticada desde el servidor sin mostrar el estado de invitado', async ({ page }) => {
     await page.goto('/')
     const response = await page.request.post('/api/auth/signin', {

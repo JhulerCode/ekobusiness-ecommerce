@@ -238,6 +238,7 @@ export default defineComponent({
             return this.momentos.find((momento) => momento.slug === this.selectedMoment)?.titulo || this.selectedMoment
         },
         selectedLineaLabel() {
+            if (this.filtroLineas.length > 1) return `${this.filtroLineas.length} líneas`
             return this.lineas.find((linea) => linea.id === this.filtroLineas[0])?.nombre || 'Línea'
         },
         priceRangeLabel() {
@@ -327,14 +328,21 @@ export default defineComponent({
         },
         applyUrlFilters() {
             const params = new URLSearchParams(window.location.search)
-            const requestedLine = this.normalizeSlug(params.get('linea') || '')
-            const line = requestedLine
-                ? this.lineas.find((item) => {
-                      const itemSlug = this.normalizeSlug(item.slug || item.nombre)
-                      return itemSlug === requestedLine || itemSlug.startsWith(requestedLine)
-                  })
-                : null
-            if (line) this.filtroLineas = [line.id]
+            const requestedLines = (params.get('linea') || '')
+                .split(',')
+                .map((line) => this.normalizeSlug(line))
+                .filter(Boolean)
+            if (requestedLines.length) {
+                this.filtroLineas = this.lineas
+                    .filter((item) => {
+                        const itemSlug = this.normalizeSlug(item.slug || item.nombre)
+                        return requestedLines.some(
+                            (requestedLine) =>
+                                itemSlug === requestedLine || itemSlug.startsWith(requestedLine),
+                        )
+                    })
+                    .map((line) => line.id)
+            }
             const requestedMoment = this.normalizeSlug(params.get('momento') || '')
             if (momentosBySlug[requestedMoment]) this.selectedMoment = requestedMoment
         },
