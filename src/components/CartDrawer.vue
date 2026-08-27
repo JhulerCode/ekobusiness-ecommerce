@@ -164,15 +164,15 @@
                             <div class="mb-4 border-l-2 border-sunka-brass bg-sunka-cream px-4 py-3 text-xs leading-5 text-sunka-stone">
                                 <p v-if="promotionQuote.hasFreeShipping" class="font-semibold text-sunka-forest">
                                     Envío gratis obtenido
-                                    <span v-if="promotionQuote.matchedPromotions.length">
-                                        · {{ promotionQuote.matchedPromotions[0].name }}
+                                    <span v-if="activePromotion">
+                                        · {{ activePromotion.name }}
                                     </span>
                                 </p>
                                 <p v-else>
                                     Te faltan {{ formatCurrency(promotionQuote.missingForFreeShipping) }}
                                     para obtener envío gratis.
                                 </p>
-                                <p v-if="promotionQuote.benefits.length" class="mt-1 font-semibold text-sunka-forest">
+                                <p v-if="hasMysteryBox" class="mt-1 font-semibold text-sunka-forest">
                                     Tu compra incluye 1 caja sorpresa.
                                 </p>
                                 <p v-else-if="!isClubMember" class="mt-1">
@@ -189,7 +189,7 @@
                                     <span>{{ formatCurrency(igv) }}</span>
                                 </div>
                             </div>
-                            <div class="mt-4 flex items-end justify-between border-t border-sunka-sand pt-4">
+                            <div class="mt-2 flex items-end justify-between">
                                 <span class="text-xs font-semibold uppercase tracking-[0.16em]">Total</span>
                                 <span class="font-heading text-2xl font-semibold">{{ formatCurrency(total) }}</span>
                             </div>
@@ -258,6 +258,14 @@ export default defineComponent({
             return evaluateCheckoutPromotions(this.items, {
                 isClubMember: this.isClubMember,
             })
+        },
+        activePromotion() {
+            return this.promotionQuote.appliedPromotions[0] || null
+        },
+        hasMysteryBox() {
+            return Boolean(this.activePromotion?.benefits.some(
+                (benefit) => benefit.type === 'caja_sorpresa',
+            ))
         },
     },
     async mounted() {

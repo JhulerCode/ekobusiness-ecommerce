@@ -2,11 +2,14 @@ import type { APIRoute } from 'astro'
 import { createPaymentSchema } from '@/lib/api-schemas'
 import { requestWithOptionalSession, setCheckoutCookie, setOrderCookie } from '@/lib/server/backend'
 import { assertSameOrigin, failure, forbiddenOrigin, invalidRequest, json, parseJson } from '@/lib/server/bff'
+import { prepareCheckoutOrder } from '@/lib/server/checkout-quote'
 
 export const POST: APIRoute = async (context) => {
     if (!assertSameOrigin(context.request)) return forbiddenOrigin()
     const parsed = await parseJson(context.request, createPaymentSchema)
     if (!parsed.success) return invalidRequest()
+    const prepared = await prepareCheckoutOrder(context, parsed.data.socio_pedido)
+    if (!prepared.ok) return json(prepared)
     const result = await requestWithOptionalSession<{
         formToken?: string
         checkout_intent_id?: string
@@ -20,7 +23,7 @@ export const POST: APIRoute = async (context) => {
         expires_at?: string
     }>(context, 'payments/izipay/form-token', {
         method: 'POST',
-        body: JSON.stringify(parsed.data),
+        body: JSON.stringify({ ...parsed.data, socio_pedido: prepared.data }),
     })
     if (!result.ok) return json(result)
     const data = result.data

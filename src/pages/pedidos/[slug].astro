@@ -122,6 +122,57 @@ const lastCompletedStageIndex = etapas.reduce(
     -1,
 )
 const orderItems: Array<Record<string, any>> = pedido?.socio_pedido_items || []
+
+const parseOrderCollection = (value: unknown): Array<Record<string, any>> => {
+    if (Array.isArray(value)) {
+        return value.filter(
+            (item): item is Record<string, any> => Boolean(item) && typeof item === 'object',
+        )
+    }
+
+    if (typeof value !== 'string' || !value.trim()) return []
+
+    try {
+        const parsed: unknown = JSON.parse(value)
+        return Array.isArray(parsed)
+            ? parsed.filter(
+                  (item): item is Record<string, any> =>
+                      Boolean(item) && typeof item === 'object',
+              )
+            : []
+    } catch {
+        return []
+    }
+}
+
+const promotions = parseOrderCollection(pedido?.promociones)
+const getPromotionBenefits = (promotion: Record<string, any>) => {
+    if (!Array.isArray(promotion.benefits)) return []
+
+    return promotion.benefits.map((benefit: unknown) => {
+        if (typeof benefit === 'string') {
+            return {
+                type: benefit,
+                label: benefit === 'envio_gratis' ? 'Envío gratis' : 'Caja sorpresa',
+                quantity: 1,
+            }
+        }
+
+        const detail = benefit && typeof benefit === 'object'
+            ? benefit as Record<string, any>
+            : {}
+        return {
+            type: detail.type,
+            label: detail.label || detail.nombre || 'Beneficio incluido',
+            quantity: Math.max(1, Number(detail.quantity || detail.cantidad || 1)),
+        }
+    })
+}
+const hasFreeShippingFallback = Boolean(
+    pedido?.entrega_tipo === 'envio' && Number(pedido?.entrega_costo) === 0 && !promotions.length,
+)
+const hasPromotions = Boolean(promotions.length || hasFreeShippingFallback)
+const productsSectionNumber = hasPromotions ? '05' : '04'
 const currencySymbol = pedido?.moneda1?.simbolo || 'S/ '
 const paymentStateLabels: Record<string, string> = {
     awaiting_payment: 'Pendiente de pago',
@@ -311,8 +362,47 @@ const orderTitle = pedido
                                         </dl>
                                     </section>
 
+                                    {hasPromotions && (
+                                        <section class="py-7">
+                                            <OrderSectionTitle number="04" title="Promociones" />
+                                            <div class="space-y-3">
+                                                {promotions.map((promotion) => (
+                                                    <article class="rounded-xl border border-sunka-brass/25 bg-[#fff8e8] p-5">
+                                                        <p class="text-[9px] font-bold uppercase tracking-[0.15em] text-sunka-brass">
+                                                            Promoción aplicada
+                                                        </p>
+                                                        <h3 class="mt-2 font-heading text-lg font-semibold text-sunka-forest">
+                                                            {promotion.name || promotion.nombre || 'Promoción aplicada'}
+                                                        </h3>
+                                                        {getPromotionBenefits(promotion).length > 0 && (
+                                                            <ul class="mt-3 flex flex-wrap gap-2">
+                                                                {getPromotionBenefits(promotion).map((benefit) => (
+                                                                    <li class="rounded-full bg-sunka-white px-3 py-1 text-[10px] font-semibold text-sunka-forest">
+                                                                        {benefit.quantity > 1
+                                                                            ? `${benefit.quantity} × ${benefit.label}`
+                                                                            : benefit.label}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        )}
+                                                    </article>
+                                                ))}
+                                                {hasFreeShippingFallback && (
+                                                    <div class="rounded-xl border border-sunka-brass/25 bg-[#fff8e8] p-5">
+                                                        <p class="text-[9px] font-bold uppercase tracking-[0.15em] text-sunka-brass">
+                                                            Promoción aplicada
+                                                        </p>
+                                                        <p class="mt-2 font-heading text-lg font-semibold text-sunka-forest">
+                                                            Envío gratis aplicado
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </section>
+                                    )}
+
                                     <section class="py-7">
-                                        <OrderSectionTitle number="04" title="Productos" />
+                                        <OrderSectionTitle number={productsSectionNumber} title="Productos" />
                                         <div class="divide-y divide-sunka-sand">
                                             {orderItems.map((item) => {
                                                 const imageUrl =

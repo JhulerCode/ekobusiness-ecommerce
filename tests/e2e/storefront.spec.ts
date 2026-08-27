@@ -93,6 +93,9 @@ test('abre un pedido sin incluir access_token en la URL', async ({ page }) => {
     await page.goto(lookup.data.redirect_url)
     expect(page.url()).not.toContain('access_token')
     await expect(page.getByText('#SUNKA-1')).toBeVisible()
+    await expect(page.getByText('Promociones', { exact: true })).toBeVisible()
+    await expect(page.getByText('Envío gratis desde S/ 75')).toBeVisible()
+    await expect(page.getByText('Caja sorpresa')).toBeVisible()
 })
 
 test('espera la confirmación IPN antes de completar un checkout intent', async ({ page }) => {
@@ -104,7 +107,13 @@ test('espera la confirmación IPN antes de completar un checkout intent', async 
             body: JSON.stringify({
                 correo: 'cliente@example.com',
                 paymentMethodToken: 'nueva',
-                socio_pedido: { codigo: 'draft', monto: 10, socio_datos: {}, socio_pedido_items: [] },
+                socio_pedido: {
+                    codigo: 'draft',
+                    monto: 10,
+                    socio_datos: {},
+                    entrega_tipo: 'retiro',
+                    socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
+                },
             }),
         }).then((response) => response.json())
         const validated = await fetch('/api/izipay/validate-payment', {
@@ -138,7 +147,11 @@ test('recupera un pago desde la cookie del intento sin repetir el cobro', async 
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
                 correo: 'cliente@example.com', paymentMethodToken: 'nueva',
-                socio_pedido: { socio_datos: {}, socio_pedido_items: [] },
+                socio_pedido: {
+                    socio_datos: {},
+                    entrega_tipo: 'retiro',
+                    socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
+                },
             }),
         }).then((response) => response.json())
         const recovered = await fetch(`/api/izipay/intents/${created.data.checkout_intent_id}`)

@@ -80,7 +80,11 @@ export default defineComponent({
     },
     methods: {
         addToCart() {
-            Cart.add({ ...this.producto, cantidad: 1 })
+            Cart.add({
+                ...this.producto,
+                articulo: this.producto.articulo ?? this.producto.id,
+                cantidad: 1,
+            })
             clearTimeout(this.toastTimeout)
             this.showToast = true
             this.toastTimeout = setTimeout(() => {

@@ -139,6 +139,9 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
 
 - Vue uses `src/lib/api.ts` and only same-origin `/api/*` endpoints. Astro SSR uses the server-only
   client. Never expose `API_URL`, `ERP_API_KEY`, `X-API-Key`, or authorization headers.
+- Checkout business policies live in ecommerce and are recalculated by Astro before creating an
+  order or payment. Browser totals, shipping costs and promotions are display-only and
+  must always be overwritten by the BFF using current catalog, session and location data.
 - Browser compatibility queries may use the legacy filter shape, but Astro translates them to fixed integration parameters:
   ```js
   { fltr: { activo: { op: 'Es', val: true }, is_ecommerce: { op: 'Es', val: true } }, cols: [...], incl: [...] }

@@ -24,7 +24,19 @@ createServer((request, response) => {
     const url = new URL(request.url || '/', 'http://127.0.0.1:4011')
     response.setHeader('content-type', 'application/json')
     if (url.pathname === '/api/integration/v1/catalog/products') {
-        response.end(JSON.stringify({ data: [] }))
+        response.end(JSON.stringify({ data: [{
+            id: 'product-1',
+            nombre: 'Producto de prueba',
+            unidad: 'UND',
+            igv_afectacion: '10',
+            list_price: 10,
+            linea1: { nombre: 'Tradicional' },
+            ecommerce_data: {
+                precio: 10,
+                presentacion: [{ label: 'Saquitos', value: 20 }],
+                fotos: [],
+            },
+        }] }))
     } else if (url.pathname === '/api/integration/v1/reference-data') {
         response.end(JSON.stringify({ data: systemData }))
     } else if (url.pathname === '/api/integration/v1/forms/newsletter') {
@@ -97,6 +109,20 @@ createServer((request, response) => {
                               comprobante_tipo1: {},
                               pago_metodo1: {},
                               socio_pedido_items: [],
+                              promociones: [
+                                  {
+                                      key: 'free-shipping-general',
+                                      name: 'Envío gratis desde S/ 75',
+                                      benefits: [
+                                          { type: 'envio_gratis', label: 'Envío gratis' },
+                                          {
+                                              type: 'caja_sorpresa',
+                                              label: 'Caja sorpresa',
+                                              quantity: 1,
+                                          },
+                                      ],
+                                  },
+                              ],
                               etapas: [],
                           },
                       }

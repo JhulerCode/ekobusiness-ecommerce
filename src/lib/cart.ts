@@ -21,13 +21,14 @@ export const Cart = {
 
     add(producto: Record<string, any>) {
         const cart = this.get();
-        const existing = cart.find((item: CartItem) => item.articulo === producto.articulo)
+        const articulo = producto.articulo ?? producto.id
+        const existing = cart.find((item: CartItem) => String(item.articulo) === String(articulo))
 
         if (existing) {
-            existing.cantidad += Number(producto.cantidad);
+            existing.cantidad = Number(existing.cantidad || 0) + Number(producto.cantidad || 1);
         } else {
             cart.push({
-                articulo: producto.id,
+                articulo,
                 nombre: producto.nombre,
                 unidad: producto.unidad,
                 has_fv: producto.has_fv,

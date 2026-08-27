@@ -9,7 +9,10 @@
         <article class="payment-verification-overlay__card">
             <span class="payment-verification-overlay__spinner" aria-hidden="true"></span>
             <h2 id="payment-verification-title">Confirmando tu pago</h2>
-            <p>Estamos esperando la notificación segura de Izipay. No cierres ni recargues esta página.</p>
+            <p>
+                Estamos esperando la notificación segura de Izipay. No cierres ni recargues esta
+                página.
+            </p>
         </article>
     </div>
 
@@ -67,7 +70,9 @@
             <p class="checkout-success__eyebrow">
                 {{ paymentPendingFailed ? 'Pago no confirmado' : 'Pago en verificación' }}
             </p>
-            <h2>{{ paymentPendingFailed ? 'Conservamos tu pedido' : 'Tu pedido fue registrado' }}</h2>
+            <h2>
+                {{ paymentPendingFailed ? 'Conservamos tu pedido' : 'Tu pedido fue registrado' }}
+            </h2>
             <p class="checkout-success__lead">
                 {{ pendingPaymentMessage }}
             </p>
@@ -103,7 +108,10 @@
             <!-- Encabezado -->
             <nav class="checkout-steps" aria-label="Progreso de compra">
                 <!-- Paso 1 -->
-                <div class="checkout-step" :class="{ 'is-active': step === 1, 'is-done': step > 1 }">
+                <div
+                    class="checkout-step"
+                    :class="{ 'is-active': step === 1, 'is-done': step > 1 }"
+                >
                     <div
                         class="checkout-step__number"
                         :class="{
@@ -114,21 +122,17 @@
                         1
                     </div>
 
-                    <span
-                        class="checkout-step__label"
-                    >
-                        Identificación
-                    </span>
+                    <span class="checkout-step__label"> Identificación </span>
                 </div>
 
                 <!-- Línea entre pasos -->
-                <div
-                    class="checkout-step__line"
-                    :class="{ 'is-complete': step > 1 }"
-                ></div>
+                <div class="checkout-step__line" :class="{ 'is-complete': step > 1 }"></div>
 
                 <!-- Paso 2 -->
-                <div class="checkout-step" :class="{ 'is-active': step === 2, 'is-done': step > 2 }">
+                <div
+                    class="checkout-step"
+                    :class="{ 'is-active': step === 2, 'is-done': step > 2 }"
+                >
                     <div
                         class="checkout-step__number"
                         :class="{
@@ -139,18 +143,11 @@
                         2
                     </div>
 
-                    <span
-                        class="checkout-step__label"
-                    >
-                        Entrega
-                    </span>
+                    <span class="checkout-step__label"> Entrega </span>
                 </div>
 
                 <!-- Línea entre pasos -->
-                <div
-                    class="checkout-step__line"
-                    :class="{ 'is-complete': step > 2 }"
-                ></div>
+                <div class="checkout-step__line" :class="{ 'is-complete': step > 2 }"></div>
 
                 <!-- Paso 3 -->
                 <div class="checkout-step" :class="{ 'is-active': step === 3 }">
@@ -163,20 +160,13 @@
                         3
                     </div>
 
-                    <span
-                        class="checkout-step__label"
-                    >
-                        Pago
-                    </span>
+                    <span class="checkout-step__label"> Pago </span>
                 </div>
             </nav>
 
             <div class="checkout-panels">
                 <!-- Paso 1: Identificación -->
-                <div
-                    class="checkout-card"
-                    ref="seccionForm1"
-                >
+                <div class="checkout-card" ref="seccionForm1">
                     <div class="checkout-card__heading">
                         <span>01</span>
                         <div>
@@ -221,7 +211,9 @@
                             <JdSelect
                                 label="Tipo de documento"
                                 :nec="true"
-                                :lista="documentos_identidad.filter((item) => Number(item.id) !== 6)"
+                                :lista="
+                                    documentos_identidad.filter((item) => Number(item.id) !== 6)
+                                "
                                 v-model="form.socio_datos.doc_tipo"
                                 :error="errors.doc_tipo"
                             />
@@ -253,14 +245,10 @@
                                 </span>
                             </JdCheckBox>
                         </div>
-
                     </div>
 
                     <!-- Resumen cuando ya se completó -->
-                    <div
-                        v-else
-                        class="checkout-completed"
-                    >
+                    <div v-else class="checkout-completed">
                         <div v-if="form.socio_datos">
                             <p>
                                 <span class="font-medium">Correo:</span>
@@ -286,11 +274,7 @@
                 </div>
 
                 <!-- Paso 2: Entrega -->
-                <div
-                    class="checkout-card"
-                    v-if="step >= 2"
-                    ref="seccionForm2"
-                >
+                <div class="checkout-card" v-if="step >= 2" ref="seccionForm2">
                     <div class="checkout-card__heading">
                         <span>02</span>
                         <div>
@@ -414,10 +398,7 @@
                     </div>
 
                     <!-- Resumen cuando ya se completó -->
-                    <div
-                        v-else-if="step > 2"
-                        class="checkout-completed"
-                    >
+                    <div v-else-if="step > 2" class="checkout-completed">
                         <div>
                             <template v-if="form.entrega_tipo === 'envio'">
                                 <p>
@@ -472,11 +453,7 @@
                 </div>
 
                 <!-- Paso 3: Pago -->
-                <div
-                    class="checkout-card"
-                    v-if="step >= 3"
-                    ref="seccionForm3"
-                >
+                <div class="checkout-card" v-if="step >= 3" ref="seccionForm3">
                     <div class="checkout-card__heading">
                         <span>03</span>
                         <div>
@@ -689,16 +666,8 @@
 
             <!-- Lista de productos -->
             <div class="checkout-summary__items">
-                <div
-                    v-for="item in items"
-                    :key="item.id"
-                    class="checkout-summary__item"
-                >
-                    <img
-                        :src="item.foto"
-                        alt="Producto"
-                        class="checkout-summary__image"
-                    />
+                <div v-for="item in items" :key="item.id" class="checkout-summary__item">
+                    <img :src="item.foto" alt="Producto" class="checkout-summary__image" />
                     <div class="flex-1">
                         <p class="text-sm font-medium text-gray-800 leading-tight">
                             {{ item.nombre }}
@@ -730,11 +699,11 @@
                     </span>
                 </div>
 
-                <div v-if="promotionQuote.matchedPromotions.length" class="checkout-promotion">
+                <div v-if="activePromotion" class="checkout-promotion">
                     <span>Promoción</span>
-                    <strong>{{ promotionQuote.matchedPromotions[0].name }}</strong>
+                    <strong>{{ activePromotion.name }}</strong>
                 </div>
-                <div v-if="promotionQuote.benefits.length" class="checkout-promotion">
+                <div v-if="hasMysteryBox" class="checkout-promotion">
                     <span>Beneficio</span>
                     <strong>1 caja sorpresa</strong>
                 </div>
@@ -746,9 +715,7 @@
                     envío gratis{{ user.id ? ' Club' : '' }}.
                 </p>
 
-                <div
-                    class="checkout-total"
-                >
+                <div class="checkout-total">
                     <span>Total</span>
                     <span>S/ {{ total.toFixed(2) }}</span>
                 </div>
@@ -925,6 +892,14 @@ export default defineComponent({
                 deliveryType: this.form.entrega_tipo,
             })
         },
+        activePromotion() {
+            return this.promotionQuote.appliedPromotions[0] || null
+        },
+        hasMysteryBox() {
+            return Boolean(this.activePromotion?.benefits.some(
+                (benefit) => benefit.type === 'caja_sorpresa',
+            ))
+        },
         costoEnvio() {
             return this.promotionQuote.deliveryCost
         },
@@ -1097,9 +1072,7 @@ export default defineComponent({
             const savedAddressExists = (this.user.direcciones || []).some(
                 (item) => String(item.id) === String(saved.entrega_direccion_id),
             )
-            this.form.entrega_direccion_id = savedAddressExists
-                ? saved.entrega_direccion_id
-                : null
+            this.form.entrega_direccion_id = savedAddressExists ? saved.entrega_direccion_id : null
 
             const savedDate = saved.fecha_entrega
             const now = new Date()
@@ -1192,7 +1165,9 @@ export default defineComponent({
                     this.errors.entrega_ubigeo = 'Este campo es obligatorio.'
                 if (
                     this.form.entrega_direccion_datos.ubigeo1 &&
-                    this.form.entrega_direccion_datos.ubigeo1.provincia !== 'Lima'
+                    String(this.form.entrega_direccion_datos.ubigeo1.provincia || '')
+                        .trim()
+                        .toLocaleUpperCase('es-PE') !== 'LIMA'
                 ) {
                     this.errors.entrega_ubigeo = 'Solo realizamos envíos a Lima Metropolitana.'
                 }
@@ -1306,7 +1281,6 @@ export default defineComponent({
 
             this.form.socio_pedido_items = this.items
             this.form.entrega_costo = this.costoEnvio
-            this.form.beneficios = this.promotionQuote.benefits
 
             if (this.form.pago_metodo == 'yape') {
                 this.form.codigo = genId()
@@ -1331,9 +1305,12 @@ export default defineComponent({
                         if (recovered?.ok && recovered.data?.status === 'completed') {
                             this.completeCardPayment(recovered)
                         } else {
-                            this.errors.general = 'Tu pago sigue en verificación. No realices un segundo pago.'
+                            this.errors.general =
+                                'Tu pago sigue en verificación. No realices un segundo pago.'
                         }
-                    } finally { this.loadingPagar = false }
+                    } finally {
+                        this.loadingPagar = false
+                    }
                     return
                 }
                 await this.activePaymentIntent.KR.openPopin()
@@ -1387,9 +1364,12 @@ export default defineComponent({
                                 this.completeCardPayment(result)
                                 await KR.closePopin()
                             } else if (result?.ok && result.data?.status === 'payment_failed') {
-                                this.showPendingCardPayment('Izipay informó que el pago no fue confirmado.')
+                                this.showPendingCardPayment(
+                                    'Izipay informó que el pago no fue confirmado.',
+                                )
                                 this.paymentPendingFailed = true
-                                this.pendingPaymentMessage = 'Izipay informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                                this.pendingPaymentMessage =
+                                    'Izipay informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
                                 clearTimeout(this.pendingStatusTimer)
                                 await KR.closePopin()
                             } else if (result?.ok && result.data?.status === 'manual_review') {
@@ -1401,7 +1381,8 @@ export default defineComponent({
                                 this.showPendingCardPayment(
                                     result?.ok
                                         ? 'Izipay aún está confirmando tu pago.'
-                                        : result?.problem?.detail || 'Izipay aún está confirmando tu pago.',
+                                        : result?.problem?.detail ||
+                                              'Izipay aún está confirmando tu pago.',
                                 )
                                 await KR.closePopin()
                             }
@@ -1418,7 +1399,8 @@ export default defineComponent({
                 await KR.openPopin()
             } catch (error) {
                 console.error('No se pudo abrir el formulario de Izipay.', error)
-                this.errors.general = 'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
+                this.errors.general =
+                    'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
                 this.activePaymentIntent = null
                 this.paymentOutcomeUncertain = false
                 this.izipayKR = null
@@ -1435,7 +1417,8 @@ export default defineComponent({
                 result = await post(`${urls.izipay}/validate-payment`, body, undefined)
             }
             if (result.ok && result.data?.status === 'completed') return result
-            if (result.ok && ['payment_failed', 'manual_review'].includes(result.data?.status)) return result
+            if (result.ok && ['payment_failed', 'manual_review'].includes(result.data?.status))
+                return result
             if (result.status === 202 || (!result.ok && result.status >= 500)) {
                 return this.pollPaymentStatus(intentId)
             }
@@ -1448,7 +1431,9 @@ export default defineComponent({
                 lastResult = await get(`/api/izipay/intents/${encodeURIComponent(intentId)}`)
                 if (
                     lastResult.ok &&
-                    ['completed', 'payment_failed', 'manual_review'].includes(lastResult.data?.status)
+                    ['completed', 'payment_failed', 'manual_review'].includes(
+                        lastResult.data?.status,
+                    )
                 ) {
                     return lastResult
                 }
@@ -1490,9 +1475,11 @@ export default defineComponent({
         schedulePendingStatusCheck() {
             clearTimeout(this.pendingStatusTimer)
             if (
-                !this.activePaymentIntent?.id || this.paymentSuccess ||
+                !this.activePaymentIntent?.id ||
+                this.paymentSuccess ||
                 this.pendingStatusAttempts >= 60
-            ) return
+            )
+                return
             this.pendingStatusTimer = window.setTimeout(async () => {
                 this.pendingStatusAttempts += 1
                 const result = await get(
@@ -1503,12 +1490,14 @@ export default defineComponent({
                     return
                 }
                 if (result.ok && result.data?.status === 'manual_review') {
-                    this.pendingPaymentMessage = 'Tu pago requiere una revisión adicional. Conservamos el pedido y te avisaremos cuando tengamos el resultado.'
+                    this.pendingPaymentMessage =
+                        'Tu pago requiere una revisión adicional. Conservamos el pedido y te avisaremos cuando tengamos el resultado.'
                     return
                 }
                 if (result.ok && result.data?.status === 'payment_failed') {
                     this.paymentPendingFailed = true
-                    this.pendingPaymentMessage = 'Izipay informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                    this.pendingPaymentMessage =
+                        'Izipay informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
                     return
                 }
                 this.schedulePendingStatusCheck()
@@ -1518,11 +1507,7 @@ export default defineComponent({
             this.shapeDatos()
 
             this.loadingPagar = true
-            const res = await post(
-                urls.socio_pedidos,
-                this.form,
-                undefined,
-            )
+            const res = await post(urls.socio_pedidos, this.form, undefined)
             this.loadingPagar = false
 
             if (!res.ok) {
@@ -1627,10 +1612,7 @@ export default defineComponent({
 
         async getCustomerWallet() {
             this.loading = true
-            const res = await get(
-                `${urls.account}/customer-wallet/${this.user.id}`,
-                null,
-            )
+            const res = await get(`${urls.account}/customer-wallet/${this.user.id}`, null)
             this.loading = false
 
             if (res.ok) {
@@ -1666,10 +1648,7 @@ export default defineComponent({
                     card.isDefault
 
                 return (
-                    favorite === true ||
-                    favorite === 1 ||
-                    favorite === '1' ||
-                    favorite === 'true'
+                    favorite === true || favorite === 1 || favorite === '1' || favorite === 'true'
                 )
             })
 

@@ -39,7 +39,6 @@ export const jsonObjectSchema = z.record(z.string(), z.unknown())
 export const orderCreateSchema = z
     .object({
         codigo: identifier,
-        monto: z.coerce.number().nonnegative(),
         socio_datos: jsonObjectSchema,
     })
     .passthrough()
