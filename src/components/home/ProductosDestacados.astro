@@ -19,6 +19,7 @@ const productos = formatProductos(res2.ok ? res2.data : [])
     .filter((producto) => producto.is_destacado)
     .map((producto) => ({
         ...producto,
+        precio_regular: producto.precio,
         precio: getProductPrice(producto, isAuthenticated),
     }))
 ---
@@ -39,7 +40,7 @@ const productos = formatProductos(res2.ok ? res2.data : [])
 
         <!-- Carrusel -->
         <div class="fade-up delay-1">
-            <ProductosCarrusel productos={productos} client:load />
+            <ProductosCarrusel productos={productos} isAuthenticated={isAuthenticated} client:load />
         </div>
 
         <!-- CTA sutil -->

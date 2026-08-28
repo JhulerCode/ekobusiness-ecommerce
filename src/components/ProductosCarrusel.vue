@@ -1,7 +1,7 @@
 <template>
     <Carousel :items="productos" :perView="4" :gap="1" :speed="4000">
         <template #item="{ item }">
-            <Producto :producto="item" />
+            <Producto :producto="item" :is-authenticated="isAuthenticated" />
         </template>
     </Carousel>
 </template>
@@ -16,6 +16,7 @@ export default defineComponent({
     components: { Carousel, Producto },
     props: {
         productos: { type: Array, default: () => [] },
+        isAuthenticated: { type: Boolean, default: false },
     },
 })
 </script>

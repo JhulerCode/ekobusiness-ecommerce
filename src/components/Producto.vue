@@ -29,7 +29,17 @@
 
                 <div class="flex justify-between text-gray-800 font-semibold">
                     <span>Precio</span>
-                    <span>S/ {{ productPrice() }}</span>
+                    <div class="flex flex-wrap items-baseline justify-end gap-x-2 gap-y-0.5">
+                        <span>S/ {{ productPrice() }}</span>
+                        <span
+                            v-if="showPriceComparison()"
+                            class="text-[10px] font-normal text-gray-500"
+                            :class="{ 'line-through': isAuthenticated }"
+                        >
+                            {{ isAuthenticated ? 'Regular' : 'Club' }}: S/
+                            {{ isAuthenticated ? regularPrice() : clubPrice() }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </a>
@@ -56,7 +66,7 @@
 import { defineComponent } from 'vue'
 import ShoppingCartPlus from '../assets/icons/shopping-cart-plus.vue';
 import { Cart } from '../../src/lib/cart';
-import { getProductPrice } from '../lib/pricing';
+import { formatProductPrice, getProductPrice, hasClubPrice } from '../lib/pricing';
 
 export default defineComponent({
     components: {
@@ -77,14 +87,34 @@ export default defineComponent({
         };
     },
     methods: {
+        regularPrice() {
+            return formatProductPrice(this.producto.precio_regular ?? this.producto.precio)
+        },
+        clubPrice() {
+            return formatProductPrice(this.producto.precio_club)
+        },
+        showPriceComparison() {
+            return hasClubPrice({
+                ...this.producto,
+                precio: this.producto.precio_regular ?? this.producto.precio,
+            })
+        },
         productPrice() {
-            return getProductPrice(this.producto, this.isAuthenticated)
+            return formatProductPrice(
+                getProductPrice(
+                    {
+                        ...this.producto,
+                        precio: this.producto.precio_regular ?? this.producto.precio,
+                    },
+                    this.isAuthenticated,
+                ),
+            )
         },
         addToCart() {
             Cart.add({
                 ...this.producto,
                 articulo: this.producto.articulo ?? this.producto.id,
-                precio_regular: this.producto.precio,
+                precio_regular: this.producto.precio_regular ?? this.producto.precio,
                 precio: this.productPrice(),
                 cantidad: 1,
             });

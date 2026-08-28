@@ -21,7 +21,17 @@
                     {{ productDescription }}
                 </p>
                 <div class="mt-auto flex items-end justify-between gap-3 pt-4">
-                    <span class="font-semibold text-sm text-sunka-ink">S/ {{ effectivePrice }}</span>
+                    <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <span class="font-semibold text-sm text-sunka-ink">S/ {{ effectivePrice }}</span>
+                        <span
+                            v-if="showPriceComparison"
+                            class="text-[10px] font-medium text-sunka-stone"
+                            :class="{ 'text-sunka-olive': !isAuthenticated, 'line-through': isAuthenticated }"
+                        >
+                            {{ isAuthenticated ? 'Regular' : 'Club' }}: S/
+                            {{ isAuthenticated ? regularPrice : clubPrice }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </a>
@@ -50,7 +60,7 @@
 import { defineComponent } from 'vue'
 import ShoppingCartPlus from '@/assets/icons/shopping-cart-plus.vue'
 import { Cart } from '@/lib/cart'
-import { getProductPrice } from '@/lib/pricing'
+import { formatProductPrice, getProductPrice, hasClubPrice } from '@/lib/pricing'
 
 export default defineComponent({
     name: 'TiendaProductCard',
@@ -80,7 +90,16 @@ export default defineComponent({
             )
         },
         effectivePrice() {
-            return getProductPrice(this.producto, this.isAuthenticated)
+            return formatProductPrice(getProductPrice(this.producto, this.isAuthenticated))
+        },
+        regularPrice() {
+            return formatProductPrice(this.producto.precio)
+        },
+        clubPrice() {
+            return formatProductPrice(this.producto.precio_club)
+        },
+        showPriceComparison() {
+            return hasClubPrice(this.producto)
         },
     },
     methods: {

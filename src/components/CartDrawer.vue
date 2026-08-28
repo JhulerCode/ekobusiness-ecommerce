@@ -151,6 +151,10 @@
                                             <p class="text-[11px] text-sunka-stone">
                                                 {{ formatCurrency(itemPrice(item)) }} c/u
                                             </p>
+                                            <p v-if="showPriceComparison(item)" class="text-[10px] text-sunka-stone">
+                                                {{ isClubMember ? 'Regular' : 'Club' }}:
+                                                {{ formatCurrency(isClubMember ? regularPrice(item) : clubPrice(item)) }}
+                                            </p>
                                             <p class="mt-0.5 font-heading text-lg font-semibold">
                                                 {{ formatCurrency(Number(itemPrice(item)) * Number(item.cantidad)) }}
                                             </p>
@@ -334,6 +338,17 @@ export default defineComponent({
                 currency: 'PEN',
                 minimumFractionDigits: 2,
             }).format(Number(value))
+        },
+        regularPrice(item) {
+            return item.precio_regular ?? item.pu
+        },
+        clubPrice(item) {
+            return item.precio_club
+        },
+        showPriceComparison(item) {
+            const regular = Number(this.regularPrice(item))
+            const club = Number(this.clubPrice(item))
+            return Number.isFinite(regular) && Number.isFinite(club) && regular !== club
         },
         checkout() {
             if (this.total <= 0) {

@@ -1,10 +1,15 @@
 <template>
-    <div>
+    <div ref="authMenu" class="relative">
         <div>
-            <a
-                v-if="user.id"
-                href="/account"
-                class="flex items-center gap-2 text-current transition-colors duration-300 hover:text-sunka-brass-light"
+            <button
+                v-if="sessionStatus === 'authenticated'"
+                type="button"
+                @click="toggleUserMenu"
+                class="flex cursor-pointer items-center gap-2 text-current transition-colors duration-300 hover:text-sunka-brass-light focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sunka-brass-light"
+                aria-label="Abrir menú de usuario"
+                aria-haspopup="menu"
+                :aria-expanded="String(isUserMenuOpen)"
+                aria-controls="user-menu"
             >
                 <UserIcon />
                 <span
@@ -13,7 +18,16 @@
                 >
                     Hola, {{ userName }}
                 </span>
-            </a>
+                <svg
+                    class="hidden h-3 w-3 transition-transform duration-200 xl:block"
+                    :class="{ 'rotate-180': isUserMenuOpen }"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    aria-hidden="true"
+                >
+                    <path d="m2.5 4.5 3.5 3 3.5-3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
 
             <button
                 v-else
@@ -25,6 +39,32 @@
                 <UserIcon />
             </button>
         </div>
+
+        <transition name="user-menu">
+            <div
+                v-if="isUserMenuOpen"
+                id="user-menu"
+                class="absolute top-[calc(100%+0.85rem)] right-0 z-[80] min-w-44 overflow-hidden border border-sunka-sand bg-sunka-cream py-1.5 text-sunka-ink shadow-[0_16px_40px_rgba(9,8,6,0.2)]"
+                role="menu"
+            >
+                <a
+                    href="/account"
+                    class="block px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors hover:bg-sunka-white hover:text-sunka-brass focus-visible:bg-sunka-white focus-visible:outline-none"
+                    role="menuitem"
+                >
+                    Mi perfil
+                </a>
+                <button
+                    type="button"
+                    @click="logout"
+                    class="block w-full cursor-pointer border-t border-sunka-sand px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--sunka-danger)] transition-colors hover:bg-[#f8eee9] focus-visible:bg-[#f8eee9] focus-visible:outline-none disabled:cursor-wait disabled:opacity-60"
+                    role="menuitem"
+                    :disabled="isLoggingOut"
+                >
+                    {{ isLoggingOut ? 'Cerrando sesión…' : 'Cerrar sesión' }}
+                </button>
+            </div>
+        </transition>
 
         <Teleport v-if="isMounted" to="body">
             <transition name="auth-modal">
@@ -148,6 +188,7 @@ import EyeOpen from '../assets/icons/eye-open.vue'
 import EyeCancel from '../assets/icons/eye-cancel.vue'
 import Xmark from '../assets/icons/xmark.vue'
 import { urls, post, get } from '../lib/api'
+import { CheckoutDraft } from '../lib/checkout-draft'
 
 export default defineComponent({
     name: 'AuthModal',
@@ -167,6 +208,8 @@ export default defineComponent({
     data() {
         return {
             isOpen: false,
+            isUserMenuOpen: false,
+            isLoggingOut: false,
             isMounted: false,
             isLogin: true,
             form: {
@@ -183,6 +226,28 @@ export default defineComponent({
         }
     },
     methods: {
+        toggleUserMenu() {
+            this.isUserMenuOpen = !this.isUserMenuOpen
+        },
+        closeUserMenu() {
+            this.isUserMenuOpen = false
+        },
+        handleOutsideClick(event) {
+            if (!this.$refs.authMenu?.contains(event.target)) this.closeUserMenu()
+        },
+        handleEscape(event) {
+            if (event.key === 'Escape') this.closeUserMenu()
+        },
+        async logout() {
+            if (this.isLoggingOut) return
+
+            this.isLoggingOut = true
+            await post(`${urls.auth}/logout`, {}, false)
+            CheckoutDraft.clear()
+            this.user = {}
+            this.sessionStatus = 'guest'
+            window.location.href = '/'
+        },
         openModal(mode) {
             this.isLogin = mode === 'login'
             this.isOpen = true
@@ -265,9 +330,15 @@ export default defineComponent({
     },
     mounted() {
         this.isMounted = true
+        document.addEventListener('click', this.handleOutsideClick)
+        document.addEventListener('keydown', this.handleEscape)
         const correoStored = localStorage.getItem('login-correo')
         if (correoStored) this.form.correo = correoStored
         if (!['authenticated', 'guest'].includes(this.sessionStatus)) this.validateSession()
+    },
+    beforeUnmount() {
+        document.removeEventListener('click', this.handleOutsideClick)
+        document.removeEventListener('keydown', this.handleEscape)
     },
     computed: {
         userName() {
@@ -289,6 +360,19 @@ export default defineComponent({
 .auth-modal-enter-active,
 .auth-modal-leave-active {
     transition: opacity 220ms ease;
+}
+
+.user-menu-enter-active,
+.user-menu-leave-active {
+    transition:
+        opacity 160ms ease,
+        transform 160ms ease;
+}
+
+.user-menu-enter-from,
+.user-menu-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
 }
 
 .auth-modal-enter-active section,

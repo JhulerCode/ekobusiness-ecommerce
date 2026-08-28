@@ -721,9 +721,13 @@
 
                             <p class="text-sm font-semibold text-gray-700 mt-1">
                                 S/
-                                {{ (item.pu * item.cantidad).toFixed(2) }}
+                                {{ (itemPrice(item) * item.cantidad).toFixed(2) }}
                             </p>
                         </div>
+                        <p v-if="showPriceComparison(item)" class="text-[10px] text-gray-500 text-right">
+                            {{ user.id ? 'Precio regular' : 'Precio Club' }}:
+                            S/ {{ (user.id ? regularPrice(item) : clubPrice(item)).toFixed(2) }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1084,6 +1088,20 @@ export default defineComponent({
             const changed = repriced.some((item, index) => Number(item.pu) !== Number(this.items[index]?.pu))
             this.items = repriced
             if (changed) Cart.save(repriced)
+        },
+        itemPrice(item) {
+            return Number(item.pu) || 0
+        },
+        regularPrice(item) {
+            return Number(item.precio_regular ?? item.pu) || 0
+        },
+        clubPrice(item) {
+            return Number(item.precio_club) || 0
+        },
+        showPriceComparison(item) {
+            const regular = this.regularPrice(item)
+            const club = this.clubPrice(item)
+            return club > 0 && regular > 0 && club !== regular
         },
 
         draftContext() {

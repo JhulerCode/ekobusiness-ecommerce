@@ -4,7 +4,7 @@ import BoxIcon from '@/assets/icons/icon-box.astro'
 import BotanicalMixIcon from '@/assets/icons/icon-botanical-mix.astro'
 import LeafIcon from '@/assets/icons/icon-leaf.astro'
 import { formatProductos } from '@/lib/api'
-import { formatProductPrice, getProductPrice } from '@/lib/pricing'
+import { formatProductPrice, getProductPrice, hasClubPrice } from '@/lib/pricing'
 import { serverGet as get } from '@/lib/server/public-api'
 import { getLineaByName } from '@/data/lineas'
 
@@ -142,6 +142,9 @@ const lineaTiendaHref = linea
     ? `/tienda?linea=${encodeURIComponent(lineaConfig?.slug ?? linea)}`
     : ''
 const precio = formatProductPrice(getProductPrice(producto, isAuthenticated))
+const precioRegular = formatProductPrice(producto.precio)
+const precioClub = formatProductPrice(producto.precio_club)
+const mostrarComparacion = hasClubPrice(producto)
 const pageDescription = producto.descripcion_corta || producto.descripcion || producto.nombre
 const cartProduct = JSON.stringify({
     ...producto,
@@ -261,8 +264,15 @@ const sectionTitleClass =
                     )
                 }
 
-                <div class="mt-5 flex items-baseline gap-3">
+                <div class="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <span class="text-2xl font-medium">S/ {precio}</span>
+                    {
+                        mostrarComparacion && (
+                            <span class:list={["text-sm", "text-sunka-stone", isAuthenticated && "line-through"]}>
+                                {isAuthenticated ? `Regular: S/ ${precioRegular}` : `Precio Club: S/ ${precioClub}`}
+                            </span>
+                        )
+                    }
                     {
                         producto.precio_anterior && (
                             <span class="text-base text-sunka-stone line-through">
@@ -547,9 +557,20 @@ const sectionTitleClass =
                                                 {item.descripcion_corta}
                                             </p>
                                         )}
-                                        <strong class="mt-2 block text-sm font-semibold text-sunka-ink">
-                                            S/ {formatProductPrice(getProductPrice(item, isAuthenticated))}
-                                        </strong>
+                                        <div class="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                                            <strong class="block text-sm font-semibold text-sunka-ink">
+                                                S/ {formatProductPrice(getProductPrice(item, isAuthenticated))}
+                                            </strong>
+                                            {
+                                                hasClubPrice(item) && (
+                                                    <span class="text-[10px] text-sunka-stone">
+                                                        {isAuthenticated
+                                                            ? `Regular: S/ ${formatProductPrice(item.precio)}`
+                                                            : `Club: S/ ${formatProductPrice(item.precio_club)}`}
+                                                    </span>
+                                                )
+                                            }
+                                        </div>
                                     </div>
                                 </a>
                             ))}
