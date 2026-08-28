@@ -365,27 +365,54 @@
                                 :error="errors.entrega_direccion_datos_referencia"
                                 class="col-span-2"
                             />
+
+                            <JdInput
+                                label="Fecha de entrega"
+                                :nec="true"
+                                type="date"
+                                v-model="form.fecha_entrega"
+                                :min="minimumDeliveryDate"
+                                :error="errors.fecha_entrega"
+                                class="col-span-2"
+                            />
+                            <p class="col-span-2 text-sm font-medium text-sunka-forest">
+                                Horario de entrega: {{ deliveryTimeRange }}.
+                            </p>
+                            <p class="col-span-2 text-xs leading-relaxed text-sunka-stone">
+                                Pedidos realizados antes de las 4:00 p. m.: entrega desde el día
+                                siguiente. Después de esa hora: desde dos días después. Primera
+                                fecha disponible: {{ minimumDeliveryDateLabel }}.
+                            </p>
                         </div>
 
                         <!-- Retiro en tienda -->
                         <div v-if="form.entrega_tipo === 'retiro'" class="space-y-5 mt-6">
-                            <div>
-                                <label class="label">Punto de retiro</label>
-                                <div class="border border-gray-200 rounded-xl p-4 bg-white">
-                                    <p class="font-medium">Oficina EkoBusiness</p>
-                                    <p class="text-sm text-gray-600">
-                                        Av. Mariscal La Mar 638, Miraflores
-                                    </p>
-                                </div>
-                            </div>
+                            <JdRadio
+                                label="Punto de retiro"
+                                :nec="true"
+                                :lista="pickupLocations"
+                                v-model="form.punto_retiro"
+                                :error="errors.punto_retiro"
+                                :withBorder="true"
+                            />
+
+                            <p class="text-sm font-medium text-sunka-forest">
+                                Horario de recojo: {{ deliveryTimeRange }}.
+                            </p>
 
                             <JdInput
                                 label="Fecha de retiro"
                                 :nec="true"
                                 type="date"
                                 v-model="form.fecha_entrega"
+                                :min="minimumDeliveryDate"
                                 :error="errors.fecha_entrega"
                             />
+                            <p class="text-xs leading-relaxed text-sunka-stone">
+                                Pedidos realizados antes de las 4:00 p. m.: recojo desde el día
+                                siguiente. Después de esa hora: desde dos días después. Primera
+                                fecha disponible: {{ minimumDeliveryDateLabel }}.
+                            </p>
                         </div>
 
                         <div class="checkout-panel-back">
@@ -425,6 +452,14 @@
                                     <span class="font-medium">Referencia:</span>
                                     {{ form.entrega_direccion_datos.referencia }}
                                 </p>
+                                <p>
+                                    <span class="font-medium">Fecha de entrega:</span>
+                                    {{ formattedDeliveryDate }}
+                                </p>
+                                <p>
+                                    <span class="font-medium">Horario de entrega:</span>
+                                    {{ deliveryTimeRange }}
+                                </p>
                             </template>
 
                             <template v-else-if="form.entrega_tipo === 'retiro'">
@@ -434,11 +469,19 @@
                                 </p>
                                 <p>
                                     <span class="font-medium">Punto de retiro:</span>
-                                    Oficina EkoBusiness
+                                    {{ selectedPickupLocation?.nombre }}
+                                </p>
+                                <p>
+                                    <span class="font-medium">Dirección:</span>
+                                    {{ selectedPickupLocation?.direccion }}
                                 </p>
                                 <p>
                                     <span class="font-medium">Fecha de retiro:</span>
-                                    {{ form.fecha_entrega }}
+                                    {{ formattedDeliveryDate }}
+                                </p>
+                                <p>
+                                    <span class="font-medium">Horario de recojo:</span>
+                                    {{ deliveryTimeRange }}
                                 </p>
                             </template>
                         </div>
@@ -809,8 +852,18 @@ import yapeLogo from '../assets/icons/yape-logo.svg?url'
 import { Cart } from '../lib/cart'
 import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draft'
 import { evaluateCheckoutPromotions } from '../lib/checkout-promotions'
+import {
+    formatDeliveryDate,
+    getMinimumDeliveryDate,
+    isDeliveryDateAllowed,
+} from '../lib/delivery-date'
+import {
+    DELIVERY_TIME_RANGE,
+    PICKUP_LOCATIONS,
+    getPickupLocation,
+} from '../data/pickup-locations'
 import { urls, get, post, patch } from '../lib/api'
-import { genId } from '../lib/mine'
+import { formatDate, genId } from '../lib/mine'
 
 export default defineComponent({
     inheritAttrs: false,
@@ -856,6 +909,7 @@ export default defineComponent({
                 },
 
                 entrega_tipo: 'envio',
+                punto_retiro: null,
                 entrega_direccion_datos: {},
 
                 comprobante_tipo: '03',
@@ -877,6 +931,9 @@ export default defineComponent({
             paymentOutcomeUncertain: false,
             pendingStatusTimer: null,
             pendingStatusAttempts: 0,
+            minimumDeliveryDate: getMinimumDeliveryDate(),
+            deliveryTimeRange: DELIVERY_TIME_RANGE,
+            pickupLocations: PICKUP_LOCATIONS,
         }
     },
     computed: {
@@ -905,6 +962,15 @@ export default defineComponent({
         },
         total() {
             return this.subtotal + this.costoEnvio
+        },
+        minimumDeliveryDateLabel() {
+            return formatDeliveryDate(this.minimumDeliveryDate)
+        },
+        formattedDeliveryDate() {
+            return formatDate(this.form.fecha_entrega)
+        },
+        selectedPickupLocation() {
+            return getPickupLocation(this.form.punto_retiro)
         },
         summaryActionText() {
             if (this.step === 1) return 'Continuar: elegir entrega'
@@ -1059,6 +1125,9 @@ export default defineComponent({
             if (validDeliveryTypes.includes(String(saved.entrega_tipo))) {
                 this.form.entrega_tipo = saved.entrega_tipo
             }
+            if (getPickupLocation(saved.punto_retiro)) {
+                this.form.punto_retiro = saved.punto_retiro
+            }
 
             this.form.direccion_nombre = saved.direccion_nombre || ''
             this.form.new_direccion = Boolean(saved.new_direccion)
@@ -1074,14 +1143,11 @@ export default defineComponent({
             )
             this.form.entrega_direccion_id = savedAddressExists ? saved.entrega_direccion_id : null
 
+            this.refreshMinimumDeliveryDate()
             const savedDate = saved.fecha_entrega
-            const now = new Date()
-            const today = [
-                now.getFullYear(),
-                String(now.getMonth() + 1).padStart(2, '0'),
-                String(now.getDate()).padStart(2, '0'),
-            ].join('-')
-            this.form.fecha_entrega = savedDate && savedDate >= today ? savedDate : null
+            this.form.fecha_entrega = savedDate && savedDate >= this.minimumDeliveryDate
+                ? savedDate
+                : null
 
             if (this.form.entrega_direccion_datos.ubigeo1) {
                 this.ubigeos = [{ ...this.form.entrega_direccion_datos.ubigeo1 }]
@@ -1141,16 +1207,16 @@ export default defineComponent({
                 this.loadingContinuarEntrega = false
             }
 
+            this.refreshMinimumDeliveryDate()
             this.step = 2
             this.scrollToForm('seccionForm2')
         },
 
         validateForm2() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''))
+            this.refreshMinimumDeliveryDate()
 
             if (this.form.entrega_tipo === 'envio') {
-                this.form.fecha_entrega = null
-
                 if (this.user.id) {
                     if (this.form.new_direccion) {
                         if (!this.form.direccion_nombre)
@@ -1175,35 +1241,44 @@ export default defineComponent({
                     this.errors.direccion_entrega = 'Este campo es obligatorio.'
                 if (!this.form.entrega_direccion_datos.referencia)
                     this.errors.entrega_direccion_datos_referencia = 'Este campo es obligatorio.'
+
+                const { punto_retiro, ...deliveryAddressData } =
+                    this.form.entrega_direccion_datos || {}
+                this.form.entrega_direccion_datos = {
+                    ...deliveryAddressData,
+                    horario: DELIVERY_TIME_RANGE,
+                }
             }
 
             if (this.form.entrega_tipo === 'retiro') {
+                const pickupLocation = getPickupLocation(this.form.punto_retiro)
+                if (!pickupLocation) {
+                    this.errors.punto_retiro = 'Seleccione un punto de retiro.'
+                }
+
                 this.form.new_direccion = false
 
                 this.form.entrega_direccion_id = null
                 this.form.direccion_nombre = null
 
                 this.form.entrega_ubigeo = null
-                this.form.direccion_entrega = null
-                this.form.entrega_direccion_datos.numero = null
-                this.form.entrega_direccion_datos.piso = null
-                this.form.entrega_direccion_datos.referencia = null
-
-                if (!this.form.fecha_entrega)
-                    this.errors.fecha_entrega = 'Este campo es obligatorio.'
-
-                if (this.form.fecha_entrega) {
-                    const today = new Date()
-                    today.setHours(0, 0, 0, 0)
-
-                    const [year, month, day] = this.form.fecha_entrega.split('-')
-
-                    const selectedDate = new Date(Number(year), Number(month) - 1, Number(day))
-
-                    if (selectedDate < today) {
-                        this.errors.fecha_entrega = 'La fecha no puede ser anterior a hoy.'
+                this.form.direccion_entrega = pickupLocation?.direccion || null
+                this.form.entrega_direccion_datos = pickupLocation
+                    ? {
+                        punto_retiro: {
+                            id: pickupLocation.id,
+                            nombre: pickupLocation.nombre,
+                            direccion: pickupLocation.direccion,
+                        },
+                        horario: DELIVERY_TIME_RANGE,
                     }
-                }
+                    : {}
+            }
+
+            if (!this.form.fecha_entrega) {
+                this.errors.fecha_entrega = 'Este campo es obligatorio.'
+            } else if (!isDeliveryDateAllowed(this.form.fecha_entrega)) {
+                this.errors.fecha_entrega = `Selecciona una fecha desde el ${this.minimumDeliveryDateLabel}.`
             }
 
             return Object.values(this.errors).every((e) => !e)
@@ -1553,6 +1628,15 @@ export default defineComponent({
                     window.scrollTo({ top: targetTop, behavior: 'smooth' })
                 }
             }, 100)
+        },
+        refreshMinimumDeliveryDate() {
+            this.minimumDeliveryDate = getMinimumDeliveryDate()
+            if (
+                this.form.fecha_entrega &&
+                this.form.fecha_entrega < this.minimumDeliveryDate
+            ) {
+                this.form.fecha_entrega = null
+            }
         },
 
         async loadUbigeos(txtBuscar) {

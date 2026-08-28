@@ -14,6 +14,8 @@
             :class="{ 'to-right': toRight }"
             :aria-invalid="error ? 'true' : undefined"
             :maxlength="maxlength"
+            :min="min"
+            :max="max"
             :number_min="number_min"
             :number_max="number_max"
         />
@@ -61,6 +63,8 @@ export default defineComponent({
         toRight: { type: Boolean, default: false },
         error: { type: String, default: null },
         maxlength: { type: [String, Number], default: null },
+        min: { type: [String, Number], default: null },
+        max: { type: [String, Number], default: null },
 
         number_min: { type: [String, Number], default: null },
         number_max: { type: [String, Number], default: null },

@@ -6,12 +6,15 @@ import {
 } from '@/lib/checkout-promotions'
 import { failure } from './bff'
 import { backendRequest, resolveSession } from './backend'
+import { isDeliveryDateAllowed } from '@/lib/delivery-date'
+import { DELIVERY_TIME_RANGE, getPickupLocation } from '@/data/pickup-locations'
 
 type CheckoutDraft = Record<string, any>
 
 interface CheckoutContext {
     isClubMember: boolean
     ubigeo?: Record<string, any> | null
+    now?: Date
 }
 
 type QuoteItem = Product & {
@@ -42,6 +45,9 @@ export function buildAuthoritativeCheckout(
 ) {
     if (!['envio', 'retiro'].includes(String(draft.entrega_tipo))) {
         throw new Error('INVALID_DELIVERY_TYPE')
+    }
+    if (!isDeliveryDateAllowed(draft.fecha_entrega, context.now)) {
+        throw new Error('INVALID_DELIVERY_DATE')
     }
     const sourceItems = Array.isArray(draft.socio_pedido_items)
         ? draft.socio_pedido_items
@@ -75,6 +81,12 @@ export function buildAuthoritativeCheckout(
     ) {
         throw new Error('DELIVERY_OUTSIDE_LIMA')
     }
+    const pickupLocation = draft.entrega_tipo === 'retiro'
+        ? getPickupLocation(draft.punto_retiro)
+        : null
+    if (draft.entrega_tipo === 'retiro' && !pickupLocation) {
+        throw new Error('INVALID_PICKUP_LOCATION')
+    }
 
     const quote = evaluateCheckoutPromotions(quoteItems, {
         isClubMember: context.isClubMember,
@@ -91,16 +103,30 @@ export function buildAuthoritativeCheckout(
         blend_datos: item.blend_datos,
     }))
 
+    const { punto_retiro: _untrustedPickup, ...deliveryAddressData } =
+        draft.entrega_direccion_datos || {}
+
     return {
         ...draft,
         monto: quote.total,
         entrega_costo: quote.deliveryCost,
+        direccion_entrega: draft.entrega_tipo === 'retiro'
+            ? pickupLocation?.direccion
+            : draft.direccion_entrega,
         entrega_direccion_datos: draft.entrega_tipo === 'envio'
             ? {
-                ...(draft.entrega_direccion_datos || {}),
+                ...deliveryAddressData,
                 ubigeo1: context.ubigeo,
+                horario: DELIVERY_TIME_RANGE,
             }
-            : draft.entrega_direccion_datos,
+            : {
+                punto_retiro: {
+                    id: pickupLocation?.id,
+                    nombre: pickupLocation?.nombre,
+                    direccion: pickupLocation?.direccion,
+                },
+                horario: DELIVERY_TIME_RANGE,
+            },
         promociones: quote.appliedPromotions.map((promotion) => ({
             ...promotion,
             policy: 'sunka-checkout',
@@ -156,12 +182,28 @@ export async function prepareCheckoutOrder(
             ),
         }
     } catch (error) {
+        if (error instanceof Error && error.message === 'INVALID_DELIVERY_DATE') {
+            return failure(
+                422,
+                'invalid-delivery-date',
+                'Fecha no disponible',
+                'La fecha elegida ya no está disponible. Selecciona una nueva fecha de entrega o recojo.',
+            )
+        }
         if (error instanceof Error && error.message === 'DELIVERY_OUTSIDE_LIMA') {
             return failure(
                 422,
                 'delivery-outside-lima',
                 'Dirección no disponible',
                 'Los envíos solo están disponibles para distritos de Lima Metropolitana.',
+            )
+        }
+        if (error instanceof Error && error.message === 'INVALID_PICKUP_LOCATION') {
+            return failure(
+                422,
+                'invalid-pickup-location',
+                'Punto de retiro no válido',
+                'Selecciona uno de los puntos de retiro disponibles.',
             )
         }
         return failure(422, 'invalid-cart', 'Carrito no válido', 'No se pudo validar el carrito con los precios actuales.')

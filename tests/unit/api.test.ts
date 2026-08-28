@@ -6,8 +6,16 @@ import { orderLookupSchema, signInSchema } from '@/lib/api-schemas'
 import { assertSameOrigin, failure, json } from '@/lib/server/bff'
 import { checkoutCookieName, orderCookieName } from '@/lib/server/backend'
 import { integrationPublicPath } from '@/lib/server/public-api'
+import { formatDate } from '@/lib/mine'
 
 describe('contratos del ecommerce', () => {
+    it('formatea las fechas siempre como dd/mm/yyyy', () => {
+        expect(formatDate('2026-08-03')).toBe('03/08/2026')
+        expect(formatDate(new Date(2026, 0, 9))).toBe('09/01/2026')
+        expect(formatDate('fecha-invalida')).toBe('')
+        expect(formatDate(null)).toBeNull()
+    })
+
     it('normaliza productos del ERP', () => {
         const [product] = formatProductos([
             {

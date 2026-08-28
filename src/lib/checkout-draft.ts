@@ -34,6 +34,7 @@ function allowedForm(form: DraftRecord) {
             doc_numero: form.socio_datos?.doc_numero || '',
         },
         entrega_tipo: form.entrega_tipo,
+        punto_retiro: form.punto_retiro || null,
         direccion_nombre: form.direccion_nombre || '',
         entrega_direccion_id: form.entrega_direccion_id ?? null,
         new_direccion: Boolean(form.new_direccion),

@@ -8,6 +8,7 @@ import ShieldIcon from '@/assets/icons/icon-shield-check.astro'
 import { backendRequest, getClientIp, orderCookieName } from '@/lib/server/backend'
 import { serverGet as get } from '@/lib/server/public-api'
 import { redondear, formatDate, formatDateTime } from '@/lib/mine'
+import { DELIVERY_TIME_RANGE } from '@/data/pickup-locations'
 
 const params = Astro.url.searchParams
 const isAccount = params.get('account') === 'true'
@@ -328,11 +329,28 @@ const orderTitle = pedido
                                                     <OrderDetail label="Referencia">
                                                         {pedido.entrega_direccion_datos?.referencia || '—'}
                                                     </OrderDetail>
+                                                    <OrderDetail label="Fecha de entrega">
+                                                        {formatDate(pedido.fecha_entrega)}
+                                                    </OrderDetail>
+                                                    <OrderDetail label="Horario de entrega">
+                                                        {pedido.entrega_direccion_datos?.horario || DELIVERY_TIME_RANGE}
+                                                    </OrderDetail>
                                                 </>
                                             ) : (
-                                                <OrderDetail label="Fecha de retiro">
-                                                    {formatDate(pedido.fecha_entrega)}
-                                                </OrderDetail>
+                                                <>
+                                                    <OrderDetail label="Punto de retiro">
+                                                        {pedido.entrega_direccion_datos?.punto_retiro?.nombre || 'Punto de recojo SUNKA'}
+                                                    </OrderDetail>
+                                                    <OrderDetail label="Dirección" wide>
+                                                        {pedido.entrega_direccion_datos?.punto_retiro?.direccion || pedido.direccion_entrega || '—'}
+                                                    </OrderDetail>
+                                                    <OrderDetail label="Fecha de retiro">
+                                                        {formatDate(pedido.fecha_entrega)}
+                                                    </OrderDetail>
+                                                    <OrderDetail label="Horario de recojo">
+                                                        {pedido.entrega_direccion_datos?.horario || DELIVERY_TIME_RANGE}
+                                                    </OrderDetail>
+                                                </>
                                             )}
                                         </dl>
                                     </section>
