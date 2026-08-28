@@ -42,6 +42,7 @@ export interface Product extends JsonRecord {
     id: string | number
     nombre: string
     precio: string | number
+    precio_club?: string | number | null
     precio_anterior?: string | number | null
     fotos?: Array<{ url?: string }>
     foto?: string

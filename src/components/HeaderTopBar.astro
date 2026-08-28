@@ -5,11 +5,86 @@ const { isClubMember = false } = Astro.props
 <div class="bg-sunka-ink text-[11px] tracking-wide text-sunka-white/85">
     <div class="mx-auto flex h-7 max-w-7xl items-center justify-center px-5 md:grid md:grid-cols-3 md:px-8">
         <p class="hidden justify-self-start md:block">Envíos a Lima Metropolitana</p>
-        <a href="/promociones" class="justify-self-center text-center transition-colors hover:text-sunka-brass-light">
-            {isClubMember
-                ? 'Compra S/ 65 o más y recibe envío gratis como miembro Club'
-                : 'Envío gratis desde S/ 75 · Con una cuenta, desde S/ 65'}
-        </a>
+        <div class="topbar-carousel justify-self-center" data-topbar-carousel>
+            <a
+                href="/promociones"
+                class="topbar-slide is-active text-center hover:text-sunka-brass-light"
+                data-topbar-slide
+            >
+                {isClubMember
+                    ? 'Compra S/ 65 o más y recibe envío gratis como miembro Club'
+                    : 'Envío gratis desde S/ 75 · Con una cuenta, desde S/ 65'}
+            </a>
+            <a
+                href="/club"
+                class="topbar-slide text-center hover:text-sunka-brass-light"
+                data-topbar-slide
+            >
+                {isClubMember
+                    ? 'Disfruta precios Club más bajos en tus productos favoritos'
+                    : 'Inicia sesión y disfruta precios más bajos en productos seleccionados'}
+            </a>
+        </div>
         <p class="hidden justify-self-end md:block">Perú</p>
     </div>
 </div>
+
+<script>
+    const carousel = document.querySelector('[data-topbar-carousel]')
+    const slides = carousel ? Array.from(carousel.querySelectorAll('[data-topbar-slide]')) : []
+
+    if (slides.length > 1) {
+        let current = 0
+
+        window.setInterval(() => {
+            const next = (current + 1) % slides.length
+            const currentSlide = slides[current]
+            const nextSlide = slides[next]
+
+            currentSlide.classList.remove('is-active')
+            currentSlide.classList.add('is-exiting')
+            nextSlide.classList.add('is-active')
+
+            window.setTimeout(() => currentSlide.classList.remove('is-exiting'), 650)
+            current = next
+        }, 8000)
+    }
+</script>
+
+<style>
+    .topbar-carousel {
+        position: relative;
+        height: 1.75rem;
+        width: min(100%, 38rem);
+        overflow: hidden;
+    }
+
+    .topbar-slide {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-inline: 0.5rem;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: transform 650ms ease, opacity 650ms ease;
+        white-space: nowrap;
+    }
+
+    .topbar-slide.is-active {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .topbar-slide.is-exiting {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .topbar-slide {
+            transition: none;
+        }
+    }
+</style>

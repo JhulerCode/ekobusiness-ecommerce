@@ -21,7 +21,7 @@
                     {{ productDescription }}
                 </p>
                 <div class="mt-auto flex items-end justify-between gap-3 pt-4">
-                    <span class="font-semibold text-sm text-sunka-ink">S/ {{ producto.precio }}</span>
+                    <span class="font-semibold text-sm text-sunka-ink">S/ {{ effectivePrice }}</span>
                 </div>
             </div>
         </a>
@@ -50,6 +50,7 @@
 import { defineComponent } from 'vue'
 import ShoppingCartPlus from '@/assets/icons/shopping-cart-plus.vue'
 import { Cart } from '@/lib/cart'
+import { getProductPrice } from '@/lib/pricing'
 
 export default defineComponent({
     name: 'TiendaProductCard',
@@ -59,6 +60,7 @@ export default defineComponent({
             type: Object,
             required: true,
         },
+        isAuthenticated: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -77,12 +79,17 @@ export default defineComponent({
                 'Una mezcla natural para acompañar tu momento.'
             )
         },
+        effectivePrice() {
+            return getProductPrice(this.producto, this.isAuthenticated)
+        },
     },
     methods: {
         addToCart() {
             Cart.add({
                 ...this.producto,
                 articulo: this.producto.articulo ?? this.producto.id,
+                precio_regular: this.producto.precio,
+                precio: this.effectivePrice,
                 cantidad: 1,
             })
             clearTimeout(this.toastTimeout)

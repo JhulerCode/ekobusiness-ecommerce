@@ -6,28 +6,9 @@ import signatureDiferencia from '@/assets/lines/signature/diferencia.webp'
 import piramidalDiferencia from '@/assets/lines/premium/diferencia.webp'
 import luxuryDiferencia from '@/assets/lines/luxury/diferencia.webp'
 import tradicionalDiferencia from '@/assets/lines/tradicional/diferencia.webp'
-import preparacion from '@/assets/lines/luxury/preparacion.webp'
 import { getMomentosBySlugs } from '@/data/momentos'
 
 const defaultMomentos = getMomentosBySlugs(['manana', 'oficina', 'despues-de-comer', 'noche'])
-
-const defaultPreparacionSteps = [
-    {
-        titulo: 'Agua caliente',
-        texto: 'Usa una taza amplia para permitir una mejor expresion de aromas.',
-        icon: 'drop',
-    },
-    {
-        titulo: 'Infusiona 3 a 5 minutos',
-        texto: 'Ajusta el tiempo segun la intensidad que quieras en tu taza.',
-        icon: 'ritual',
-    },
-    {
-        titulo: 'Completa tu momento',
-        texto: 'Disfrutalo en una pausa lenta, en sobremesa o durante tu rutina diaria.',
-        icon: 'moon',
-    },
-]
 
 export const lineas: Array<Record<string, any>> = [
     {
@@ -45,7 +26,7 @@ export const lineas: Array<Record<string, any>> = [
         heroCtas: [
             { label: 'Comprar coleccion', href: '/tienda?linea=signature', variant: 'primary' },
             { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
-            { label: 'Armar pack', href: '#productos', variant: 'ghost' },
+            { label: 'Ver destacados', href: '#productos', variant: 'ghost' },
         ],
         momentosTitle: 'En que momento vas a vivir Signature Black?',
         momentosSubtitle: 'Elige tu momento y encuentra el blend ideal para tu ritual.',
@@ -55,32 +36,6 @@ export const lineas: Array<Record<string, any>> = [
             'a3471eb0-ffbc-488c-b256-911d78592241',
             '8977694d-de6e-47f2-81f8-71ae3e84b6bf',
         ],
-        preparacion: {
-            label: 'Modo de preparacion',
-            title: 'Un ritual simple, preciso y elegante.',
-            description:
-                'Prepara Signature Black con calma y deja que el formato doble camara libere todo su aroma en cada taza.',
-            image: preparacion,
-            imageAlt: 'Ritual de preparacion Signature Black',
-            icon: 'lotus',
-            steps: [
-                {
-                    titulo: 'Agua caliente',
-                    texto: 'Usa una taza amplia para permitir una mejor expresion del te negro.',
-                    icon: 'drop',
-                },
-                {
-                    titulo: 'Infusiona 3 a 5 minutos',
-                    texto: 'Mas tiempo para una taza intensa, menos tiempo para un perfil mas suave.',
-                    icon: 'ritual',
-                },
-                {
-                    titulo: 'Completa tu momento',
-                    texto: 'Ideal para oficina, sobremesa, tarde o una pausa lenta al final del dia.',
-                    icon: 'moon',
-                },
-            ],
-        },
         diferencia: {
             label: 'La diferencia esta en la taza',
             title: 'Mas aroma, mas cuerpo y mejor liberacion de sabor.',
@@ -187,16 +142,6 @@ export const lineas: Array<Record<string, any>> = [
             'f5d90ebb-38b1-4c10-844e-28b805927ad1',
             'e9dc6380-3c61-4e2b-a17d-7bb74b2e2d67',
         ],
-        preparacion: {
-            label: 'Modo de preparacion',
-            title: 'Deja que la piramide despliegue todo su perfil.',
-            description:
-                'Usa agua caliente y una taza amplia para que cada ingrediente tenga espacio de infusion.',
-            image: preparacion,
-            imageAlt: 'Preparacion de infusion piramidal',
-            icon: 'lotus',
-            steps: defaultPreparacionSteps,
-        },
         diferencia: {
             label: 'La diferencia esta en el formato',
             title: 'La diferencia se ve antes de probarla.',
@@ -305,16 +250,6 @@ export const lineas: Array<Record<string, any>> = [
             '8b40851b-e6c6-4607-936d-81be73a8f845',
             '623f2b51-f181-4085-9ee3-f9036198f774',
         ],
-        preparacion: {
-            label: 'Modo de preparacion',
-            title: 'Prepara cada taza como un pequeno regalo.',
-            description:
-                'Cuida el tiempo de infusion y deja que los aromas se abran antes del primer sorbo.',
-            image: preparacion,
-            imageAlt: 'Preparacion Luxury Collection',
-            icon: 'lotus',
-            steps: defaultPreparacionSteps,
-        },
         diferencia: {
             label: 'La diferencia esta en el detalle',
             title: 'Más que un té, la máxima expresión de Sunka',
@@ -422,16 +357,6 @@ export const lineas: Array<Record<string, any>> = [
             'a3d94dff-f781-4389-9475-45979324b919',
             '079abd48-0241-4fac-9a90-8c6be2fa5a23',
         ],
-        preparacion: {
-            label: 'Modo de preparacion',
-            title: 'Una taza sencilla, calida y de todos los dias.',
-            description:
-                'Prepara tu infusion tradicional con calma y ajusta el tiempo segun el sabor que busques.',
-            image: preparacion,
-            imageAlt: 'Preparacion linea Tradicionales',
-            icon: 'lotus',
-            steps: defaultPreparacionSteps,
-        },
         diferencia: {
             label: 'La diferencia esta en lo esencial',
             title: 'Lo tradicional no tiene por qué ser básico.',
@@ -515,6 +440,114 @@ export const lineas: Array<Record<string, any>> = [
             ],
         },
     },
+    {
+        slug: 'sunka-cup',
+        title: 'Sunka Cup',
+        aliases: ['Sunka Cup'],
+        seoTitle: 'Sunka Cup | Sunka Herbal Tea',
+        eyebrow: 'Sunka Cup / Infusiones en taza',
+        description:
+            'Ingredientes naturales dosificados bajo un filtro vegetal integrado, dentro de un práctico vaso de 280 ml. Agrega agua caliente, mueve suavemente y disfruta una infusión Sunka donde estés.',
+        heroTitle: 'Tu infusión ya viene en el vaso.',
+        heroImage: signature,
+        heroImageAlt: 'Linea Sunka Cup',
+        heroImagePosition: 'object-center',
+        heroCtas: [
+            { label: 'Comprar coleccion', href: '/tienda?linea=sunka-cup', variant: 'primary' },
+            { label: 'Descubre tu momento', href: '#momentos', variant: 'secondary' },
+            { label: 'Ver destacados', href: '#productos', variant: 'ghost' },
+        ],
+        momentosTitle: 'En que momento vas a vivir Sunka Cup?',
+        momentosSubtitle: 'Encuentra una infusion para cada pausa del dia.',
+        momentos: defaultMomentos,
+        productosDestacadosIds: [
+            'ea26fe7f-084d-4d82-b323-ecf100933f2b',
+            '30c9b2ae-d287-4bb4-ae97-740b82bb40e6',
+            '3fda3a49-5caf-4434-8912-74accb530008',
+        ],
+        diferencia: {
+            label: 'La diferencia esta en cada vaso',
+            title: 'La innovación esta dentro del vaso.',
+            description:
+                'Sunka Cup integra 2 g de ingredientes naturales y un filtro de fibra vegetal dentro de un práctico vaso de 280 ml. Solo agrega agua caliente a 85 °C, mueve suavemente y espera de 2 a 3 minutos para disfrutar una infusión con todo su aroma y sabor, sin accesorios adicionales.',
+            image: signatureDiferencia,
+            imageAlt: 'Detalle linea Sunka Cup',
+            metrics: [
+                {
+                    titulo: '2 g',
+                    texto: 'de ingredientes naturales',
+                    icon: 'leaf',
+                    iconClass: 'scale-[0.82]',
+                },
+                {
+                    titulo: 'Vegetal',
+                    texto: 'filtro integrado en el vaso',
+                    icon: 'shield',
+                    iconClass: 'scale-[1.05]',
+                },
+                {
+                    titulo: '2–3 min',
+                    texto: 'para disfrutar tu infusión',
+                    icon: 'drop',
+                    iconClass: 'scale-[0.86]',
+                },
+                {
+                    titulo: 'ISO',
+                    texto: 'calidad 9001',
+                    icon: 'shield',
+                    iconClass: 'scale-[1.05]',
+                },
+            ],
+        },
+        diferenciales: [
+            {
+                titulo: 'Filtro vegetal integrado',
+                descripcion:
+                    'Retiene los ingredientes dentro del vaso mientras permite que sus aromas y sabores se liberen durante la infusión.',
+                icon: 'layers',
+            },
+            {
+                titulo: 'Porción lista para preparar',
+                descripcion:
+                    'Cada vaso contiene 2 g de ingredientes naturales cuidadosamente dosificados para lograr una taza práctica y consistente.',
+                icon: 'leaf',
+            },
+            {
+                titulo: 'Todo en un solo vaso',
+                descripcion:
+                    'El formato de 280 ml reúne recipiente, filtro e infusión para que solo necesites agregar agua caliente y disfrutar.',
+                icon: 'box',
+            },
+        ],
+        idealPara: {
+            label: 'Una linea para ti',
+            title: 'Sunka Cup es para ti si...',
+            description:
+                'Una forma práctica de disfrutar ingredientes naturales y una infusión bien preparada, incluso cuando tienes poco tiempo o estás fuera de casa.',
+            points: [
+                {
+                    title: 'Estás siempre en movimiento',
+                    text: 'Quieres llevar una infusión práctica a la oficina, la universidad o cualquier lugar de tu rutina.',
+                    icon: 'mountain',
+                },
+                {
+                    title: 'Buscas preparar sin complicaciones',
+                    text: 'Prefieres agregar agua caliente y disfrutar directamente en el vaso, sin usar taza, colador ni accesorios.',
+                    icon: 'drop',
+                },
+                {
+                    title: 'Tienes poco tiempo',
+                    text: 'Necesitas una pausa lista en pocos minutos sin renunciar al aroma y al sabor de una buena infusión.',
+                    icon: 'ritual',
+                },
+                {
+                    title: 'Eliges ingredientes naturales',
+                    text: 'Valoras una porción dosificada con ingredientes naturales y un filtro de fibra vegetal integrado.',
+                    icon: 'leaf',
+                },
+            ],
+        },
+    },
     // {
     //     slug: 'granel',
     //     title: 'Granel',
@@ -535,16 +568,6 @@ export const lineas: Array<Record<string, any>> = [
     //     momentosSubtitle: 'Arma tu ritual con la cantidad y el perfil que mejor encajen contigo.',
     //     momentos: defaultMomentos,
     //     productosDestacadosIds: [],
-    //     preparacion: {
-    //         label: 'Modo de preparacion',
-    //         title: 'Mide, infusiona y ajusta cada taza a tu gusto.',
-    //         description:
-    //             'El formato granel te permite jugar con intensidad, cantidad y combinaciones segun el momento.',
-    //         image: preparacion,
-    //         imageAlt: 'Preparacion linea Granel',
-    //         icon: 'lotus',
-    //         steps: defaultPreparacionSteps,
-    //     },
     //     diferencia: {
     //         label: 'La diferencia esta en la libertad',
     //         title: 'Mas control sobre cantidad, intensidad y forma de preparar.',
@@ -603,7 +626,7 @@ export const lineasByName = Object.fromEntries(
     ),
 )
 
-const coleccionesOrder = ['signature', 'piramidal', 'luxury', 'tradicional']
+const coleccionesOrder = ['signature', 'piramidal', 'luxury', 'tradicional', 'sunka-cup']
 const coleccionesPosition: Record<string, string> = {
     signature: 'object-left',
     piramidal: 'object-bottom',

@@ -850,6 +850,7 @@ import qrYapeUrl from '../assets/qr-yape-eko-business.jpg?url'
 import yapeLogo from '../assets/icons/yape-logo.svg?url'
 
 import { Cart } from '../lib/cart'
+import { getProductPrice } from '../lib/pricing'
 import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draft'
 import { evaluateCheckoutPromotions } from '../lib/checkout-promotions'
 import {
@@ -1025,6 +1026,7 @@ export default defineComponent({
         }
 
         await this.validateSession()
+        this.refreshItemPrices()
         this.restoreDraft()
         this.draftReady = true
         this.saveDraft()
@@ -1066,6 +1068,22 @@ export default defineComponent({
             this.form.socio_datos.doc_numero = this.user.doc_numero
             this.form.socio_datos.correo = this.user.correo
             this.form.socio_datos.telefono = this.user.telefono1
+        },
+        refreshItemPrices() {
+            const isAuthenticated = Boolean(this.user.id)
+            const repriced = this.items.map((item) => ({
+                ...item,
+                pu: getProductPrice(
+                    {
+                        precio: item.precio_regular ?? item.pu,
+                        precio_club: item.precio_club,
+                    },
+                    isAuthenticated,
+                ),
+            }))
+            const changed = repriced.some((item, index) => Number(item.pu) !== Number(this.items[index]?.pu))
+            this.items = repriced
+            if (changed) Cart.save(repriced)
         },
 
         draftContext() {

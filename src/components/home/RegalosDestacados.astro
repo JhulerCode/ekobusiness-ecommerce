@@ -1,6 +1,9 @@
 ---
 import { formatProductos } from '@/lib/api'
+import { formatProductPrice, getProductPrice } from '@/lib/pricing'
 import { serverGet as get } from '@/lib/server/public-api'
+
+const isAuthenticated = Astro.locals.session?.status === 'authenticated'
 
 const qry2 = {
     fltr: {
@@ -61,7 +64,7 @@ const productos = formatProductos(res2.ok ? res2.data : [])
                                     {producto.nombre}
                                 </h3>
                                 <p class="mt-0.5 text-sm font-medium leading-tight text-sunka-ink">
-                                    S/ {producto.precio}
+                                    S/ {formatProductPrice(getProductPrice(producto, isAuthenticated))}
                                 </p>
                             </div>
                         </a>

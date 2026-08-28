@@ -111,7 +111,12 @@
             </div>
 
             <div v-if="productosPaginados.length" class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <TiendaProductCard v-for="producto in productosPaginados" :key="producto.id" :producto="producto" />
+                <TiendaProductCard
+                    v-for="producto in productosPaginados"
+                    :key="producto.id"
+                    :producto="producto"
+                    :is-authenticated="isAuthenticated"
+                />
             </div>
 
             <div v-else class="flex flex-col items-center justify-center py-24 text-center">
@@ -161,6 +166,7 @@ import ChevronDown from '@/assets/icons/chevron-down.vue'
 import ChevronLeft from '@/assets/icons/chevron-left.vue'
 import ChevronRight from '@/assets/icons/chevron-right.vue'
 import ChevronUp from '@/assets/icons/chevron-up.vue'
+import { getProductPrice } from '@/lib/pricing'
 
 export default defineComponent({
     name: 'TiendaCatalog',
@@ -169,6 +175,7 @@ export default defineComponent({
         productos: { type: Array, required: true },
         lineas: { type: Array, required: true },
         momentos: { type: Array, default: () => [] },
+        isAuthenticated: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -198,12 +205,12 @@ export default defineComponent({
             if (this.selectedMoment) {
                 resultado = resultado.filter((producto) => this.productMatchesMoment(producto, this.selectedMoment))
             }
-            if (this.precioMin != null) resultado = resultado.filter((producto) => Number(producto.precio) >= this.precioMin)
-            if (this.precioMax != null) resultado = resultado.filter((producto) => Number(producto.precio) <= this.precioMax)
+            if (this.precioMin != null) resultado = resultado.filter((producto) => Number(this.productPrice(producto)) >= this.precioMin)
+            if (this.precioMax != null) resultado = resultado.filter((producto) => Number(this.productPrice(producto)) <= this.precioMax)
 
             return resultado.sort((a, b) => {
-                if (this.orden === 'precio-asc') return Number(a.precio) - Number(b.precio)
-                if (this.orden === 'precio-desc') return Number(b.precio) - Number(a.precio)
+                if (this.orden === 'precio-asc') return Number(this.productPrice(a)) - Number(this.productPrice(b))
+                if (this.orden === 'precio-desc') return Number(this.productPrice(b)) - Number(this.productPrice(a))
                 const nombreA = this.normalizeSearch(a.nombre || a.name)
                 const nombreB = this.normalizeSearch(b.nombre || b.name)
                 if (this.orden === 'nombre-desc') return nombreB.localeCompare(nombreA)
@@ -258,6 +265,9 @@ export default defineComponent({
         this.isInitializing = false
     },
     methods: {
+        productPrice(producto) {
+            return getProductPrice(producto, this.isAuthenticated)
+        },
         normalizeSlug(value = '') {
             return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')
         },

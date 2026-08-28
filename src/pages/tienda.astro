@@ -8,6 +8,8 @@ import { formatProductos } from '@/lib/api'
 import { serverGet as get } from '@/lib/server/public-api'
 import { momentos } from '@/data/momentos'
 
+const isAuthenticated = Astro.locals.session?.status === 'authenticated'
+
 //--- Load productos ---//
 const qryProductos = {
     fltr: {
@@ -104,6 +106,7 @@ const momentosOrdenados = [...momentos].sort((a, b) => collator.compare(a.titulo
         productos={productos}
         lineas={lineas}
         momentos={momentosOrdenados}
+        isAuthenticated={isAuthenticated}
     />
 
     <Beneficios />

@@ -29,7 +29,7 @@
 
                 <div class="flex justify-between text-gray-800 font-semibold">
                     <span>Precio</span>
-                    <span>S/ {{ producto.precio }}</span>
+                    <span>S/ {{ productPrice() }}</span>
                 </div>
             </div>
         </a>
@@ -56,6 +56,7 @@
 import { defineComponent } from 'vue'
 import ShoppingCartPlus from '../assets/icons/shopping-cart-plus.vue';
 import { Cart } from '../../src/lib/cart';
+import { getProductPrice } from '../lib/pricing';
 
 export default defineComponent({
     components: {
@@ -67,6 +68,7 @@ export default defineComponent({
             required: true,
             default: () => ({}),
         },
+        isAuthenticated: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -75,8 +77,17 @@ export default defineComponent({
         };
     },
     methods: {
+        productPrice() {
+            return getProductPrice(this.producto, this.isAuthenticated)
+        },
         addToCart() {
-            Cart.add({ ...this.producto, cantidad: 1 });
+            Cart.add({
+                ...this.producto,
+                articulo: this.producto.articulo ?? this.producto.id,
+                precio_regular: this.producto.precio,
+                precio: this.productPrice(),
+                cantidad: 1,
+            });
             clearTimeout(this.timeOutCloseToast);
             this.showToast = true;
 

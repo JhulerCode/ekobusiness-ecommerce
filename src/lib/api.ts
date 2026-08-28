@@ -147,6 +147,10 @@ export function formatProductos(datos: Product[] = []): Product[] {
                 producto.precio == null || producto.precio === ''
                     ? producto.precio
                     : Number(producto.precio).toFixed(2),
+            precio_club:
+                producto.precio_club == null || producto.precio_club === ''
+                    ? producto.precio_club
+                    : Number(producto.precio_club).toFixed(2),
             precio_anterior:
                 producto.precio_anterior == null || producto.precio_anterior === ''
                     ? null

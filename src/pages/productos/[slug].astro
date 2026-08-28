@@ -4,10 +4,12 @@ import BoxIcon from '@/assets/icons/icon-box.astro'
 import BotanicalMixIcon from '@/assets/icons/icon-botanical-mix.astro'
 import LeafIcon from '@/assets/icons/icon-leaf.astro'
 import { formatProductos } from '@/lib/api'
+import { formatProductPrice, getProductPrice } from '@/lib/pricing'
 import { serverGet as get } from '@/lib/server/public-api'
 import { getLineaByName } from '@/data/lineas'
 
 const { slug } = Astro.params
+const isAuthenticated = Astro.locals.session?.status === 'authenticated'
 
 const productQuery = {
     fltr: {
@@ -139,9 +141,13 @@ const linea = producto.linea1?.nombre ?? ''
 const lineaTiendaHref = linea
     ? `/tienda?linea=${encodeURIComponent(lineaConfig?.slug ?? linea)}`
     : ''
-const precio = Number(producto.precio ?? 0).toFixed(2)
+const precio = formatProductPrice(getProductPrice(producto, isAuthenticated))
 const pageDescription = producto.descripcion_corta || producto.descripcion || producto.nombre
-const cartProduct = JSON.stringify(producto)
+const cartProduct = JSON.stringify({
+    ...producto,
+    precio_regular: producto.precio,
+    precio: getProductPrice(producto, isAuthenticated),
+})
 const eyebrowClass = 'text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass'
 const sectionTitleClass =
     'mt-3 font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl'
@@ -542,7 +548,7 @@ const sectionTitleClass =
                                             </p>
                                         )}
                                         <strong class="mt-2 block text-sm font-semibold text-sunka-ink">
-                                            S/ {item.precio}
+                                            S/ {formatProductPrice(getProductPrice(item, isAuthenticated))}
                                         </strong>
                                     </div>
                                 </a>

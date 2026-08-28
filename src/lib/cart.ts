@@ -1,4 +1,5 @@
 import { formatProductos, get } from './api'
+import { getProductPrice } from './pricing'
 
 const CART_KEY = 'sunka_cart'
 
@@ -22,10 +23,25 @@ export const Cart = {
     add(producto: Record<string, any>) {
         const cart = this.get();
         const articulo = producto.articulo ?? producto.id
-        const existing = cart.find((item: CartItem) => String(item.articulo) === String(articulo))
+        const matches = articulo == null
+            ? []
+            : cart.filter((item: CartItem) => item.articulo != null && String(item.articulo) === String(articulo))
+        const existing = matches[0]
 
         if (existing) {
-            existing.cantidad = Number(existing.cantidad || 0) + Number(producto.cantidad || 1);
+            existing.cantidad = matches.reduce((total, item) => total + Number(item.cantidad || 0), 0) + Number(producto.cantidad || 1);
+            for (let index = cart.length - 1; index >= 0; index -= 1) {
+                if (cart[index] !== existing && cart[index].articulo != null && String(cart[index].articulo) === String(articulo)) {
+                    cart.splice(index, 1)
+                }
+            }
+            if (producto.precio !== undefined && producto.precio !== null) existing.pu = producto.precio;
+            if (producto.precio_regular !== undefined && producto.precio_regular !== null) {
+                existing.precio_regular = producto.precio_regular;
+            }
+            if (producto.precio_club !== undefined && producto.precio_club !== null) {
+                existing.precio_club = producto.precio_club;
+            }
         } else {
             cart.push({
                 articulo,
@@ -36,6 +52,8 @@ export const Cart = {
                 cantidad: producto.cantidad,
 
                 pu: producto.precio,
+                precio_regular: producto.precio_regular ?? producto.precio,
+                precio_club: producto.precio_club,
                 igv_afectacion: producto.igv_afectacion,
                 igv_porcentaje: 18,
 
@@ -66,10 +84,27 @@ export const Cart = {
         return this.get().reduce((sum: number, item: CartItem) => sum + Number(item.cantidad), 0)
     },
 
+    priceItems(items: CartItem[], isAuthenticated = false) {
+        return items.map((item) => ({
+            ...item,
+            pu: getProductPrice(
+                {
+                    precio: item.precio_regular ?? item.pu,
+                    precio_club: item.precio_club,
+                },
+                isAuthenticated,
+            ),
+        }))
+    },
+
     async hydrateMetadata() {
         const cart = this.get()
         const missing = cart.filter(
-            (item: CartItem) => !item.linea_nombre || !Array.isArray(item.presentacion),
+            (item: CartItem) =>
+                !item.linea_nombre ||
+                !Array.isArray(item.presentacion) ||
+                item.precio_club === undefined ||
+                item.precio_regular === undefined,
         )
         if (!missing.length) return cart
 
@@ -88,6 +123,8 @@ export const Cart = {
                 linea: product.linea,
                 linea_nombre: product.linea1?.nombre,
                 presentacion: product.presentacion,
+                precio_regular: product.precio,
+                precio_club: product.precio_club,
             }
         })
         this.save(hydrated)

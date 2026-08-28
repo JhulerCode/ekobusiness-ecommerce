@@ -149,10 +149,10 @@
 
                                         <div class="text-right">
                                             <p class="text-[11px] text-sunka-stone">
-                                                {{ formatCurrency(item.pu) }} c/u
+                                                {{ formatCurrency(itemPrice(item)) }} c/u
                                             </p>
                                             <p class="mt-0.5 font-heading text-lg font-semibold">
-                                                {{ formatCurrency(Number(item.pu) * Number(item.cantidad)) }}
+                                                {{ formatCurrency(Number(itemPrice(item)) * Number(item.cantidad)) }}
                                             </p>
                                         </div>
                                     </div>
@@ -247,7 +247,7 @@ export default defineComponent({
         },
         total() {
             return this.items.reduce(
-                (sum, item) => sum + Number(item.pu) * Number(item.cantidad),
+                (sum, item) => sum + Number(this.itemPrice(item)) * Number(item.cantidad),
                 0,
             )
         },
@@ -267,6 +267,9 @@ export default defineComponent({
                 (benefit) => benefit.type === 'caja_sorpresa',
             ))
         },
+        itemPrice(item) {
+            return Cart.priceItems([item], this.isClubMember)[0]?.pu ?? item.pu
+        },
     },
     async mounted() {
         this.isMounted = true
@@ -277,6 +280,7 @@ export default defineComponent({
         window.addEventListener('cart-updated', this.onCartUpdated)
         window.addEventListener('keydown', this.handleKeydown)
         this.items = await Cart.hydrateMetadata()
+        this.refreshPrices()
     },
     beforeUnmount() {
         window.removeEventListener('cart-updated', this.onCartUpdated)
@@ -286,6 +290,13 @@ export default defineComponent({
     methods: {
         load() {
             this.items = Cart.get()
+            this.refreshPrices()
+        },
+        refreshPrices() {
+            const repriced = Cart.priceItems(this.items, this.isClubMember)
+            const changed = repriced.some((item, index) => Number(item.pu) !== Number(this.items[index]?.pu))
+            this.items = repriced
+            if (changed) Cart.save(repriced)
         },
         open() {
             this.load()

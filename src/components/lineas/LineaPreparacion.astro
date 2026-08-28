@@ -4,13 +4,29 @@ import RitualGoalIcon from '@/assets/icons/icon-ritual-goal.astro'
 import MoonIcon from '@/assets/icons/icon-moon.astro'
 import LotusIcon from '@/assets/icons/icon-lotus.astro'
 import LeafIcon from '@/assets/icons/icon-leaf.astro'
+import preparacionImage from '@/assets/lines/luxury/preparacion.webp'
 
-const { linea } = Astro.props as {
-    linea: Record<string, any> & {
-        preparacion: Record<string, any> & { steps: Array<Record<string, any>> }
-    }
+const preparacion = {
+    title: 'Un ritual simple, preciso y elegante.',
+    imageAlt: 'Ritual de preparación de una infusión Sunka',
+    steps: [
+        {
+            titulo: 'Agua caliente',
+            texto: 'Usa una taza amplia para permitir una mejor expresión de aromas.',
+            icon: 'drop',
+        },
+        {
+            titulo: 'Infusiona 3 a 5 minutos',
+            texto: 'Ajusta el tiempo según la intensidad que quieras en tu taza.',
+            icon: 'ritual',
+        },
+        {
+            titulo: 'Completa tu momento',
+            texto: 'Disfrútalo en una pausa lenta, en sobremesa o durante tu rutina diaria.',
+            icon: 'moon',
+        },
+    ],
 }
-const preparacion = linea.preparacion
 
 const icons: Record<string, any> = {
     drop: DropIcon,
@@ -29,7 +45,7 @@ const icons: Record<string, any> = {
             class="relative min-h-[460px] overflow-hidden rounded-[22px] bg-sunka-ink md:min-h-[620px] lg:min-h-[680px]"
         >
             <img
-                src={preparacion.image.src}
+                src={preparacionImage.src}
                 alt={preparacion.imageAlt}
                 class="absolute inset-0 h-full w-full object-cover object-center"
             />
