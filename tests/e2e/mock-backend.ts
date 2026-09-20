@@ -41,7 +41,7 @@ createServer((request, response) => {
         }
         const data = !ids.length || ids.includes('product-1') ? [product] : []
         response.end(JSON.stringify({ data }))
-    } else if (url.pathname === '/api/integration/v1/reference-data') {
+    } else if (url.pathname === '/api/integration/v1/ubigeo-data') {
         response.end(JSON.stringify({ data: systemData }))
     } else if (url.pathname === '/api/integration/v1/forms/newsletter') {
         response.writeHead(201)

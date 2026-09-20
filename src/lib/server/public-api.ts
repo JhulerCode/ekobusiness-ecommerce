@@ -8,7 +8,7 @@ export function integrationPublicPath(endpoint: PublicEndpoint, qry?: unknown) {
     if (endpoint === 'sistema') {
         const keys = Array.isArray(qry) ? qry.filter((key): key is string => typeof key === 'string') : []
         search.set('keys', keys.join(','))
-        return `reference-data?${search}`
+        return `ubigeo-data?${search}`
     }
     const filters = qry && typeof qry === 'object' && 'fltr' in qry
         ? (qry as { fltr?: Record<string, { op?: string; val?: unknown }> }).fltr || {}
