@@ -271,9 +271,6 @@ export default defineComponent({
                 (benefit) => benefit.type === 'caja_sorpresa',
             ))
         },
-        itemPrice(item) {
-            return Cart.priceItems([item], this.isClubMember)[0]?.pu ?? item.pu
-        },
     },
     async mounted() {
         this.isMounted = true
@@ -331,6 +328,9 @@ export default defineComponent({
         },
         remove(id) {
             Cart.remove(id)
+        },
+        itemPrice(item) {
+            return Cart.priceItems([item], this.isClubMember)[0]?.pu ?? item.pu
         },
         formatCurrency(value) {
             return new Intl.NumberFormat('es-PE', {

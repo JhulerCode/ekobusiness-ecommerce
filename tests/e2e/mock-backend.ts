@@ -12,11 +12,12 @@ createServer((request, response) => {
     if (request.headers['x-api-key'] !== 'itd_0000000000000000.e2e-integration-secret-00000000000000000000') {
         response.writeHead(401, { 'content-type': 'application/problem+json' })
         response.end(JSON.stringify({
-            type: 'urn:itd:integration:problem:middleware:invalid-api-key',
+            type: 'urn:itderp:problem:integration-invalid-api-key',
             title: 'API key inválida',
             status: 401,
             detail: 'La credencial de integración no es válida.',
-            instance: 'urn:itd:integration:request:e2e',
+            instance: '/api/integration/v1/e2e',
+            errorCode: 'INTEGRATION_INVALID_API_KEY',
         }))
         return
     }
@@ -24,7 +25,8 @@ createServer((request, response) => {
     const url = new URL(request.url || '/', 'http://127.0.0.1:4011')
     response.setHeader('content-type', 'application/json')
     if (url.pathname === '/api/integration/v1/catalog/products') {
-        response.end(JSON.stringify({ data: [{
+        const ids = (url.searchParams.get('ids') || '').split(',').filter(Boolean)
+        const product = {
             id: 'product-1',
             nombre: 'Producto de prueba',
             unidad: 'UND',
@@ -36,7 +38,9 @@ createServer((request, response) => {
                 presentacion: [{ label: 'Saquitos', value: 20 }],
                 fotos: [],
             },
-        }] }))
+        }
+        const data = !ids.length || ids.includes('product-1') ? [product] : []
+        response.end(JSON.stringify({ data }))
     } else if (url.pathname === '/api/integration/v1/reference-data') {
         response.end(JSON.stringify({ data: systemData }))
     } else if (url.pathname === '/api/integration/v1/forms/newsletter') {
@@ -60,11 +64,12 @@ createServer((request, response) => {
                 authenticated
                     ? { data: { access_token: 'access-mock' } }
                     : {
-                          type: 'urn:itd:integration:problem:customers:invalid-session',
+                          type: 'urn:itderp:problem:integration-customer-invalid-session',
                           title: 'Sesión inválida',
                           status: 401,
                           detail: 'La sesión no es válida o ha vencido.',
-                          instance: 'urn:itd:integration:request:e2e',
+                          instance: '/api/integration/v1/customers/auth/refresh',
+                          errorCode: 'INTEGRATION_CUSTOMER_INVALID_SESSION',
                       },
             ),
         )
@@ -79,11 +84,12 @@ createServer((request, response) => {
                 authenticated
                     ? { data: { id: 'user-1', correo: 'cliente@example.com' } }
                     : {
-                          type: 'urn:itd:integration:problem:customers:invalid-session',
+                          type: 'urn:itderp:problem:integration-customer-invalid-session',
                           title: 'Sesión inválida',
                           status: 401,
                           detail: 'La sesión no es válida o ha vencido.',
-                          instance: 'urn:itd:integration:request:e2e',
+                          instance: '/api/integration/v1/customers/me',
+                          errorCode: 'INTEGRATION_CUSTOMER_INVALID_SESSION',
                       },
             ),
         )
@@ -127,11 +133,12 @@ createServer((request, response) => {
                           },
                       }
                     : {
-                          type: 'urn:itd:integration:problem:orders:order-access-invalid',
+                          type: 'urn:itderp:problem:integration-order-access-invalid',
                           title: 'Acceso al pedido inválido',
                           status: 401,
                           detail: 'El acceso al pedido no es válido o ha vencido.',
-                          instance: 'urn:itd:integration:request:e2e',
+                          instance: '/api/integration/v1/orders/order-1',
+                          errorCode: 'INTEGRATION_ORDER_ACCESS_INVALID',
                       },
             ),
         )
@@ -156,16 +163,17 @@ createServer((request, response) => {
         response.writeHead(authorized ? 200 : 401)
         response.end(JSON.stringify(authorized
             ? { data: { status: 'completed', id: 'payment-order-1', codigo: 'SUNKA-PAY', access_token: 'payment-access' } }
-            : { type: 'urn:itd:integration:problem:payments:checkout-access-invalid', title: 'Acceso inválido', status: 401, detail: 'Acceso inválido.', instance: 'urn:itd:integration:request:e2e' }))
+            : { type: 'urn:itderp:problem:integration-payment-access-invalid', title: 'Acceso al pago inválido', status: 401, detail: 'El acceso al intento de pago no es válido o ha vencido.', instance: '/api/integration/v1/payments/izipay/intents/intent-1/status', errorCode: 'INTEGRATION_PAYMENT_ACCESS_INVALID' }))
     } else {
         response.writeHead(404)
         response.setHeader('content-type', 'application/problem+json')
         response.end(JSON.stringify({
-            type: 'urn:itd:integration:problem:middleware:not-found',
-            title: 'No encontrado',
+            type: 'urn:itderp:problem:integration-route-not-found',
+            title: 'Ruta no encontrada',
             status: 404,
-            detail: 'No encontrado.',
-            instance: 'urn:itd:integration:request:e2e',
+            detail: 'La ruta de integración solicitada no existe.',
+            instance: request.url || '/',
+            errorCode: 'INTEGRATION_ROUTE_NOT_FOUND',
         }))
     }
 }).listen(4011, '127.0.0.1')

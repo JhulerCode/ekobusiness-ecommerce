@@ -14,6 +14,7 @@ export interface ApiProblem {
     status: number
     detail: string
     instance?: string
+    errorCode?: string
     errors?: Array<{ detail: string; pointer?: string }>
 }
 

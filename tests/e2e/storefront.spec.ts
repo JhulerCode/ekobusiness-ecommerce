@@ -102,8 +102,8 @@ test('abre un pedido sin incluir access_token en la URL', async ({ page }) => {
     await page.goto(lookup.data.redirect_url)
     expect(page.url()).not.toContain('access_token')
     await expect(page.getByText('#SUNKA-1')).toBeVisible()
-    await expect(page.getByText('Promociones', { exact: true })).toBeVisible()
-    await expect(page.getByText('Envío gratis desde S/ 75')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Promociones' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Envío gratis desde S/ 75' })).toBeVisible()
     await expect(page.getByText('Caja sorpresa')).toBeVisible()
 })
 
@@ -121,7 +121,7 @@ test('espera la confirmación IPN antes de completar un checkout intent', async 
                     monto: 10,
                     socio_datos: {},
                     entrega_tipo: 'retiro',
-                    punto_retiro: 'oficina-ekobusiness',
+                    punto_retiro: 'planta-sunka',
                     fecha_entrega: '2099-01-01',
                     socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
                 },
@@ -161,7 +161,7 @@ test('recupera un pago desde la cookie del intento sin repetir el cobro', async 
                 socio_pedido: {
                     socio_datos: {},
                     entrega_tipo: 'retiro',
-                    punto_retiro: 'oficina-ekobusiness',
+                    punto_retiro: 'planta-sunka',
                     fecha_entrega: '2099-01-01',
                     socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
                 },
