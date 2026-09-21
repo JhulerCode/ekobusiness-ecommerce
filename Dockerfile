@@ -1,6 +1,10 @@
 FROM node:22-alpine AS builder
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 WORKDIR /app
+ARG PUBLIC_IZIPAY_PUBLIC_KEY
+ARG PUBLIC_RECAPTCHA_SITE_KEY
+ENV PUBLIC_IZIPAY_PUBLIC_KEY=$PUBLIC_IZIPAY_PUBLIC_KEY
+ENV PUBLIC_RECAPTCHA_SITE_KEY=$PUBLIC_RECAPTCHA_SITE_KEY
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
