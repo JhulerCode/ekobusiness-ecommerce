@@ -29,8 +29,13 @@ const cookieOptions = (maxAge: number) => ({
     secure: import.meta.env.PROD,
 })
 
+function runtimeEnv(name: string) {
+    return process.env[name] ?? (import.meta.env as Record<string, string | undefined>)[name]
+}
+
 function backendUrl(path: string) {
-    const base = (import.meta.env.API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '')).replace(
+    const base = (runtimeEnv('API_URL') || (import.meta.env.DEV ? 'http://localhost:4000' : '')).replace(
+    // const base = (import.meta.env.API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '')).replace(
         /\/$/,
         '',
     )
@@ -81,7 +86,7 @@ export async function backendRequest<T = unknown>(
 ): Promise<BackendResult<T>> {
     const headers = new Headers(options.headers)
     headers.set('accept', 'application/json, application/problem+json')
-    headers.set('x-api-key', import.meta.env.ERP_API_KEY || '')
+    headers.set('x-api-key', runtimeEnv('ERP_API_KEY') || '')
     if (options.clientIp) headers.set('x-client-ip', options.clientIp)
     if (options.token) headers.set('authorization', `Bearer ${options.token}`)
     if (options.orderToken) headers.set('x-order-access', options.orderToken)
@@ -137,7 +142,8 @@ export async function backendRequest<T = unknown>(
             ...(validWarnings(source.warnings) ? { warnings: validWarnings(source.warnings) } : {}),
             headers: responseHeaders,
         }
-    } catch {
+    } catch (error) {
+        console.error(`[backend] no se pudo conectar con ${path}:`, error instanceof Error ? error.message : error)
         return {
             ok: false,
             status: 503,
