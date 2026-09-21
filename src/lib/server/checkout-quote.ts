@@ -148,7 +148,7 @@ export async function prepareCheckoutOrder(
         return failure(422, 'invalid-cart', 'Carrito no válido', 'El carrito no contiene productos válidos.')
     }
 
-    const productPath = `catalog/products?ids=${encodeURIComponent(ids.join(','))}`
+    const productPath = `productos?ids=${encodeURIComponent(ids.join(','))}`
     const ubigeoPath = draft.entrega_tipo === 'envio' && draft.entrega_ubigeo
         ? `locations/ubigeos?id=${encodeURIComponent(String(draft.entrega_ubigeo))}`
         : null

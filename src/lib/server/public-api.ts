@@ -3,38 +3,45 @@ import { backendRequest } from './backend'
 
 type PublicEndpoint = 'productos' | 'sistema' | 'ubigeos'
 
-export function integrationPublicPath(endpoint: PublicEndpoint, qry?: unknown) {
+type PublicParams = {
+    ids?: string | string[]
+    linea?: string
+    categoria?: string
+    featured?: string
+    keys?: string | string[]
+    id?: string
+    departamento?: string
+    provincia?: string
+    distrito?: string
+    search?: string
+}
+
+function setParam(search: URLSearchParams, key: string, value: unknown) {
+    if (value === undefined || value === null || value === '') return
+    search.set(key, Array.isArray(value) ? value.map(String).join(',') : String(value))
+}
+
+export function integrationPublicPath(endpoint: PublicEndpoint, params: PublicParams = {}) {
     const search = new URLSearchParams()
     if (endpoint === 'sistema') {
-        const keys = Array.isArray(qry) ? qry.filter((key): key is string => typeof key === 'string') : []
-        search.set('keys', keys.join(','))
+        search.set('keys', Array.isArray(params.keys) ? params.keys.join(',') : String(params.keys ?? ''))
         return `ubigeo-data?${search}`
     }
-    const filters = qry && typeof qry === 'object' && 'fltr' in qry
-        ? (qry as { fltr?: Record<string, { op?: string; val?: unknown }> }).fltr || {}
-        : {}
     if (endpoint === 'productos') {
-        const ids = filters.id?.val
-        if (Array.isArray(ids)) search.set('ids', ids.map(String).join(','))
-        else if (ids) search.set('ids', String(ids))
-        if (filters.linea?.val) search.set('linea', String(filters.linea.val))
-        if (filters.categoria?.val) search.set('categoria', String(filters.categoria.val))
-        return `catalog/products${search.size ? `?${search}` : ''}`
+        setParam(search, 'ids', params.ids)
+        setParam(search, 'linea', params.linea)
+        setParam(search, 'categoria', params.categoria)
+        setParam(search, 'featured', params.featured)
+        return `productos${search.size ? `?${search}` : ''}`
     }
-    for (const key of ['departamento', 'provincia', 'distrito']) {
-        const filter = filters[key]
-        const value = filter?.val
-        if (value) search.set(key, String(value))
-    }
-    if (filters.distrito?.op === 'Contiene' && filters.distrito.val) {
-        search.delete('distrito')
-        search.set('search', String(filters.distrito.val))
+    for (const key of ['id', 'departamento', 'provincia', 'distrito', 'search'] as const) {
+        setParam(search, key, params[key])
     }
     return `locations/ubigeos${search.size ? `?${search}` : ''}`
 }
 
-export async function serverGet<T = any>(endpoint: PublicEndpoint, params: { qry?: unknown } = {}): Promise<ApiResult<T>> {
-    const result = await backendRequest<T>(integrationPublicPath(endpoint, params.qry))
+export async function serverGet<T = any>(endpoint: PublicEndpoint, params: PublicParams = {}): Promise<ApiResult<T>> {
+    const result = await backendRequest<T>(integrationPublicPath(endpoint, params))
     const { headers, ...response } = result
     return {
         ...response,

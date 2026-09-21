@@ -109,7 +109,7 @@ export const Cart = {
         if (!missing.length) return cart
 
         const res = await get('productos', {
-            qry: { fltr: { id: { op: 'Es', val: missing.map((item: CartItem) => item.articulo) } } },
+            ids: missing.map((item: CartItem) => item.articulo),
         })
         if (!res.ok) return cart
 

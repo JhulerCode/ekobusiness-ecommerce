@@ -11,17 +11,7 @@ import { getLineaByName } from '@/data/lineas'
 const { slug } = Astro.params
 const isAuthenticated = Astro.locals.session?.status === 'authenticated'
 
-const productQuery = {
-    fltr: {
-        id: { op: 'Es', val: slug },
-        activo: { op: 'Es', val: true },
-        is_ecommerce: { op: 'Es', val: true },
-    },
-    cols: ['id', 'nombre', 'linea', 'unidad', 'igv_afectacion', 'ecommerce_data'],
-    incl: ['linea1'],
-}
-
-const productResponse = await get('productos', { qry: productQuery })
+const productResponse = await get('productos', { ids: slug })
 const producto = formatProductos(productResponse.ok ? productResponse.data ?? [] : [])[0]
 
 if (!producto) return Astro.rewrite('/404')
@@ -119,17 +109,9 @@ const relatedIds = Array.isArray(producto.productos_relacionados)
       ].slice(0, 3)
     : []
 
-const relatedResponses = await get('productos', {
-    qry: {
-        fltr: {
-            id: { op: 'Es', val: relatedIds },
-            activo: { op: 'Es', val: true },
-            is_ecommerce: { op: 'Es', val: true },
-        },
-        cols: ['id', 'nombre', 'linea', 'unidad', 'igv_afectacion', 'ecommerce_data'],
-        incl: ['linea1'],
-    },
-})
+const relatedResponses = relatedIds.length
+    ? await get('productos', { ids: relatedIds })
+    : { ok: true, status: 200, data: [] }
 const relatedById = new Map(
     formatProductos(relatedResponses.ok ? relatedResponses.data ?? [] : []).map((item) => [String(item.id), item]),
 )

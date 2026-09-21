@@ -6,7 +6,7 @@ import { serverGet as get } from '@/lib/server/public-api'
 import empresa from '@/data/company'
 
 const res = await get('sistema', {
-    qry: [
+    keys: [
         'documentos_identidad',
         'entrega_tipos',
         'comprobante_tipos',

@@ -24,7 +24,7 @@ createServer((request, response) => {
 
     const url = new URL(request.url || '/', 'http://127.0.0.1:4011')
     response.setHeader('content-type', 'application/json')
-    if (url.pathname === '/api/integration/v1/catalog/products') {
+    if (url.pathname === '/api/integration/v1/productos') {
         const ids = (url.searchParams.get('ids') || '').split(',').filter(Boolean)
         const product = {
             id: 'product-1',

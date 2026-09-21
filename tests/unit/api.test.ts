@@ -66,22 +66,15 @@ describe('contratos del ecommerce', () => {
         expect(checkoutCookieName('intent/../../1')).toBe('sunka_checkout_intent1')
     })
 
-    it('traduce qry heredado a parámetros fijos de integración', () => {
-        const path = integrationPublicPath('productos', {
-            fltr: { id: { op: 'Es', val: ['tea-1', 'tea-2'] }, linea: { op: 'Es', val: 'ande' } },
-            cols: ['secret-column'],
-        })
-        expect(path).toBe('catalog/products?ids=tea-1%2Ctea-2&linea=ande')
-        expect(path).not.toContain('secret-column')
+    it('construye parámetros fijos de productos sin columnas ni operadores', () => {
+        const path = integrationPublicPath('productos', { ids: ['tea-1', 'tea-2'], linea: 'ande' })
+        expect(path).toBe('productos?ids=tea-1%2Ctea-2&linea=ande')
     })
 
-    it('traduce la búsqueda parcial de distritos sin exponer operadores arbitrarios', () => {
-        const path = integrationPublicPath('ubigeos', {
-            fltr: { distrito: { op: 'Contiene', val: 'santa' } },
-        })
+    it('construye la búsqueda parcial de distritos con parámetros fijos', () => {
+        const path = integrationPublicPath('ubigeos', { search: 'santa', provincia: 'Lima' })
 
-        expect(path).toBe('locations/ubigeos?search=santa')
-        expect(path).not.toContain('Contiene')
+        expect(path).toBe('locations/ubigeos?provincia=Lima&search=santa')
     })
 
     it('serializa errores BFF como Problem Details y soporta 204', async () => {
@@ -101,7 +94,7 @@ describe('contratos del ecommerce', () => {
         expect(await emptyResponse.text()).toBe('')
     })
 
-    it('no conserva consumidores del contrato legacy en src', () => {
+    it('no conserva el shape legacy qry/fltr/cols/incl en src', () => {
         const sourceDir = fileURLToPath(new URL('../../src', import.meta.url))
         const filesBelow = (directory: string): string[] => readdirSync(directory, { withFileTypes: true })
             .flatMap((entry) => {
@@ -113,6 +106,7 @@ describe('contratos del ecommerce', () => {
         for (const path of sourceFiles) {
             const source = readFileSync(path, 'utf8')
             expect(source, path).not.toMatch(/\.code\b|\bcode\s*:/)
+            expect(source, path).not.toMatch(/['"]qry['"]|\bfltr\s*:|\bcols\s*:|\bincl\s*:|\bop\s*:\s*['"]/)
         }
     })
 })

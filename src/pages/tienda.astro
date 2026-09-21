@@ -11,15 +11,7 @@ import { momentos } from '@/data/momentos'
 const isAuthenticated = Astro.locals.session?.status === 'authenticated'
 
 //--- Load productos ---//
-const qryProductos = {
-    fltr: {
-        activo: { op: 'Es', val: true },
-        is_ecommerce: { op: 'Es', val: true },
-    },
-    cols: ['id', 'nombre', 'linea', 'unidad', 'igv_afectacion', 'ecommerce_data'],
-    incl: ['linea1'],
-}
-const resProductos = await get('productos', { qry: qryProductos })
+const resProductos = await get('productos')
 const productos = formatProductos(resProductos.ok ? resProductos.data : [])
 
 //--- Set líneas ---//
