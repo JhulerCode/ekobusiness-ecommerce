@@ -9,7 +9,10 @@ export const POST: APIRoute = async (context) => {
     const parsed = await parseJson(context.request, createPaymentSchema)
     if (!parsed.success) return invalidRequest()
     const prepared = await prepareCheckoutOrder(context, parsed.data.socio_pedido)
-    if (!prepared.ok) return json(prepared)
+    if (!prepared.ok) {
+        console.error(`[create-payment] prepareCheckoutOrder -> ${prepared.status} ${prepared.problem.type}`)
+        return json(prepared)
+    }
     const result = await requestWithOptionalSession<{
         formToken?: string
         checkout_intent_id?: string
@@ -25,12 +28,16 @@ export const POST: APIRoute = async (context) => {
         method: 'POST',
         body: JSON.stringify({ ...parsed.data, socio_pedido: prepared.data }),
     })
-    if (!result.ok) return json(result)
+    if (!result.ok) {
+        console.error(`[create-payment] form-token -> ${result.status} ${result.problem.type}`)
+        return json(result)
+    }
     const data = result.data
     if (
         !data?.formToken || !data.checkout_intent_id || !data.checkout_access_token ||
         !data.orderId || !data.order_id || !data.order_access_token || !data.lookup_code
     ) {
+        console.error('[create-payment] form-token sin campos requeridos')
         return json(failure(502, 'upstream-contract-error', 'Respuesta no válida', 'El servicio devolvió una respuesta no válida.'))
     }
     setCheckoutCookie(context, data.checkout_intent_id, data.checkout_access_token)

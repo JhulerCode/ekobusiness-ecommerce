@@ -117,10 +117,12 @@ export async function backendRequest<T = unknown>(
         }
 
         if (!response.ok) {
+            const problem = safeProblem(parsed, response.status)
+            console.error(`[backend] ${options.method || 'GET'} ${path} -> ${response.status} ${problem.type}`)
             return {
                 ok: false,
                 status: response.status,
-                problem: safeProblem(parsed, response.status),
+                problem,
                 headers: responseHeaders,
             }
         }
