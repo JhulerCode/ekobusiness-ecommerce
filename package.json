@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "postdev": "node -e \"require('node:fs').rmSync('.astro',{recursive:true,force:true})\"",
     "build": "astro build",
+    "start": "node ./dist/server/entry.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
@@ -14,6 +15,7 @@
     "verify": "pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
+    "@astrojs/node": "^9.4.1",
     "@astrojs/vercel": "^8.2.10",
     "@astrojs/vue": "^5.1.1",
     "@lyracom/embedded-form-glue": "^1.4.4",

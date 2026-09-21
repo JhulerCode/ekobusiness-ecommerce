@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ['nodejs_22']
+
+[phases.install]
+cmds = ['corepack enable', 'corepack prepare pnpm@10.12.1 --activate', 'pnpm i --frozen-lockfile']
+
+[phases.build]
+cmds = ['pnpm build']
+
+[start]
+cmd = 'node ./dist/server/entry.mjs'
