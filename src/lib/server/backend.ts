@@ -58,6 +58,7 @@ function safeProblem(value: unknown, status: number): ApiProblem {
             status,
             detail: source.detail,
             ...(typeof source.instance === 'string' ? { instance: source.instance } : {}),
+            ...(typeof source.errorCode === 'string' ? { errorCode: source.errorCode } : {}),
             ...(Array.isArray(source.errors) ? { errors: source.errors as ApiProblem['errors'] } : {}),
         }
     }
@@ -181,17 +182,14 @@ export async function requestWithSession<T = unknown>(
     const requestOptions = {
         ...options,
         clientIp: options.clientIp || getClientIp(context.request),
+        ...(accessToken ? { token: accessToken } : {}),
     }
-    let result: BackendResult<T> | undefined
-
-    if (accessToken) {
-        result = await backendRequest<T>(path, { ...requestOptions, token: accessToken })
-        const isCustomerSessionFailure = !result.ok && result.status === 401 && [
-            'urn:itd:integration:problem:middleware:invalid-customer-session',
-            'urn:itd:integration:problem:customers:invalid-session',
-        ].includes(result.problem.type)
-        if (!isCustomerSessionFailure) return result
-    }
+    let result = await backendRequest<T>(path, requestOptions)
+    const isCustomerSessionFailure = !result.ok && result.status === 401 && [
+        'urn:itderp:problem:integration-customer-session-invalid',
+        'urn:itderp:problem:integration-customer-invalid-session',
+    ].includes(result.problem.type)
+    if (!isCustomerSessionFailure) return result
 
     const refreshToken = context.cookies.get(REFRESH_COOKIE)?.value
     if (!refreshToken) {

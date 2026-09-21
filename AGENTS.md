@@ -139,15 +139,12 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
 
 - Vue uses `src/lib/api.ts` and only same-origin `/api/*` endpoints. Astro SSR uses the server-only
   client. Never expose `API_URL`, `ERP_API_KEY`, `X-API-Key`, or authorization headers.
-- Checkout business policies live in ecommerce and are recalculated by Astro before creating an
-  order or payment. Browser totals, shipping costs and promotions are display-only and
-  must always be overwritten by the BFF using current catalog, session and location data.
-- Browser compatibility queries may use the legacy filter shape, but Astro translates them to fixed integration parameters:
-  ```js
-  { fltr: { activo: { op: 'Es', val: true }, is_ecommerce: { op: 'Es', val: true } }, cols: [...], incl: [...] }
-  ```
-- Successful responses use `{ data, meta?, warnings? }`; errors use RFC 9457 Problem Details with
-  `application/problem+json`. Client helpers return the discriminated `ApiResult<T>` type.
+- The BFF sends only the fixed parameters each integration endpoint declares (`ids`, `linea`,
+  `categoria`, `featured`, `search`, etc.). Never forward `qry`, `cols`, `incl`, tenant, or
+  upstream URLs; the legacy `{ fltr, cols, incl }` shape is removed.
+- Successful responses use `{ data, meta?, warnings? }`; errors use the ERP Problem Details
+  (`application/problem+json`) with `type`, `errorCode`, `title`, `status`, `detail`, `instance`.
+  Client helpers return the discriminated `ApiResult<T>` type.
 - Check `result.ok`; use `result.problem.type` for behavior and `result.problem.detail` for safe
   user-facing text. HTTP `401` means the HttpOnly session expired. Always reset `loading`.
 - Keep validation (email regex, required fields) in the component before submitting.

@@ -4,7 +4,7 @@ import AccountPanel from '../components/AccountPanel.vue'
 import { serverGet as get } from '@/lib/server/public-api'
 
 const res = await get('sistema', {
-    qry: ['documentos_identidad'],
+    keys: ['documentos_identidad'],
 })
 
 const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : []

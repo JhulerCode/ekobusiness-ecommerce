@@ -100,7 +100,7 @@ let etapas: Array<Record<string, any>> = []
 
 if (pedido) {
     const systemResponse = await get('sistema', {
-        qry: [
+        keys: [
             'socio_pedidos_etapas',
             'entrega_tipos',
             'pago_metodos',

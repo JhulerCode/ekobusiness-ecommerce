@@ -92,13 +92,16 @@ async function request<T>(url: string, init: RequestInit): Promise<ApiResult<T>>
     }
 }
 
-export async function get<T = any>(endpoint: Endpoint, params: { qry?: unknown } | null = {}) {
+export async function get<T = any>(endpoint: Endpoint, params: Record<string, string | string[] | undefined> | null = {}) {
     const url = new URL(endpointUrl(endpoint), window.location.origin)
-    if (params?.qry !== undefined) url.searchParams.set('qry', JSON.stringify(params.qry))
+    for (const [key, value] of Object.entries(params ?? {})) {
+        if (value === undefined || value === null || value === '') continue
+        url.searchParams.set(key, Array.isArray(value) ? value.join(',') : value)
+    }
     return request<T>(url.toString(), { method: 'GET' })
 }
 
-export async function post<T = any>(endpoint: Endpoint, item: RequestItem, _message?: unknown, _legacyToken?: unknown) {
+export async function post<T = any>(endpoint: Endpoint, item: RequestItem, _message?: unknown) {
     const isFormData = item.is_form_data === true
     return request<T>(endpointUrl(endpoint), {
         method: 'POST',

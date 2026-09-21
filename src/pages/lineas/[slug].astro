@@ -19,16 +19,7 @@ const productosDestacadosIds = lineaConfig.productosDestacadosIds ?? []
 let productosDestacados: Array<Record<string, any>> = []
 
 if (productosDestacadosIds.length > 0) {
-    const productosQuery = {
-        fltr: {
-            id: { op: 'En', val: productosDestacadosIds },
-            activo: { op: 'Es', val: true },
-            is_ecommerce: { op: 'Es', val: true },
-        },
-        cols: ['id', 'ecommerce_data'],
-    }
-
-    const productosResponse = await get('productos', { qry: productosQuery })
+    const productosResponse = await get('productos', { ids: productosDestacadosIds })
     const productosById = new Map(
         (productosResponse.ok ? productosResponse.data ?? [] : []).map(
             (producto: Record<string, any>) => [producto.id, producto],

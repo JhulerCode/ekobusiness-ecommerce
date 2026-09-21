@@ -29,7 +29,7 @@ export const Cart = {
         const existing = matches[0]
 
         if (existing) {
-            existing.cantidad = matches.reduce((total, item) => total + Number(item.cantidad || 0), 0) + Number(producto.cantidad || 1);
+            existing.cantidad = matches.reduce((total: number, item: CartItem) => total + Number(item.cantidad || 0), 0) + Number(producto.cantidad || 1);
             for (let index = cart.length - 1; index >= 0; index -= 1) {
                 if (cart[index] !== existing && cart[index].articulo != null && String(cart[index].articulo) === String(articulo)) {
                     cart.splice(index, 1)
@@ -109,7 +109,7 @@ export const Cart = {
         if (!missing.length) return cart
 
         const res = await get('productos', {
-            qry: { fltr: { id: { op: 'Es', val: missing.map((item: CartItem) => item.articulo) } } },
+            ids: missing.map((item: CartItem) => item.articulo),
         })
         if (!res.ok) return cart
 

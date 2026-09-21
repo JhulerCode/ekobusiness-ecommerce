@@ -274,18 +274,10 @@ export default defineComponent({
                 return;
             }
 
-            const qry = {
-                fltr: {
-                    distrito: { op: 'Contiene', val: txtBuscar },
-                    provincia: { op: 'Es', val: 'Lima' },
-                },
-                cols: ['departamento', 'provincia', 'distrito', 'nombre'],
-            };
-
             this.ubigeosLoading = true;
             const res = await get(
                 'ubigeos',
-                { qry }
+                { search: txtBuscar, provincia: 'Lima' }
             );
             this.ubigeosLoading = false;
 
