@@ -118,7 +118,11 @@ export async function backendRequest<T = unknown>(
 
         if (!response.ok) {
             const problem = safeProblem(parsed, response.status)
-            console.error(`[backend] ${options.method || 'GET'} ${path} -> ${response.status} ${problem.type}`)
+            if (response.status >= 500) {
+                console.error(`[backend] ${options.method || 'GET'} ${path} -> ${response.status} ${problem.type} :: ${raw.slice(0, 500)}`)
+            } else {
+                console.error(`[backend] ${options.method || 'GET'} ${path} -> ${response.status} ${problem.type}`)
+            }
             return {
                 ok: false,
                 status: response.status,
