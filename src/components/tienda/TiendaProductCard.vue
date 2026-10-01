@@ -80,7 +80,7 @@ export default defineComponent({
     },
     computed: {
         productLabel() {
-            return this.producto.linea1?.nombre || this.producto.lineaNombre || 'SUNKA'
+            return this.producto.line?.name || this.producto.lineaNombre || 'SUNKA'
         },
         productDescription() {
             return (

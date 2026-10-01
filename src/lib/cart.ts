@@ -61,7 +61,7 @@ export const Cart = {
                 fotos: producto.fotos,
 
                 linea: producto.linea,
-                linea_nombre: producto.linea_nombre || producto.linea1?.nombre,
+                linea_nombre: producto.linea_nombre || producto.line?.name,
                 presentacion: producto.presentacion || producto.ecommerce_data?.presentacion,
 
                 blend_datos: producto.blend_datos,
@@ -121,7 +121,7 @@ export const Cart = {
             return {
                 ...item,
                 linea: product.linea,
-                linea_nombre: product.linea1?.nombre,
+                linea_nombre: product.line?.name,
                 presentacion: product.presentacion,
                 precio_regular: product.precio,
                 precio_club: product.precio_club,

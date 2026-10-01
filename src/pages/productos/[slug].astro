@@ -78,7 +78,7 @@ const hasPerfilSensorial = Boolean(
     momentos.length,
 )
 
-const lineaConfig = getLineaByName(producto.linea1?.nombre)
+const lineaConfig = getLineaByName(producto.line?.name)
 const diferenciales: Array<Record<string, any>> = lineaConfig?.diferenciales ?? []
 
 const preparacion =
@@ -119,7 +119,7 @@ const relacionados = relatedIds
     .map((id) => relatedById.get(String(id)))
     .filter((item): item is NonNullable<typeof item> => Boolean(item))
 
-const linea = producto.linea1?.nombre ?? ''
+const linea = producto.line?.name ?? ''
 const lineaTiendaHref = linea
     ? `/tienda?linea=${encodeURIComponent(lineaConfig?.slug ?? linea)}`
     : ''

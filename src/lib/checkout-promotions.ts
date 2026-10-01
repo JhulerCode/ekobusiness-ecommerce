@@ -219,7 +219,7 @@ function normalizeSlug(value: unknown) {
 }
 
 export function getProductLine(item: PromotionItem) {
-    return normalizeSlug(item.linea_nombre || item.linea1?.nombre || item.lineName)
+    return normalizeSlug(item.linea_nombre || item.line?.name || item.lineName)
 }
 
 export function getProductPresentation(item: PromotionItem) {
