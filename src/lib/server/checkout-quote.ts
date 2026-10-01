@@ -33,14 +33,14 @@ function normalizeText(value: unknown) {
         .toUpperCase()
 }
 
-function productPrice(product: Product) {
+function productPrice(product: Record<string, any>) {
     const ecommerceData = product.ecommerce_data || {}
     return Number(ecommerceData.precio ?? ecommerceData.price ?? product.list_price)
 }
 
 export function buildAuthoritativeCheckout(
     draft: CheckoutDraft,
-    products: Product[],
+    products: Array<Record<string, any>>,
     context: CheckoutContext,
 ) {
     if (!['envio', 'retiro'].includes(String(draft.entrega_tipo))) {
@@ -94,11 +94,11 @@ export function buildAuthoritativeCheckout(
     })
     const authoritativeItems = quoteItems.map((item) => ({
         articulo: item.id,
-        nombre: item.ecommerce_data?.name || item.nombre,
-        unidad: item.unidad,
+        nombre: item.ecommerce_data?.name || item.name,
+        unidad: item.unit,
         cantidad: item.cantidad,
         pu: item.pu,
-        igv_afectacion: item.igv_afectacion,
+        igv_afectacion: item.igv_affectation,
         igv_porcentaje: 18,
         blend_datos: item.blend_datos,
     }))

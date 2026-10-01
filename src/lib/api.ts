@@ -129,7 +129,7 @@ export async function delet<T = any>(endpoint: Endpoint, item: RequestItem, _mes
     })
 }
 
-export function formatProductos(datos: Product[] = []): Product[] {
+export function formatProductos(datos: Array<Record<string, any>> = []): Product[] {
     return datos.map((source): Product => {
         const ecommerceData = (source.ecommerce_data || {}) as Record<string, any>
         const fotos = Array.isArray(ecommerceData.fotos)
@@ -137,10 +137,14 @@ export function formatProductos(datos: Product[] = []): Product[] {
             : Array.isArray(source.fotos)
               ? source.fotos
               : []
-        const producto = {
+        const producto: Record<string, any> = {
             ...source,
             ...ecommerceData,
-            nombre: ecommerceData.name ?? source.nombre,
+            nombre: ecommerceData.name ?? source.name,
+            unidad: source.unit,
+            linea: source.line_id,
+            linea1: source.line,
+            igv_afectacion: source.igv_affectation,
             fotos,
         }
 

@@ -28,11 +28,11 @@ createServer((request, response) => {
         const ids = (url.searchParams.get('ids') || '').split(',').filter(Boolean)
         const product = {
             id: 'product-1',
-            nombre: 'Producto de prueba',
-            unidad: 'UND',
-            igv_afectacion: '10',
+            name: 'Producto de prueba',
+            unit: 'UND',
+            igv_affectation: '10',
             list_price: 10,
-            linea1: { nombre: 'Tradicional' },
+            line: { name: 'Tradicional' },
             ecommerce_data: {
                 precio: 10,
                 presentacion: [{ label: 'Saquitos', value: 20 }],

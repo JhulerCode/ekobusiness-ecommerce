@@ -124,10 +124,10 @@ describe('promociones del checkout', () => {
             socio_pedido_items: [{ articulo: 'product-1', cantidad: 1, pu: 0 }],
         }, [{
             id: 'product-1',
-            nombre: 'Producto tradicional',
+            name: 'Producto tradicional',
             precio: 20,
             list_price: 20,
-            linea1: { nombre: 'Tradicional' },
+            line: { name: 'Tradicional' },
             ecommerce_data: {
                 precio: 20,
                 presentacion: [{ label: 'Saquitos', value: 20 }],
@@ -152,7 +152,7 @@ describe('promociones del checkout', () => {
             socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
         }, [{
             id: 'product-1',
-            nombre: 'Producto',
+            name: 'Producto',
             precio: 20,
             ecommerce_data: { precio: 20, presentacion: [] },
         }], {
@@ -170,7 +170,7 @@ describe('promociones del checkout', () => {
             socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
         }, [{
             id: 'product-1',
-            nombre: 'Producto',
+            name: 'Producto',
             precio: 20,
             ecommerce_data: { precio: 20, presentacion: [] },
         }], {
@@ -192,7 +192,7 @@ describe('promociones del checkout', () => {
             socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
         }, [{
             id: 'product-1',
-            nombre: 'Producto',
+            name: 'Producto',
             precio: 20,
             ecommerce_data: { precio: 20, presentacion: [] },
         }], {
@@ -221,7 +221,7 @@ describe('promociones del checkout', () => {
             socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
         }, [{
             id: 'product-1',
-            nombre: 'Producto',
+            name: 'Producto',
             precio: 20,
             ecommerce_data: { precio: 20, presentacion: [] },
         }], {

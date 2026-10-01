@@ -20,7 +20,7 @@ describe('contratos del ecommerce', () => {
         const [product] = formatProductos([
             {
                 id: 'tea-1',
-                nombre: 'Nombre interno',
+                name: 'Nombre interno',
                 precio: 12,
                 ecommerce_data: {
                     name: 'Té Andino',

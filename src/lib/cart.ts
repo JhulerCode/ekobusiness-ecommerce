@@ -47,7 +47,7 @@ export const Cart = {
                 articulo,
                 nombre: producto.nombre,
                 unidad: producto.unidad,
-                has_fv: producto.has_fv,
+                has_fv: producto.has_expiry,
 
                 cantidad: producto.cantidad,
 
