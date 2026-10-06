@@ -30,21 +30,21 @@
         </div>
 
         <div class="grid gap-5 md:grid-cols-2 md:gap-x-7 md:gap-y-6">
-            <JdInput label="Nombres" v-model="user.nombres" :disabled="!editing" />
+            <JdInput label="Nombres" v-model="user.name" :disabled="!editing" />
 
             <JdSelect
                 label="Tipo de documento"
                 :lista="documentos_identidad"
-                v-model="user.doc_tipo"
+                v-model="user.document_type"
                 :disabled="!editing"
             />
 
-            <JdInput label="Número de documento" v-model="user.doc_numero" :disabled="!editing" />
+            <JdInput label="Número de documento" v-model="user.document_number" :disabled="!editing" />
 
-            <JdInput label="Teléfono" v-model="user.telefono1" :disabled="!editing" />
+            <JdInput label="Teléfono" v-model="user.phone1" :disabled="!editing" />
 
             <div>
-                <JdInput label="Correo" v-model="user.correo" :disabled="true" />
+                <JdInput label="Correo" v-model="user.email" :disabled="true" />
 
                 <p class="mt-2 text-xs leading-relaxed text-sunka-stone" v-if="editing">
                     Por tu seguridad, no es posible cambiar tu correo. Si quieres usar otro, crea
@@ -92,14 +92,14 @@ export default defineComponent({
         //     return Object.values(this.errors).every((e) => !e);
         // },
         shapeDatos() {
-            const { id, nombres, doc_tipo, doc_numero, telefono1 } = this.user
+            const { id, name, document_type, document_number, phone1 } = this.user
 
             return {
                 id,
-                nombres,
-                doc_tipo,
-                doc_numero,
-                telefono1,
+                name,
+                document_type,
+                document_number,
+                phone1,
                 tipo: 2,
                 comes_from: 'ecommerce',
             }

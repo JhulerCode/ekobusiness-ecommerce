@@ -119,7 +119,7 @@ test('espera la confirmación IPN antes de completar un checkout intent', async 
                 socio_pedido: {
                     codigo: 'draft',
                     monto: 10,
-                    socio_datos: {},
+                    partner_data: {},
                     entrega_tipo: 'retiro',
                     punto_retiro: 'planta-sunka',
                     fecha_entrega: '2099-01-01',
@@ -159,7 +159,7 @@ test('recupera un pago desde la cookie del intento sin repetir el cobro', async 
             body: JSON.stringify({
                 correo: 'cliente@example.com', paymentMethodToken: 'nueva',
                 socio_pedido: {
-                    socio_datos: {},
+                    partner_data: {},
                     entrega_tipo: 'retiro',
                     punto_retiro: 'planta-sunka',
                     fecha_entrega: '2099-01-01',

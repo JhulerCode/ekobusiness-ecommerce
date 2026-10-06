@@ -100,7 +100,10 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
 
 - **Code identifiers in English**: `get`, `formatProductos`, `productosFiltrados`, `applyUrlFilters`.
 - **Content/data fields in Spanish** (they mirror the backend): `nombre`, `descripcion`, `titulo`,
-  `fotos`, `precio`, `precio_anterior`, `unidad`, `slug`.
+  `fotos`, `precio`, `precio_anterior`, `unidad`, `slug`. Exception: customer/partner data mirrors
+  the ERP in English (`name`, `document_type`, `document_number`, `email`, `phone1`, `addresses`,
+  `contacts`, `partner_data`). Auth credentials (`correo`, `contrasena`, `codigo_verificacion`)
+  keep the frozen integration auth contract.
 - Files/components: **PascalCase** for `.astro`/`.vue` component files (except icons, see below);
   **kebab-case** for icon files (`icon-*.astro`, `chevron-left.vue`); lowercase for `.js` modules.
 - Keep Spanish strings unaccented vs accented inconsistent across the codebase; prefer accented

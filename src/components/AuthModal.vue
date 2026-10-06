@@ -294,7 +294,7 @@ export default defineComponent({
                 if (!res.ok) {
                     this.errors.general = res.problem.detail
                 } else {
-                    this.user = { correo: this.form.correo }
+                    this.user = { email: this.form.correo }
                     localStorage.setItem('login-correo', this.form.correo)
                     this.closeModal()
                     window.location.reload()
@@ -311,7 +311,7 @@ export default defineComponent({
                         this.errors.general = res.problem.detail
                     }
                 } else {
-                    this.user = { correo: this.form.correo }
+                    this.user = { email: this.form.correo }
                     this.closeModal()
                     window.location.href = '/account'
                 }
@@ -342,15 +342,15 @@ export default defineComponent({
     },
     computed: {
         userName() {
-            const nombres = typeof this.user.nombres === 'string'
-                ? this.user.nombres.trim()
+            const name = typeof this.user.name === 'string'
+                ? this.user.name.trim()
                 : ''
-            if (nombres) return nombres
+            if (name) return name
 
-            const correo = typeof this.user.correo === 'string'
-                ? this.user.correo.trim()
+            const email = typeof this.user.email === 'string'
+                ? this.user.email.trim()
                 : ''
-            return correo.split('@')[0]
+            return email.split('@')[0]
         },
     },
 })

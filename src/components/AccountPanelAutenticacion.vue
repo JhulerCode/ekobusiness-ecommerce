@@ -231,7 +231,7 @@ export default defineComponent({
 
         async sendCodigoVerificacion() {
             const send = {
-                correo: this.user.correo,
+                correo: this.user.email,
             };
 
             this.loading = true;
@@ -272,7 +272,7 @@ export default defineComponent({
             if (!this.validateForm1()) return;
 
             const send = {
-                correo: this.user.correo,
+                correo: this.user.email,
                 codigo_verificacion: this.form.codigo_verificacion,
             };
 

@@ -50,7 +50,7 @@ createServer((request, response) => {
         response.end(
             JSON.stringify({
                 data: {
-                    user: { id: 'user-1', correo: 'cliente@example.com', activo: true },
+                    user: { id: 'user-1', email: 'cliente@example.com', activo: true },
                     access_token: 'access-mock',
                     refresh_token: 'refresh-mock',
                 },
@@ -82,7 +82,7 @@ createServer((request, response) => {
         response.end(
             JSON.stringify(
                 authenticated
-                    ? { data: { id: 'user-1', correo: 'cliente@example.com' } }
+                    ? { data: { id: 'user-1', email: 'cliente@example.com' } }
                     : {
                           type: 'urn:itderp:problem:integration-customer-invalid-session',
                           title: 'Sesión inválida',
@@ -110,7 +110,7 @@ createServer((request, response) => {
                               monto: 25,
                               estado1: { nombre: 'RECIBIDO' },
                               moneda1: { simbolo: 'S/ ' },
-                              socio_datos: {},
+                              partner_data: {},
                               entrega_tipo1: {},
                               comprobante_tipo1: {},
                               pago_metodo1: {},

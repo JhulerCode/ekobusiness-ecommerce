@@ -288,18 +288,18 @@ const orderTitle = pedido
                                         <OrderSectionTitle number="01" title="Información de contacto" />
                                         <dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
                                             <OrderDetail label="Cliente">
-                                                {pedido.socio_datos?.nombres}{' '}
-                                                {pedido.socio_datos?.apellidos}
+                                                {pedido.partner_data?.name}{' '}
+                                                {pedido.partner_data?.apellidos}
                                             </OrderDetail>
                                             <OrderDetail label="Correo" breakable>
-                                                {pedido.socio_datos?.correo}
+                                                {pedido.partner_data?.email}
                                             </OrderDetail>
                                             <OrderDetail label="Documento">
-                                                {pedido.socio_datos?.doc_tipo1?.nombre}{' '}
-                                                {pedido.socio_datos?.doc_numero}
+                                                {pedido.partner_data?.document_type_entry?.nombre}{' '}
+                                                {pedido.partner_data?.document_number}
                                             </OrderDetail>
                                             <OrderDetail label="Teléfono">
-                                                {pedido.socio_datos?.telefono}
+                                                {pedido.partner_data?.phone1}
                                             </OrderDetail>
                                         </dl>
                                     </section>

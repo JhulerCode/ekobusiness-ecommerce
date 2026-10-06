@@ -180,7 +180,7 @@ export default defineComponent({
         userName() {
             if (!this.user) return "";
 
-            return this.user.nombres ? this.user.nombres : this.user.correo.split("@")[0];
+            return this.user.name ? this.user.name : this.user.email.split("@")[0];
         },
         menuText() {
             return this.menu.find((m) => m.key === this.active)?.label;

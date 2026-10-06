@@ -182,13 +182,13 @@
                             compra.
                         </p>
 
-                        <div class="grid md:grid-cols-2 gap-4" v-if="form.socio_datos">
+                        <div class="grid md:grid-cols-2 gap-4" v-if="form.partner_data">
                             <JdInput
                                 label="Correo"
                                 :nec="true"
                                 type="email"
-                                v-model="form.socio_datos.correo"
-                                :error="errors.correo"
+                                v-model="form.partner_data.email"
+                                :error="errors.email"
                             />
 
                             <div>
@@ -196,16 +196,16 @@
                                     label="Teléfono"
                                     :nec="true"
                                     type="tel"
-                                    v-model="form.socio_datos.telefono"
-                                    :error="errors.telefono"
+                                    v-model="form.partner_data.phone1"
+                                    :error="errors.phone1"
                                 />
                             </div>
 
                             <JdInput
                                 label="Nombres"
                                 :nec="true"
-                                v-model="form.socio_datos.nombres"
-                                :error="errors.nombres"
+                                v-model="form.partner_data.name"
+                                :error="errors.name"
                             />
 
                             <JdSelect
@@ -214,20 +214,20 @@
                                 :lista="
                                     documentos_identidad.filter((item) => Number(item.id) !== 6)
                                 "
-                                v-model="form.socio_datos.doc_tipo"
-                                :error="errors.doc_tipo"
+                                v-model="form.partner_data.document_type"
+                                :error="errors.document_type"
                             />
 
                             <JdInput
                                 label="Nro de documento"
                                 :nec="true"
-                                v-model="form.socio_datos.doc_numero"
-                                :error="errors.doc_numero"
+                                v-model="form.partner_data.document_number"
+                                :error="errors.document_number"
                             />
 
                             <JdCheckBox
                                 :nec="true"
-                                v-model="form.socio_datos.privacidad"
+                                v-model="form.partner_data.privacidad"
                                 :error="errors.privacidad"
                                 class="col-span-2"
                             >
@@ -249,18 +249,18 @@
 
                     <!-- Resumen cuando ya se completó -->
                     <div v-else class="checkout-completed">
-                        <div v-if="form.socio_datos">
+                        <div v-if="form.partner_data">
                             <p>
                                 <span class="font-medium">Correo:</span>
-                                {{ form.socio_datos.correo }}
+                                {{ form.partner_data.email }}
                             </p>
                             <p>
                                 <span class="font-medium">Teléfono:</span>
-                                {{ form.socio_datos.telefono }}
+                                {{ form.partner_data.phone1 }}
                             </p>
                             <p>
                                 <span class="font-medium">Nombre:</span>
-                                {{ form.socio_datos.nombres }}
+                                {{ form.partner_data.name }}
                             </p>
                         </div>
 
@@ -909,8 +909,8 @@ export default defineComponent({
             loading: false,
 
             form: {
-                socio_datos: {
-                    doc_tipo: 1,
+                partner_data: {
+                    document_type: 1,
                 },
 
                 entrega_tipo: 'envio',
@@ -1066,12 +1066,12 @@ export default defineComponent({
             if (!res.ok) return
 
             this.user = res.data
-            this.form.socio_datos.nombres = this.user.nombres
-            this.form.socio_datos.apellidos = this.user.apellidos
-            this.form.socio_datos.doc_tipo = this.user.doc_tipo
-            this.form.socio_datos.doc_numero = this.user.doc_numero
-            this.form.socio_datos.correo = this.user.correo
-            this.form.socio_datos.telefono = this.user.telefono1
+            this.form.partner_data.name = this.user.name
+            this.form.partner_data.apellidos = this.user.apellidos
+            this.form.partner_data.document_type = this.user.document_type
+            this.form.partner_data.document_number = this.user.document_number
+            this.form.partner_data.email = this.user.email
+            this.form.partner_data.phone1 = this.user.phone1
         },
         refreshItemPrices() {
             const isAuthenticated = Boolean(this.user.id)
@@ -1137,23 +1137,23 @@ export default defineComponent({
                 .map((item) => String(item.id))
             const validPaymentMethods = this.pago_metodos.map((item) => String(item.id))
 
-            Object.assign(this.form.socio_datos, saved.socio_datos || {}, { privacidad: false })
+            Object.assign(this.form.partner_data, saved.partner_data || {}, { privacidad: false })
 
             // Los datos de la cuenta son la fuente de verdad para un usuario autenticado.
             // Un borrador del mismo usuario solo debe restaurar el resto del checkout.
             if (this.user.id) {
-                Object.assign(this.form.socio_datos, {
-                    nombres: this.user.nombres,
+                Object.assign(this.form.partner_data, {
+                    name: this.user.name,
                     apellidos: this.user.apellidos,
-                    doc_tipo: this.user.doc_tipo,
-                    doc_numero: this.user.doc_numero,
-                    correo: this.user.correo,
-                    telefono: this.user.telefono1,
+                    document_type: this.user.document_type,
+                    document_number: this.user.document_number,
+                    email: this.user.email,
+                    phone1: this.user.phone1,
                 })
             }
 
-            if (!validDocumentTypes.includes(String(this.form.socio_datos.doc_tipo))) {
-                this.form.socio_datos.doc_tipo = this.documentos_identidad.find(
+            if (!validDocumentTypes.includes(String(this.form.partner_data.document_type))) {
+                this.form.partner_data.document_type = this.documentos_identidad.find(
                     (item) => Number(item.id) !== 6,
                 )?.id
             }
@@ -1208,17 +1208,17 @@ export default defineComponent({
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''))
 
             if (
-                !this.form.socio_datos.correo ||
-                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.socio_datos.correo)
+                !this.form.partner_data.email ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.partner_data.email)
             )
-                this.errors.correo = 'Ingrese un correo válido.'
-            if (!this.form.socio_datos.telefono) this.errors.telefono = 'Este campo es obligatorio.'
-            if (!this.form.socio_datos.nombres) this.errors.nombres = 'Este campo es obligatorio.'
-            if (!this.form.socio_datos.doc_tipo)
-                this.errors.doc_tipo = 'Seleccione un tipo de documento.'
-            if (!this.form.socio_datos.doc_numero)
-                this.errors.doc_numero = 'Este campo es obligatorio.'
-            if (!this.form.socio_datos.privacidad)
+                this.errors.email = 'Ingrese un correo válido.'
+            if (!this.form.partner_data.phone1) this.errors.phone1 = 'Este campo es obligatorio.'
+            if (!this.form.partner_data.name) this.errors.name = 'Este campo es obligatorio.'
+            if (!this.form.partner_data.document_type)
+                this.errors.document_type = 'Seleccione un tipo de documento.'
+            if (!this.form.partner_data.document_number)
+                this.errors.document_number = 'Este campo es obligatorio.'
+            if (!this.form.partner_data.privacidad)
                 this.errors.privacidad = 'Este campo es obligatorio.'
 
             return Object.values(this.errors).every((e) => !e)
@@ -1231,11 +1231,11 @@ export default defineComponent({
                     id: this.user.id,
                     tipo: 2,
                     comes_from: 'ecommerce',
-                    nombres: this.form.socio_datos.nombres,
-                    doc_tipo: this.form.socio_datos.doc_tipo,
-                    doc_numero: this.form.socio_datos.doc_numero,
-                    correo: this.form.socio_datos.correo,
-                    telefono1: this.form.socio_datos.telefono,
+                    name: this.form.partner_data.name,
+                    document_type: this.form.partner_data.document_type,
+                    document_number: this.form.partner_data.document_number,
+                    email: this.form.partner_data.email,
+                    phone1: this.form.partner_data.phone1,
                 }
 
                 this.loadingContinuarEntrega = true
@@ -1384,7 +1384,7 @@ export default defineComponent({
             this.form.tipo = 2
             this.form.origin = 'ecommerce'
             this.form.fecha = new Date().toISOString().split('T')[0]
-            this.form.socio = this.user.id
+            this.form.partner_id = this.user.id
 
             this.form.pago_condicion = '1'
             this.form.moneda = 'PEN'
@@ -1429,7 +1429,7 @@ export default defineComponent({
             }
             this.shapeDatos()
             const send = {
-                correo: this.form.socio_datos.correo,
+                correo: this.form.partner_data.email,
                 paymentMethodToken: this.form.paymentMethodToken,
                 socio_pedido: this.form,
             }

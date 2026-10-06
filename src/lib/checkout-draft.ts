@@ -26,12 +26,12 @@ function hash(value: string) {
 
 function allowedForm(form: DraftRecord) {
     return {
-        socio_datos: {
-            correo: form.socio_datos?.correo || '',
-            telefono: form.socio_datos?.telefono || '',
-            nombres: form.socio_datos?.nombres || '',
-            doc_tipo: form.socio_datos?.doc_tipo ?? null,
-            doc_numero: form.socio_datos?.doc_numero || '',
+        partner_data: {
+            email: form.partner_data?.email || '',
+            phone1: form.partner_data?.phone1 || '',
+            name: form.partner_data?.name || '',
+            document_type: form.partner_data?.document_type ?? null,
+            document_number: form.partner_data?.document_number || '',
         },
         entrega_tipo: form.entrega_tipo,
         punto_retiro: form.punto_retiro || null,

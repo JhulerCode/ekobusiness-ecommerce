@@ -39,7 +39,7 @@ export const jsonObjectSchema = z.record(z.string(), z.unknown())
 export const orderCreateSchema = z
     .object({
         codigo: identifier,
-        socio_datos: jsonObjectSchema,
+        partner_data: jsonObjectSchema,
     })
     .passthrough()
 
