@@ -3,7 +3,7 @@ import { allowedUploadTypes, arcoMetadataSchema, maxUploadBytes } from '@/lib/ap
 import { backendRequest, getClientIp } from '@/lib/server/backend'
 import { assertSameOrigin, forbiddenOrigin, invalidRequest, json } from '@/lib/server/bff'
 
-const fileFields = new Set(['doc_file', 'rep_doc_file', 'extras_doc', 'archivo', 'archivos'])
+const fileFields = new Set(['identity_document_file', 'representative_document_file', 'additional_documents', 'archivo', 'archivos'])
 
 export const POST: APIRoute = async (context) => {
     if (!assertSameOrigin(context.request)) return forbiddenOrigin()

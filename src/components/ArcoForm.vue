@@ -10,30 +10,30 @@
                 <JdInput
                     label="Nombres"
                     :nec="true"
-                    v-model="form.nombres"
-                    :error="errors.nombres"
+                    v-model="form.first_name"
+                    :error="errors.first_name"
                 />
 
                 <JdInput
                     label="Apellidos"
                     :nec="true"
-                    v-model="form.apellidos"
-                    :error="errors.apellidos"
+                    v-model="form.last_name"
+                    :error="errors.last_name"
                 />
 
                 <JdSelect
                     label="Tipo de documento"
                     :nec="true"
                     :lista="documentos_identidad"
-                    v-model="form.doc_tipo"
-                    :error="errors.doc_tipo"
+                    v-model="form.document_type"
+                    :error="errors.document_type"
                 />
 
                 <JdInput
                     label="Nro de documento"
                     :nec="true"
-                    v-model="form.doc_numero"
-                    :error="errors.doc_numero"
+                    v-model="form.document_number"
+                    :error="errors.document_number"
                 />
 
                 <!-- Adjuntar documento -->
@@ -41,7 +41,7 @@
                     <label class="label">Adjuntar documento*</label>
                     <input
                         type="file"
-                        @change="handleFile($event, 'doc_file')"
+                        @change="handleFile($event, 'identity_document_file')"
                         accept=".jpg,.jpeg,.png,.pdf"
                         class="input text-sm"
                     />
@@ -49,10 +49,10 @@
                         Máx. 5MB en formato jpg, jpeg, png o pdf
                     </p>
                     <p
-                        v-if="errors.doc_file"
+                        v-if="errors.identity_document_file"
                         class="text-left text-red-500 text-xs mt-1 ml-2"
                     >
-                        {{ errors.doc_file }}
+                        {{ errors.identity_document_file }}
                     </p>
                 </div>
 
@@ -66,8 +66,8 @@
                 <JdInput
                     label="Dirección"
                     :nec="true"
-                    v-model="form.domicilio"
-                    :error="errors.domicilio"
+                    v-model="form.address"
+                    :error="errors.address"
                 />
             </div>
         </div>
@@ -87,37 +87,30 @@
                 <JdInput
                     label="Nombres"
                     :nec="true"
-                    v-model="form.rep_nombres"
-                    :error="errors.rep_nombres"
+                    v-model="form.representative_first_name"
+                    :error="errors.representative_first_name"
                 />
 
                 <JdInput
-                    label="Nombres"
+                    label="Apellidos"
                     :nec="true"
-                    v-model="form.rep_apellidos"
-                    :error="errors.rep_apellidos"
-                />
-
-                <JdInput
-                    label="Nombres"
-                    :nec="true"
-                    v-model="form.rep_apellidos"
-                    :error="errors.rep_apellidos"
+                    v-model="form.representative_last_name"
+                    :error="errors.representative_last_name"
                 />
 
                 <JdSelect
                     label="Tipo de documento"
                     :nec="true"
                     :lista="documentos_identidad"
-                    v-model="form.rep_dot_tipo"
-                    :error="errors.rep_dot_tipo"
+                    v-model="form.representative_document_type"
+                    :error="errors.representative_document_type"
                 />
 
                 <JdInput
                     label="Nro de documento"
                     :nec="true"
-                    v-model="form.rep_doc_numero"
-                    :error="errors.rep_doc_numero"
+                    v-model="form.representative_document_number"
+                    :error="errors.representative_document_number"
                 />
 
                 <div>
@@ -126,7 +119,7 @@
                     >
                     <input
                         type="file"
-                        @change="handleFile($event, 'rep_doc_file')"
+                        @change="handleFile($event, 'representative_document_file')"
                         accept=".jpg,.jpeg,.png,.pdf"
                         class="input text-sm"
                     />
@@ -147,8 +140,8 @@
                 label="Tipo"
                 :nec="true"
                 :lista="solicitud_tipos"
-                v-model="form.tipo"
-                :error="errors.tipo"
+                v-model="form.request_type"
+                :error="errors.request_type"
                 :with-border="true"
             />
         </div>
@@ -157,15 +150,15 @@
         <div>
             <label class="label">Detalle de su solicitud*</label>
             <textarea
-                v-model.trim="form.detalle"
+                v-model.trim="form.description"
                 rows="4"
                 class="input"
             ></textarea>
             <p
-                v-if="errors.detalle"
+                v-if="errors.description"
                 class="text-left text-red-500 text-xs mt-1 ml-2"
             >
-                {{ errors.detalle }}
+                {{ errors.description }}
             </p>
         </div>
 
@@ -174,7 +167,7 @@
             <label class="label">Adjuntar documentos adicionales</label>
             <input
                 type="file"
-                @change="handleFile($event, 'extras_doc')"
+                @change="handleFile($event, 'additional_documents')"
                 accept=".jpg,.jpeg,.png,.pdf"
                 class="input text-sm"
             />
@@ -325,26 +318,26 @@ export default defineComponent({
         validateForm() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
-            if (!this.form.nombres) this.errors.nombres = 'Campo obligatorio.';
-            if (!this.form.apellidos)
-                this.errors.apellidos = 'Campo obligatorio.';
-            if (!this.form.doc_tipo)
-                this.errors.doc_tipo = 'Seleccione un tipo de documento.';
-            if (!this.form.doc_numero)
-                this.errors.doc_numero = 'Campo obligatorio.';
-            if (!this.form.doc_file)
-                this.errors.doc_file = 'Debe adjuntar su documento.';
+            if (!this.form.first_name) this.errors.first_name = 'Campo obligatorio.';
+            if (!this.form.last_name)
+                this.errors.last_name = 'Campo obligatorio.';
+            if (!this.form.document_type)
+                this.errors.document_type = 'Seleccione un tipo de documento.';
+            if (!this.form.document_number)
+                this.errors.document_number = 'Campo obligatorio.';
+            if (!this.form.identity_document_file)
+                this.errors.identity_document_file = 'Debe adjuntar su documento.';
             if (
                 !this.form.email ||
                 !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)
             )
                 this.errors.email = 'Ingrese un email válido.';
-            if (!this.form.domicilio)
-                this.errors.domicilio = 'Campo obligatorio.';
-            if (!this.form.tipo)
-                this.errors.tipo = 'Seleccione un tipo de solicitud.';
-            if (!this.form.detalle)
-                this.errors.detalle = 'Describa su solicitud.';
+            if (!this.form.address)
+                this.errors.address = 'Campo obligatorio.';
+            if (!this.form.request_type)
+                this.errors.request_type = 'Seleccione un tipo de solicitud.';
+            if (!this.form.description)
+                this.errors.description = 'Describa su solicitud.';
             if (!this.form.captcha)
                 this.errors.captcha = 'Resuelve el captcha.';
 
@@ -353,7 +346,7 @@ export default defineComponent({
 
         shapeDatos() {
             this.form.is_form_data = true;
-            this.form.fecha_recepcion = new Date();
+            this.form.received_date = new Date();
         },
 
         async submitForm() {
@@ -415,7 +408,7 @@ export default defineComponent({
                     // ✅ Limpiar todo el formulario
                     Object.keys(this.form).forEach((k) => {
                         if (
-                            ['doc_file', 'rep_doc_file', 'extras_doc'].includes(
+                            ['identity_document_file', 'representative_document_file', 'additional_documents'].includes(
                                 k
                             )
                         )
