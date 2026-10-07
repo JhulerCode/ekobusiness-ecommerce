@@ -7,7 +7,7 @@ export const urls = {
     arco: '/api/arco',
     izipay: '/api/izipay',
     libro_reclamos: '/api/libro-reclamos',
-    socio_pedidos: '/api/pedidos',
+    partner_orders: '/api/pedidos',
     newsletter: '/api/newsletter',
     sistema: '/api/sistema',
     ubigeos: '/api/ubigeos',

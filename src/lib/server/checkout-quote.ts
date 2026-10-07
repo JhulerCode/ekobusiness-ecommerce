@@ -18,11 +18,11 @@ interface CheckoutContext {
 }
 
 type QuoteItem = Product & {
-    cantidad: number
-    pu: number
-    blend_datos?: unknown
-    unidad?: string
-    igv_afectacion?: string
+    quantity: number
+    unit_price: number
+    blend_data?: unknown
+    unit?: string
+    igv_affectation?: string
 }
 
 function normalizeText(value: unknown) {
@@ -43,14 +43,14 @@ export function buildAuthoritativeCheckout(
     products: Array<Record<string, any>>,
     context: CheckoutContext,
 ) {
-    if (!['envio', 'retiro'].includes(String(draft.entrega_tipo))) {
+    if (!['envio', 'retiro'].includes(String(draft.delivery_type))) {
         throw new Error('INVALID_DELIVERY_TYPE')
     }
-    if (!isDeliveryDateAllowed(draft.fecha_entrega, context.now)) {
+    if (!isDeliveryDateAllowed(draft.delivery_date, context.now)) {
         throw new Error('INVALID_DELIVERY_DATE')
     }
-    const sourceItems = Array.isArray(draft.socio_pedido_items)
-        ? draft.socio_pedido_items
+    const sourceItems = Array.isArray(draft.partner_order_lines)
+        ? draft.partner_order_lines
         : []
     if (!sourceItems.length || sourceItems.length > 50) {
         throw new Error('INVALID_CART')
@@ -58,62 +58,62 @@ export function buildAuthoritativeCheckout(
 
     const productsById = new Map(products.map((product) => [String(product.id), product]))
     const quoteItems: QuoteItem[] = sourceItems.map((source) => {
-        const product = productsById.get(String(source.articulo || ''))
-        const cantidad = Number(source.cantidad)
-        const pu = product ? productPrice(product) : Number.NaN
+        const product = productsById.get(String(source.article_id || ''))
+        const quantity = Number(source.quantity)
+        const unit_price = product ? productPrice(product) : Number.NaN
         if (
-            !product || !Number.isFinite(cantidad) || cantidad <= 0 || cantidad > 100 ||
-            !Number.isFinite(pu) || pu < 0
+            !product || !Number.isFinite(quantity) || quantity <= 0 || quantity > 100 ||
+            !Number.isFinite(unit_price) || unit_price < 0
         ) {
             throw new Error('INVALID_CART')
         }
         return {
             ...product,
-            cantidad,
-            pu,
-            blend_datos: source.blend_datos,
+            quantity,
+            unit_price,
+            blend_data: source.blend_data,
         } as QuoteItem
     })
 
     if (
-        draft.entrega_tipo === 'envio' &&
+        draft.delivery_type === 'envio' &&
         normalizeText(context.ubigeo?.provincia) !== 'LIMA'
     ) {
         throw new Error('DELIVERY_OUTSIDE_LIMA')
     }
-    const pickupLocation = draft.entrega_tipo === 'retiro'
+    const pickupLocation = draft.delivery_type === 'retiro'
         ? getPickupLocation(draft.punto_retiro)
         : null
-    if (draft.entrega_tipo === 'retiro' && !pickupLocation) {
+    if (draft.delivery_type === 'retiro' && !pickupLocation) {
         throw new Error('INVALID_PICKUP_LOCATION')
     }
 
     const quote = evaluateCheckoutPromotions(quoteItems, {
         isClubMember: context.isClubMember,
-        deliveryType: draft.entrega_tipo,
+        deliveryType: draft.delivery_type,
     })
     const authoritativeItems = quoteItems.map((item) => ({
-        articulo: item.id,
-        nombre: item.ecommerce_data?.name || item.name,
-        unidad: item.unit,
-        cantidad: item.cantidad,
-        pu: item.pu,
-        igv_afectacion: item.igv_affectation,
-        igv_porcentaje: 18,
-        blend_datos: item.blend_datos,
+        article_id: item.id,
+        name: item.ecommerce_data?.name || item.name,
+        unit: item.unit,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        igv_affectation: item.igv_affectation,
+        igv_rate: 18,
+        blend_data: item.blend_data,
     }))
 
     const { punto_retiro: _untrustedPickup, ...deliveryAddressData } =
-        draft.entrega_direccion_datos || {}
+        draft.delivery_address_data || {}
 
     return {
         ...draft,
-        monto: quote.total,
-        entrega_costo: quote.deliveryCost,
-        direccion_entrega: draft.entrega_tipo === 'retiro'
+        amount: quote.total,
+        delivery_cost: quote.deliveryCost,
+        delivery_address: draft.delivery_type === 'retiro'
             ? pickupLocation?.direccion
-            : draft.direccion_entrega,
-        entrega_direccion_datos: draft.entrega_tipo === 'envio'
+            : draft.delivery_address,
+        delivery_address_data: draft.delivery_type === 'envio'
             ? {
                 ...deliveryAddressData,
                 ubigeo1: context.ubigeo,
@@ -127,12 +127,12 @@ export function buildAuthoritativeCheckout(
                 },
                 horario: DELIVERY_TIME_RANGE,
             },
-        promociones: quote.appliedPromotions.map((promotion) => ({
+        promotions: quote.appliedPromotions.map((promotion) => ({
             ...promotion,
             policy: 'sunka-checkout',
             version: CHECKOUT_POLICY_VERSION,
         })),
-        socio_pedido_items: authoritativeItems,
+        partner_order_lines: authoritativeItems,
     }
 }
 
@@ -140,17 +140,17 @@ export async function prepareCheckoutOrder(
     context: APIContext,
     draft: CheckoutDraft,
 ): Promise<ApiResult<CheckoutDraft>> {
-    const sourceItems = Array.isArray(draft.socio_pedido_items)
-        ? draft.socio_pedido_items
+    const sourceItems = Array.isArray(draft.partner_order_lines)
+        ? draft.partner_order_lines
         : []
-    const ids = [...new Set(sourceItems.map((item) => String(item.articulo || '')).filter(Boolean))]
+    const ids = [...new Set(sourceItems.map((item) => String(item.article_id || '')).filter(Boolean))]
     if (!ids.length || ids.length > 50) {
         return failure(422, 'invalid-cart', 'Carrito no válido', 'El carrito no contiene productos válidos.')
     }
 
     const productPath = `productos?ids=${encodeURIComponent(ids.join(','))}`
-    const ubigeoPath = draft.entrega_tipo === 'envio' && draft.entrega_ubigeo
-        ? `locations/ubigeos?id=${encodeURIComponent(String(draft.entrega_ubigeo))}`
+    const ubigeoPath = draft.delivery_type === 'envio' && draft.delivery_ubigeo_id
+        ? `locations/ubigeos?id=${encodeURIComponent(String(draft.delivery_ubigeo_id))}`
         : null
     const [productsResult, ubigeoResult, session] = await Promise.all([
         backendRequest<Product[]>(productPath),

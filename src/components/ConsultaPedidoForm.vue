@@ -25,7 +25,7 @@
             <JdInput
                 label="Número de pedido"
                 :nec="true"
-                v-model="codigo"
+                v-model="orderCode"
                 placeholder="Ejemplo: 1762018452516211"
                 :error="error"
                 maxlength="30"
@@ -36,9 +36,9 @@
                 v-if="!showResend"
                 label="Código de consulta"
                 :nec="true"
-                v-model="codigoConsulta"
+                v-model="lookupCode"
                 placeholder="Ejemplo: 482193"
-                :error="codigoConsultaError"
+                :error="lookupCodeError"
                 maxlength="6"
             />
 
@@ -76,9 +76,9 @@
                 <JdInput
                     label="Correo de la compra"
                     type="email"
-                    v-model="correo"
+                    v-model="email"
                     placeholder="tu@correo.com"
-                    :error="correoError"
+                    :error="emailError"
                     maxlength="254"
                 />
                 <button
@@ -127,12 +127,12 @@ export default defineComponent({
     },
     data() {
         return {
-            codigo: '',
-            codigoConsulta: '',
-            correo: '',
+            orderCode: '',
+            lookupCode: '',
+            email: '',
             error: '',
-            codigoConsultaError: '',
-            correoError: '',
+            lookupCodeError: '',
+            emailError: '',
             loading: false,
             resendLoading: false,
             resendMessage: '',
@@ -142,21 +142,21 @@ export default defineComponent({
     methods: {
         async consultarPedido() {
             this.error = ''
-            this.codigoConsultaError = ''
-            if (!this.codigo.trim()) {
+            this.lookupCodeError = ''
+            if (!this.orderCode.trim()) {
                 this.error = 'Por favor, ingresa un número de pedido.'
             }
-            if (!/^\d{6}$/.test(this.codigoConsulta.trim())) {
-                this.codigoConsultaError = 'Ingresa el código de seis dígitos.'
+            if (!/^\d{6}$/.test(this.lookupCode.trim())) {
+                this.lookupCodeError = 'Ingresa el código de seis dígitos.'
             }
-            if (this.error || this.codigoConsultaError) return
+            if (this.error || this.lookupCodeError) return
 
             this.loading = true
             const res = await post(
-                `${urls.socio_pedidos}/consulta`,
+                `${urls.partner_orders}/consulta`,
                 {
-                    codigo: this.codigo.trim(),
-                    codigo_consulta: this.codigoConsulta.trim(),
+                    order_code: this.orderCode.trim(),
+                    lookup_code: this.lookupCode.trim(),
                 },
                 false,
             )
@@ -170,21 +170,21 @@ export default defineComponent({
         },
         async reenviarCodigo() {
             this.error = ''
-            this.correoError = ''
+            this.emailError = ''
             this.resendMessage = ''
 
-            if (!this.codigo.trim()) {
+            if (!this.orderCode.trim()) {
                 this.error = 'Por favor, ingresa un número de pedido.'
             }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.correo.trim())) {
-                this.correoError = 'Ingresa el correo utilizado en la compra.'
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim())) {
+                this.emailError = 'Ingresa el correo utilizado en la compra.'
             }
-            if (this.error || this.correoError) return
+            if (this.error || this.emailError) return
 
             this.resendLoading = true
             const res = await post(
-                `${urls.socio_pedidos}/consulta/reenviar`,
-                { codigo: this.codigo.trim(), correo: this.correo.trim() },
+                `${urls.partner_orders}/consulta/reenviar`,
+                { order_code: this.orderCode.trim(), email: this.email.trim() },
                 false,
             )
             this.resendLoading = false
@@ -195,8 +195,8 @@ export default defineComponent({
         },
         toggleResendMode() {
             this.showResend = !this.showResend
-            this.codigoConsultaError = ''
-            this.correoError = ''
+            this.lookupCodeError = ''
+            this.emailError = ''
             this.resendMessage = ''
         },
     },

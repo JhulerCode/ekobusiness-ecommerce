@@ -21,12 +21,12 @@
             <div class="checkout-success__icon" aria-hidden="true">✓</div>
 
             <p class="checkout-success__eyebrow">
-                {{ form.pago_metodo === 'yape' ? 'Pedido recibido' : 'Pago confirmado' }}
+                {{ form.payment_method === 'yape' ? 'Pedido recibido' : 'Pago confirmado' }}
             </p>
 
             <h2>
                 {{
-                    form.pago_metodo === 'yape'
+                    form.payment_method === 'yape'
                         ? 'Tu pedido fue recibido'
                         : 'Tu compra está confirmada'
                 }}
@@ -34,18 +34,18 @@
 
             <p class="checkout-success__lead">
                 {{
-                    form.pago_metodo === 'yape'
+                    form.payment_method === 'yape'
                         ? 'En unos momentos recibirás un correo con todos los detalles de tu pedido.'
                         : 'Procesamos tu pago correctamente. En unos momentos recibirás un correo con los detalles de tu compra.'
                 }}
             </p>
 
-            <div v-if="form.codigo" class="checkout-success__order">
+            <div v-if="form.order_code" class="checkout-success__order">
                 <span>Número de pedido</span>
-                <strong>{{ form.codigo }}</strong>
+                <strong>{{ form.order_code }}</strong>
             </div>
 
-            <div v-if="form.pago_metodo === 'yape'" class="checkout-success__notice">
+            <div v-if="form.payment_method === 'yape'" class="checkout-success__notice">
                 <span>Pago por validar</span>
                 <p>
                     Nuestro equipo verificará el pago realizado por Yape y actualizará el estado de
@@ -55,7 +55,7 @@
 
             <div class="checkout-success__actions">
                 <a :href="orderDetailUrl" class="checkout-success__action is-primary">
-                    {{ form.pago_metodo === 'yape' ? 'Ver estado del pedido' : 'Ver mi pedido' }}
+                    {{ form.payment_method === 'yape' ? 'Ver estado del pedido' : 'Ver mi pedido' }}
                 </a>
                 <a href="/tienda" class="checkout-success__action is-secondary">
                     Seguir comprando
@@ -76,9 +76,9 @@
             <p class="checkout-success__lead">
                 {{ pendingPaymentMessage }}
             </p>
-            <div v-if="form.codigo" class="checkout-success__order">
+            <div v-if="form.order_code" class="checkout-success__order">
                 <span>Número de pedido</span>
-                <strong>{{ form.codigo }}</strong>
+                <strong>{{ form.order_code }}</strong>
             </div>
             <div v-if="paymentLookupCode" class="checkout-success__order">
                 <span>Código de consulta</span>
@@ -543,7 +543,7 @@
                             label="Método de pago"
                             :nec="true"
                             :lista="pago_metodos"
-                            v-model="form.pago_metodo"
+                            v-model="form.payment_method"
                             :error="errors.pago_metodo"
                             :withBorder="true"
                             @change="errors = {}"
@@ -551,7 +551,7 @@
 
                         <div class="space-y-4 bg-gray-50 p-4 rounded-xl">
                             <!-- Si el método es TARJETA -->
-                            <template v-if="form.pago_metodo === 'tarjeta'">
+                            <template v-if="form.payment_method === 'tarjeta'">
                                 <!-- <JdButton
                                     text="Recargar wallet"
                                     @click="getCustomerWallet"
@@ -635,7 +635,7 @@
                             </template>
 
                             <!-- Si el método es YAPE -->
-                            <template v-else-if="form.pago_metodo === 'yape'">
+                            <template v-else-if="form.payment_method === 'yape'">
                                 <p class="text-gray-500 text-sm">
                                     Escanea el QR con tu app Yape, realiza el pago y luego ingresa
                                     el código de operación. Nuestro equipo verificará la transacción
@@ -980,12 +980,12 @@ export default defineComponent({
         summaryActionText() {
             if (this.step === 1) return 'Continuar: elegir entrega'
             if (this.step === 2) return 'Continuar: elegir pago'
-            if (this.form.pago_metodo === 'yape') return 'Procesar compra'
+            if (this.form.payment_method === 'yape') return 'Procesar compra'
             return 'Ir a pagar'
         },
         summaryActionMobileText() {
             if (this.step !== 3) return 'Continuar'
-            return this.form.pago_metodo === 'yape' ? 'Procesar compra' : 'Ir a pagar'
+            return this.form.payment_method === 'yape' ? 'Procesar compra' : 'Ir a pagar'
         },
         summaryActionLoading() {
             if (this.step === 1) return this.loadingContinuarEntrega
@@ -1014,7 +1014,7 @@ export default defineComponent({
 
             window.dispatchEvent(
                 new CustomEvent('checkout:success', {
-                    detail: { paymentMethod: this.form.pago_metodo },
+                    detail: { paymentMethod: this.form.payment_method },
                 }),
             )
         },
@@ -1196,7 +1196,7 @@ export default defineComponent({
             this.form.comprobante_razon_social = saved.comprobante_razon_social || ''
 
             if (validPaymentMethods.includes(String(saved.pago_metodo))) {
-                this.form.pago_metodo = saved.pago_metodo
+                this.form.payment_method = saved.pago_metodo
             }
 
             this.form.paymentMethodToken = null
@@ -1371,10 +1371,10 @@ export default defineComponent({
                     this.errors.comprobante_razon_social = 'Este campo es obligatorio.'
             }
 
-            if (this.form.pago_metodo == 'tarjeta') {
+            if (this.form.payment_method == 'tarjeta') {
                 if (!this.form.paymentMethodToken)
                     this.errors.paymentMethodToken = 'Seleccione una tarjeta.'
-            } else if (this.form.pago_metodo == 'yape') {
+            } else if (this.form.payment_method == 'yape') {
                 if (!this.form.pago_id) this.errors.pago_id = 'Este campo es obligatorio.'
             }
 
@@ -1390,20 +1390,20 @@ export default defineComponent({
             this.form.moneda = 'PEN'
             this.form.monto = this.total.toFixed(2)
 
-            this.form.socio_pedido_items = this.items
+            this.form.partner_order_items = this.items
             this.form.entrega_costo = this.costoEnvio
 
-            if (this.form.pago_metodo == 'yape') {
-                this.form.codigo = genId()
+            if (this.form.payment_method == 'yape') {
+                this.form.order_code = genId()
             }
         },
         async pagar() {
             if (this.loadingPagar || this.paymentVerifying) return
             if (!this.validarForm3()) return
 
-            if (this.form.pago_metodo == 'tarjeta') {
+            if (this.form.payment_method == 'tarjeta') {
                 await this.pagarConTarjeta()
-            } else if (this.form.pago_metodo == 'yape') {
+            } else if (this.form.payment_method == 'yape') {
                 await this.pagarConYape()
             }
         },
@@ -1429,9 +1429,9 @@ export default defineComponent({
             }
             this.shapeDatos()
             const send = {
-                correo: this.form.partner_data.email,
+                email: this.form.partner_data.email,
                 paymentMethodToken: this.form.paymentMethodToken,
-                socio_pedido: this.form,
+                partner_order: this.form,
             }
 
             this.loadingPagar = true
@@ -1445,7 +1445,7 @@ export default defineComponent({
                     this.errors.general = res.problem.detail
                     return
                 }
-                this.form.codigo = res.data.orderId
+                this.form.order_code = res.data.order_code
                 this.form.id = res.data.order_id
                 this.form.redirect_url = res.data.redirect_url
                 this.paymentLookupCode = res.data.lookup_code
@@ -1561,7 +1561,7 @@ export default defineComponent({
             this.paymentPendingFailed = false
             this.form.id = result.data.id
             this.form.redirect_url = result.data.redirect_url
-            this.form.codigo = result.data.codigo
+            this.form.order_code = result.data.order_code
             this.errors.general = result.warnings?.[0]?.detail || ''
             this.activePaymentIntent = null
             this.paymentOutcomeUncertain = false
@@ -1618,7 +1618,7 @@ export default defineComponent({
             this.shapeDatos()
 
             this.loadingPagar = true
-            const res = await post(urls.socio_pedidos, this.form, undefined)
+            const res = await post(urls.partner_orders, this.form, undefined)
             this.loadingPagar = false
 
             if (!res.ok) {
@@ -1627,7 +1627,7 @@ export default defineComponent({
                 this.paymentSuccess = true
                 this.form.id = res.data.id
                 this.form.redirect_url = res.data.redirect_url
-                this.form.codigo = res.data.codigo
+                this.form.order_code = res.data.order_code
                 this.errors.general = res.warnings?.[0]?.detail || ''
                 Cart.clear()
                 CheckoutDraft.clear()

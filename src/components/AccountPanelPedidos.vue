@@ -27,7 +27,7 @@
                 class="flex flex-col gap-5 bg-sunka-white p-5 transition-colors hover:bg-sunka-cream/55 sm:flex-row sm:items-start sm:justify-between sm:p-6"
             >
                 <div>
-                    <p class="font-heading text-lg font-semibold text-sunka-forest">Pedido #{{ a.codigo }}</p>
+                    <p class="font-heading text-lg font-semibold text-sunka-forest">Pedido #{{ a.code }}</p>
 
                     <p class="mt-1 text-xs leading-relaxed text-sunka-stone sm:text-sm">
                         {{ new Date(a.fecha).toLocaleDateString("es-PE") }} |
@@ -101,7 +101,7 @@ export default defineComponent({
     methods: {
         async loadPedidos() {
             this.loading = true;
-            const res = await get('socio_pedidos')
+            const res = await get('partner_orders')
             this.loading = false;
 
             if (!res.ok) return;
@@ -112,7 +112,7 @@ export default defineComponent({
             this.error = ''
             this.openingOrderId = id
             const res = await post(
-                `${urls.socio_pedidos}/${id}/access`,
+                `${urls.partner_orders}/${id}/access`,
                 {},
                 false,
             )

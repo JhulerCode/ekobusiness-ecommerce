@@ -15,8 +15,8 @@ function item(line: string, presentation: number, quantity: number, price = 1) {
     return {
         line_name: line,
         presentation: [{ label: 'Saquitos', value: presentation }],
-        cantidad: quantity,
-        pu: price,
+        quantity,
+        unit_price: price,
     }
 }
 
@@ -107,8 +107,8 @@ describe('promociones del checkout', () => {
         const quote = evaluateCheckoutPromotions([{
             line_name: 'Luxury',
             presentation: [{ label: 'Peso', value: 10 }, { label: 'Saquitos', value: 50 }],
-            cantidad: 3,
-            pu: 1,
+            quantity: 3,
+            unit_price: 1,
         }])
         expect(quote.matchedPromotions).toHaveLength(0)
         expect(quote.deliveryCost).toBe(10)
@@ -116,12 +116,12 @@ describe('promociones del checkout', () => {
 
     it('el servidor de Astro reemplaza montos y promociones enviados por el navegador', () => {
         const order = buildAuthoritativeCheckout({
-            entrega_tipo: 'envio',
-            entrega_costo: 0,
-            monto: 0,
-            promociones: [{ key: 'inventada' }],
-            fecha_entrega: '2026-08-23',
-            socio_pedido_items: [{ articulo: 'product-1', cantidad: 1, pu: 0 }],
+            delivery_type: 'envio',
+            delivery_cost: 0,
+            amount: 0,
+            promotions: [{ key: 'inventada' }],
+            delivery_date: '2026-08-23',
+            partner_order_lines: [{ article_id: 'product-1', quantity: 1, unit_price: 0 }],
         }, [{
             id: 'product-1',
             name: 'Producto tradicional',
@@ -138,18 +138,18 @@ describe('promociones del checkout', () => {
             now: new Date('2026-08-22T19:00:00.000Z'),
         })
 
-        expect(order.entrega_costo).toBe(10)
-        expect(order.monto).toBe(30)
-        expect(order.promociones).toEqual([])
-        expect(order.socio_pedido_items[0].pu).toBe(20)
-        expect(order.entrega_direccion_datos.ubigeo1.provincia).toBe('LIMA')
+        expect(order.delivery_cost).toBe(10)
+        expect(order.amount).toBe(30)
+        expect(order.promotions).toEqual([])
+        expect(order.partner_order_lines[0].unit_price).toBe(20)
+        expect(order.delivery_address_data.ubigeo1.provincia).toBe('LIMA')
     })
 
     it('el servidor de Astro valida Lima con el ubigeo obtenido del ERP', () => {
         expect(() => buildAuthoritativeCheckout({
-            entrega_tipo: 'envio',
-            fecha_entrega: '2026-08-23',
-            socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
+            delivery_type: 'envio',
+            delivery_date: '2026-08-23',
+            partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
         }, [{
             id: 'product-1',
             name: 'Producto',
@@ -164,10 +164,10 @@ describe('promociones del checkout', () => {
 
     it('el servidor de Astro rechaza una fecha anterior a la permitida', () => {
         expect(() => buildAuthoritativeCheckout({
-            entrega_tipo: 'retiro',
+            delivery_type: 'retiro',
             punto_retiro: 'oficina-ekobusiness',
-            fecha_entrega: '2026-08-29',
-            socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
+            delivery_date: '2026-08-29',
+            partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
         }, [{
             id: 'product-1',
             name: 'Producto',
@@ -181,15 +181,15 @@ describe('promociones del checkout', () => {
 
     it('el servidor guarda el punto de retiro oficial y descarta una dirección manipulada', () => {
         const order = buildAuthoritativeCheckout({
-            entrega_tipo: 'retiro',
+            delivery_type: 'retiro',
             punto_retiro: 'planta-sunka',
-            direccion_entrega: 'Dirección inventada',
-            entrega_direccion_datos: {
+            delivery_address: 'Dirección inventada',
+            delivery_address_data: {
                 punto_retiro: { nombre: 'Local inventado' },
                 horario: 'Todo el día',
             },
-            fecha_entrega: '2026-08-30',
-            socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
+            delivery_date: '2026-08-30',
+            partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
         }, [{
             id: 'product-1',
             name: 'Producto',
@@ -200,10 +200,10 @@ describe('promociones del checkout', () => {
             now: new Date('2026-08-28T19:00:00.000Z'),
         })
 
-        expect(order.direccion_entrega).toBe(
+        expect(order.delivery_address).toBe(
             'Cal. 7 Mza. D Lote 10 Urb. Los Productores, Santa Anita',
         )
-        expect(order.entrega_direccion_datos).toEqual({
+        expect(order.delivery_address_data).toEqual({
             punto_retiro: {
                 id: 'planta-sunka',
                 nombre: 'Planta Sunka',
@@ -215,10 +215,10 @@ describe('promociones del checkout', () => {
 
     it('el servidor rechaza puntos de retiro que no pertenecen al catálogo', () => {
         expect(() => buildAuthoritativeCheckout({
-            entrega_tipo: 'retiro',
+            delivery_type: 'retiro',
             punto_retiro: 'local-inventado',
-            fecha_entrega: '2026-08-30',
-            socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
+            delivery_date: '2026-08-30',
+            partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
         }, [{
             id: 'product-1',
             name: 'Producto',

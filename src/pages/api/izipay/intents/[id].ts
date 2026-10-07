@@ -14,7 +14,7 @@ export const GET: APIRoute = async (context) => {
         status?: 'processing' | 'payment_failed' | 'manual_review' | 'completed'
         checkout_intent_id?: string
         id?: string
-        codigo?: string
+        order_code?: string
         access_token?: string
     }>(context, `payments/izipay/intents/${encodeURIComponent(parsed.data)}/status`, {
         checkoutToken,

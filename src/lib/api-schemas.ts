@@ -17,11 +17,11 @@ export const registerSchema = signInSchema.extend({
 })
 
 export const orderLookupSchema = z
-    .object({ codigo: z.string().trim().min(1).max(30), codigo_consulta: z.string().regex(/^\d{6}$/) })
+    .object({ order_code: z.string().trim().min(1).max(30), lookup_code: z.string().regex(/^\d{6}$/) })
     .strict()
 
 export const orderResendSchema = z
-    .object({ codigo: z.string().trim().min(1).max(30), correo: email })
+    .object({ order_code: z.string().trim().min(1).max(30), email })
     .strict()
 
 export const accountCodeSchema = z.object({ correo: email }).passthrough()
@@ -38,16 +38,16 @@ export const jsonObjectSchema = z.record(z.string(), z.unknown())
 
 export const orderCreateSchema = z
     .object({
-        codigo: identifier,
+        order_code: identifier,
         partner_data: jsonObjectSchema,
     })
     .passthrough()
 
 export const createPaymentSchema = z
     .object({
-        correo: email,
+        email,
         paymentMethodToken: z.string().max(500).optional(),
-        socio_pedido: jsonObjectSchema,
+        partner_order: jsonObjectSchema,
     })
     .strict()
 

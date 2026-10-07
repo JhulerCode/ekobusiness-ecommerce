@@ -8,7 +8,7 @@ export const POST: APIRoute = async (context) => {
     if (!assertSameOrigin(context.request)) return forbiddenOrigin()
     const parsed = await parseJson(context.request, createPaymentSchema)
     if (!parsed.success) return invalidRequest()
-    const prepared = await prepareCheckoutOrder(context, parsed.data.socio_pedido)
+    const prepared = await prepareCheckoutOrder(context, parsed.data.partner_order)
     if (!prepared.ok) {
         console.error(`[create-payment] prepareCheckoutOrder -> ${prepared.status} ${prepared.problem.type}`)
         return json(prepared)
@@ -17,7 +17,7 @@ export const POST: APIRoute = async (context) => {
         formToken?: string
         checkout_intent_id?: string
         checkout_access_token?: string
-        orderId?: string
+        order_code?: string
         order_id?: string
         order_access_token?: string
         lookup_code?: string
@@ -26,7 +26,7 @@ export const POST: APIRoute = async (context) => {
         expires_at?: string
     }>(context, 'payments/izipay/form-token', {
         method: 'POST',
-        body: JSON.stringify({ ...parsed.data, socio_pedido: prepared.data }),
+        body: JSON.stringify({ ...parsed.data, partner_order: prepared.data }),
     })
     if (!result.ok) {
         console.error(`[create-payment] form-token -> ${result.status} ${result.problem.type}`)
@@ -35,7 +35,7 @@ export const POST: APIRoute = async (context) => {
     const data = result.data
     if (
         !data?.formToken || !data.checkout_intent_id || !data.checkout_access_token ||
-        !data.orderId || !data.order_id || !data.order_access_token || !data.lookup_code
+        !data.order_code || !data.order_id || !data.order_access_token || !data.lookup_code
     ) {
         console.error('[create-payment] form-token sin campos requeridos')
         return json(failure(502, 'upstream-contract-error', 'Respuesta no válida', 'El servicio devolvió una respuesta no válida.'))

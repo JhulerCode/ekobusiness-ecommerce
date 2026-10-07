@@ -105,7 +105,7 @@ describe('contratos del ecommerce', () => {
 
         for (const path of sourceFiles) {
             const source = readFileSync(path, 'utf8')
-            expect(source, path).not.toMatch(/\.code\b|\bcode\s*:/)
+            expect(source, path).not.toMatch(/\bcodigo\s*:/)
             expect(source, path).not.toMatch(/['"]qry['"]|\bfltr\s*:|\bcols\s*:|\bincl\s*:|\bop\s*:\s*['"]/)
         }
     })

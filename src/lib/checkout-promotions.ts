@@ -4,8 +4,8 @@ export const CLUB_FREE_SHIPPING_MINIMUM = 65
 export const CHECKOUT_POLICY_VERSION = 1
 
 type PromotionItem = Record<string, any> & {
-    cantidad?: number
-    pu?: number
+    quantity?: number
+    unit_price?: number
 }
 
 export type PromotionRequirement = {
@@ -236,7 +236,7 @@ export function evaluateCheckoutPromotions(
     { isClubMember = false, deliveryType = 'envio' } = {},
 ) {
     const subtotal = items.reduce(
-        (sum, item) => sum + Number(item.pu || 0) * Number(item.cantidad || 0),
+        (sum, item) => sum + Number(item.unit_price || 0) * Number(item.quantity || 0),
         0,
     )
     const quantities = new Map<string, number>()
@@ -245,7 +245,7 @@ export function evaluateCheckoutPromotions(
         const presentation = getProductPresentation(item)
         if (!line || presentation == null) continue
         const key = `${line}:${presentation}`
-        quantities.set(key, (quantities.get(key) || 0) + Number(item.cantidad || 0))
+        quantities.set(key, (quantities.get(key) || 0) + Number(item.quantity || 0))
     }
 
     const audience = isClubMember ? 'club' : 'general'

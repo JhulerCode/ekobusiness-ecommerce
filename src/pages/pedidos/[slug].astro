@@ -96,33 +96,33 @@ if (orderError && errorStatus !== null) {
         Astro.response.headers.set('Retry-After', String(Math.ceil(retryAfterSeconds)))
     }
 }
-let etapas: Array<Record<string, any>> = []
+let stages: Array<Record<string, any>> = []
 
 if (pedido) {
     const systemResponse = await get('sistema', {
         keys: [
-            'socio_pedidos_etapas',
-            'entrega_tipos',
-            'pago_metodos',
-            'comprobante_tipos',
+            'partner_order_stages',
+            'delivery_types',
+            'payment_methods',
+            'invoice_types',
         ],
     })
 
     if (systemResponse.ok) {
-        etapas = (systemResponse.data?.socio_pedidos_etapas || []).map((etapa: Record<string, any>) => ({
+        stages = (systemResponse.data?.partner_order_stages || []).map((etapa: Record<string, any>) => ({
             ...etapa,
-            fecha: (pedido.etapas || []).find((item: Record<string, any>) => item.id == etapa.id)?.fecha || null,
+            fecha: (pedido.stages || []).find((item: Record<string, any>) => item.id == etapa.id)?.fecha || null,
         }))
     }
 }
 
 const orderState = pedido?.estado1?.nombre || ''
-const lastCompletedStageIndex = etapas.reduce(
+const lastCompletedStageIndex = stages.reduce(
     (lastIndex: number, etapa: Record<string, any>, index: number) =>
         etapa.fecha ? index : lastIndex,
     -1,
 )
-const orderItems: Array<Record<string, any>> = pedido?.socio_pedido_items || []
+const orderItems: Array<Record<string, any>> = pedido?.partner_order_lines || []
 
 const parseOrderCollection = (value: unknown): Array<Record<string, any>> => {
     if (Array.isArray(value)) {
@@ -189,7 +189,7 @@ const paymentState = pedido?.pagado
 const paymentFailed = pedido?.pago_estado === 'payment_failed'
 const paymentReview = pedido?.pago_estado === 'manual_review'
 const orderTitle = pedido
-    ? `Pedido ${pedido.codigo} | SUNKA Herbal Tea`
+    ? `Pedido ${pedido.code} | SUNKA Herbal Tea`
     : `${orderError?.title || 'Pedido no encontrado'} | SUNKA Herbal Tea`
 ---
 
@@ -233,7 +233,7 @@ const orderTitle = pedido
                             </div>
 
                             <h1 class="font-heading text-3xl font-semibold leading-tight md:text-5xl">
-                                Pedido <span class="break-all text-sunka-brass-light">#{pedido.codigo}</span>
+                                Pedido <span class="break-all text-sunka-brass-light">#{pedido.code}</span>
                             </h1>
                             <p class="mt-5 max-w-xl text-sm leading-relaxed text-sunka-white/65 md:text-base">
                                 Revisa los detalles de tu compra y acompaña cada etapa hasta recibir
@@ -486,13 +486,13 @@ const orderTitle = pedido
                                     </header>
 
                                     <ol class="px-6 py-7">
-                                        {etapas.map((etapa, index) => {
+                                        {stages.map((etapa, index) => {
                                             const completed = Boolean(etapa.fecha)
                                             const current = index === lastCompletedStageIndex
 
                                             return (
                                                 <li class="relative grid grid-cols-[28px_1fr] gap-3 pb-8 last:pb-0">
-                                                    {index < etapas.length - 1 && (
+                                                    {index < stages.length - 1 && (
                                                         <span
                                                             class:list={[
                                                                 'absolute left-[6px] top-4 h-[calc(100%-4px)] w-px',
