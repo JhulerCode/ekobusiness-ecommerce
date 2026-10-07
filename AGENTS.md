@@ -103,9 +103,9 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
   `name`, `short_description`, `description`, `photos`, `photo`, `price`, `club_price`,
   `previous_price`, `regular_price`, `presentation`, `certifications`, `sensory_profile`,
   `preparation`, `related_products`, `is_featured`, `unit`, `slug`. Exception: customer/partner data mirrors
-  the ERP in English (`name`, `document_type`, `document_number`, `email`, `phone1`, `addresses`,
-  `contacts`, `partner_data`). Auth credentials (`correo`, `contrasena`, `codigo_verificacion`)
-  keep the frozen integration auth contract. Static site data (`src/data/`, blend customizer,
+  the ERP in English (`name`, `document_type`, `document_number`, `email`,   `phone1`, `addresses`,
+  `contacts`, `partner_data`). Auth credentials use the English integration contract (`email`,
+  `password`, `verification_code`, `password_updated_at`). Static site data (`src/data/`, blend customizer,
   pickup locations) and UI filter state keep their existing Spanish keys.
 - Files/components: **PascalCase** for `.astro`/`.vue` component files (except icons, see below);
   **kebab-case** for icon files (`icon-*.astro`, `chevron-left.vue`); lowercase for `.js` modules.

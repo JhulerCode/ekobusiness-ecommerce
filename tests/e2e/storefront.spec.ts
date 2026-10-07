@@ -17,7 +17,7 @@ test('envía newsletter por el BFF del mismo origen', async ({ page }) => {
         const result = await fetch('/api/newsletter', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ correo: 'cliente@example.com' }),
+            body: JSON.stringify({ email: 'cliente@example.com' }),
         })
         return { status: result.status, body: await result.json() }
     })
@@ -30,7 +30,7 @@ test('mantiene la sesión en cookies HttpOnly y no expone el token', async ({ pa
         const response = await fetch('/api/auth/signin', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ correo: 'cliente@example.com', contrasena: 'secreto123' }),
+            body: JSON.stringify({ email: 'cliente@example.com', password: 'secreto123' }),
         })
         return response.json()
     })
@@ -61,7 +61,7 @@ test('publica las promociones y sus condiciones desde el mismo catálogo', async
 test('renderiza la cuenta autenticada desde el servidor sin mostrar el estado de invitado', async ({ page }) => {
     await page.goto('/')
     const response = await page.request.post('/api/auth/signin', {
-        data: { correo: 'cliente@example.com', contrasena: 'secreto123' },
+        data: { email: 'cliente@example.com', password: 'secreto123' },
     })
     expect(response.status()).toBe(200)
 
@@ -114,16 +114,16 @@ test('espera la confirmación IPN antes de completar un checkout intent', async 
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
-                correo: 'cliente@example.com',
+                email: 'cliente@example.com',
                 paymentMethodToken: 'nueva',
-                socio_pedido: {
-                    codigo: 'draft',
-                    monto: 10,
+                partner_order: {
+                    code: 'draft',
+                    amount: 10,
                     partner_data: {},
-                    entrega_tipo: 'retiro',
+                    delivery_type: 'retiro',
                     punto_retiro: 'planta-sunka',
-                    fecha_entrega: '2099-01-01',
-                    socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
+                    delivery_date: '2099-01-01',
+                    partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
                 },
             }),
         }).then((response) => response.json())
@@ -157,13 +157,13 @@ test('recupera un pago desde la cookie del intento sin repetir el cobro', async 
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
-                correo: 'cliente@example.com', paymentMethodToken: 'nueva',
-                socio_pedido: {
+                email: 'cliente@example.com', paymentMethodToken: 'nueva',
+                partner_order: {
                     partner_data: {},
-                    entrega_tipo: 'retiro',
+                    delivery_type: 'retiro',
                     punto_retiro: 'planta-sunka',
-                    fecha_entrega: '2099-01-01',
-                    socio_pedido_items: [{ articulo: 'product-1', cantidad: 1 }],
+                    delivery_date: '2099-01-01',
+                    partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
                 },
             }),
         }).then((response) => response.json())

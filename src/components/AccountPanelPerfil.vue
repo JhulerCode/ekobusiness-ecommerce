@@ -34,7 +34,7 @@
 
             <JdSelect
                 label="Tipo de documento"
-                :lista="documentos_identidad"
+                :lista="identity_documents"
                 v-model="user.document_type"
                 :disabled="!editing"
             />
@@ -73,7 +73,7 @@ export default defineComponent({
     props: {
         headText: { type: String, default: '' },
         user: { type: Object, default: () => ({}) },
-        documentos_identidad: { type: Array, default: () => [] },
+        identity_documents: { type: Array, default: () => [] },
     },
     data() {
         return {
@@ -83,14 +83,6 @@ export default defineComponent({
         }
     },
     methods: {
-        // validateForm() {
-        //     Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
-
-        //     if (!this.form.correo)
-        //         this.errors.correo = 'Este campo es obligatorio.';
-
-        //     return Object.values(this.errors).every((e) => !e);
-        // },
         shapeDatos() {
             const { id, name, document_type, document_number, phone1 } = this.user
 

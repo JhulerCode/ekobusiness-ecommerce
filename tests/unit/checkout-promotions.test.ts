@@ -134,7 +134,7 @@ describe('promociones del checkout', () => {
             },
         }], {
             isClubMember: false,
-            ubigeo: { provincia: 'LIMA' },
+            ubigeo: { province: 'LIMA' },
             now: new Date('2026-08-22T19:00:00.000Z'),
         })
 
@@ -142,7 +142,7 @@ describe('promociones del checkout', () => {
         expect(order.amount).toBe(30)
         expect(order.promotions).toEqual([])
         expect(order.partner_order_lines[0].unit_price).toBe(20)
-        expect(order.delivery_address_data.ubigeo1.provincia).toBe('LIMA')
+        expect(order.delivery_address_data.ubigeo1.province).toBe('LIMA')
     })
 
     it('el servidor de Astro valida Lima con el ubigeo obtenido del ERP', () => {
@@ -157,7 +157,7 @@ describe('promociones del checkout', () => {
             ecommerce_data: { price: 20, presentation: [] },
         }], {
             isClubMember: false,
-            ubigeo: { provincia: 'CALLAO' },
+            ubigeo: { province: 'CALLAO' },
             now: new Date('2026-08-22T19:00:00.000Z'),
         })).toThrow('DELIVERY_OUTSIDE_LIMA')
     })

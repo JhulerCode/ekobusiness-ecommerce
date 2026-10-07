@@ -53,7 +53,7 @@
                     v-if="active === 'perfil'"
                     :user="user"
                     :headText="menuText"
-                    :documentos_identidad="documentos_identidad"
+                    :identity_documents="identity_documents"
                 />
 
                 <AccountPanelDirecciones
@@ -63,7 +63,7 @@
                 />
 
                 <AccountPanelPagoMetodos
-                    v-else-if="active === 'pago_metodos'"
+                    v-else-if="active === 'payment_methods'"
                     :user="user"
                     :headText="menuText"
                 />
@@ -157,7 +157,7 @@ export default defineComponent({
         AccountPanelAutenticacion,
     },
     props: {
-        documentos_identidad: { type: Array, default: () => [] },
+        identity_documents: { type: Array, default: () => [] },
         initialUser: { type: Object, default: null },
         initialSessionStatus: { type: String, default: 'loading' },
     },
@@ -169,7 +169,7 @@ export default defineComponent({
             menu: [
                 { key: "perfil", label: "Perfil" },
                 { key: "direcciones", label: "Direcciones" },
-                { key: "pago_metodos", label: "Medios de pago" },
+                { key: "payment_methods", label: "Medios de pago" },
                 { key: "pedidos", label: "Pedidos" },
                 { key: "autenticacion", label: "Autenticación" },
             ],

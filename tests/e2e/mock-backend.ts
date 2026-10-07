@@ -1,11 +1,11 @@
 import { createServer } from 'node:http'
 
 const systemData = {
-    documentos_identidad: [],
-    entrega_tipos: [],
-    pago_metodos: [],
-    comprobante_tipos: [],
-    socio_pedidos_etapas: [],
+    identity_documents: [],
+    delivery_types: [],
+    payment_methods: [],
+    invoice_types: [],
+    partner_order_stages: [],
 }
 
 createServer((request, response) => {
@@ -106,17 +106,17 @@ createServer((request, response) => {
                 authorized
                     ? {
                           data: {
-                              codigo: 'SUNKA-1',
-                              fecha: '2026-08-22',
-                              monto: 25,
-                              estado1: { nombre: 'RECIBIDO' },
-                              moneda1: { simbolo: 'S/ ' },
+                              code: 'SUNKA-1',
+                              date: '2026-08-22',
+                              amount: 25,
+                              status: '1',
+                              currency: { symbol: 'S/ ' },
                               partner_data: {},
-                              entrega_tipo1: {},
-                              comprobante_tipo1: {},
-                              pago_metodo1: {},
-                              socio_pedido_items: [],
-                              promociones: [
+                              delivery_type: 'envio',
+                              invoice_type: '03',
+                              payment_method: 'tarjeta',
+                              partner_order_lines: [],
+                              promotions: [
                                   {
                                       key: 'free-shipping-general',
                                       name: 'Envío gratis desde S/ 75',
@@ -163,7 +163,7 @@ createServer((request, response) => {
         const authorized = request.headers['x-checkout-access'] === 'checkout-access'
         response.writeHead(authorized ? 200 : 401)
         response.end(JSON.stringify(authorized
-            ? { data: { status: 'completed', id: 'payment-order-1', codigo: 'SUNKA-PAY', access_token: 'payment-access' } }
+            ? { data: { status: 'completed', id: 'payment-order-1', order_code: 'SUNKA-PAY', access_token: 'payment-access' } }
             : { type: 'urn:itderp:problem:integration-payment-access-invalid', title: 'Acceso al pago inválido', status: 401, detail: 'El acceso al intento de pago no es válido o ha vencido.', instance: '/api/integration/v1/payments/izipay/intents/intent-1/status', errorCode: 'INTEGRATION_PAYMENT_ACCESS_INVALID' }))
     } else {
         response.writeHead(404)

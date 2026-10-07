@@ -7,9 +7,9 @@ export const GET: APIRoute = async ({ request }) => {
     const source = new URL(request.url).searchParams
     const result = await backendRequest(integrationPublicPath('ubigeos', {
         id: source.get('id') ?? undefined,
-        departamento: source.get('departamento') ?? undefined,
-        provincia: source.get('provincia') ?? undefined,
-        distrito: source.get('distrito') ?? undefined,
+        department: source.get('department') ?? source.get('departamento') ?? undefined,
+        province: source.get('province') ?? source.get('provincia') ?? undefined,
+        district: source.get('district') ?? source.get('distrito') ?? undefined,
         search: source.get('search') ?? undefined,
     }))
     const response = json(result)

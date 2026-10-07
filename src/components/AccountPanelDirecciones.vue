@@ -52,8 +52,8 @@
                     </p>
 
                     <p class="mt-1 text-sm leading-relaxed text-sunka-stone" v-if="dir.ubigeo1">
-                        {{ dir.ubigeo1.distrito }}, {{ dir.ubigeo1.provincia }},
-                        {{ dir.ubigeo1.departamento }}
+                        {{ dir.ubigeo1.district || dir.ubigeo1.distrito }}, {{ dir.ubigeo1.province || dir.ubigeo1.provincia }},
+                        {{ dir.ubigeo1.department || dir.ubigeo1.departamento }}
                     </p>
 
                     <p v-if="dir.referencia" class="mt-3 text-xs leading-relaxed text-sunka-stone">
@@ -277,7 +277,7 @@ export default defineComponent({
             this.ubigeosLoading = true;
             const res = await get(
                 'ubigeos',
-                { search: txtBuscar, provincia: 'Lima' }
+                { search: txtBuscar, province: 'Lima' }
             );
             this.ubigeosLoading = false;
 

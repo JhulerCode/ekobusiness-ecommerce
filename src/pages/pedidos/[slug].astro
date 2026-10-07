@@ -97,10 +97,14 @@ if (orderError && errorStatus !== null) {
     }
 }
 let stages: Array<Record<string, any>> = []
+let deliveryTypes: Array<Record<string, any>> = []
+let paymentMethods: Array<Record<string, any>> = []
+let invoiceTypes: Array<Record<string, any>> = []
 
 if (pedido) {
     const systemResponse = await get('sistema', {
         keys: [
+            'partner_order_states',
             'partner_order_stages',
             'delivery_types',
             'payment_methods',
@@ -111,12 +115,21 @@ if (pedido) {
     if (systemResponse.ok) {
         stages = (systemResponse.data?.partner_order_stages || []).map((etapa: Record<string, any>) => ({
             ...etapa,
-            fecha: (pedido.stages || []).find((item: Record<string, any>) => item.id == etapa.id)?.fecha || null,
+            fecha: (pedido.stages || []).find((item: Record<string, any>) => item.id == etapa.id)?.date || null,
         }))
+        const stateEntry = (systemResponse.data?.partner_order_states || []).find(
+            (item: Record<string, any>) => String(item.id) === String(pedido.status),
+        )
+        if (stateEntry) pedido.state_name = stateEntry.nombre
+        deliveryTypes = systemResponse.data?.delivery_types || []
+        paymentMethods = systemResponse.data?.payment_methods || []
+        invoiceTypes = systemResponse.data?.invoice_types || []
     }
 }
 
-const orderState = pedido?.estado1?.nombre || ''
+const orderState = pedido?.state_name || ''
+const catalogName = (list: Array<Record<string, any>>, id: unknown) =>
+    list.find((item) => String(item.id) === String(id))?.nombre || String(id ?? '—')
 const lastCompletedStageIndex = stages.reduce(
     (lastIndex: number, etapa: Record<string, any>, index: number) =>
         etapa.fecha ? index : lastIndex,
@@ -146,7 +159,7 @@ const parseOrderCollection = (value: unknown): Array<Record<string, any>> => {
     }
 }
 
-const promotions = parseOrderCollection(pedido?.promociones)
+const promotions = parseOrderCollection(pedido?.promotions)
 const getPromotionBenefits = (promotion: Record<string, any>) => {
     if (!Array.isArray(promotion.benefits)) return []
 
@@ -170,11 +183,11 @@ const getPromotionBenefits = (promotion: Record<string, any>) => {
     })
 }
 const hasFreeShippingFallback = Boolean(
-    pedido?.entrega_tipo === 'envio' && Number(pedido?.entrega_costo) === 0 && !promotions.length,
+    pedido?.delivery_type === 'envio' && Number(pedido?.delivery_cost) === 0 && !promotions.length,
 )
 const hasPromotions = Boolean(promotions.length || hasFreeShippingFallback)
 const productsSectionNumber = hasPromotions ? '05' : '04'
-const currencySymbol = pedido?.moneda1?.simbolo || 'S/ '
+const currencySymbol = pedido?.currency?.symbol || 'S/ '
 const paymentStateLabels: Record<string, string> = {
     awaiting_payment: 'Pendiente de pago',
     awaiting_confirmation: 'En verificación',
@@ -183,11 +196,11 @@ const paymentStateLabels: Record<string, string> = {
     manual_review: 'Revisión manual',
     pending: 'Pendiente',
 }
-const paymentState = pedido?.pagado
+const paymentState = pedido?.is_paid
     ? 'Confirmado'
-    : paymentStateLabels[pedido?.pago_estado] || 'En verificación'
-const paymentFailed = pedido?.pago_estado === 'payment_failed'
-const paymentReview = pedido?.pago_estado === 'manual_review'
+    : paymentStateLabels[pedido?.payment_status] || 'En verificación'
+const paymentFailed = pedido?.payment_status === 'payment_failed'
+const paymentReview = pedido?.payment_status === 'manual_review'
 const orderTitle = pedido
     ? `Pedido ${pedido.code} | SUNKA Herbal Tea`
     : `${orderError?.title || 'Pedido no encontrado'} | SUNKA Herbal Tea`
@@ -245,7 +258,7 @@ const orderTitle = pedido
 
                 <main class="bg-sunka-cream pb-20">
                     <div class="relative z-10 mx-auto -mt-10 max-w-7xl px-5 md:px-8">
-                        {pedido.pago_metodo === 'tarjeta' && !pedido.pagado && (
+                            {pedido.payment_method === 'tarjeta' && !pedido.is_paid && (
                             <aside class="mb-6 rounded-2xl border border-sunka-brass/35 bg-[#fff8e8] px-6 py-5 text-sunka-ink shadow-[0_12px_35px_rgba(35,29,24,0.06)]">
                                 <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-sunka-brass">
                                     {paymentFailed ? 'Pago no confirmado' : paymentReview ? 'Revisión manual' : 'Pago en verificación'}
@@ -278,7 +291,7 @@ const orderTitle = pedido
                                             Fecha del pedido
                                         </span>
                                         <strong class="mt-1 block text-sm font-semibold text-sunka-ink">
-                                            {formatDate(pedido.fecha)}
+                                            {formatDate(pedido.date)}
                                         </strong>
                                     </div>
                                 </header>
@@ -308,47 +321,47 @@ const orderTitle = pedido
                                         <OrderSectionTitle number="02" title="Entrega" />
                                         <dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
                                             <OrderDetail label="Modalidad">
-                                                {pedido.entrega_tipo1?.nombre}
+                                                {catalogName(deliveryTypes, pedido.delivery_type)}
                                             </OrderDetail>
-                                            {pedido.entrega_tipo === 'envio' ? (
+                                            {pedido.delivery_type === 'envio' ? (
                                                 <>
                                                     <OrderDetail label="Costo de envío">
                                                         {currencySymbol}
-                                                        {redondear(pedido.entrega_costo || 0)}
+                                                        {redondear(pedido.delivery_cost || 0)}
                                                     </OrderDetail>
                                                     <OrderDetail label="Dirección" wide>
-                                                        {pedido.direccion_entrega}
-                                                        {pedido.entrega_direccion_datos?.numero &&
-                                                            ` · Nro. ${pedido.entrega_direccion_datos.numero}`}
-                                                        {pedido.entrega_direccion_datos?.piso &&
-                                                            ` · Piso ${pedido.entrega_direccion_datos.piso}`}
+                                                        {pedido.delivery_address}
+                                                        {pedido.delivery_address_data?.numero &&
+                                                            ` · Nro. ${pedido.delivery_address_data.numero}`}
+                                                        {pedido.delivery_address_data?.piso &&
+                                                            ` · Piso ${pedido.delivery_address_data.piso}`}
                                                     </OrderDetail>
                                                     <OrderDetail label="Distrito">
-                                                        {pedido.entrega_direccion_datos?.ubigeo1?.nombre}
+                                                        {pedido.delivery_address_data?.ubigeo1?.district || pedido.delivery_address_data?.ubigeo1?.full_name}
                                                     </OrderDetail>
                                                     <OrderDetail label="Referencia">
-                                                        {pedido.entrega_direccion_datos?.referencia || '—'}
+                                                        {pedido.delivery_address_data?.referencia || '—'}
                                                     </OrderDetail>
                                                     <OrderDetail label="Fecha de entrega">
-                                                        {formatDate(pedido.fecha_entrega)}
+                                                        {formatDate(pedido.delivery_date)}
                                                     </OrderDetail>
                                                     <OrderDetail label="Horario de entrega">
-                                                        {pedido.entrega_direccion_datos?.horario || DELIVERY_TIME_RANGE}
+                                                        {pedido.delivery_address_data?.horario || DELIVERY_TIME_RANGE}
                                                     </OrderDetail>
                                                 </>
                                             ) : (
                                                 <>
                                                     <OrderDetail label="Punto de retiro">
-                                                        {pedido.entrega_direccion_datos?.punto_retiro?.nombre || 'Punto de recojo SUNKA'}
+                                                        {pedido.delivery_address_data?.punto_retiro?.nombre || 'Punto de recojo SUNKA'}
                                                     </OrderDetail>
                                                     <OrderDetail label="Dirección" wide>
-                                                        {pedido.entrega_direccion_datos?.punto_retiro?.direccion || pedido.direccion_entrega || '—'}
+                                                        {pedido.delivery_address_data?.punto_retiro?.direccion || pedido.delivery_address || '—'}
                                                     </OrderDetail>
                                                     <OrderDetail label="Fecha de retiro">
-                                                        {formatDate(pedido.fecha_entrega)}
+                                                        {formatDate(pedido.delivery_date)}
                                                     </OrderDetail>
                                                     <OrderDetail label="Horario de recojo">
-                                                        {pedido.entrega_direccion_datos?.horario || DELIVERY_TIME_RANGE}
+                                                        {pedido.delivery_address_data?.horario || DELIVERY_TIME_RANGE}
                                                     </OrderDetail>
                                                 </>
                                             )}
@@ -359,21 +372,21 @@ const orderTitle = pedido
                                         <OrderSectionTitle number="03" title="Pago y comprobante" />
                                         <dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
                                             <OrderDetail label="Comprobante">
-                                                {pedido.comprobante_tipo1?.nombre}
+                                                {catalogName(invoiceTypes, pedido.invoice_type)}
                                             </OrderDetail>
                                             <OrderDetail label="Método de pago">
-                                                {pedido.pago_metodo1?.nombre}
+                                                {catalogName(paymentMethods, pedido.payment_method)}
                                             </OrderDetail>
                                             <OrderDetail label="Estado del pago">
                                                 {paymentState}
                                             </OrderDetail>
-                                            {pedido.comprobante_tipo === '01' && (
+                                            {pedido.invoice_type === '01' && (
                                                 <>
                                                     <OrderDetail label="RUC">
-                                                        {pedido.comprobante_ruc}
+                                                        {pedido.invoice_ruc}
                                                     </OrderDetail>
                                                     <OrderDetail label="Razón social">
-                                                        {pedido.comprobante_razon_social}
+                                                        {pedido.invoice_business_name}
                                                     </OrderDetail>
                                                 </>
                                             )}
@@ -424,7 +437,7 @@ const orderTitle = pedido
                                         <div class="divide-y divide-sunka-sand">
                                             {orderItems.map((item) => {
                                                 const imageUrl =
-                                                    item.articulo1?.ecommerce_data?.photos?.[0]?.url
+                                                    item.article?.ecommerce_data?.photos?.[0]?.url
 
                                                 return (
                                                     <article class="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
@@ -432,7 +445,7 @@ const orderTitle = pedido
                                                             <img
                                                                 src={imageUrl}
                                                                 loading="lazy"
-                                                                alt={item.nombre || 'Producto SUNKA'}
+                                                                alt={item.name || 'Producto SUNKA'}
                                                                 class="h-20 w-20 shrink-0 rounded-xl border border-sunka-sand bg-sunka-cream object-cover"
                                                             />
                                                         ) : (
@@ -442,14 +455,14 @@ const orderTitle = pedido
                                                         )}
                                                         <div class="min-w-0 flex-1">
                                                             <h4 class="font-heading text-base font-semibold text-sunka-ink">
-                                                                {item.nombre}
+                                                                {item.name}
                                                             </h4>
                                                             <p class="mt-1 text-[11px] text-sunka-stone">
-                                                                Cantidad: {item.cantidad}
+                                                                Cantidad: {item.quantity}
                                                             </p>
                                                         </div>
                                                         <strong class="shrink-0 text-sm font-semibold text-sunka-forest">
-                                                            S/ {(item.pu * item.cantidad).toFixed(2)}
+                                                            S/ {(item.unit_price * item.quantity).toFixed(2)}
                                                         </strong>
                                                     </article>
                                                 )
@@ -467,7 +480,7 @@ const orderTitle = pedido
                                             </div>
                                             <strong class="font-heading text-2xl font-semibold text-sunka-brass-light">
                                                 {currencySymbol}
-                                                {redondear(pedido.monto)}
+                                                {redondear(pedido.amount)}
                                             </strong>
                                         </div>
                                     </section>

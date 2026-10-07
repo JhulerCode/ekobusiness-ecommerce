@@ -4,10 +4,10 @@ import LibroReclamacionesForm from '../components/LibroReclamacionesForm.vue';
 import { serverGet as get } from '@/lib/server/public-api'
 
 const res = await get('sistema', {
-    keys: ['documentos_identidad'],
+    keys: ['identity_documents'],
 });
 
-const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : [];
+const identity_documents = res.ok ? res.data?.identity_documents || [] : [];
 ---
 
 <BaseLayout title="Libro de reclamaciones">
@@ -31,7 +31,7 @@ const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : [];
 
         <LibroReclamacionesForm
             client:load
-            documentos_identidad={documentos_identidad}
+            identity_documents={identity_documents}
         />
     </main>
 </BaseLayout>

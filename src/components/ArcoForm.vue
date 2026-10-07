@@ -24,7 +24,7 @@
                 <JdSelect
                     label="Tipo de documento"
                     :nec="true"
-                    :lista="documentos_identidad"
+                    :lista="identity_documents"
                     v-model="form.document_type"
                     :error="errors.document_type"
                 />
@@ -101,7 +101,7 @@
                 <JdSelect
                     label="Tipo de documento"
                     :nec="true"
-                    :lista="documentos_identidad"
+                    :lista="identity_documents"
                     v-model="form.representative_document_type"
                     :error="errors.representative_document_type"
                 />
@@ -238,7 +238,7 @@ export default defineComponent({
         JdRadio,
     },
     props: {
-        documentos_identidad: { type: Array, default: () => [] },
+        identity_documents: { type: Array, default: () => [] },
     },
     data() {
         return {

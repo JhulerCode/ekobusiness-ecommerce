@@ -3,17 +3,17 @@ import { z } from 'zod'
 const email = z.string().trim().email().max(254)
 const identifier = z.string().trim().min(1).max(100)
 
-export const newsletterSchema = z.object({ correo: email }).strict()
+export const newsletterSchema = z.object({ email }).strict()
 
 export const signInSchema = z
-    .object({ correo: email, contrasena: z.string().min(1).max(200) })
+    .object({ email, password: z.string().min(1).max(200) })
     .passthrough()
 
 export const registerSchema = signInSchema.extend({
     nombres: z.string().trim().min(1).max(150).optional(),
     apellidos: z.string().trim().min(1).max(150).optional(),
     telefono: z.string().trim().max(30).optional(),
-    contrasena_confirmar: z.string().min(1).max(200).optional(),
+    password_confirm: z.string().min(1).max(200).optional(),
 })
 
 export const orderLookupSchema = z
@@ -24,12 +24,12 @@ export const orderResendSchema = z
     .object({ order_code: z.string().trim().min(1).max(30), email })
     .strict()
 
-export const accountCodeSchema = z.object({ correo: email }).passthrough()
+export const accountCodeSchema = z.object({ email }).passthrough()
 export const accountVerifySchema = z
-    .object({ correo: email, codigo_verificacion: z.string().trim().min(1).max(20) })
+    .object({ email, verification_code: z.string().trim().min(1).max(20) })
     .passthrough()
 export const accountPasswordSchema = z
-    .object({ id: identifier, contrasena: z.string().min(8).max(200) })
+    .object({ id: identifier, password: z.string().min(8).max(200) })
     .passthrough()
 
 export const idSchema = identifier

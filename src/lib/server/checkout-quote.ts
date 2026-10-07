@@ -77,7 +77,7 @@ export function buildAuthoritativeCheckout(
 
     if (
         draft.delivery_type === 'envio' &&
-        normalizeText(context.ubigeo?.provincia) !== 'LIMA'
+        normalizeText(context.ubigeo?.province || context.ubigeo?.provincia) !== 'LIMA'
     ) {
         throw new Error('DELIVERY_OUTSIDE_LIMA')
     }

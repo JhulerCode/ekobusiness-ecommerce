@@ -38,7 +38,7 @@ describe('contratos del ecommerce', () => {
     })
 
     it('rechaza credenciales y códigos de consulta inválidos', () => {
-        expect(signInSchema.safeParse({ correo: 'invalido', contrasena: '' }).success).toBe(false)
+        expect(signInSchema.safeParse({ email: 'invalido', password: '' }).success).toBe(false)
         expect(orderLookupSchema.safeParse({ codigo: 'P-1', codigo_consulta: '123' }).success).toBe(
             false,
         )
@@ -72,9 +72,9 @@ describe('contratos del ecommerce', () => {
     })
 
     it('construye la búsqueda parcial de distritos con parámetros fijos', () => {
-        const path = integrationPublicPath('ubigeos', { search: 'santa', provincia: 'Lima' })
+        const path = integrationPublicPath('ubigeos', { search: 'santa', province: 'Lima' })
 
-        expect(path).toBe('locations/ubigeos?provincia=Lima&search=santa')
+        expect(path).toBe('locations/ubigeos?province=Lima&search=santa')
     })
 
     it('serializa errores BFF como Problem Details y soporta 204', async () => {

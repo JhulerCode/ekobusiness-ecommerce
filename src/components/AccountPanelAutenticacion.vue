@@ -14,7 +14,7 @@
             <div class="mb-6 flex flex-col gap-1 border-b border-sunka-sand pb-4 sm:flex-row sm:items-end sm:justify-between">
                 <h3 class="font-heading text-lg font-semibold text-sunka-forest">Contraseña</h3>
 
-                <p class="text-xs text-sunka-stone">Última actualización: {{ contrasena_updated_at }}</p>
+                <p class="text-xs text-sunka-stone">Última actualización: {{ password_updated_at }}</p>
             </div>
 
             <div class="grid gap-5 md:grid-cols-2">
@@ -29,8 +29,8 @@
                     <JdInput
                         label="Ingresa el código de verificación enviado a tu correo"
                         :nec="true"
-                        v-model="form.codigo_verificacion"
-                        :error="errors.codigo_verificacion"
+                        v-model="form.verification_code"
+                        :error="errors.verification_code"
                         maxlength="6"
                     />
 
@@ -59,16 +59,16 @@
                     <JdInputPassword
                         label="Nueva contraseña"
                         :nec="true"
-                        v-model="form.contrasena"
-                        :error="errors.contrasena"
+                        v-model="form.password"
+                        :error="errors.password"
                         class="col-start-1"
                     />
 
                     <JdInputPassword
                         label="Confirmar contraseña"
                         :nec="true"
-                        v-model="form.contrasena_confirmar"
-                        :error="errors.contrasena_confirmar"
+                        v-model="form.password_confirm"
+                        :error="errors.password_confirm"
                     />
 
                     <div class="flex flex-col items-end gap-2 md:col-start-2">
@@ -201,8 +201,8 @@ export default defineComponent({
         };
     },
     computed: {
-        contrasena_updated_at() {
-            return new Date(this.user.contrasena_updated_at).toLocaleDateString("es-ES", {
+        password_updated_at() {
+            return new Date(this.user.password_updated_at).toLocaleDateString("es-ES", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
@@ -215,7 +215,7 @@ export default defineComponent({
     methods: {
         validateLastUpdated() {
             const hoy = new Date();
-            const fechaComparar = new Date(this.user.contrasena_updated_at);
+            const fechaComparar = new Date(this.user.password_updated_at);
 
             const diffMs = hoy - fechaComparar;
 
@@ -231,7 +231,7 @@ export default defineComponent({
 
         async sendCodigoVerificacion() {
             const send = {
-                correo: this.user.email,
+                email: this.user.email,
             };
 
             this.loading = true;
@@ -263,8 +263,8 @@ export default defineComponent({
         validateForm1() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
-            if (!this.form.codigo_verificacion)
-                this.errors.codigo_verificacion = "Este campo es obligatorio.";
+            if (!this.form.verification_code)
+                this.errors.verification_code = "Este campo es obligatorio.";
 
             return Object.values(this.errors).every((e) => !e);
         },
@@ -272,8 +272,8 @@ export default defineComponent({
             if (!this.validateForm1()) return;
 
             const send = {
-                correo: this.user.email,
-                codigo_verificacion: this.form.codigo_verificacion,
+                email: this.user.email,
+                verification_code: this.form.verification_code,
             };
 
             this.loading = true;
@@ -294,13 +294,13 @@ export default defineComponent({
         validateForm2() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
-            if (!this.form.contrasena) this.errors.contrasena = "Este campo es obligatorio.";
+            if (!this.form.password) this.errors.password = "Este campo es obligatorio.";
 
-            if (!this.form.contrasena_confirmar)
-                this.errors.contrasena_confirmar = "Este campo es obligatorio.";
+            if (!this.form.password_confirm)
+                this.errors.password_confirm = "Este campo es obligatorio.";
 
-            if (this.form.contrasena !== this.form.contrasena_confirmar) {
-                this.errors.contrasena_confirmar = "Las contraseñas no coinciden.";
+            if (this.form.password !== this.form.password_confirm) {
+                this.errors.password_confirm = "Las contraseñas no coinciden.";
                 return;
             }
 
@@ -309,7 +309,7 @@ export default defineComponent({
         shapeDatos() {
             return {
                 id: this.user.id,
-                contrasena: this.form.contrasena,
+                password: this.form.password,
             };
         },
         async actualizarContrasena() {
@@ -331,7 +331,7 @@ export default defineComponent({
                 this.editing = false;
                 this.form = {};
                 this.errors = {};
-                this.user.contrasena_updated_at = res.data.contrasena_updated_at;
+                this.user.password_updated_at = res.data.password_updated_at;
 
                 this.validateLastUpdated();
                 this.errors.success = true;

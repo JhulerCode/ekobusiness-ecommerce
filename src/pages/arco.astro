@@ -5,10 +5,10 @@ import { serverGet as get } from '@/lib/server/public-api'
 import empresa from '../data/company';
 
 const res = await get('sistema', {
-    keys: ['documentos_identidad'],
+    keys: ['identity_documents'],
 });
 
-const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : [];
+const identity_documents = res.ok ? res.data?.identity_documents || [] : [];
 
 const direccionPrincipal =
     empresa.direcciones.find((direccion) => direccion.principal) ?? empresa.direcciones[0];
@@ -45,6 +45,6 @@ const ubicacionPrincipal = direccionPrincipal.distrito ?? direccionPrincipal.ubi
             personales contenidos en nuestros bancos de datos.
         </p>
 
-        <ArcoForm client:load documentos_identidad={documentos_identidad} />
+        <ArcoForm client:load identity_documents={identity_documents} />
     </main>
 </BaseLayout>

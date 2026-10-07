@@ -7,18 +7,18 @@ import empresa from '@/data/company'
 
 const res = await get('sistema', {
     keys: [
-        'documentos_identidad',
-        'entrega_tipos',
-        'comprobante_tipos',
-        'pago_metodos',
+        'identity_documents',
+        'delivery_types',
+        'invoice_types',
+        'payment_methods',
     ],
 })
 
 const {
-    documentos_identidad = [],
-    entrega_tipos = [],
-    comprobante_tipos = [],
-    pago_metodos = [],
+    identity_documents = [],
+    delivery_types = [],
+    invoice_types = [],
+    payment_methods = [],
 } = res.ok ? res.data || {} : {}
 ---
 
@@ -91,10 +91,10 @@ const {
         <CheckoutForm
             client:load
             empresa={empresa}
-            pago_metodos={pago_metodos}
-            documentos_identidad={documentos_identidad}
-            entrega_tipos={entrega_tipos}
-            comprobante_tipos={comprobante_tipos}
+            payment_methods={payment_methods}
+            identity_documents={identity_documents}
+            delivery_types={delivery_types}
+            invoice_types={invoice_types}
         />
     </main>
 </BaseLayout>

@@ -53,7 +53,7 @@ export interface Product extends JsonRecord {
 
 export interface AuthUser extends JsonRecord {
     id: string
-    correo?: string
+    email?: string
 }
 
 export interface OrderAccess {

@@ -212,7 +212,7 @@
                                 label="Tipo de documento"
                                 :nec="true"
                                 :lista="
-                                    documentos_identidad.filter((item) => Number(item.id) !== 6)
+                                    identity_documents.filter((item) => Number(item.id) !== 6)
                                 "
                                 v-model="form.partner_data.document_type"
                                 :error="errors.document_type"
@@ -287,16 +287,16 @@
                     <div v-if="step === 2" class="space-y-6">
                         <JdRadio
                             :nec="true"
-                            :lista="entrega_tipos"
-                            v-model="form.entrega_tipo"
-                            :error="errors.entrega_tipo"
+                            :lista="delivery_types"
+                            v-model="form.delivery_type"
+                            :error="errors.delivery_type"
                             :row="true"
                             @change="errors = {}"
                         />
 
                         <!-- Envío a domicilio -->
                         <div
-                            v-if="form.entrega_tipo === 'envio'"
+                            v-if="form.delivery_type === 'envio'"
                             class="mt-6 grid md:grid-cols-2 gap-4"
                         >
                             <template v-if="user.id">
@@ -370,9 +370,9 @@
                                 label="Fecha de entrega"
                                 :nec="true"
                                 type="date"
-                                v-model="form.fecha_entrega"
+                                v-model="form.delivery_date"
                                 :min="minimumDeliveryDate"
-                                :error="errors.fecha_entrega"
+                                :error="errors.delivery_date"
                                 class="col-span-2"
                             />
                             <p class="col-span-2 text-sm font-medium text-sunka-forest">
@@ -386,7 +386,7 @@
                         </div>
 
                         <!-- Retiro en tienda -->
-                        <div v-if="form.entrega_tipo === 'retiro'" class="space-y-5 mt-6">
+                        <div v-if="form.delivery_type === 'retiro'" class="space-y-5 mt-6">
                             <JdRadio
                                 label="Punto de retiro"
                                 :nec="true"
@@ -404,9 +404,9 @@
                                 label="Fecha de retiro"
                                 :nec="true"
                                 type="date"
-                                v-model="form.fecha_entrega"
+                                v-model="form.delivery_date"
                                 :min="minimumDeliveryDate"
-                                :error="errors.fecha_entrega"
+                                :error="errors.delivery_date"
                             />
                             <p class="text-xs leading-relaxed text-sunka-stone">
                                 Pedidos realizados antes de las 4:00 p. m.: recojo desde el día
@@ -427,7 +427,7 @@
                     <!-- Resumen cuando ya se completó -->
                     <div v-else-if="step > 2" class="checkout-completed">
                         <div>
-                            <template v-if="form.entrega_tipo === 'envio'">
+                            <template v-if="form.delivery_type === 'envio'">
                                 <p>
                                     <span class="font-medium">Tipo de entrega:</span>
                                     Envío a domicilio
@@ -446,7 +446,7 @@
                                 </p>
                                 <p v-if="form.entrega_direccion_datos.ubigeo1">
                                     <span class="font-medium">Distrito:</span>
-                                    {{ form.entrega_direccion_datos.ubigeo1.nombre }}
+                                    {{ form.entrega_direccion_datos.ubigeo1.full_name || form.entrega_direccion_datos.ubigeo1.district }}
                                 </p>
                                 <p>
                                     <span class="font-medium">Referencia:</span>
@@ -462,7 +462,7 @@
                                 </p>
                             </template>
 
-                            <template v-else-if="form.entrega_tipo === 'retiro'">
+                            <template v-else-if="form.delivery_type === 'retiro'">
                                 <p>
                                     <span class="font-medium">Tipo de entrega:</span>
                                     Retiro en tienda
@@ -511,30 +511,30 @@
                         <JdRadio
                             label="Tipo de comprobante"
                             :nec="true"
-                            :lista="comprobante_tipos.filter((a) => a.id != 'NV')"
-                            v-model="form.comprobante_tipo"
-                            :error="errors.comprobante_tipo"
+                            :lista="invoice_types.filter((a) => a.id != 'NV')"
+                            v-model="form.invoice_type"
+                            :error="errors.invoice_type"
                             :row="true"
                             @change="errors = {}"
                         />
 
                         <!-- Campos adicionales si es Factura -->
                         <div
-                            v-if="form.comprobante_tipo === '01'"
+                            v-if="form.invoice_type === '01'"
                             class="grid md:grid-cols-2 gap-4"
                         >
                             <JdInput
                                 label="RUC"
                                 :nec="true"
-                                v-model="form.comprobante_ruc"
-                                :error="errors.comprobante_ruc"
+                                v-model="form.invoice_ruc"
+                                :error="errors.invoice_ruc"
                             />
 
                             <JdInput
                                 label="Razon social"
                                 :nec="true"
-                                v-model="form.comprobante_razon_social"
-                                :error="errors.comprobante_razon_social"
+                                v-model="form.invoice_business_name"
+                                :error="errors.invoice_business_name"
                             />
                         </div>
 
@@ -542,9 +542,9 @@
                         <JdRadio
                             label="Método de pago"
                             :nec="true"
-                            :lista="pago_metodos"
+                            :lista="payment_methods"
                             v-model="form.payment_method"
-                            :error="errors.pago_metodo"
+                            :error="errors.payment_method"
                             :withBorder="true"
                             @change="errors = {}"
                         />
@@ -679,8 +679,8 @@
                                 <JdInput
                                     label="Código de operación"
                                     :nec="true"
-                                    v-model="form.pago_id"
-                                    :error="errors.pago_id"
+                                    v-model="form.payment_reference"
+                                    :error="errors.payment_reference"
                                     placeholder="Ejemplo: 123456"
                                 />
                             </template>
@@ -741,7 +741,7 @@
                 <div class="flex justify-between">
                     <span>Costo de envío</span>
                     <span>
-                        <span v-if="costoEnvio > 0">S/ {{ costoEnvio.toFixed(2) }}</span>
+                        <span v-if="deliveryCost > 0">S/ {{ deliveryCost.toFixed(2) }}</span>
                         <span v-else>Gratis</span>
                     </span>
                 </div>
@@ -755,7 +755,7 @@
                     <strong>1 caja sorpresa</strong>
                 </div>
                 <p
-                    v-if="form.entrega_tipo === 'envio' && !promotionQuote.hasFreeShipping"
+                    v-if="form.delivery_type === 'envio' && !promotionQuote.hasFreeShipping"
                     class="checkout-shipping-progress"
                 >
                     Te faltan S/ {{ promotionQuote.missingForFreeShipping.toFixed(2) }} para obtener
@@ -886,10 +886,10 @@ export default defineComponent({
     },
     props: {
         empresa: { type: Object, default: () => ({}) },
-        pago_metodos: { type: Array, default: () => [] },
-        documentos_identidad: { type: Array, default: () => [] },
-        entrega_tipos: { type: Array, default: () => [] },
-        comprobante_tipos: { type: Array, default: () => [] },
+        payment_methods: { type: Array, default: () => [] },
+        identity_documents: { type: Array, default: () => [] },
+        delivery_types: { type: Array, default: () => [] },
+        invoice_types: { type: Array, default: () => [] },
     },
     data() {
         return {
@@ -913,13 +913,13 @@ export default defineComponent({
                     document_type: 1,
                 },
 
-                entrega_tipo: 'envio',
+                delivery_type: 'envio',
                 punto_retiro: null,
                 entrega_direccion_datos: {},
 
-                comprobante_tipo: '03',
+                invoice_type: '03',
 
-                pago_metodo: 'tarjeta',
+                payment_method: 'tarjeta',
                 paymentMethodToken: 'nueva',
             },
             errors: {},
@@ -951,7 +951,7 @@ export default defineComponent({
         promotionQuote() {
             return evaluateCheckoutPromotions(this.items, {
                 isClubMember: Boolean(this.user.id),
-                deliveryType: this.form.entrega_tipo,
+                deliveryType: this.form.delivery_type,
             })
         },
         activePromotion() {
@@ -962,17 +962,17 @@ export default defineComponent({
                 (benefit) => benefit.type === 'caja_sorpresa',
             ))
         },
-        costoEnvio() {
+        deliveryCost() {
             return this.promotionQuote.deliveryCost
         },
         total() {
-            return this.subtotal + this.costoEnvio
+            return this.subtotal + this.deliveryCost
         },
         minimumDeliveryDateLabel() {
             return formatDeliveryDate(this.minimumDeliveryDate)
         },
         formattedDeliveryDate() {
-            return formatDate(this.form.fecha_entrega)
+            return formatDate(this.form.delivery_date)
         },
         selectedPickupLocation() {
             return getPickupLocation(this.form.punto_retiro)
@@ -1128,14 +1128,14 @@ export default defineComponent({
             if (!draft?.form) return
 
             const saved = draft.form
-            const validDocumentTypes = this.documentos_identidad
+            const validDocumentTypes = this.identity_documents
                 .filter((item) => Number(item.id) !== 6)
                 .map((item) => String(item.id))
-            const validDeliveryTypes = this.entrega_tipos.map((item) => String(item.id))
-            const validReceiptTypes = this.comprobante_tipos
+            const validDeliveryTypes = this.delivery_types.map((item) => String(item.id))
+            const validReceiptTypes = this.invoice_types
                 .filter((item) => item.id !== 'NV')
                 .map((item) => String(item.id))
-            const validPaymentMethods = this.pago_metodos.map((item) => String(item.id))
+            const validPaymentMethods = this.payment_methods.map((item) => String(item.id))
 
             Object.assign(this.form.partner_data, saved.partner_data || {}, { privacidad: false })
 
@@ -1153,13 +1153,13 @@ export default defineComponent({
             }
 
             if (!validDocumentTypes.includes(String(this.form.partner_data.document_type))) {
-                this.form.partner_data.document_type = this.documentos_identidad.find(
+                this.form.partner_data.document_type = this.identity_documents.find(
                     (item) => Number(item.id) !== 6,
                 )?.id
             }
 
-            if (validDeliveryTypes.includes(String(saved.entrega_tipo))) {
-                this.form.entrega_tipo = saved.entrega_tipo
+            if (validDeliveryTypes.includes(String(saved.delivery_type))) {
+                this.form.delivery_type = saved.delivery_type
             }
             if (getPickupLocation(saved.punto_retiro)) {
                 this.form.punto_retiro = saved.punto_retiro
@@ -1180,8 +1180,8 @@ export default defineComponent({
             this.form.entrega_direccion_id = savedAddressExists ? saved.entrega_direccion_id : null
 
             this.refreshMinimumDeliveryDate()
-            const savedDate = saved.fecha_entrega
-            this.form.fecha_entrega = savedDate && savedDate >= this.minimumDeliveryDate
+            const savedDate = saved.delivery_date
+            this.form.delivery_date = savedDate && savedDate >= this.minimumDeliveryDate
                 ? savedDate
                 : null
 
@@ -1189,18 +1189,18 @@ export default defineComponent({
                 this.ubigeos = [{ ...this.form.entrega_direccion_datos.ubigeo1 }]
             }
 
-            if (validReceiptTypes.includes(String(saved.comprobante_tipo))) {
-                this.form.comprobante_tipo = saved.comprobante_tipo
+            if (validReceiptTypes.includes(String(saved.invoice_type))) {
+                this.form.invoice_type = saved.invoice_type
             }
-            this.form.comprobante_ruc = saved.comprobante_ruc || ''
-            this.form.comprobante_razon_social = saved.comprobante_razon_social || ''
+            this.form.invoice_ruc = saved.invoice_ruc || ''
+            this.form.invoice_business_name = saved.invoice_business_name || ''
 
-            if (validPaymentMethods.includes(String(saved.pago_metodo))) {
-                this.form.payment_method = saved.pago_metodo
+            if (validPaymentMethods.includes(String(saved.payment_method))) {
+                this.form.payment_method = saved.payment_method
             }
 
             this.form.paymentMethodToken = null
-            this.form.pago_id = ''
+            this.form.payment_reference = ''
             this.step = 1
         },
 
@@ -1252,7 +1252,7 @@ export default defineComponent({
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''))
             this.refreshMinimumDeliveryDate()
 
-            if (this.form.entrega_tipo === 'envio') {
+            if (this.form.delivery_type === 'envio') {
                 if (this.user.id) {
                     if (this.form.new_direccion) {
                         if (!this.form.direccion_nombre)
@@ -1267,7 +1267,7 @@ export default defineComponent({
                     this.errors.entrega_ubigeo = 'Este campo es obligatorio.'
                 if (
                     this.form.entrega_direccion_datos.ubigeo1 &&
-                    String(this.form.entrega_direccion_datos.ubigeo1.provincia || '')
+                    String(this.form.entrega_direccion_datos.ubigeo1.province || this.form.entrega_direccion_datos.ubigeo1.provincia || '')
                         .trim()
                         .toLocaleUpperCase('es-PE') !== 'LIMA'
                 ) {
@@ -1286,7 +1286,7 @@ export default defineComponent({
                 }
             }
 
-            if (this.form.entrega_tipo === 'retiro') {
+            if (this.form.delivery_type === 'retiro') {
                 const pickupLocation = getPickupLocation(this.form.punto_retiro)
                 if (!pickupLocation) {
                     this.errors.punto_retiro = 'Seleccione un punto de retiro.'
@@ -1311,10 +1311,10 @@ export default defineComponent({
                     : {}
             }
 
-            if (!this.form.fecha_entrega) {
-                this.errors.fecha_entrega = 'Este campo es obligatorio.'
-            } else if (!isDeliveryDateAllowed(this.form.fecha_entrega)) {
-                this.errors.fecha_entrega = `Selecciona una fecha desde el ${this.minimumDeliveryDateLabel}.`
+            if (!this.form.delivery_date) {
+                this.errors.delivery_date = 'Este campo es obligatorio.'
+            } else if (!isDeliveryDateAllowed(this.form.delivery_date)) {
+                this.errors.delivery_date = `Selecciona una fecha desde el ${this.minimumDeliveryDateLabel}.`
             }
 
             return Object.values(this.errors).every((e) => !e)
@@ -1364,34 +1364,34 @@ export default defineComponent({
         validarForm3() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''))
 
-            if (this.form.comprobante_tipo === '01') {
-                if (!this.form.comprobante_ruc || !/^\d{11}$/.test(this.form.comprobante_ruc))
-                    this.errors.comprobante_ruc = 'El RUC debe tener 11 dígitos numéricos.'
-                if (!this.form.comprobante_razon_social)
-                    this.errors.comprobante_razon_social = 'Este campo es obligatorio.'
+            if (this.form.invoice_type === '01') {
+                if (!this.form.invoice_ruc || !/^\d{11}$/.test(this.form.invoice_ruc))
+                    this.errors.invoice_ruc = 'El RUC debe tener 11 dígitos numéricos.'
+                if (!this.form.invoice_business_name)
+                    this.errors.invoice_business_name = 'Este campo es obligatorio.'
             }
 
             if (this.form.payment_method == 'tarjeta') {
                 if (!this.form.paymentMethodToken)
                     this.errors.paymentMethodToken = 'Seleccione una tarjeta.'
             } else if (this.form.payment_method == 'yape') {
-                if (!this.form.pago_id) this.errors.pago_id = 'Este campo es obligatorio.'
+                if (!this.form.payment_reference) this.errors.payment_reference = 'Este campo es obligatorio.'
             }
 
             return Object.values(this.errors).every((e) => !e)
         },
         shapeDatos() {
-            this.form.tipo = 2
+            this.form.type = 2
             this.form.origin = 'ecommerce'
-            this.form.fecha = new Date().toISOString().split('T')[0]
+            this.form.date = new Date().toISOString().split('T')[0]
             this.form.partner_id = this.user.id
 
-            this.form.pago_condicion = '1'
-            this.form.moneda = 'PEN'
-            this.form.monto = this.total.toFixed(2)
+            this.form.payment_term = '1'
+            this.form.currency_id = 'PEN'
+            this.form.amount = this.total.toFixed(2)
 
-            this.form.partner_order_items = this.items
-            this.form.entrega_costo = this.costoEnvio
+            this.form.partner_order_lines = this.items
+            this.form.delivery_cost = this.deliveryCost
 
             if (this.form.payment_method == 'yape') {
                 this.form.order_code = genId()
@@ -1668,10 +1668,10 @@ export default defineComponent({
         refreshMinimumDeliveryDate() {
             this.minimumDeliveryDate = getMinimumDeliveryDate()
             if (
-                this.form.fecha_entrega &&
-                this.form.fecha_entrega < this.minimumDeliveryDate
+                this.form.delivery_date &&
+                this.form.delivery_date < this.minimumDeliveryDate
             ) {
-                this.form.fecha_entrega = null
+                this.form.delivery_date = null
             }
         },
 
@@ -1682,7 +1682,7 @@ export default defineComponent({
             }
 
             this.ubigeosLoading = true
-            const res = await get('ubigeos', { search: txtBuscar, provincia: 'Lima' })
+            const res = await get('ubigeos', { search: txtBuscar, province: 'Lima' })
             this.ubigeosLoading = false
 
             if (!res.ok) return

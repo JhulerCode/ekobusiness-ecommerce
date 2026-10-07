@@ -4,10 +4,10 @@ import AccountPanel from '../components/AccountPanel.vue'
 import { serverGet as get } from '@/lib/server/public-api'
 
 const res = await get('sistema', {
-    keys: ['documentos_identidad'],
+    keys: ['identity_documents'],
 })
 
-const documentos_identidad = res.ok ? res.data?.documentos_identidad || [] : []
+const identity_documents = res.ok ? res.data?.identity_documents || [] : []
 const session = Astro.locals.session || { status: 'guest' }
 ---
 
@@ -46,7 +46,7 @@ const session = Astro.locals.session || { status: 'guest' }
         <div class="relative z-10 mx-auto -mt-10 max-w-7xl px-5 pb-20 md:px-8">
             <AccountPanel
                 client:load
-                documentos_identidad={documentos_identidad}
+                identity_documents={identity_documents}
                 initialUser={session.user}
                 initialSessionStatus={session.status}
             />

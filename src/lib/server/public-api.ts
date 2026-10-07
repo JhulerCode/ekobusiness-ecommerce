@@ -10,9 +10,9 @@ type PublicParams = {
     featured?: string
     keys?: string | string[]
     id?: string
-    departamento?: string
-    provincia?: string
-    distrito?: string
+    department?: string
+    province?: string
+    district?: string
     search?: string
 }
 
@@ -34,7 +34,7 @@ export function integrationPublicPath(endpoint: PublicEndpoint, params: PublicPa
         setParam(search, 'featured', params.featured)
         return `productos${search.size ? `?${search}` : ''}`
     }
-    for (const key of ['id', 'departamento', 'provincia', 'distrito', 'search'] as const) {
+    for (const key of ['id', 'department', 'province', 'district', 'search'] as const) {
         setParam(search, key, params[key])
     }
     return `locations/ubigeos${search.size ? `?${search}` : ''}`

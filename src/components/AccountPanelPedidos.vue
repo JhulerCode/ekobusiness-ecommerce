@@ -30,8 +30,8 @@
                     <p class="font-heading text-lg font-semibold text-sunka-forest">Pedido #{{ a.code }}</p>
 
                     <p class="mt-1 text-xs leading-relaxed text-sunka-stone sm:text-sm">
-                        {{ new Date(a.fecha).toLocaleDateString("es-PE") }} |
-                        {{ a.entrega_tipo1.nombre }} | {{ a.pago_metodo1.nombre }}
+                        {{ new Date(a.date).toLocaleDateString("es-PE") }} |
+                        {{ deliveryName(a.delivery_type) }} | {{ paymentName(a.payment_method) }}
                     </p>
 
                     <button
@@ -45,19 +45,19 @@
                 </div>
 
                 <div class="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:text-right">
-                    <p class="font-heading text-xl font-semibold text-sunka-ink">{{ a.moneda1?.simbolo }}{{ a.monto }}</p>
+                    <p class="font-heading text-xl font-semibold text-sunka-ink">{{ a.currency?.symbol }}{{ a.amount }}</p>
 
                     <span
                         class="border px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.14em]"
                         :class="[
-                            a.estado1?.nombre === 'ABIERTO'
+                            statusName(a.status) === 'ABIERTO'
                                 ? 'border-sunka-brass/40 bg-sunka-cream text-sunka-brass'
-                                : a.estado1?.nombre === 'CERRADO'
+                                : statusName(a.status) === 'CERRADO'
                                 ? 'border-sunka-olive/30 bg-sunka-olive/10 text-sunka-olive'
                                 : 'border-sunka-sand bg-sunka-cream text-sunka-stone',
                         ]"
                     >
-                        {{ a.estado1?.nombre }}
+                        {{ statusName(a.status) }}
                     </span>
                 </div>
             </div>
@@ -99,6 +99,17 @@ export default defineComponent({
         }
     },
     methods: {
+        statusName(status) {
+            return String(status) === '2' ? 'CERRADO' : 'ABIERTO'
+        },
+        deliveryName(type) {
+            return type === 'retiro' ? 'RETIRO' : 'ENVÍO'
+        },
+        paymentName(method) {
+            if (method === 'yape') return 'Yape'
+            if (method === 'tarjeta') return 'Tarjeta de crédito o débito'
+            return String(method || '—')
+        },
         async loadPedidos() {
             this.loading = true;
             const res = await get('partner_orders')

@@ -117,25 +117,25 @@
                                 <JdInput
                                     label="Correo electrónico"
                                     :nec="true"
-                                    v-model="form.correo"
-                                    :error="errors.correo"
+                                    v-model="form.email"
+                                    :error="errors.email"
                                     placeholder="nombre@correo.com"
                                 />
 
                                 <JdInputPassword
                                     :label="isLogin ? 'Contraseña' : 'Nueva contraseña'"
                                     :nec="true"
-                                    v-model="form.contrasena"
-                                    :error="errors.contrasena"
+                                    v-model="form.password"
+                                    :error="errors.password"
                                     placeholder="Ingresa tu contraseña"
                                 />
 
                                 <JdInputPassword
                                     label="Confirmar contraseña"
                                     :nec="true"
-                                    v-model="form.contrasena_confirmar"
+                                    v-model="form.password_confirm"
                                     v-if="!isLogin"
-                                    :error="errors.contrasena_confirmar"
+                                    :error="errors.password_confirm"
                                     placeholder="Repite tu contraseña"
                                 />
 
@@ -213,9 +213,9 @@ export default defineComponent({
             isMounted: false,
             isLogin: true,
             form: {
-                correo: '',
-                contrasena: '',
-                contrasena_confirmar: '',
+                email: '',
+                password: '',
+                password_confirm: '',
             },
             errors: {},
             showPassword: false,
@@ -265,17 +265,17 @@ export default defineComponent({
         validateForm() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''))
 
-            if (!this.form.correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.correo))
-                this.errors.correo = 'Ingrese un correo válido.'
+            if (!this.form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email))
+                this.errors.email = 'Ingrese un correo válido.'
 
-            if (!this.form.contrasena) this.errors.contrasena = 'Este campo es obligatorio.'
+            if (!this.form.password) this.errors.password = 'Este campo es obligatorio.'
 
             if (!this.isLogin) {
-                if (!this.form.contrasena_confirmar)
-                    this.errors.contrasena_confirmar = 'Este campo es obligatorio.'
+                if (!this.form.password_confirm)
+                    this.errors.password_confirm = 'Este campo es obligatorio.'
 
-                if (!this.isLogin && this.form.contrasena !== this.form.contrasena_confirmar) {
-                    this.errors.contrasena_confirmar = 'Las contraseñas no coinciden.'
+                if (!this.isLogin && this.form.password !== this.form.password_confirm) {
+                    this.errors.password_confirm = 'Las contraseñas no coinciden.'
                     return
                 }
             }
@@ -294,8 +294,9 @@ export default defineComponent({
                 if (!res.ok) {
                     this.errors.general = res.problem.detail
                 } else {
-                    this.user = { email: this.form.correo }
-                    localStorage.setItem('login-correo', this.form.correo)
+                    this.user = { email: this.form.email }
+                    localStorage.setItem('login-email', this.form.email)
+                    localStorage.removeItem('login-correo')
                     this.closeModal()
                     window.location.reload()
                     // window.location.href = '/account';
@@ -306,12 +307,12 @@ export default defineComponent({
 
                 if (!res.ok) {
                     if (res.problem.type.endsWith(':already-exists')) {
-                        this.errors.correo = res.problem.detail
+                        this.errors.email = res.problem.detail
                     } else {
                         this.errors.general = res.problem.detail
                     }
                 } else {
-                    this.user = { email: this.form.correo }
+                    this.user = { email: this.form.email }
                     this.closeModal()
                     window.location.href = '/account'
                 }
@@ -332,8 +333,8 @@ export default defineComponent({
         this.isMounted = true
         document.addEventListener('click', this.handleOutsideClick)
         document.addEventListener('keydown', this.handleEscape)
-        const correoStored = localStorage.getItem('login-correo')
-        if (correoStored) this.form.correo = correoStored
+        const emailStored = localStorage.getItem('login-email') || localStorage.getItem('login-correo')
+        if (emailStored) this.form.email = emailStored
         if (!['authenticated', 'guest'].includes(this.sessionStatus)) this.validateSession()
     },
     beforeUnmount() {

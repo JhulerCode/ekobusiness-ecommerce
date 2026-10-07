@@ -184,7 +184,7 @@ export default defineComponent({
 
             this.loading = true
             try {
-                const res = await post('newsletter', { correo: this.email }, 'Correo')
+                const res = await post('newsletter', { email: this.email }, 'Correo')
                 this.showMsg = true
                 this.resMsg = res.ok
                     ? res.warnings?.[0]?.detail || 'Suscripción registrada correctamente.'
