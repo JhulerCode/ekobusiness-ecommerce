@@ -38,7 +38,7 @@ const { linea } = Astro.props as {
                         >
                             <img
                                 src={producto.image?.src ?? producto.image}
-                                alt={producto.imageAlt || producto.nombre}
+                                alt={producto.imageAlt || producto.name}
                                 class="h-full w-full object-cover object-left transition duration-[1800ms] ease-out group-hover:scale-105"
                             />
                             <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,0)_34%,rgba(9,8,6,.18)_100%)]"></div>
@@ -46,12 +46,12 @@ const { linea } = Astro.props as {
 
                         <div class="pt-5 text-center">
                             <h2 class="font-heading text-2xl font-semibold leading-tight text-sunka-ink md:text-3xl">
-                                {producto.nombre}
+                                {producto.name}
                             </h2>
                             {
-                                producto.perfil && (
+                                producto.description && (
                                     <p class="mt-2 line-clamp-2 text-sm leading-relaxed text-sunka-ink/68">
-                                        {producto.perfil}
+                                        {producto.description}
                                     </p>
                                 )
                             }

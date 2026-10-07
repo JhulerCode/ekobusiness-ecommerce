@@ -9,10 +9,43 @@ export interface CartItem extends Record<string, any> {
     pu: number
 }
 
+function normalizeCartItem(item: Record<string, any>): CartItem {
+    const normalized: Record<string, any> = { ...item }
+    if (normalized.price === undefined && normalized.precio !== undefined) {
+        normalized.price = normalized.precio
+    }
+    if (normalized.regular_price === undefined && normalized.precio_regular !== undefined) {
+        normalized.regular_price = normalized.precio_regular
+    }
+    if (normalized.club_price === undefined && normalized.precio_club !== undefined) {
+        normalized.club_price = normalized.precio_club
+    }
+    if (normalized.name === undefined && normalized.nombre !== undefined) {
+        normalized.name = normalized.nombre
+    }
+    if (normalized.photo === undefined && normalized.foto !== undefined) {
+        normalized.photo = normalized.foto
+    }
+    if (normalized.photos === undefined && normalized.fotos !== undefined) {
+        normalized.photos = normalized.fotos
+    }
+    if (normalized.presentation === undefined && normalized.presentacion !== undefined) {
+        normalized.presentation = normalized.presentacion
+    }
+    if (normalized.line_name === undefined && normalized.linea_nombre !== undefined) {
+        normalized.line_name = normalized.linea_nombre
+    }
+    if (normalized.unit === undefined && normalized.unidad !== undefined) {
+        normalized.unit = normalized.unidad
+    }
+    return normalized as CartItem
+}
+
 export const Cart = {
     get() {
         const data = localStorage.getItem(CART_KEY);
-        return data ? JSON.parse(data) : [];
+        const items = data ? JSON.parse(data) : [];
+        return items.map(normalizeCartItem);
     },
 
     save(cart: CartItem[]) {
@@ -35,34 +68,34 @@ export const Cart = {
                     cart.splice(index, 1)
                 }
             }
-            if (producto.precio !== undefined && producto.precio !== null) existing.pu = producto.precio;
-            if (producto.precio_regular !== undefined && producto.precio_regular !== null) {
-                existing.precio_regular = producto.precio_regular;
+            if (producto.price !== undefined && producto.price !== null) existing.pu = producto.price;
+            if (producto.regular_price !== undefined && producto.regular_price !== null) {
+                existing.regular_price = producto.regular_price;
             }
-            if (producto.precio_club !== undefined && producto.precio_club !== null) {
-                existing.precio_club = producto.precio_club;
+            if (producto.club_price !== undefined && producto.club_price !== null) {
+                existing.club_price = producto.club_price;
             }
         } else {
             cart.push({
                 articulo,
-                nombre: producto.nombre,
-                unidad: producto.unidad,
+                name: producto.name,
+                unit: producto.unit,
                 has_fv: producto.has_expiry,
 
                 cantidad: producto.cantidad,
 
-                pu: producto.precio,
-                precio_regular: producto.precio_regular ?? producto.precio,
-                precio_club: producto.precio_club,
+                pu: producto.price,
+                regular_price: producto.regular_price ?? producto.price,
+                club_price: producto.club_price,
                 igv_afectacion: producto.igv_afectacion,
                 igv_porcentaje: 18,
 
-                foto: producto.foto,
-                fotos: producto.fotos,
+                photo: producto.photo,
+                photos: producto.photos,
 
                 linea: producto.linea,
-                linea_nombre: producto.linea_nombre || producto.line?.name,
-                presentacion: producto.presentacion || producto.ecommerce_data?.presentacion,
+                line_name: producto.line_name || producto.line?.name,
+                presentation: producto.presentation || producto.ecommerce_data?.presentation,
 
                 blend_datos: producto.blend_datos,
             });
@@ -81,7 +114,7 @@ export const Cart = {
     },
 
     count() {
-        return this.get().reduce((sum: number, item: CartItem) => sum + Number(item.cantidad), 0)
+        return this.get().reduce((sum: number, item: CartItem) => sum + Number(item.cantidad || 0), 0)
     },
 
     priceItems(items: CartItem[], isAuthenticated = false) {
@@ -89,8 +122,8 @@ export const Cart = {
             ...item,
             pu: getProductPrice(
                 {
-                    precio: item.precio_regular ?? item.pu,
-                    precio_club: item.precio_club,
+                    price: item.regular_price ?? item.pu,
+                    club_price: item.club_price,
                 },
                 isAuthenticated,
             ),
@@ -101,10 +134,10 @@ export const Cart = {
         const cart = this.get()
         const missing = cart.filter(
             (item: CartItem) =>
-                !item.linea_nombre ||
-                !Array.isArray(item.presentacion) ||
-                item.precio_club === undefined ||
-                item.precio_regular === undefined,
+                !item.line_name ||
+                !Array.isArray(item.presentation) ||
+                item.club_price === undefined ||
+                item.regular_price === undefined,
         )
         if (!missing.length) return cart
 
@@ -121,10 +154,10 @@ export const Cart = {
             return {
                 ...item,
                 linea: product.linea,
-                linea_nombre: product.line?.name,
-                presentacion: product.presentacion,
-                precio_regular: product.precio,
-                precio_club: product.precio_club,
+                line_name: product.line?.name,
+                presentation: product.presentation,
+                regular_price: product.price,
+                club_price: product.club_price,
             }
         })
         this.save(hydrated)

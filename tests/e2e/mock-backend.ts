@@ -34,9 +34,10 @@ createServer((request, response) => {
             list_price: 10,
             line: { name: 'Tradicional' },
             ecommerce_data: {
-                precio: 10,
-                presentacion: [{ label: 'Saquitos', value: 20 }],
-                fotos: [],
+                name: 'Producto de prueba',
+                price: 10,
+                presentation: [{ label: 'Saquitos', value: 20 }],
+                photos: [],
             },
         }
         const data = !ids.length || ids.includes('product-1') ? [product] : []

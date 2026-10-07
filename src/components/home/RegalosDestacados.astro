@@ -7,7 +7,7 @@ const isAuthenticated = Astro.locals.session?.status === 'authenticated'
 
 const res2 = await get('productos', { featured: 'true' })
 const productos = formatProductos(res2.ok ? res2.data : [])
-    .filter((producto) => producto.is_destacado)
+    .filter((producto) => producto.is_featured)
     .slice(0, 6)
 ---
 
@@ -41,10 +41,10 @@ const productos = formatProductos(res2.ok ? res2.data : [])
                             class="group block overflow-hidden rounded-[6px] border border-sunka-ink/14  shadow-[0_1px_0_rgba(9,8,6,0.05)] transition hover:border-sunka-brass/45"
                         >
                             <div class="aspect-[4/4] overflow-hidden bg-sunka-sand">
-                                {producto.foto && (
+                                {producto.photo && (
                                     <img
-                                        src={producto.foto}
-                                        alt={producto.nombre}
+                                        src={producto.photo}
+                                        alt={producto.name}
                                         loading="lazy"
                                         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                                     />
@@ -53,7 +53,7 @@ const productos = formatProductos(res2.ok ? res2.data : [])
 
                             <div class="min-h-[58px] px-3 py-2 text-center">
                                 <h3 class="truncate text-sm font-semibold leading-tight text-sunka-ink">
-                                    {producto.nombre}
+                                    {producto.name}
                                 </h3>
                                 <div class="mt-0.5 flex flex-wrap items-baseline justify-center gap-x-2 gap-y-0.5">
                                     <p class="text-sm font-medium leading-tight text-sunka-ink">
@@ -63,8 +63,8 @@ const productos = formatProductos(res2.ok ? res2.data : [])
                                         hasClubPrice(producto) && (
                                             <p class="text-[10px] leading-tight text-sunka-stone">
                                                 {isAuthenticated
-                                                    ? `Regular: S/ ${formatProductPrice(producto.precio)}`
-                                                    : `Club: S/ ${formatProductPrice(producto.precio_club)}`}
+                                                    ? `Regular: S/ ${formatProductPrice(producto.price)}`
+                                                    : `Club: S/ ${formatProductPrice(producto.club_price)}`}
                                             </p>
                                         )
                                     }

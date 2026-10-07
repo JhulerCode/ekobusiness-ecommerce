@@ -35,7 +35,7 @@ function normalizeText(value: unknown) {
 
 function productPrice(product: Record<string, any>) {
     const ecommerceData = product.ecommerce_data || {}
-    return Number(ecommerceData.precio ?? ecommerceData.price ?? product.list_price)
+    return Number(ecommerceData.price ?? product.list_price)
 }
 
 export function buildAuthoritativeCheckout(

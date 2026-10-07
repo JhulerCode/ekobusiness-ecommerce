@@ -406,12 +406,12 @@ export default defineComponent({
             // Filtro por precio
             if (this.precioMin != null && this.precioMin !== '') {
                 resultado = resultado.filter(
-                    (p) => Number(p.precio) >= this.precioMin
+                    (p) => Number(p.price) >= this.precioMin
                 );
             }
             if (this.precioMax != null && this.precioMax !== '') {
                 resultado = resultado.filter(
-                    (p) => Number(p.precio) <= this.precioMax
+                    (p) => Number(p.price) <= this.precioMax
                 );
             }
 
@@ -419,13 +419,13 @@ export default defineComponent({
             resultado.sort((a, b) => {
                 switch (this.orden) {
                     case 'nombre-asc':
-                        return a.nombre.localeCompare(b.nombre);
+                        return a.name.localeCompare(b.name);
                     case 'nombre-desc':
-                        return b.nombre.localeCompare(a.nombre);
+                        return b.name.localeCompare(a.name);
                     case 'precio-asc':
-                        return Number(a.precio) - Number(b.precio);
+                        return Number(a.price) - Number(b.price);
                     case 'precio-desc':
-                        return Number(b.precio) - Number(a.precio);
+                        return Number(b.price) - Number(a.price);
                     default:
                         return 0;
                 }
@@ -589,8 +589,8 @@ export default defineComponent({
         },
         getProductMoments(producto) {
             const sources = [
-                producto.perfil_sensorial?.momentos,
-                producto.ecommerce_data?.perfil_sensorial?.momentos,
+                producto.sensory_profile?.moments,
+                producto.ecommerce_data?.sensory_profile?.moments,
                 producto.momentos,
                 producto.momento,
                 producto.tags,

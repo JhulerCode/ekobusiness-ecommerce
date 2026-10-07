@@ -219,11 +219,11 @@ function normalizeSlug(value: unknown) {
 }
 
 export function getProductLine(item: PromotionItem) {
-    return normalizeSlug(item.linea_nombre || item.line?.name || item.lineName)
+    return normalizeSlug(item.line_name || item.line?.name || item.lineName)
 }
 
 export function getProductPresentation(item: PromotionItem) {
-    const presentation = item.presentacion || item.ecommerce_data?.presentacion || []
+    const presentation = item.presentation || item.ecommerce_data?.presentation || []
     const sachets = Array.isArray(presentation)
         ? presentation.find((entry) => normalizeSlug(entry?.label) === 'saquitos')
         : null

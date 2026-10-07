@@ -31,13 +31,13 @@ if (productosDestacadosIds.length > 0) {
         .filter(Boolean)
         .map((producto: Record<string, any>) => {
             const ecommerceData = producto.ecommerce_data ?? {}
-            const fotoPrincipal = ecommerceData.fotos?.[0]
+            const fotoPrincipal = ecommerceData.photos?.[0]
 
             return {
                 id: producto.id,
                 // ...ecommerceData,
-                nombre: ecommerceData.name,
-                perfil: ecommerceData.descripcion,
+                name: ecommerceData.name,
+                description: ecommerceData.description,
                 image: fotoPrincipal?.url,
                 imageAlt: fotoPrincipal?.name ?? ecommerceData.name,
                 href: `/productos/${producto.id}`,

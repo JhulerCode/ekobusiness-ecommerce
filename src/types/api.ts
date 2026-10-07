@@ -41,12 +41,12 @@ export type JsonRecord = Record<string, any>
 
 export interface Product extends JsonRecord {
     id: string | number
-    nombre: string
-    precio: string | number
-    precio_club?: string | number | null
-    precio_anterior?: string | number | null
-    fotos?: Array<{ url?: string }>
-    foto?: string
+    name: string
+    price: string | number
+    club_price?: string | number | null
+    previous_price?: string | number | null
+    photos?: Array<{ url?: string }>
+    photo?: string
     slug?: string | number
     ecommerce_data?: JsonRecord
 }

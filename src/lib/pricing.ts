@@ -1,12 +1,12 @@
 export function getProductPrice(product: Record<string, any> | null | undefined, isAuthenticated = false) {
     if (!product) return null
 
-    const clubPrice = product.precio_club
+    const clubPrice = product.club_price
     if (isAuthenticated && clubPrice !== undefined && clubPrice !== null && clubPrice !== '') {
         return clubPrice
     }
 
-    return product.precio
+    return product.price
 }
 
 export function formatProductPrice(value: unknown) {
@@ -18,12 +18,12 @@ export function formatProductPrice(value: unknown) {
 export function hasClubPrice(product: Record<string, any> | null | undefined) {
     if (!product) return false
 
-    const regular = Number(product.precio)
-    const club = Number(product.precio_club)
+    const regular = Number(product.price)
+    const club = Number(product.club_price)
     return (
-        product.precio_club !== undefined &&
-        product.precio_club !== null &&
-        product.precio_club !== '' &&
+        product.club_price !== undefined &&
+        product.club_price !== null &&
+        product.club_price !== '' &&
         Number.isFinite(regular) &&
         Number.isFinite(club) &&
         regular !== club

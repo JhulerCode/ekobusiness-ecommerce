@@ -3,10 +3,10 @@
         <!-- Miniaturas -->
         <div class="flex md:flex-col gap-2 order-2 md:order-1">
             <img
-                v-for="(foto, index) in producto.fotos"
+                v-for="(foto, index) in producto.photos"
                 :key="foto.id"
                 :src="foto.url"
-                :alt="`${producto.nombre} ${index + 1}`"
+                :alt="`${producto.name} ${index + 1}`"
                 @click="seleccionarImagen(index)"
                 :class="[
                     'w-20 h-20 object-cover rounded-lg cursor-pointer',
@@ -29,8 +29,8 @@
             "
         >
             <img
-                :src="producto.fotos[imagenSeleccionada].url"
-                :alt="producto.nombre"
+                :src="producto.photos[imagenSeleccionada].url"
+                :alt="producto.name"
                 class="w-full h-auto object-cover transition-transform duration-200"
                 :style="imgStyle"
                 ref="image"

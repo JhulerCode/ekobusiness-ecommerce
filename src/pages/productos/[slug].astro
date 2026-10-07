@@ -47,9 +47,9 @@ const normalizePairs = (value: unknown): Array<{ label: string; value: string }>
         )
 }
 
-const fotos = Array.isArray(producto.fotos) ? producto.fotos.filter((foto) => foto?.url) : []
-const fotoPrincipal = fotos[0]?.url ?? producto.foto
-const presentacion = normalizePairs(producto.presentacion)
+const fotos = Array.isArray(producto.photos) ? producto.photos.filter((foto) => foto?.url) : []
+const fotoPrincipal = fotos[0]?.url ?? producto.photo
+const presentacion = normalizePairs(producto.presentation)
 const presentationGridClass =
     presentacion.length >= 4
         ? 'grid-cols-2 sm:grid-cols-4'
@@ -58,11 +58,11 @@ const presentationGridClass =
           : presentacion.length === 2
             ? 'grid-cols-2'
             : 'grid-cols-1'
-const certificaciones = normalizeTextList(producto.certificaciones)
+const certificaciones = normalizeTextList(producto.certifications)
 
 const perfilSensorial =
-    producto.perfil_sensorial && typeof producto.perfil_sensorial === 'object'
-        ? producto.perfil_sensorial
+    producto.sensory_profile && typeof producto.sensory_profile === 'object'
+        ? producto.sensory_profile
         : {}
 const notas = normalizeTextList(perfilSensorial.notas)
 const momentos = normalizeTextList(perfilSensorial.momentos)
@@ -71,8 +71,8 @@ const atributos = normalizePairs(perfilSensorial.atributos).map((atributo) => ({
     percentage: Math.min(100, Math.max(0, Number.parseFloat(atributo.value) || 0)),
 }))
 const hasPerfilSensorial = Boolean(
-    perfilSensorial.titulo ||
-    perfilSensorial.descripcion ||
+    perfilSensorial.title ||
+    perfilSensorial.description ||
     notas.length ||
     atributos.length ||
     momentos.length,
@@ -82,7 +82,7 @@ const lineaConfig = getLineaByName(producto.line?.name)
 const diferenciales: Array<Record<string, any>> = lineaConfig?.diferenciales ?? []
 
 const preparacion =
-    producto.preparacion && typeof producto.preparacion === 'object' ? producto.preparacion : {}
+    producto.preparation && typeof producto.preparation === 'object' ? producto.preparation : {}
 const pasosPreparacion = [
     {
         titulo: 'Calienta',
@@ -99,10 +99,10 @@ const pasosPreparacion = [
 ]
 const hasPreparacion = true
 
-const relatedIds = Array.isArray(producto.productos_relacionados)
+const relatedIds = Array.isArray(producto.related_products)
     ? [
           ...new Set(
-              producto.productos_relacionados
+              producto.related_products
                   .map((item: Record<string, any>) => item?.id)
                   .filter((id: string) => id && id !== producto.id),
           ),
@@ -124,21 +124,21 @@ const lineaTiendaHref = linea
     ? `/tienda?linea=${encodeURIComponent(lineaConfig?.slug ?? linea)}`
     : ''
 const precio = formatProductPrice(getProductPrice(producto, isAuthenticated))
-const precioRegular = formatProductPrice(producto.precio)
-const precioClub = formatProductPrice(producto.precio_club)
+const precioRegular = formatProductPrice(producto.price)
+const precioClub = formatProductPrice(producto.club_price)
 const mostrarComparacion = hasClubPrice(producto)
-const pageDescription = producto.descripcion_corta || producto.descripcion || producto.nombre
+const pageDescription = producto.short_description || producto.description || producto.name
 const cartProduct = JSON.stringify({
     ...producto,
-    precio_regular: producto.precio,
-    precio: getProductPrice(producto, isAuthenticated),
+    regular_price: producto.price,
+    price: getProductPrice(producto, isAuthenticated),
 })
 const eyebrowClass = 'text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass'
 const sectionTitleClass =
     'mt-3 font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl'
 ---
 
-<BaseLayout title={`${producto.nombre} | SUNKA`} description={pageDescription}>
+<BaseLayout title={`${producto.name} | SUNKA`} description={pageDescription}>
     <article class="overflow-hidden bg-sunka-white text-sunka-ink">
         <div class="mx-auto max-w-7xl px-5 pt-24 md:px-8">
             <nav
@@ -160,7 +160,7 @@ const sectionTitleClass =
                     )
                 }
                 <span>/</span>
-                <span aria-current="page">{producto.nombre}</span>
+                <span aria-current="page">{producto.name}</span>
             </nav>
         </div>
 
@@ -184,7 +184,7 @@ const sectionTitleClass =
                                     type="button"
                                     class="group w-[62px] shrink-0 cursor-pointer sm:w-[68px] [&[aria-pressed=true]_img]:border-sunka-brass"
                                     data-gallery-thumb={foto.url}
-                                    aria-label={`Ver imagen ${index + 1} de ${producto.nombre}`}
+                                    aria-label={`Ver imagen ${index + 1} de ${producto.name}`}
                                     aria-pressed={index === 0 ? 'true' : 'false'}
                                 >
                                     <img
@@ -206,7 +206,7 @@ const sectionTitleClass =
                         fotoPrincipal ? (
                             <img
                                 src={fotoPrincipal}
-                                alt={producto.nombre}
+                                alt={producto.name}
                                 data-gallery-main
                                 fetchpriority="high"
                                 class="h-full max-h-[680px] w-full object-contain"
@@ -228,12 +228,12 @@ const sectionTitleClass =
                 <h1
                     class="mt-3 font-heading text-3xl font-semibold leading-tight text-sunka-ink md:text-4xl"
                 >
-                    {producto.nombre}
+                    {producto.name}
                 </h1>
                 <!-- {
-                    producto.descripcion_corta && (
+                    producto.short_description && (
                         <p class="mt-4 text-sm leading-relaxed text-sunka-ink/65 md:text-base">
-                            {producto.descripcion_corta}
+                            {producto.short_description}
                         </p>
                     )
                 } -->
@@ -256,18 +256,18 @@ const sectionTitleClass =
                         )
                     }
                     {
-                        producto.precio_anterior && (
+                        producto.previous_price && (
                             <span class="text-base text-sunka-stone line-through">
-                                S/ {producto.precio_anterior}
+                                S/ {producto.previous_price}
                             </span>
                         )
                     }
                 </div>
 
                 {
-                    producto.descripcion && (
+                    producto.description && (
                         <p class="mt-4 text-sm leading-relaxed text-sunka-ink/65">
-                            {producto.descripcion}
+                            {producto.description}
                         </p>
                     )
                 }
@@ -369,14 +369,14 @@ const sectionTitleClass =
                             <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-sunka-brass-light">
                                 Perfil sensorial
                             </p>
-                            {perfilSensorial.titulo && (
+                            {perfilSensorial.title && (
                                 <h2 class="mt-3 font-heading text-3xl font-semibold leading-tight md:text-4xl">
-                                    {perfilSensorial.titulo}
+                                    {perfilSensorial.title}
                                 </h2>
                             )}
-                            {perfilSensorial.descripcion && (
+                            {perfilSensorial.description && (
                                 <p class="mt-5 max-w-xl text-sm leading-relaxed text-sunka-white/75 md:text-base">
-                                    {perfilSensorial.descripcion}
+                                    {perfilSensorial.description}
                                 </p>
                             )}
 
@@ -495,9 +495,9 @@ const sectionTitleClass =
                             </ol>
                         )}
 
-                        {preparacion.maridaje && (
+                        {preparacion.pairing && (
                             <p class="mt-8 rounded-sm bg-sunka-white px-5 py-3 text-center text-xs text-sunka-ink/65">
-                                {preparacion.maridaje}
+                                {preparacion.pairing}
                             </p>
                         )}
                     </div>
@@ -519,10 +519,10 @@ const sectionTitleClass =
                                     href={`/productos/${item.slug}`}
                                 >
                                     <div class="grid aspect-[1.08] place-items-center overflow-hidden bg-sunka-cream">
-                                        {item.foto ? (
+                                        {item.photo ? (
                                             <img
-                                                src={item.foto}
-                                                alt={item.nombre}
+                                                src={item.photo}
+                                                alt={item.name}
                                                 loading="lazy"
                                                 class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
                                             />
@@ -532,11 +532,11 @@ const sectionTitleClass =
                                     </div>
                                     <div class="mt-5">
                                         <h3 class="text-base font-semibold text-sunka-ink">
-                                            {item.nombre}
+                                            {item.name}
                                         </h3>
-                                        {item.descripcion_corta && (
+                                        {item.short_description && (
                                             <p class="mt-1 line-clamp-2 text-xs leading-relaxed text-sunka-stone">
-                                                {item.descripcion_corta}
+                                                {item.short_description}
                                             </p>
                                         )}
                                         <div class="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
@@ -547,8 +547,8 @@ const sectionTitleClass =
                                                 hasClubPrice(item) && (
                                                     <span class="text-[10px] text-sunka-stone">
                                                         {isAuthenticated
-                                                            ? `Regular: S/ ${formatProductPrice(item.precio)}`
-                                                            : `Club: S/ ${formatProductPrice(item.precio_club)}`}
+                                                            ? `Regular: S/ ${formatProductPrice(item.price)}`
+                                                            : `Club: S/ ${formatProductPrice(item.club_price)}`}
                                                     </span>
                                                 )
                                             }

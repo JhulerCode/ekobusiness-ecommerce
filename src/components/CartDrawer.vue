@@ -98,8 +98,8 @@
                                 class="grid grid-cols-[88px_1fr] gap-4 border-b border-sunka-sand py-5 sm:grid-cols-[104px_1fr] sm:gap-5"
                             >
                                 <img
-                                    :src="item.foto || '/placeholder.png'"
-                                    :alt="item.nombre"
+                                    :src="item.photo || '/placeholder.png'"
+                                    :alt="item.name"
                                     class="h-24 w-[88px] bg-sunka-sand object-cover sm:h-28 sm:w-[104px]"
                                 />
 
@@ -107,16 +107,16 @@
                                     <div class="flex items-start justify-between gap-3">
                                         <div class="min-w-0">
                                             <h3 class="font-heading text-base font-medium leading-5">
-                                                {{ item.nombre }}
+                                                {{ item.name }}
                                             </h3>
-                                            <p v-if="item.unidad" class="mt-1 text-xs text-sunka-stone">
-                                                {{ item.unidad }}
+                                            <p v-if="item.unit" class="mt-1 text-xs text-sunka-stone">
+                                                {{ item.unit }}
                                             </p>
                                         </div>
                                         <button
                                             type="button"
                                             class="shrink-0 cursor-pointer text-[10px] font-semibold uppercase tracking-[0.12em] text-sunka-stone underline decoration-sunka-stone/40 underline-offset-4 transition-colors hover:text-sunka-ink"
-                                            :aria-label="`Eliminar ${item.nombre} del carrito`"
+                                            :aria-label="`Eliminar ${item.name} del carrito`"
                                             @click="remove(item.articulo)"
                                         >
                                             Eliminar
@@ -129,7 +129,7 @@
                                                 type="button"
                                                 class="h-full w-9 text-lg font-light transition-colors hover:bg-sunka-sand disabled:cursor-not-allowed disabled:opacity-35"
                                                 :disabled="Number(item.cantidad) <= 1"
-                                                :aria-label="`Reducir cantidad de ${item.nombre}`"
+                                                :aria-label="`Reducir cantidad de ${item.name}`"
                                                 @click="changeQuantity(item, -1)"
                                             >
                                                 −
@@ -140,7 +140,7 @@
                                             <button
                                                 type="button"
                                                 class="h-full w-9 text-lg font-light transition-colors hover:bg-sunka-sand"
-                                                :aria-label="`Aumentar cantidad de ${item.nombre}`"
+                                                :aria-label="`Aumentar cantidad de ${item.name}`"
                                                 @click="changeQuantity(item, 1)"
                                             >
                                                 +
@@ -340,10 +340,10 @@ export default defineComponent({
             }).format(Number(value))
         },
         regularPrice(item) {
-            return item.precio_regular ?? item.pu
+            return item.regular_price ?? item.pu
         },
         clubPrice(item) {
-            return item.precio_club
+            return item.club_price
         },
         showPriceComparison(item) {
             const regular = Number(this.regularPrice(item))

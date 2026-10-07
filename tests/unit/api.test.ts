@@ -21,18 +21,18 @@ describe('contratos del ecommerce', () => {
             {
                 id: 'tea-1',
                 name: 'Nombre interno',
-                precio: 12,
+                price: 12,
                 ecommerce_data: {
                     name: 'Té Andino',
-                    fotos: [{ url: 'https://cdn.example/tea.webp' }],
+                    photos: [{ url: 'https://cdn.example/tea.webp' }],
                 },
             },
         ])
 
         expect(product).toMatchObject({
-            nombre: 'Té Andino',
-            precio: '12.00',
-            foto: 'https://cdn.example/tea.webp',
+            name: 'Té Andino',
+            price: '12.00',
+            photo: 'https://cdn.example/tea.webp',
             slug: 'tea-1',
         })
     })

@@ -197,7 +197,7 @@ export default defineComponent({
             let resultado = [...this.productos]
             const search = this.normalizeSearch(this.searchTerm)
             if (search) {
-                resultado = resultado.filter((producto) => this.normalizeSearch(producto.nombre || producto.name).includes(search))
+                resultado = resultado.filter((producto) => this.normalizeSearch(producto.name).includes(search))
             }
             if (this.filtroLineas.length) {
                 resultado = resultado.filter((producto) => this.filtroLineas.includes(producto.linea))
@@ -211,8 +211,8 @@ export default defineComponent({
             return resultado.sort((a, b) => {
                 if (this.orden === 'precio-asc') return Number(this.productPrice(a)) - Number(this.productPrice(b))
                 if (this.orden === 'precio-desc') return Number(this.productPrice(b)) - Number(this.productPrice(a))
-                const nombreA = this.normalizeSearch(a.nombre || a.name)
-                const nombreB = this.normalizeSearch(b.nombre || b.name)
+                const nombreA = this.normalizeSearch(a.name)
+                const nombreB = this.normalizeSearch(b.name)
                 if (this.orden === 'nombre-desc') return nombreB.localeCompare(nombreA)
                 return nombreA.localeCompare(nombreB)
             })
@@ -286,8 +286,8 @@ export default defineComponent({
                 })
             }
             ;[
-                producto.perfil_sensorial?.momentos,
-                producto.ecommerce_data?.perfil_sensorial?.momentos,
+                producto.sensory_profile?.moments,
+                producto.ecommerce_data?.sensory_profile?.moments,
                 producto.momentos,
                 producto.momento,
                 producto.tags,

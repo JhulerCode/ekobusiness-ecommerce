@@ -8,11 +8,11 @@ const isAuthenticated = Astro.locals.session?.status === 'authenticated'
 
 const res2 = await get('productos', { featured: 'true' })
 const productos = formatProductos(res2.ok ? res2.data : [])
-    .filter((producto) => producto.is_destacado)
+    .filter((producto) => producto.is_featured)
     .map((producto) => ({
         ...producto,
-        precio_regular: producto.precio,
-        precio: getProductPrice(producto, isAuthenticated),
+        regular_price: producto.price,
+        price: getProductPrice(producto, isAuthenticated),
     }))
 ---
 

@@ -3,8 +3,8 @@
         <a :href="`/productos/${producto.slug}`" class="block">
             <div class="relative aspect-[1.05] overflow-hidden bg-sunka-sand/35">
                 <img
-                    :src="producto.foto"
-                    :alt="producto.nombre"
+                    :src="producto.photo"
+                    :alt="producto.name"
                     loading="lazy"
                     class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                 />
@@ -15,7 +15,7 @@
 
             <div class="flex min-h-[142px] flex-col px-4 pb-3 pt-4 pr-14">
                 <h3 class="truncate text-sm font-semibold leading-tight text-sunka-ink">
-                    {{ producto.nombre }}
+                    {{ producto.name }}
                 </h3>
                 <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-sunka-ink/60">
                     {{ productDescription }}
@@ -39,7 +39,7 @@
         <button
             type="button"
             class="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-sunka-cream text-sunka-ink shadow-sm transition-colors duration-300 hover:bg-sunka-brass hover:text-sunka-white"
-            :aria-label="`Agregar ${producto.nombre} al carrito`"
+            :aria-label="`Agregar ${producto.name} al carrito`"
             @click.stop="addToCart"
         >
             <ShoppingCartPlus class="h-4 w-4" />
@@ -84,7 +84,6 @@ export default defineComponent({
         },
         productDescription() {
             return (
-                this.producto.descripcion ||
                 this.producto.description ||
                 'Una mezcla natural para acompañar tu momento.'
             )
@@ -93,10 +92,10 @@ export default defineComponent({
             return formatProductPrice(getProductPrice(this.producto, this.isAuthenticated))
         },
         regularPrice() {
-            return formatProductPrice(this.producto.precio)
+            return formatProductPrice(this.producto.price)
         },
         clubPrice() {
-            return formatProductPrice(this.producto.precio_club)
+            return formatProductPrice(this.producto.club_price)
         },
         showPriceComparison() {
             return hasClubPrice(this.producto)
@@ -107,8 +106,8 @@ export default defineComponent({
             Cart.add({
                 ...this.producto,
                 articulo: this.producto.articulo ?? this.producto.id,
-                precio_regular: this.producto.precio,
-                precio: this.effectivePrice,
+                regular_price: this.producto.price,
+                price: this.effectivePrice,
                 cantidad: 1,
             })
             clearTimeout(this.toastTimeout)

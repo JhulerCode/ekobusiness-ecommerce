@@ -132,37 +132,33 @@ export async function delet<T = any>(endpoint: Endpoint, item: RequestItem, _mes
 export function formatProductos(datos: Array<Record<string, any>> = []): Product[] {
     return datos.map((source): Product => {
         const ecommerceData = (source.ecommerce_data || {}) as Record<string, any>
-        const fotos = Array.isArray(ecommerceData.fotos)
-            ? ecommerceData.fotos
-            : Array.isArray(source.fotos)
-              ? source.fotos
-              : []
+        const photos = Array.isArray(ecommerceData.photos) ? ecommerceData.photos : []
         const producto: Record<string, any> = {
             ...source,
             ...ecommerceData,
-            nombre: ecommerceData.name ?? source.name,
+            name: ecommerceData.name ?? source.name,
             unidad: source.unit,
             linea: source.line_id,
             linea1: source.line,
             igv_afectacion: source.igv_affectation,
-            fotos,
+            photos,
         }
 
         return {
             ...producto,
-            precio:
-                producto.precio == null || producto.precio === ''
-                    ? producto.precio
-                    : Number(producto.precio).toFixed(2),
-            precio_club:
-                producto.precio_club == null || producto.precio_club === ''
-                    ? producto.precio_club
-                    : Number(producto.precio_club).toFixed(2),
-            precio_anterior:
-                producto.precio_anterior == null || producto.precio_anterior === ''
+            price:
+                producto.price == null || producto.price === ''
+                    ? producto.price
+                    : Number(producto.price).toFixed(2),
+            club_price:
+                producto.club_price == null || producto.club_price === ''
+                    ? producto.club_price
+                    : Number(producto.club_price).toFixed(2),
+            previous_price:
+                producto.previous_price == null || producto.previous_price === ''
                     ? null
-                    : Number(producto.precio_anterior).toFixed(2),
-            foto: producto.fotos[0]?.url,
+                    : Number(producto.previous_price).toFixed(2),
+            photo: producto.photos[0]?.url,
             slug: producto.id,
         } as Product
     })

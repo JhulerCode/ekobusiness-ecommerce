@@ -5,8 +5,8 @@
         <a :href="`/productos/${producto.slug}`">
             <div class="aspect-square overflow-hidden">
                 <img
-                    :src="producto.foto"
-                    :alt="producto.nombre"
+                    :src="producto.photo"
+                    :alt="producto.name"
                     loading="lazy"
                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -14,16 +14,16 @@
 
             <div class="pt-2 flex flex-col flex-grow">
                 <p class="text-gray-700 text-sm line-clamp-1 mb-1.5">
-                    {{ producto.nombre }}
+                    {{ producto.name }}
                 </p>
 
                 <div
-                    v-if="producto.precio_anterior"
+                    v-if="producto.previous_price"
                     class="flex justify-between text-gray-400 text-sm"
                 >
                     <span>Antes</span>
                     <span class="line-through">
-                        S/ {{ producto.precio_anterior }}
+                        S/ {{ producto.previous_price }}
                     </span>
                 </div>
 
@@ -88,15 +88,15 @@ export default defineComponent({
     },
     methods: {
         regularPrice() {
-            return formatProductPrice(this.producto.precio_regular ?? this.producto.precio)
+            return formatProductPrice(this.producto.regular_price ?? this.producto.price)
         },
         clubPrice() {
-            return formatProductPrice(this.producto.precio_club)
+            return formatProductPrice(this.producto.club_price)
         },
         showPriceComparison() {
             return hasClubPrice({
                 ...this.producto,
-                precio: this.producto.precio_regular ?? this.producto.precio,
+                price: this.producto.regular_price ?? this.producto.price,
             })
         },
         productPrice() {
@@ -104,7 +104,7 @@ export default defineComponent({
                 getProductPrice(
                     {
                         ...this.producto,
-                        precio: this.producto.precio_regular ?? this.producto.precio,
+                        price: this.producto.regular_price ?? this.producto.price,
                     },
                     this.isAuthenticated,
                 ),
@@ -114,8 +114,8 @@ export default defineComponent({
             Cart.add({
                 ...this.producto,
                 articulo: this.producto.articulo ?? this.producto.id,
-                precio_regular: this.producto.precio_regular ?? this.producto.precio,
-                precio: this.productPrice(),
+                regular_price: this.producto.regular_price ?? this.producto.price,
+                price: this.productPrice(),
                 cantidad: 1,
             });
             clearTimeout(this.timeOutCloseToast);

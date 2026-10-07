@@ -710,10 +710,10 @@
             <!-- Lista de productos -->
             <div class="checkout-summary__items">
                 <div v-for="item in items" :key="item.id" class="checkout-summary__item">
-                    <img :src="item.foto" alt="Producto" class="checkout-summary__image" />
+                    <img :src="item.photo" alt="Producto" class="checkout-summary__image" />
                     <div class="flex-1">
                         <p class="text-sm font-medium text-gray-800 leading-tight">
-                            {{ item.nombre }}
+                            {{ item.name }}
                         </p>
 
                         <div class="flex justify-between">
@@ -1079,8 +1079,8 @@ export default defineComponent({
                 ...item,
                 pu: getProductPrice(
                     {
-                        precio: item.precio_regular ?? item.pu,
-                        precio_club: item.precio_club,
+                        price: item.regular_price ?? item.pu,
+                        club_price: item.club_price,
                     },
                     isAuthenticated,
                 ),
@@ -1093,10 +1093,10 @@ export default defineComponent({
             return Number(item.pu) || 0
         },
         regularPrice(item) {
-            return Number(item.precio_regular ?? item.pu) || 0
+            return Number(item.regular_price ?? item.pu) || 0
         },
         clubPrice(item) {
-            return Number(item.precio_club) || 0
+            return Number(item.club_price) || 0
         },
         showPriceComparison(item) {
             const regular = this.regularPrice(item)

@@ -13,8 +13,8 @@ import {
 
 function item(line: string, presentation: number, quantity: number, price = 1) {
     return {
-        linea_nombre: line,
-        presentacion: [{ label: 'Saquitos', value: presentation }],
+        line_name: line,
+        presentation: [{ label: 'Saquitos', value: presentation }],
         cantidad: quantity,
         pu: price,
     }
@@ -105,8 +105,8 @@ describe('promociones del checkout', () => {
 
     it('solo considera el valor cuya etiqueta es Saquitos', () => {
         const quote = evaluateCheckoutPromotions([{
-            linea_nombre: 'Luxury',
-            presentacion: [{ label: 'Peso', value: 10 }, { label: 'Saquitos', value: 50 }],
+            line_name: 'Luxury',
+            presentation: [{ label: 'Peso', value: 10 }, { label: 'Saquitos', value: 50 }],
             cantidad: 3,
             pu: 1,
         }])
@@ -125,12 +125,12 @@ describe('promociones del checkout', () => {
         }, [{
             id: 'product-1',
             name: 'Producto tradicional',
-            precio: 20,
+            price: 20,
             list_price: 20,
             line: { name: 'Tradicional' },
             ecommerce_data: {
-                precio: 20,
-                presentacion: [{ label: 'Saquitos', value: 20 }],
+                price: 20,
+                presentation: [{ label: 'Saquitos', value: 20 }],
             },
         }], {
             isClubMember: false,
@@ -153,8 +153,8 @@ describe('promociones del checkout', () => {
         }, [{
             id: 'product-1',
             name: 'Producto',
-            precio: 20,
-            ecommerce_data: { precio: 20, presentacion: [] },
+            price: 20,
+            ecommerce_data: { price: 20, presentation: [] },
         }], {
             isClubMember: false,
             ubigeo: { provincia: 'CALLAO' },
@@ -171,8 +171,8 @@ describe('promociones del checkout', () => {
         }, [{
             id: 'product-1',
             name: 'Producto',
-            precio: 20,
-            ecommerce_data: { precio: 20, presentacion: [] },
+            price: 20,
+            ecommerce_data: { price: 20, presentation: [] },
         }], {
             isClubMember: false,
             now: new Date('2026-08-28T21:00:00.000Z'),
@@ -193,8 +193,8 @@ describe('promociones del checkout', () => {
         }, [{
             id: 'product-1',
             name: 'Producto',
-            precio: 20,
-            ecommerce_data: { precio: 20, presentacion: [] },
+            price: 20,
+            ecommerce_data: { price: 20, presentation: [] },
         }], {
             isClubMember: false,
             now: new Date('2026-08-28T19:00:00.000Z'),
@@ -222,8 +222,8 @@ describe('promociones del checkout', () => {
         }, [{
             id: 'product-1',
             name: 'Producto',
-            precio: 20,
-            ecommerce_data: { precio: 20, presentacion: [] },
+            price: 20,
+            ecommerce_data: { price: 20, presentation: [] },
         }], {
             isClubMember: false,
             now: new Date('2026-08-28T19:00:00.000Z'),

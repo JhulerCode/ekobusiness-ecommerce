@@ -2,8 +2,8 @@
     <Carousel :items="productos" :perView="1" :gap="1" :speed="4000">
         <template #item="{ item }">
             <img
-                :src="item.foto"
-                :alt="item.nombre"
+                :src="item.photo"
+                :alt="item.name"
                 loading="lazy"
 
             />
