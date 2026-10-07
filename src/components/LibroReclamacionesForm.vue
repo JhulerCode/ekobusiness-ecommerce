@@ -8,42 +8,42 @@
                 <JdInput
                     label="Nombres"
                     :nec="true"
-                    v-model="form.nombres"
-                    :error="errors.nombres"
+                    v-model="form.first_name"
+                    :error="errors.first_name"
                 />
 
                 <JdInput
                     label="Apellidos"
                     :nec="true"
-                    v-model="form.apellidos"
-                    :error="errors.apellidos"
+                    v-model="form.last_name"
+                    :error="errors.last_name"
                 />
 
                 <JdSelect
                     label="Tipo de documento"
                     :nec="true"
                     :lista="documentos_identidad"
-                    v-model="form.doc_tipo"
-                    :error="errors.doc_tipo"
+                    v-model="form.document_type"
+                    :error="errors.document_type"
                 />
 
                 <JdInput
                     label="Nro de documento"
                     :nec="true"
-                    v-model="form.doc_numero"
-                    :error="errors.doc_numero"
+                    v-model="form.document_number"
+                    :error="errors.document_number"
                 />
 
-                <JdInput label="Correo" :nec="true" v-model="form.correo" :error="errors.correo" />
+                <JdInput label="Correo" :nec="true" v-model="form.email" :error="errors.email" />
 
                 <JdInput
                     label="Dirección"
                     :nec="true"
-                    v-model="form.direccion"
-                    :error="errors.direccion"
+                    v-model="form.address"
+                    :error="errors.address"
                 />
 
-                <JdCheckBox label="Soy menor de edad" v-model="form.menor_edad" />
+                <JdCheckBox label="Soy menor de edad" v-model="form.is_minor" />
             </div>
         </div>
 
@@ -61,23 +61,23 @@
                 <JdInput
                     label="Nro de pedido"
                     :nec="true"
-                    v-model="form.pedido_codigo"
-                    :error="errors.pedido_codigo"
+                    v-model="form.order_code"
+                    :error="errors.order_code"
                 />
 
                 <JdInput
                     label="Monto reclamado en soles"
                     :nec="true"
                     type="number"
-                    v-model="form.monto"
-                    :error="errors.monto"
+                    v-model="form.amount"
+                    :error="errors.amount"
                 />
 
                 <JdTextArea
                     label="Descripción del producto"
                     :nec="true"
-                    v-model="form.producto_descripcion"
-                    :error="errors.producto_descripcion"
+                    v-model="form.product_description"
+                    :error="errors.product_description"
                     class="md:col-span-2"
                 />
             </div>
@@ -92,23 +92,23 @@
                     label="Tipo"
                     :nec="true"
                     :lista="solicitud_tipos"
-                    v-model="form.tipo"
-                    :error="errors.tipo"
+                    v-model="form.claim_type"
+                    :error="errors.claim_type"
                     :with-border="true"
                 />
 
                 <JdTextArea
                     label="Resumen de tu reclamo"
                     :nec="true"
-                    v-model="form.resumen"
-                    :error="errors.resumen"
+                    v-model="form.summary"
+                    :error="errors.summary"
                 />
 
                 <JdTextArea
                     label="Detalle de tu solicitud"
                     :nec="true"
-                    v-model="form.detalle"
-                    :error="errors.detalle"
+                    v-model="form.description"
+                    :error="errors.description"
                 />
             </div>
         </div>
@@ -187,27 +187,27 @@ export default defineComponent({
         validateForm() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
 
-            if (!this.form.nombres) this.errors.nombres = "Campo obligatorio.";
-            if (!this.form.apellidos) this.errors.apellidos = "Campo obligatorio.";
-            if (!this.form.doc_tipo) this.errors.doc_tipo = "Seleccione un tipo de documento.";
-            if (!this.form.doc_numero) this.errors.doc_numero = "Campo obligatorio.";
-            if (!this.form.correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.correo))
-                this.errors.correo = "Ingrese un correo válido.";
-            if (!this.form.direccion) this.errors.direccion = "Campo obligatorio.";
+            if (!this.form.first_name) this.errors.first_name = "Campo obligatorio.";
+            if (!this.form.last_name) this.errors.last_name = "Campo obligatorio.";
+            if (!this.form.document_type) this.errors.document_type = "Seleccione un tipo de documento.";
+            if (!this.form.document_number) this.errors.document_number = "Campo obligatorio.";
+            if (!this.form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email))
+                this.errors.email = "Ingrese un correo válido.";
+            if (!this.form.address) this.errors.address = "Campo obligatorio.";
 
-            if (!this.form.pedido_codigo) this.errors.pedido_codigo = "Campo obligatorio.";
-            if (!this.form.monto) this.errors.monto = "Campo obligatorio.";
-            if (!this.form.producto_descripcion)
-                this.errors.producto_descripcion = "Campo obligatorio.";
+            if (!this.form.order_code) this.errors.order_code = "Campo obligatorio.";
+            if (!this.form.amount) this.errors.amount = "Campo obligatorio.";
+            if (!this.form.product_description)
+                this.errors.product_description = "Campo obligatorio.";
 
-            if (!this.form.tipo) this.errors.tipo = "Seleccione un tipo de solicitud.";
-            if (!this.form.resumen) this.errors.resumen = "Resuma su reclamo.";
-            if (!this.form.detalle) this.errors.detalle = "Describa su solicitud.";
+            if (!this.form.claim_type) this.errors.claim_type = "Seleccione un tipo de solicitud.";
+            if (!this.form.summary) this.errors.summary = "Resuma su reclamo.";
+            if (!this.form.description) this.errors.description = "Describa su solicitud.";
 
             return Object.values(this.errors).every((e) => !e);
         },
         shapeDatos() {
-            this.form.fecha_recepcion = new Date();
+            this.form.received_date = new Date();
         },
         async enviar() {
             if (!this.validateForm()) return;

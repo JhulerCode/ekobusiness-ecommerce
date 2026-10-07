@@ -56,7 +56,7 @@ export const validatePaymentSchema = z
     .strict()
 
 export const complaintSchema = z
-    .object({ correo: email, detalle: z.string().trim().min(1).max(20_000) })
+    .object({ email, description: z.string().trim().min(1).max(20_000) })
     .passthrough()
 
 export const arcoMetadataSchema = z.record(
