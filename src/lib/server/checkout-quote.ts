@@ -5,6 +5,11 @@ import {
     evaluateCheckoutPromotions,
 } from '@/lib/checkout-promotions'
 import { failure } from './bff'
+import {
+    ORDER_CURRENCY,
+    PARTNER_ORDER_ORIGIN,
+    PARTNER_ORDER_TYPE,
+} from '@/lib/api-schemas'
 import { backendRequest, resolveSession } from './backend'
 import { isDeliveryDateAllowed } from '@/lib/delivery-date'
 import { DELIVERY_TIME_RANGE, getPickupLocation } from '@/data/pickup-locations'
@@ -45,6 +50,21 @@ export function buildAuthoritativeCheckout(
 ) {
     if (!['envio', 'retiro'].includes(String(draft.delivery_type))) {
         throw new Error('INVALID_DELIVERY_TYPE')
+    }
+    if (draft.type !== undefined && draft.type !== PARTNER_ORDER_TYPE) {
+        throw new Error('INVALID_ORDER_TYPE')
+    }
+    if (draft.origin !== undefined && draft.origin !== PARTNER_ORDER_ORIGIN) {
+        throw new Error('INVALID_ORDER_ORIGIN')
+    }
+    if (draft.currency_id !== undefined && draft.currency_id !== ORDER_CURRENCY) {
+        throw new Error('INVALID_ORDER_CURRENCY')
+    }
+    if (draft.payment_method !== undefined && !['tarjeta', 'yape'].includes(String(draft.payment_method))) {
+        throw new Error('INVALID_PAYMENT_METHOD')
+    }
+    if (draft.invoice_type !== undefined && !['03', '01', 'NV'].includes(String(draft.invoice_type))) {
+        throw new Error('INVALID_INVOICE_TYPE')
     }
     if (!isDeliveryDateAllowed(draft.delivery_date, context.now)) {
         throw new Error('INVALID_DELIVERY_DATE')
@@ -108,6 +128,9 @@ export function buildAuthoritativeCheckout(
 
     return {
         ...draft,
+        type: PARTNER_ORDER_TYPE,
+        origin: PARTNER_ORDER_ORIGIN,
+        currency_id: ORDER_CURRENCY,
         amount: quote.total,
         delivery_cost: quote.deliveryCost,
         delivery_address: draft.delivery_type === 'retiro'
@@ -182,6 +205,18 @@ export async function prepareCheckoutOrder(
             ),
         }
     } catch (error) {
+        if (
+            error instanceof Error &&
+            [
+                'INVALID_ORDER_TYPE',
+                'INVALID_ORDER_ORIGIN',
+                'INVALID_ORDER_CURRENCY',
+                'INVALID_PAYMENT_METHOD',
+                'INVALID_INVOICE_TYPE',
+            ].includes(error.message)
+        ) {
+            return failure(422, 'invalid-cart', 'Carrito no válido', 'El tipo de pedido no es válido.')
+        }
         if (error instanceof Error && error.message === 'INVALID_DELIVERY_DATE') {
             return failure(
                 422,

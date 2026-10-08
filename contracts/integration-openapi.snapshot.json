@@ -1,0 +1,2079 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ITD ERP Integration API",
+    "version": "1.1.0",
+    "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
+  },
+  "servers": [
+    {
+      "url": "/api/integration/v1"
+    }
+  ],
+  "security": [
+    {
+      "ApiKey": []
+    }
+  ],
+  "x-problem-types": [
+    "urn:itderp:problem:arco-drive-not-configured",
+    "urn:itderp:problem:arco-drive-upload-failed",
+    "urn:itderp:problem:arco-invalid-captcha",
+    "urn:itderp:problem:arco-invalid-field-types",
+    "urn:itderp:problem:arco-invalid-files",
+    "urn:itderp:problem:arco-invalid-input",
+    "urn:itderp:problem:arco-invalid-state",
+    "urn:itderp:problem:arco-not-found",
+    "urn:itderp:problem:arco-required-fields-missing",
+    "urn:itderp:problem:arco-unavailable",
+    "urn:itderp:problem:arco-write-forbidden",
+    "urn:itderp:problem:book-claim-invalid-field-types",
+    "urn:itderp:problem:book-claim-invalid-input",
+    "urn:itderp:problem:book-claim-invalid-state",
+    "urn:itderp:problem:book-claim-not-found",
+    "urn:itderp:problem:book-claim-required-fields-missing",
+    "urn:itderp:problem:book-claim-unavailable",
+    "urn:itderp:problem:book-claim-write-forbidden",
+    "urn:itderp:problem:integration-auth-unavailable",
+    "urn:itderp:problem:integration-productos-unavailable",
+    "urn:itderp:problem:integration-company-unavailable",
+    "urn:itderp:problem:integration-customer-already-exists",
+    "urn:itderp:problem:integration-customer-email-not-verified",
+    "urn:itderp:problem:integration-customer-invalid-credentials",
+    "urn:itderp:problem:integration-customer-invalid-input",
+    "urn:itderp:problem:integration-customer-invalid-session",
+    "urn:itderp:problem:integration-customer-invalid-verification-code",
+    "urn:itderp:problem:integration-customer-mail-unavailable",
+    "urn:itderp:problem:integration-customer-session-invalid",
+    "urn:itderp:problem:integration-customer-unavailable",
+    "urn:itderp:problem:integration-customer-wallet-unavailable",
+    "urn:itderp:problem:integration-insufficient-scope",
+    "urn:itderp:problem:integration-invalid-api-key",
+    "urn:itderp:problem:integration-invalid-parameter",
+    "urn:itderp:problem:integration-order-access-invalid",
+    "urn:itderp:problem:integration-order-guest-not-configured",
+    "urn:itderp:problem:integration-order-invalid-cart",
+    "urn:itderp:problem:integration-order-lookup-blocked",
+    "urn:itderp:problem:integration-order-lookup-invalid",
+    "urn:itderp:problem:integration-order-not-found",
+    "urn:itderp:problem:integration-order-unavailable",
+    "urn:itderp:problem:integration-origin-forbidden",
+    "urn:itderp:problem:integration-payment-access-invalid",
+    "urn:itderp:problem:integration-payment-data-mismatch",
+    "urn:itderp:problem:integration-payment-intent-expired",
+    "urn:itderp:problem:integration-payment-invalid-cart",
+    "urn:itderp:problem:integration-payment-invalid-email",
+    "urn:itderp:problem:integration-payment-invalid-signature",
+    "urn:itderp:problem:integration-payment-method-not-found",
+    "urn:itderp:problem:integration-payment-persistence-unavailable",
+    "urn:itderp:problem:integration-payment-provider-unavailable",
+    "urn:itderp:problem:integration-product-not-found",
+    "urn:itderp:problem:integration-rate-limited",
+    "urn:itderp:problem:integration-ubigeo-invalid-keys",
+    "urn:itderp:problem:integration-ubigeo-unavailable",
+    "urn:itderp:problem:integration-route-not-found",
+    "urn:itderp:problem:partner-email-conflict"
+  ],
+  "paths": {
+    "/productos": {
+      "get": {
+        "x-scopes": [
+          "productos:read"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "description": "IDs separados por coma, máximo 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "line_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "featured",
+            "in": "query",
+            "description": "'true' filtra ecommerce_data.is_featured",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ProductList"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/productos/{id}": {
+      "get": {
+        "x-scopes": [
+          "productos:read"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Product"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/ubigeo-data": {
+      "get": {
+        "x-scopes": [
+          "ubigeo:read"
+        ],
+        "parameters": [
+          {
+            "name": "keys",
+            "in": "query",
+            "required": true,
+            "description": "Subconjunto de identity_documents,delivery_types,invoice_types,payment_methods,partner_order_stages",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UbigeoData"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/locations/ubigeos": {
+      "get": {
+        "x-scopes": [
+          "ubigeo:read"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "province",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "district",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Búsqueda parcial por distrito",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UbigeoList"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/auth/register": {
+      "post": {
+        "x-scopes": [
+          "customers:auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerRegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Auth"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/auth/signin": {
+      "post": {
+        "x-scopes": [
+          "customers:auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerSigninRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Auth"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/auth/refresh": {
+      "post": {
+        "x-scopes": [
+          "customers:auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refresh_token"
+                ],
+                "properties": {
+                  "refresh_token": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/AuthRefresh"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/auth/logout": {
+      "post": {
+        "x-scopes": [
+          "customers:auth"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sesión cerrada"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/me": {
+      "get": {
+        "x-scopes": [
+          "customers:read"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Customer"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      },
+      "patch": {
+        "x-scopes": [
+          "customers:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Customer"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      },
+      "delete": {
+        "x-scopes": [
+          "customers:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Cliente desactivado"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/me/verification-code": {
+      "post": {
+        "x-scopes": [
+          "customers:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Código enviado"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/me/verify-code": {
+      "post": {
+        "x-scopes": [
+          "customers:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "verification_code"
+                ],
+                "properties": {
+                  "verification_code": {
+                    "type": "string",
+                    "maxLength": 20
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Código verificado"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/me/password": {
+      "post": {
+        "x-scopes": [
+          "customers:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Data"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/customers/me/wallet": {
+      "get": {
+        "x-scopes": [
+          "customers:read"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Data"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "x-scopes": [
+          "orders:read"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OrderList"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      },
+      "post": {
+        "x-scopes": [
+          "orders:create"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/OrderCreated"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/orders/lookup": {
+      "post": {
+        "x-scopes": [
+          "orders:read"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderLookupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OrderAccess"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/orders/lookup/resend": {
+      "post": {
+        "x-scopes": [
+          "orders:read"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "order_code",
+                  "email"
+                ],
+                "properties": {
+                  "order_code": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 254
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Data"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "x-scopes": [
+          "orders:read"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "OrderAccess": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OrderDetail"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/orders/{id}/access": {
+      "post": {
+        "x-scopes": [
+          "orders:read"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OrderAccess"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/izipay/form-token": {
+      "post": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutFormTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CheckoutAttempt"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/izipay/validate": {
+      "post": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "description": "Valida la respuesta firmada del navegador y deja el pago esperando la confirmación IPN.",
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/PaymentStatus"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/izipay/intents/{id}/status": {
+      "get": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CheckoutAccess": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PaymentStatus"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/izipay/payment-methods/{id}": {
+      "delete": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Método eliminado"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/izipay/ipn": {
+      "post": {
+        "security": [],
+        "description": "Única confirmación autoritativa del pago; valida la firma de Izipay y responde texto plano.",
+        "responses": {
+          "200": {
+            "description": "Notificación aceptada",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Firma o notificación inválida"
+          }
+        }
+      }
+    },
+    "/forms/newsletter": {
+      "post": {
+        "x-scopes": [
+          "forms:write"
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Data"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/forms/arco": {
+      "post": {
+        "x-scopes": [
+          "forms:write"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Data"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/forms/claims": {
+      "post": {
+        "x-scopes": [
+          "forms:write"
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Data"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      },
+      "CustomerBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "OrderAccess": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Order-Access"
+      },
+      "CheckoutAccess": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Checkout-Access"
+      }
+    },
+    "parameters": {
+      "Id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "instance"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri-reference"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string",
+            "format": "uri-reference"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "Warning": {
+        "type": "object",
+        "required": [
+          "type",
+          "title"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DataEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {},
+          "meta": {
+            "type": "object"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Warning"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "user",
+              "access_token",
+              "refresh_token"
+            ],
+            "properties": {
+              "user": {
+                "type": "object"
+              },
+              "access_token": {
+                "type": "string"
+              },
+              "refresh_token": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthRefreshEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "access_token"
+            ],
+            "properties": {
+              "access_token": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderAccessEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "status",
+              "id",
+              "access_token"
+            ],
+            "properties": {
+              "status": {
+                "const": "completed"
+              },
+              "id": {
+                "type": "string"
+              },
+              "order_code": {
+                "type": "string"
+              },
+              "access_token": {
+                "type": "string"
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Warning"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutAttemptEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "formToken",
+              "checkout_intent_id",
+              "checkout_access_token",
+              "order_code",
+              "order_id",
+              "order_access_token",
+              "lookup_code",
+              "amount",
+              "currency",
+              "expires_at"
+            ],
+            "properties": {
+              "formToken": {
+                "type": "string"
+              },
+              "checkout_intent_id": {
+                "type": "string"
+              },
+              "checkout_access_token": {
+                "type": "string"
+              },
+              "order_code": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              },
+              "order_access_token": {
+                "type": "string"
+              },
+              "lookup_code": {
+                "type": "string",
+                "pattern": "^[0-9]{6}$"
+              },
+              "amount": {
+                "type": "integer"
+              },
+              "currency": {
+                "const": "PEN"
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Warning"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentStatusEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "processing",
+                  "payment_failed",
+                  "manual_review",
+                  "completed"
+                ]
+              },
+              "checkout_intent_id": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "order_code": {
+                "type": "string"
+              },
+              "access_token": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CatalogEntry": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {},
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "Catalogs": {
+        "type": "object",
+        "description": "Subconjunto de catálogos pedido vía ?keys=. Claves válidas: identity_documents, delivery_types, invoice_types, payment_methods, partner_order_stages.",
+        "properties": {
+          "identity_documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogEntry"
+            }
+          },
+          "delivery_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogEntry"
+            }
+          },
+          "invoice_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogEntry"
+            }
+          },
+          "payment_methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogEntry"
+            }
+          },
+          "partner_order_stages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogEntry"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "Ubigeo": {
+        "type": "object",
+        "required": [
+          "id",
+          "department",
+          "province",
+          "district",
+          "full_name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string"
+          },
+          "district": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Product": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "line_id": {
+            "type": "string"
+          },
+          "category_id": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "igv_affectation": {
+            "type": "string"
+          },
+          "list_price": {
+            "type": "number"
+          },
+          "ecommerce_data": {
+            "type": "object"
+          },
+          "line": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": true
+      },
+      "PartnerData": {
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "apellidos": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "document_type": {},
+          "document_number": {
+            "type": "string"
+          },
+          "phone1": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OrderLineInput": {
+        "type": "object",
+        "required": [
+          "article_id",
+          "quantity"
+        ],
+        "properties": {
+          "article_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "quantity": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 100
+          },
+          "blend_data": {}
+        },
+        "additionalProperties": true
+      },
+      "OrderCreateRequest": {
+        "type": "object",
+        "required": [
+          "partner_data",
+          "partner_order_lines"
+        ],
+        "properties": {
+          "type": {
+            "const": "sale",
+            "description": "Único tipo aceptado por ecommerce. Valores legacy 1/2 o 'purchase' se rechazan."
+          },
+          "origin": {
+            "const": "integration"
+          },
+          "partner_data": {
+            "$ref": "#/components/schemas/PartnerData"
+          },
+          "partner_order_lines": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/OrderLineInput"
+            }
+          },
+          "delivery_type": {
+            "type": "string",
+            "enum": [
+              "envio",
+              "retiro"
+            ]
+          },
+          "delivery_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "delivery_ubigeo_id": {
+            "type": "string"
+          },
+          "delivery_address": {
+            "type": "string"
+          },
+          "delivery_address_data": {
+            "type": "object"
+          },
+          "delivery_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "payment_term": {
+            "type": "string"
+          },
+          "payment_method": {
+            "type": "string",
+            "enum": [
+              "tarjeta",
+              "yape"
+            ]
+          },
+          "invoice_type": {
+            "type": "string",
+            "enum": [
+              "03",
+              "01",
+              "NV"
+            ]
+          },
+          "invoice_ruc": {
+            "type": "string"
+          },
+          "invoice_business_name": {
+            "type": "string"
+          },
+          "contact_id": {
+            "type": "string"
+          },
+          "contact_data": {
+            "type": "object"
+          },
+          "observation": {
+            "type": "string"
+          },
+          "promotions": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "OrderCreatedEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "id",
+              "order_code",
+              "access_token"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "order_code": {
+                "type": "string"
+              },
+              "access_token": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Warning"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderListItem": {
+        "type": "object",
+        "required": [
+          "code",
+          "date",
+          "amount",
+          "status"
+        ],
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "payment_method": {
+            "type": "string",
+            "enum": [
+              "tarjeta",
+              "yape"
+            ]
+          },
+          "payment_status": {
+            "type": "string"
+          },
+          "delivery_type": {
+            "type": "string",
+            "enum": [
+              "envio",
+              "retiro"
+            ]
+          },
+          "amount": {},
+          "currency_id": {
+            "const": "PEN"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OrderDetail": {
+        "type": "object",
+        "required": [
+          "code",
+          "date",
+          "amount"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "partner_id": {
+            "type": "string"
+          },
+          "partner_data": {
+            "$ref": "#/components/schemas/PartnerData"
+          },
+          "currency_id": {
+            "const": "PEN"
+          },
+          "amount": {},
+          "status": {
+            "type": "string"
+          },
+          "is_paid": {
+            "type": "boolean"
+          },
+          "payment_status": {
+            "type": "string"
+          },
+          "is_ready": {
+            "type": "boolean"
+          },
+          "is_delivered": {
+            "type": "boolean"
+          },
+          "delivery_type": {
+            "type": "string",
+            "enum": [
+              "envio",
+              "retiro"
+            ]
+          },
+          "delivery_date": {
+            "type": "string"
+          },
+          "delivery_address": {
+            "type": "string"
+          },
+          "delivery_address_data": {
+            "type": "object"
+          },
+          "delivery_cost": {},
+          "payment_method": {
+            "type": "string",
+            "enum": [
+              "tarjeta",
+              "yape"
+            ]
+          },
+          "invoice_type": {
+            "type": "string",
+            "enum": [
+              "03",
+              "01",
+              "NV"
+            ]
+          },
+          "invoice_ruc": {
+            "type": "string"
+          },
+          "invoice_business_name": {
+            "type": "string"
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "promotions": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "partner_order_lines": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "OrderLookupRequest": {
+        "type": "object",
+        "required": [
+          "order_code",
+          "lookup_code"
+        ],
+        "properties": {
+          "order_code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30
+          },
+          "lookup_code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutFormTokenRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "partner_order"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "paymentMethodToken": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "partner_order": {
+            "$ref": "#/components/schemas/OrderCreateRequest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerRegisterRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "nombres": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "apellidos": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "telefono": {
+            "type": "string",
+            "maxLength": 30
+          }
+        },
+        "additionalProperties": true
+      },
+      "CustomerSigninRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "additionalProperties": true
+      },
+      "CustomerUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "nombres": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "apellidos": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "telefono": {
+            "type": "string",
+            "maxLength": 30
+          }
+        },
+        "additionalProperties": true
+      },
+      "ProductListEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Product"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UbigeoDataEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Catalogs"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UbigeoListEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ubigeo"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderListEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderListItem"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderDetailEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/OrderDetail"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "responses": {
+      "Data": {
+        "description": "Operación exitosa",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DataEnvelope"
+            }
+          }
+        }
+      },
+      "Auth": {
+        "description": "Sesión creada",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AuthEnvelope"
+            }
+          }
+        }
+      },
+      "AuthRefresh": {
+        "description": "Sesión renovada",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AuthRefreshEnvelope"
+            }
+          }
+        }
+      },
+      "OrderAccess": {
+        "description": "Acceso temporal emitido",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrderAccessEnvelope"
+            }
+          }
+        }
+      },
+      "CheckoutAttempt": {
+        "description": "Formulario e intento persistente creados",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CheckoutAttemptEnvelope"
+            }
+          }
+        }
+      },
+      "PaymentStatus": {
+        "description": "Estado recuperable del pago",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PaymentStatusEnvelope"
+            }
+          }
+        }
+      },
+      "ProductList": {
+        "description": "Lista de productos",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProductListEnvelope"
+            }
+          }
+        }
+      },
+      "Product": {
+        "description": "Producto",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProductEnvelope"
+            }
+          }
+        }
+      },
+      "UbigeoData": {
+        "description": "Catálogos para la tienda",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UbigeoDataEnvelope"
+            }
+          }
+        }
+      },
+      "UbigeoList": {
+        "description": "Lista de ubigeos",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UbigeoListEnvelope"
+            }
+          }
+        }
+      },
+      "Customer": {
+        "description": "Cliente",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CustomerEnvelope"
+            }
+          }
+        }
+      },
+      "OrderList": {
+        "description": "Pedidos del cliente",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrderListEnvelope"
+            }
+          }
+        }
+      },
+      "OrderDetail": {
+        "description": "Detalle del pedido",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrderDetailEnvelope"
+            }
+          }
+        }
+      },
+      "OrderCreated": {
+        "description": "Pedido creado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrderCreatedEnvelope"
+            }
+          }
+        }
+      },
+      "Problem": {
+        "description": "Error conocido o seguro",
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "RateLimit-Limit": {
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Remaining": {
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Reset": {
+            "schema": {
+              "type": "integer"
+            }
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      }
+    }
+  }
+}

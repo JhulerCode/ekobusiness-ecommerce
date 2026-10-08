@@ -1382,8 +1382,8 @@ export default defineComponent({
             return Object.values(this.errors).every((e) => !e)
         },
         shapeDatos() {
-            this.form.type = 2
-            this.form.origin = 'ecommerce'
+            this.form.type = 'sale'
+            this.form.origin = 'integration'
             this.form.date = new Date().toISOString().split('T')[0]
             this.form.partner_id = this.user.id
 
