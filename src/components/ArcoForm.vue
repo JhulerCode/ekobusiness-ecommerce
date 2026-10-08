@@ -256,41 +256,41 @@ export default defineComponent({
             solicitud_tipos: [
                 {
                     id: 'acceso',
-                    nombre: 'Acceso',
+                    name: 'Acceso',
                     descripcion:
                         'Obtener información personal almacenada y condiciones de tratamiento.',
                 },
                 {
                     id: 'rectificacion',
-                    nombre: 'Rectificación',
+                    name: 'Rectificación',
                     descripcion: 'Corregir o actualizar información inexacta.',
                 },
                 {
                     id: 'cancelacion',
-                    nombre: 'Cancelación',
+                    name: 'Cancelación',
                     descripcion: 'Suprimir información personal no necesaria.',
                 },
                 {
                     id: 'oposicion',
-                    nombre: 'Oposición',
+                    name: 'Oposición',
                     descripcion:
                         'Impedir o cesar el tratamiento de datos personales.',
                 },
                 {
                     id: 'informacion',
-                    nombre: 'Información',
+                    name: 'Información',
                     descripcion:
                         'Conocer la finalidad, destinatarios y tratamiento de los datos.',
                 },
                 {
                     id: 'revocacion',
-                    nombre: 'Revocación',
+                    name: 'Revocación',
                     descripcion:
                         'Retirar el consentimiento para el tratamiento de datos.',
                 },
                 {
                     id: 'portabilidad',
-                    nombre: 'Portabilidad',
+                    name: 'Portabilidad',
                     descripcion:
                         'Trasladar los datos personales a otro responsable.',
                 },

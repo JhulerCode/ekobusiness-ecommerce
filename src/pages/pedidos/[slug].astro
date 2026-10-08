@@ -120,7 +120,7 @@ if (pedido) {
         const stateEntry = (systemResponse.data?.partner_order_states || []).find(
             (item: Record<string, any>) => String(item.id) === String(pedido.status),
         )
-        if (stateEntry) pedido.state_name = stateEntry.nombre
+        if (stateEntry) pedido.state_name = stateEntry.name
         deliveryTypes = systemResponse.data?.delivery_types || []
         paymentMethods = systemResponse.data?.payment_methods || []
         invoiceTypes = systemResponse.data?.invoice_types || []
@@ -129,7 +129,7 @@ if (pedido) {
 
 const orderState = pedido?.state_name || ''
 const catalogName = (list: Array<Record<string, any>>, id: unknown) =>
-    list.find((item) => String(item.id) === String(id))?.nombre || String(id ?? '—')
+    list.find((item) => String(item.id) === String(id))?.name || String(id ?? '—')
 const lastCompletedStageIndex = stages.reduce(
     (lastIndex: number, etapa: Record<string, any>, index: number) =>
         etapa.fecha ? index : lastIndex,
@@ -308,7 +308,7 @@ const orderTitle = pedido
                                                 {pedido.partner_data?.email}
                                             </OrderDetail>
                                             <OrderDetail label="Documento">
-                                                {pedido.partner_data?.document_type_entry?.nombre}{' '}
+                                                {pedido.partner_data?.document_type_entry?.name}{' '}
                                                 {pedido.partner_data?.document_number}
                                             </OrderDetail>
                                             <OrderDetail label="Teléfono">
@@ -352,7 +352,7 @@ const orderTitle = pedido
                                             ) : (
                                                 <>
                                                     <OrderDetail label="Punto de retiro">
-                                                        {pedido.delivery_address_data?.punto_retiro?.nombre || 'Punto de recojo SUNKA'}
+                                                        {pedido.delivery_address_data?.punto_retiro?.name ?? pedido.delivery_address_data?.punto_retiro?.nombre ?? 'Punto de recojo SUNKA'}
                                                     </OrderDetail>
                                                     <OrderDetail label="Dirección" wide>
                                                         {pedido.delivery_address_data?.punto_retiro?.direccion || pedido.delivery_address || '—'}
@@ -535,7 +535,7 @@ const orderTitle = pedido
                                                                         : 'text-sunka-stone',
                                                                 ]}
                                                             >
-                                                                {etapa.nombre}
+                                                                {etapa.name}
                                                             </h3>
                                                             {current && (
                                                                 <span class="rounded-full bg-sunka-brass/10 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.1em] text-sunka-brass">

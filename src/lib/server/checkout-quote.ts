@@ -122,7 +122,7 @@ export function buildAuthoritativeCheckout(
             : {
                 punto_retiro: {
                     id: pickupLocation?.id,
-                    nombre: pickupLocation?.nombre,
+                    name: pickupLocation?.name,
                     direccion: pickupLocation?.direccion,
                 },
                 horario: DELIVERY_TIME_RANGE,

@@ -74,7 +74,7 @@ export default defineComponent({
         loaded: { type: Boolean, default: false },
         lista: { type: Array, default: () => [] },
         id: { type: String, default: 'id' },
-        mostrar: { type: String, default: 'nombre' },
+        mostrar: { type: String, default: 'name' },
         placeholder: { type: String, default: null },
         groupBy: { type: String, default: null },
         disabled: { type: Boolean, default: false },

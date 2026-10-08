@@ -312,6 +312,7 @@
                                 <JdSelect
                                     label="Dirección guardada"
                                     :lista="user.direcciones || []"
+                                    mostrar="nombre"
                                     v-model="form.entrega_direccion_id"
                                     :error="errors.entrega_direccion_id"
                                     @elegir="setDireccion"
@@ -469,7 +470,7 @@
                                 </p>
                                 <p>
                                     <span class="font-medium">Punto de retiro:</span>
-                                    {{ selectedPickupLocation?.nombre }}
+                                    {{ selectedPickupLocation?.name }}
                                 </p>
                                 <p>
                                     <span class="font-medium">Dirección:</span>
@@ -1303,7 +1304,7 @@ export default defineComponent({
                     ? {
                         punto_retiro: {
                             id: pickupLocation.id,
-                            nombre: pickupLocation.nombre,
+                            name: pickupLocation.name,
                             direccion: pickupLocation.direccion,
                         },
                         horario: DELIVERY_TIME_RANGE,
