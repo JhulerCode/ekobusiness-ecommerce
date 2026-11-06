@@ -1,0 +1,53 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+const status = Astro.url.searchParams.get('status') || 'processing'
+const messages: Record<string, { eyebrow: string; title: string; detail: string }> = {
+    completed: {
+        eyebrow: 'Pago confirmado',
+        title: 'Tu compra está confirmada',
+        detail: 'Procesamos tu pago correctamente. En unos momentos recibirás un correo con los detalles de tu compra.',
+    },
+    error: {
+        eyebrow: 'Pago no completado',
+        title: 'No pudimos confirmar tu pago',
+        detail: 'No se realizó ningún cobro adicional. Vuelve a intentarlo o contáctanos para revisar tu pedido.',
+    },
+    payment_failed: {
+        eyebrow: 'Pago no confirmado',
+        title: 'El pago no fue autorizado',
+        detail: 'Puedes intentarlo nuevamente con otro medio de pago o contactarnos para revisar tu pedido.',
+    },
+    manual_review: {
+        eyebrow: 'Pago en revisión',
+        title: 'Estamos revisando tu pago',
+        detail: 'No realices otro pago. Te avisaremos cuando tengamos el resultado de la revisión.',
+    },
+    processing: {
+        eyebrow: 'Pago en verificación',
+        title: 'Tu pago está siendo confirmado',
+        detail: 'No realices otro pago. Actualizaremos el estado de tu pedido cuando tengamos la confirmación.',
+    },
+}
+const message = messages[status] || messages.processing
+---
+
+<BaseLayout title="Resultado del pago | SUNKA Herbal Tea">
+    <section class="mx-auto max-w-3xl px-5 py-28 md:px-8">
+        <article class="rounded-2xl border border-sunka-sand bg-sunka-white p-8 shadow-[0_18px_45px_rgba(35,29,24,0.07)] md:p-12">
+            <p class="text-[10px] font-bold uppercase tracking-[0.24em] text-sunka-brass">
+                {message.eyebrow}
+            </p>
+            <h1 class="mt-3 font-heading text-3xl font-semibold text-sunka-forest md:text-4xl">
+                {message.title}
+            </h1>
+            <p class="mt-4 text-sm leading-relaxed text-sunka-stone md:text-base">
+                {message.detail}
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+                <a href="/consulta-pedido" class="button button1">Consultar mi pedido</a>
+                <a href="/tienda" class="button button2">Volver a la tienda</a>
+            </div>
+        </article>
+    </section>
+</BaseLayout>

@@ -10,8 +10,8 @@
             <span class="payment-verification-overlay__spinner" aria-hidden="true"></span>
             <h2 id="payment-verification-title">Confirmando tu pago</h2>
             <p>
-                Estamos esperando la notificación segura de Izipay. No cierres ni recargues esta
-                página.
+                Estamos esperando la confirmación segura de {{ paymentProviderLabel }}. No cierres
+                ni recargues esta página.
             </p>
         </article>
     </div>
@@ -552,6 +552,21 @@
                         <div class="space-y-4 bg-gray-50 p-4 rounded-xl">
                             <!-- Si el método es TARJETA -->
                             <template v-if="form.payment_method === 'tarjeta'">
+                                <template v-if="isNiubiz">
+                                    <p class="text-gray-500 text-sm">
+                                        Al continuar se abrirá el formulario seguro de Niubiz para
+                                        ingresar los datos de tu tarjeta.
+                                    </p>
+                                    <div id="niubizPaymentForm" class="grid gap-3"></div>
+                                    <p
+                                        v-if="niubizSession && !activePaymentIntent"
+                                        class="text-sm text-sunka-stone"
+                                    >
+                                        La sesión de pago venció. Vuelve a intentarlo.
+                                    </p>
+                                </template>
+
+                                <template v-else>
                                 <!-- <JdButton
                                     text="Recargar wallet"
                                     @click="getCustomerWallet"
@@ -632,6 +647,7 @@
                                         />
                                     </div>
                                 </div>
+                                </template>
                             </template>
 
                             <!-- Si el método es YAPE -->
@@ -886,6 +902,7 @@ export default defineComponent({
     },
     props: {
         empresa: { type: Object, default: () => ({}) },
+        payment_provider: { type: String, default: 'izipay' },
         payment_methods: { type: Array, default: () => [] },
         identity_documents: { type: Array, default: () => [] },
         delivery_types: { type: Array, default: () => [] },
@@ -931,6 +948,7 @@ export default defineComponent({
             draftSaveTimeout: null,
             izipayKR: null,
             izipaySubmitRegistered: false,
+            niubizSession: null,
             activePaymentIntent: null,
             paymentVerifying: false,
             paymentOutcomeUncertain: false,
@@ -942,6 +960,12 @@ export default defineComponent({
         }
     },
     computed: {
+        isNiubiz() {
+            return this.payment_provider === 'niubiz'
+        },
+        paymentProviderLabel() {
+            return this.isNiubiz ? 'Niubiz' : 'Izipay'
+        },
         orderDetailUrl() {
             return this.form.redirect_url || '/consulta-pedido'
         },
@@ -1020,7 +1044,7 @@ export default defineComponent({
         },
     },
     async mounted() {
-        this.injectarJsIzipay()
+        if (!this.isNiubiz) this.injectarJsIzipay()
         this.items = await Cart.hydrateMetadata()
 
         if (this.items.length == 0) {
@@ -1351,12 +1375,12 @@ export default defineComponent({
                         this.form.entrega_direccion_id = newDireccionId
                     }
                 }
-                if (!this.user.wallet) {
+                if (!this.isNiubiz && !this.user.wallet) {
                     await this.getCustomerWallet()
                 }
             }
 
-            this.selectDefaultPaymentMethod()
+            if (!this.isNiubiz) this.selectDefaultPaymentMethod()
             this.step = 3
             this.scrollToForm('seccionForm3')
         },
@@ -1372,7 +1396,7 @@ export default defineComponent({
             }
 
             if (this.form.payment_method == 'tarjeta') {
-                if (!this.form.paymentMethodToken)
+                if (!this.isNiubiz && !this.form.paymentMethodToken)
                     this.errors.paymentMethodToken = 'Seleccione una tarjeta.'
             } else if (this.form.payment_method == 'yape') {
                 if (!this.form.payment_reference) this.errors.payment_reference = 'Este campo es obligatorio.'
@@ -1408,6 +1432,15 @@ export default defineComponent({
             }
         },
         async pagarConTarjeta() {
+            if (this.isNiubiz) {
+                if (this.activePaymentIntent?.provider === 'niubiz') {
+                    this.errors.general =
+                        'Completa el pago en el formulario seguro de Niubiz para continuar.'
+                    return
+                }
+                await this.pagarConNiubiz()
+                return
+            }
             if (this.activePaymentIntent?.KR) {
                 if (this.paymentOutcomeUncertain) {
                     this.loadingPagar = true
@@ -1520,6 +1553,74 @@ export default defineComponent({
                 this.loadingPagar = false
             }
         },
+        async pagarConNiubiz() {
+            this.shapeDatos()
+            const send = {
+                email: this.form.partner_data.email,
+                partner_order: this.form,
+            }
+
+            this.loadingPagar = true
+            this.errors.general = ''
+            try {
+                const res = await post(`${urls.niubiz}/create-payment`, send, undefined)
+                if (!res.ok) {
+                    this.errors.general = res.problem.detail
+                    return
+                }
+                this.form.order_code = res.data.order_code
+                this.form.id = res.data.order_id
+                this.form.redirect_url = res.data.redirect_url
+                this.paymentLookupCode = res.data.lookup_code
+                this.niubizSession = res.data
+                this.activePaymentIntent = {
+                    id: res.data.checkout_intent_id,
+                    provider: 'niubiz',
+                }
+                await this.renderNiubizButton(res.data)
+            } catch (error) {
+                console.error('No se pudo abrir el formulario de Niubiz.', error)
+                this.errors.general =
+                    'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
+                this.activePaymentIntent = null
+                this.niubizSession = null
+            } finally {
+                this.loadingPagar = false
+            }
+        },
+        async renderNiubizButton(session: Record<string, any>) {
+            const container = document.getElementById('niubizPaymentForm')
+            if (!container) throw new Error('NIUBIZ_CONTAINER_MISSING')
+            if (!session.checkoutScriptUrl || !session.sessionToken || !session.merchantId) {
+                throw new Error('NIUBIZ_SESSION_INCOMPLETE')
+            }
+
+            container.innerHTML = ''
+            const form = document.createElement('form')
+            form.method = 'post'
+            form.action = `${window.location.origin}/api/niubiz/confirm?id=${encodeURIComponent(session.checkout_intent_id)}`
+
+            const script = document.createElement('script')
+            script.src = session.checkoutScriptUrl
+            script.setAttribute('data-sessiontoken', session.sessionToken)
+            script.setAttribute('data-channel', 'web')
+            script.setAttribute('data-merchantid', session.merchantId)
+            script.setAttribute('data-purchasenumber', session.purchaseNumber)
+            script.setAttribute('data-amount', Number(session.amount).toFixed(2))
+            script.setAttribute('data-expirationminutes', '20')
+            script.setAttribute('data-timeouturl', window.location.href)
+            script.setAttribute('data-merchantlogo', `${window.location.origin}/favicon.png`)
+            script.setAttribute('data-formbuttoncolor', '#1f3d2b')
+
+            form.appendChild(script)
+            container.appendChild(form)
+
+            await new Promise<void>((resolve) => {
+                script.onload = () => resolve()
+                script.onerror = () => resolve()
+                window.setTimeout(resolve, 1500)
+            })
+        },
         async validateCardPayment(paymentData: Record<string, unknown>, intentId: string) {
             const body = { paymentData, checkout_intent_id: intentId }
             let result = await post(`${urls.izipay}/validate-payment`, body, undefined)
@@ -1535,11 +1636,15 @@ export default defineComponent({
             }
             return result
         },
+        paymentIntentUrl(intentId: string) {
+            const provider = this.activePaymentIntent?.provider === 'niubiz' ? 'niubiz' : 'izipay'
+            return `/api/${provider}/intents/${encodeURIComponent(intentId)}`
+        },
         async pollPaymentStatus(intentId: string) {
             let lastResult = null
             for (let attempt = 0; attempt < 15; attempt += 1) {
                 await this.wait(1000)
-                lastResult = await get(`/api/izipay/intents/${encodeURIComponent(intentId)}`)
+                lastResult = await get(this.paymentIntentUrl(intentId))
                 if (
                     lastResult.ok &&
                     ['completed', 'payment_failed', 'manual_review'].includes(
@@ -1593,9 +1698,7 @@ export default defineComponent({
                 return
             this.pendingStatusTimer = window.setTimeout(async () => {
                 this.pendingStatusAttempts += 1
-                const result = await get(
-                    `/api/izipay/intents/${encodeURIComponent(this.activePaymentIntent.id)}`,
-                )
+                const result = await get(this.paymentIntentUrl(this.activePaymentIntent.id))
                 if (result.ok && result.data?.status === 'completed') {
                     this.completeCardPayment(result)
                     return

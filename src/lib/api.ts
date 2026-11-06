@@ -6,6 +6,7 @@ export const urls = {
     productos: '/api/productos',
     arco: '/api/arco',
     izipay: '/api/izipay',
+    niubiz: '/api/niubiz',
     libro_reclamos: '/api/libro-reclamos',
     partner_orders: '/api/pedidos',
     newsletter: '/api/newsletter',

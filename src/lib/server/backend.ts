@@ -285,10 +285,14 @@ export function checkoutCookieName(id: string) {
     return `sunka_checkout_${id.replace(/[^a-zA-Z0-9_-]/g, '')}`
 }
 
-export function setCheckoutCookie(context: APIContext, id: string, token: string) {
+export function checkoutCookiePath(provider = 'izipay') {
+    return provider === 'niubiz' ? '/api/niubiz' : '/api/izipay'
+}
+
+export function setCheckoutCookie(context: APIContext, id: string, token: string, provider = 'izipay') {
     context.cookies.set(checkoutCookieName(id), token, {
         ...cookieOptions(24 * 60 * 60),
-        path: '/api/izipay',
+        path: checkoutCookiePath(provider),
     })
 }
 
@@ -296,6 +300,6 @@ export function getCheckoutCookie(context: APIContext, id: string) {
     return context.cookies.get(checkoutCookieName(id))?.value
 }
 
-export function clearCheckoutCookie(context: APIContext, id: string) {
-    context.cookies.delete(checkoutCookieName(id), { path: '/api/izipay' })
+export function clearCheckoutCookie(context: APIContext, id: string, provider = 'izipay') {
+    context.cookies.delete(checkoutCookieName(id), { path: checkoutCookiePath(provider) })
 }

@@ -143,6 +143,9 @@ createServer((request, response) => {
                       },
             ),
         )
+    } else if (url.pathname === '/api/integration/v1/payments/config') {
+        response.writeHead(200)
+        response.end(JSON.stringify({ data: { provider: 'izipay' } }))
     } else if (url.pathname === '/api/integration/v1/payments/izipay/form-token') {
         response.writeHead(201)
         response.end(JSON.stringify({
