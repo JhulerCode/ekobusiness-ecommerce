@@ -170,13 +170,13 @@ export default defineComponent({
             solicitud_tipos: [
                 {
                     id: "reclamo",
-                    nombre: "Reclamo",
+                    name: "Reclamo",
                     descripcion:
                         "Es la expresión de disconformidad del consumidor referida a los bienes expendidos o suministrados o a los servicios prestados.",
                 },
                 {
                     id: "queja",
-                    nombre: "Queja",
+                    name: "Queja",
                     descripcion:
                         "Es aquella disconformidad que no se encuentra relacionada a los bienes que comercializa el proveedor o a los servicios que presta. Puede expresar el malestar o descontento del consumidor respecto a la atención al público.",
                 },

@@ -185,7 +185,7 @@ describe('promociones del checkout', () => {
             punto_retiro: 'planta-sunka',
             delivery_address: 'Dirección inventada',
             delivery_address_data: {
-                punto_retiro: { nombre: 'Local inventado' },
+                punto_retiro: { name: 'Local inventado' },
                 horario: 'Todo el día',
             },
             delivery_date: '2026-08-30',
@@ -206,7 +206,7 @@ describe('promociones del checkout', () => {
         expect(order.delivery_address_data).toEqual({
             punto_retiro: {
                 id: 'planta-sunka',
-                nombre: 'Planta Sunka',
+                name: 'Planta Sunka',
                 direccion: 'Cal. 7 Mza. D Lote 10 Urb. Los Productores, Santa Anita',
             },
             horario: '8:00 a. m. a 4:00 p. m.',

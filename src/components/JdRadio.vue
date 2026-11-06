@@ -18,11 +18,11 @@
 
                 <span class="text-left">
                     <template v-if="a.descripcion">
-                        <strong>{{ a.nombre }}:</strong> {{ a.descripcion }}
+                        <strong>{{ a.name }}:</strong> {{ a.descripcion }}
                     </template>
 
                     <template v-else>
-                        {{ a.nombre }}
+                        {{ a.name }}
                     </template>
                 </span>
             </label>
