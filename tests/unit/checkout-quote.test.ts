@@ -4,7 +4,6 @@ import {
     PARTNER_ORDER_ORIGIN,
     PARTNER_ORDER_TYPE,
     createPaymentSchema,
-    orderCreateSchema,
     partnerOrderTypeSchema,
 } from '../../src/lib/api-schemas'
 import { buildAuthoritativeCheckout } from '../../src/lib/server/checkout-quote'
@@ -72,19 +71,21 @@ describe('contrato partnerOrder.type con integration', () => {
         expect(PARTNER_ORDER_ORIGIN).toBe('integration')
         expect(ORDER_CURRENCY).toBe('PEN')
         expect(
-            orderCreateSchema.safeParse({
-                order_code: 'abc',
-                partner_data: {},
-                type: 2,
+            createPaymentSchema.safeParse({
+                email: 'a@b.pe',
+                partner_order: { type: 2 },
             }).success,
         ).toBe(false)
         expect(
-            orderCreateSchema.safeParse({
-                order_code: 'abc',
-                partner_data: {},
-                type: 'sale',
-                payment_method: 'yape',
-                invoice_type: '03',
+            createPaymentSchema.safeParse({
+                email: 'a@b.pe',
+                partner_order: { type: 'sale', payment_method: 'yape', invoice_type: '03' },
+            }).success,
+        ).toBe(false)
+        expect(
+            createPaymentSchema.safeParse({
+                email: 'a@b.pe',
+                partner_order: { type: 'sale', payment_method: 'tarjeta', invoice_type: '03' },
             }).success,
         ).toBe(true)
         expect(

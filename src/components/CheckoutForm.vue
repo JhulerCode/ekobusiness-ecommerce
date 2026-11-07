@@ -20,24 +20,13 @@
         <article class="checkout-success__card">
             <div class="checkout-success__icon" aria-hidden="true">✓</div>
 
-            <p class="checkout-success__eyebrow">
-                {{ form.payment_method === 'yape' ? 'Pedido recibido' : 'Pago confirmado' }}
-            </p>
+            <p class="checkout-success__eyebrow">Pago confirmado</p>
 
-            <h2>
-                {{
-                    form.payment_method === 'yape'
-                        ? 'Tu pedido fue recibido'
-                        : 'Tu compra está confirmada'
-                }}
-            </h2>
+            <h2>Tu compra está confirmada</h2>
 
             <p class="checkout-success__lead">
-                {{
-                    form.payment_method === 'yape'
-                        ? 'En unos momentos recibirás un correo con todos los detalles de tu pedido.'
-                        : 'Procesamos tu pago correctamente. En unos momentos recibirás un correo con los detalles de tu compra.'
-                }}
+                Procesamos tu pago correctamente. En unos momentos recibirás un correo con los
+                detalles de tu compra.
             </p>
 
             <div v-if="form.order_code" class="checkout-success__order">
@@ -45,17 +34,9 @@
                 <strong>{{ form.order_code }}</strong>
             </div>
 
-            <div v-if="form.payment_method === 'yape'" class="checkout-success__notice">
-                <span>Pago por validar</span>
-                <p>
-                    Nuestro equipo verificará el pago realizado por Yape y actualizará el estado de
-                    tu pedido a la brevedad.
-                </p>
-            </div>
-
             <div class="checkout-success__actions">
                 <a :href="orderDetailUrl" class="checkout-success__action is-primary">
-                    {{ form.payment_method === 'yape' ? 'Ver estado del pedido' : 'Ver mi pedido' }}
+                    Ver mi pedido
                 </a>
                 <a href="/tienda" class="checkout-success__action is-secondary">
                     Seguir comprando
@@ -80,15 +61,11 @@
                 <span>Número de pedido</span>
                 <strong>{{ form.order_code }}</strong>
             </div>
-            <div v-if="paymentLookupCode" class="checkout-success__order">
-                <span>Código de consulta</span>
-                <strong>{{ paymentLookupCode }}</strong>
-            </div>
             <div class="checkout-success__notice">
                 <span>Tu pedido está seguro</span>
                 <p>
-                    Puedes cerrar esta página y consultar el estado con el número y código enviados
-                    a tu correo.
+                    Puedes cerrar esta página. Te enviaremos un correo con los detalles cuando el
+                    pago se confirme.
                 </p>
             </div>
             <div class="checkout-success__actions">
@@ -539,16 +516,7 @@
                             />
                         </div>
 
-                        <!-- Método de pago -->
-                        <JdRadio
-                            label="Método de pago"
-                            :nec="true"
-                            :lista="payment_methods"
-                            v-model="form.payment_method"
-                            :error="errors.payment_method"
-                            :withBorder="true"
-                            @change="errors = {}"
-                        />
+                        <p class="text-sm font-medium text-sunka-ink">Pago con tarjeta</p>
 
                         <div class="space-y-4 bg-gray-50 p-4 rounded-xl">
                             <!-- Si el método es TARJETA -->
@@ -651,56 +619,6 @@
                                 </template>
                             </template>
 
-                            <!-- Si el método es YAPE -->
-                            <template v-else-if="form.payment_method === 'yape'">
-                                <p class="text-gray-500 text-sm">
-                                    Escanea el QR con tu app Yape, realiza el pago y luego ingresa
-                                    el código de operación. Nuestro equipo verificará la transacción
-                                    y confirmará tu pago para continuar con el proceso de compra.
-                                </p>
-
-                                <div
-                                    class="flex flex-col items-center gap-4 md:flex-row md:justify-center bg-[#742284] rounded-md p-4"
-                                >
-                                    <img
-                                        :src="qrYapeUrl"
-                                        alt="QR de Yape"
-                                        class="w-48 h-48 rounded-xl"
-                                    />
-
-                                    <div
-                                        class="text-white text-sm flex flex-col justify-center items-center text-center space-y-4"
-                                    >
-                                        <img
-                                            :src="yapeLogo"
-                                            alt="Yape logo"
-                                            class="w-20 h-20 rounded-xl"
-                                        />
-
-                                        <div>
-                                            <b>Empresa:</b> {{ empresa.nombre }}<br />
-                                            <b>RUC:</b> {{ empresa.ruc }}<br />
-                                            <b>Celular Yape:</b> {{ empresa.yape_number }}<br />
-                                        </div>
-
-                                        <a
-                                            class="p-2 rounded-md bg-[#10cbb4] w-full"
-                                            :href="`tel:+51${empresa.yape_number}`"
-                                        >
-                                            Añadir a contacto
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <!-- Código de verificación -->
-                                <JdInput
-                                    label="Código de operación"
-                                    :nec="true"
-                                    v-model="form.payment_reference"
-                                    :error="errors.payment_reference"
-                                    placeholder="Ejemplo: 123456"
-                                />
-                            </template>
                         </div>
 
                         <div class="checkout-panel-back">
@@ -867,8 +785,6 @@ import mastercardUrl from '../assets/icons/mastercard.svg?url'
 import dinersUrl from '../assets/icons/diners-club.svg?url'
 import amexUrl from '../assets/icons/american-express.svg?url'
 import genericUrl from '../assets/icons/card-generic.svg?url'
-import qrYapeUrl from '../assets/qr-yape-eko-business.jpg?url'
-import yapeLogo from '../assets/icons/yape-logo.svg?url'
 
 import { Cart } from '../lib/cart'
 import { getProductPrice } from '../lib/pricing'
@@ -902,25 +818,19 @@ export default defineComponent({
         iPlus,
     },
     props: {
-        empresa: { type: Object, default: () => ({}) },
         payment_provider: { type: String, default: 'izipay' },
-        payment_methods: { type: Array, default: () => [] },
         identity_documents: { type: Array, default: () => [] },
         delivery_types: { type: Array, default: () => [] },
         invoice_types: { type: Array, default: () => [] },
     },
     data() {
         return {
-            qrYapeUrl,
-            yapeLogo,
-
             user: {},
             step: 1,
             paymentSuccess: false,
             paymentPending: false,
             paymentPendingFailed: false,
             pendingPaymentMessage: '',
-            paymentLookupCode: '',
             loadingContinuarEntrega: false,
             loadingContinuarPago: false,
             loadingPagar: false,
@@ -1005,12 +915,11 @@ export default defineComponent({
         summaryActionText() {
             if (this.step === 1) return 'Continuar: elegir entrega'
             if (this.step === 2) return 'Continuar: elegir pago'
-            if (this.form.payment_method === 'yape') return 'Procesar compra'
             return 'Ir a pagar'
         },
         summaryActionMobileText() {
             if (this.step !== 3) return 'Continuar'
-            return this.form.payment_method === 'yape' ? 'Procesar compra' : 'Ir a pagar'
+            return 'Ir a pagar'
         },
         summaryActionLoading() {
             if (this.step === 1) return this.loadingContinuarEntrega
@@ -1160,7 +1069,6 @@ export default defineComponent({
             const validReceiptTypes = this.invoice_types
                 .filter((item) => item.id !== 'NV')
                 .map((item) => String(item.id))
-            const validPaymentMethods = this.payment_methods.map((item) => String(item.id))
 
             Object.assign(this.form.partner_data, saved.partner_data || {}, { privacidad: false })
 
@@ -1220,12 +1128,7 @@ export default defineComponent({
             this.form.invoice_ruc = saved.invoice_ruc || ''
             this.form.invoice_business_name = saved.invoice_business_name || ''
 
-            if (validPaymentMethods.includes(String(saved.payment_method))) {
-                this.form.payment_method = saved.payment_method
-            }
-
             this.form.paymentMethodToken = null
-            this.form.payment_reference = ''
             this.step = 1
         },
 
@@ -1396,12 +1299,8 @@ export default defineComponent({
                     this.errors.invoice_business_name = 'Este campo es obligatorio.'
             }
 
-            if (this.form.payment_method == 'tarjeta') {
-                if (!this.isNiubiz && !this.form.paymentMethodToken)
-                    this.errors.paymentMethodToken = 'Seleccione una tarjeta.'
-            } else if (this.form.payment_method == 'yape') {
-                if (!this.form.payment_reference) this.errors.payment_reference = 'Este campo es obligatorio.'
-            }
+            if (!this.isNiubiz && !this.form.paymentMethodToken)
+                this.errors.paymentMethodToken = 'Seleccione una tarjeta.'
 
             return Object.values(this.errors).every((e) => !e)
         },
@@ -1417,20 +1316,12 @@ export default defineComponent({
 
             this.form.partner_order_lines = this.items
             this.form.delivery_cost = this.deliveryCost
-
-            if (this.form.payment_method == 'yape') {
-                this.form.order_code = genId()
-            }
         },
         async pagar() {
             if (this.loadingPagar || this.paymentVerifying) return
             if (!this.validarForm3()) return
 
-            if (this.form.payment_method == 'tarjeta') {
-                await this.pagarConTarjeta()
-            } else if (this.form.payment_method == 'yape') {
-                await this.pagarConYape()
-            }
+            await this.pagarConTarjeta()
         },
         async pagarConTarjeta() {
             if (this.isNiubiz) {
@@ -1482,7 +1373,6 @@ export default defineComponent({
                 this.form.order_code = res.data.order_code
                 this.form.id = res.data.order_id
                 this.form.redirect_url = res.data.redirect_url
-                this.paymentLookupCode = res.data.lookup_code
                 const endpoint = 'https://api.micuentaweb.pe'
                 const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY
                 if (!publicKey?.trim()) throw new Error('IZIPAY_PUBLIC_KEY_MISSING')
@@ -1572,7 +1462,6 @@ export default defineComponent({
                 this.form.order_code = res.data.order_code
                 this.form.id = res.data.order_id
                 this.form.redirect_url = res.data.redirect_url
-                this.paymentLookupCode = res.data.lookup_code
                 this.niubizSession = res.data
                 this.activePaymentIntent = {
                     id: res.data.checkout_intent_id,
@@ -1718,31 +1607,6 @@ export default defineComponent({
                 this.schedulePendingStatusCheck()
             }, 5000)
         },
-        async pagarConYape() {
-            this.shapeDatos()
-
-            this.loadingPagar = true
-            const res = await post(urls.partner_orders, this.form, undefined)
-            this.loadingPagar = false
-
-            if (!res.ok) {
-                this.errors.general = res.problem.detail
-            } else {
-                this.paymentSuccess = true
-                this.form.id = res.data.id
-                this.form.redirect_url = res.data.redirect_url
-                this.form.order_code = res.data.order_code
-                this.errors.general = res.warnings?.[0]?.detail || ''
-                Cart.clear()
-                CheckoutDraft.clear()
-
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth',
-                })
-            }
-        },
-
         prevStep() {
             if (this.step > 1) this.step--
             this.errors = {}

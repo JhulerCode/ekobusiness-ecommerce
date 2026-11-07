@@ -37,9 +37,9 @@ La primera ejecución E2E requiere `pnpm exec playwright install chromium`.
 ## Seguridad y despliegue
 
 - Access y refresh tokens se almacenan en cookies `HttpOnly`, `SameSite=Lax` y `Secure` en producción.
-- Los tokens temporales de pedido se guardan en cookies con scope por pedido y no aparecen en URLs.
+- Los tokens temporales de pedido se guardan en cookies con scope por pedido. El enlace del correo de confirmación intercambia el token por una cookie y redirige a la URL limpia del pedido.
 - Las rutas mutables del BFF validan `Origin`; las entradas sensibles se validan con Zod.
 - El IPN de Izipay entra directamente a Express en `/api/integration/v1/payments/izipay/ipn` y valida su firma.
 - Catálogo, sistema y ubigeos permiten caché pública corta. Cuenta, pedidos y pagos son `no-store`.
 
-Antes de producción, ejecutar `pnpm verify`, `pnpm test:e2e` y smoke tests reales de signin, refresh, ARCO multipart, libro de reclamaciones, Yape, tarjeta, IPN y consulta de pedido.
+Antes de producción, ejecutar `pnpm verify`, `pnpm test:e2e` y smoke tests reales de signin, refresh, ARCO multipart, libro de reclamaciones, tarjeta, IPN y consulta de pedido.

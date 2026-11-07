@@ -14,7 +14,6 @@ export default {
 
     email_ventas: 'comercial@sunkatea.com',
     email_soporte: 'soporte@sunkatea.com',
-    yape_number: '913621456',
 
     igv_porcentaje: 18,
     direcciones: [

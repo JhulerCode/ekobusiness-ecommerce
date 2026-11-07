@@ -46,24 +46,11 @@ export const ORDER_CURRENCY = 'PEN' as const
 export const orderCurrencySchema = z.literal(ORDER_CURRENCY)
 
 export const orderDeliveryTypeSchema = z.enum(['envio', 'retiro'])
-export const orderPaymentMethodSchema = z.enum(['tarjeta', 'yape'])
+export const orderPaymentMethodSchema = z.literal('tarjeta')
 export const orderInvoiceTypeSchema = z.enum(['03', '01', 'NV'])
 
 export const partnerOrderContractSchema = z
     .object({
-        type: partnerOrderTypeSchema.optional(),
-        origin: partnerOrderOriginSchema.optional(),
-        currency_id: orderCurrencySchema.optional(),
-        delivery_type: orderDeliveryTypeSchema.optional(),
-        payment_method: orderPaymentMethodSchema.optional(),
-        invoice_type: orderInvoiceTypeSchema.optional(),
-    })
-    .passthrough()
-
-export const orderCreateSchema = z
-    .object({
-        order_code: identifier,
-        partner_data: jsonObjectSchema,
         type: partnerOrderTypeSchema.optional(),
         origin: partnerOrderOriginSchema.optional(),
         currency_id: orderCurrencySchema.optional(),

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
   },
   "servers": [
@@ -565,35 +565,6 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/OrderList"
-          },
-          "default": {
-            "$ref": "#/components/responses/Problem"
-          }
-        }
-      },
-      "post": {
-        "x-scopes": [
-          "orders:create"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OrderCreateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/OrderCreated"
-          },
-          "400": {
-            "$ref": "#/components/responses/Problem"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem"
           },
           "default": {
             "$ref": "#/components/responses/Problem"
@@ -1774,8 +1745,7 @@
           "payment_method": {
             "type": "string",
             "enum": [
-              "tarjeta",
-              "yape"
+              "tarjeta"
             ]
           },
           "invoice_type": {
@@ -1808,41 +1778,6 @@
         },
         "additionalProperties": true
       },
-      "OrderCreatedEnvelope": {
-        "type": "object",
-        "required": [
-          "data"
-        ],
-        "properties": {
-          "data": {
-            "type": "object",
-            "required": [
-              "id",
-              "order_code",
-              "access_token"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "order_code": {
-                "type": "string"
-              },
-              "access_token": {
-                "type": "string"
-              }
-            },
-            "additionalProperties": false
-          },
-          "warnings": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Warning"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
       "OrderListItem": {
         "type": "object",
         "required": [
@@ -1861,8 +1796,7 @@
           "payment_method": {
             "type": "string",
             "enum": [
-              "tarjeta",
-              "yape"
+              "tarjeta"
             ]
           },
           "payment_status": {
@@ -1944,8 +1878,7 @@
           "payment_method": {
             "type": "string",
             "enum": [
-              "tarjeta",
-              "yape"
+              "tarjeta"
             ]
           },
           "invoice_type": {
@@ -2340,16 +2273,6 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/OrderDetailEnvelope"
-            }
-          }
-        }
-      },
-      "OrderCreated": {
-        "description": "Pedido creado",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/OrderCreatedEnvelope"
             }
           }
         }

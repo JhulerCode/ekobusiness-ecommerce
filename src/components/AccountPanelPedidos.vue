@@ -106,7 +106,6 @@ export default defineComponent({
             return type === 'retiro' ? 'RETIRO' : 'ENVÍO'
         },
         paymentName(method) {
-            if (method === 'yape') return 'Yape'
             if (method === 'tarjeta') return 'Tarjeta de crédito o débito'
             return String(method || '—')
         },

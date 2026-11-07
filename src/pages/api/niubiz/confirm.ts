@@ -57,11 +57,14 @@ export const POST: APIRoute = async (context) => {
 
     const data = result.data
     const orderId = data?.order_id || data?.id
-    if (orderId && data?.access_token) {
+    if (data?.status === 'completed' && orderId && data?.access_token) {
         setOrderCookie(context, orderId, data.access_token, 60 * 60)
         clearCheckoutCookie(context, id.data, 'niubiz')
         return redirect(context, `/pedidos/${encodeURIComponent(orderId)}`)
     }
 
+    if (['payment_failed', 'manual_review'].includes(data?.status || '')) {
+        clearCheckoutCookie(context, id.data, 'niubiz')
+    }
     return redirect(context, `/checkout/respuesta?status=${encodeURIComponent(data?.status || 'processing')}`)
 }

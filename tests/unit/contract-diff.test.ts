@@ -7,16 +7,15 @@ function spec(overrides: Record<string, any> = {}): any {
         paths: {
             '/orders': {
                 get: { responses: { 200: { content: { 'application/json': { schema: { $ref: '#/components/schemas/OrderListEnvelope' } } } } } },
-                post: {
-                    requestBody: { content: { 'application/json': { schema: { $ref: '#/components/schemas/OrderCreateRequest' } } } },
-                    responses: { 201: { content: { 'application/json': { schema: { $ref: '#/components/schemas/OrderCreatedEnvelope' } } } } },
-                },
+            },
+            '/orders/{id}': {
+                get: { responses: { 200: { content: { 'application/json': { schema: { $ref: '#/components/schemas/OrderDetailEnvelope' } } } } } },
             },
         },
         components: {
             schemas: {
                 OrderListEnvelope: { type: 'object' },
-                OrderCreatedEnvelope: { type: 'object' },
+                OrderDetailEnvelope: { type: 'object' },
                 OrderCreateRequest: {
                     type: 'object',
                     required: ['partner_data'],
@@ -39,10 +38,10 @@ describe('diff del contrato de integration', () => {
 
     it('detecta operación eliminada y enum reducido', () => {
         const next = spec()
-        delete next.paths['/orders'].post
+        delete next.paths['/orders/{id}']
         next.components.schemas.OrderCreateRequest.properties.payment_method.enum = ['tarjeta']
         const findings = diffContracts(spec(), next)
-        expect(findings.some((finding) => finding.includes('POST /orders'))).toBe(true)
+        expect(findings.some((finding) => finding.includes('GET /orders/{id}'))).toBe(true)
         expect(findings.some((finding) => finding.includes('enum pierde'))).toBe(true)
     })
 

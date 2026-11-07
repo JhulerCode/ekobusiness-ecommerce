@@ -11,7 +11,6 @@ export const TRACKED_OPERATIONS = [
     ['/locations/ubigeos', 'get', '200'],
     ['/customers/me', 'get', '200'],
     ['/orders', 'get', '200'],
-    ['/orders', 'post', '201'],
     ['/orders/{id}', 'get', '200'],
     ['/payments/izipay/form-token', 'post', '201'],
 ]
@@ -19,7 +18,6 @@ export const TRACKED_OPERATIONS = [
 export const TRACKED_SCHEMAS = [
     'OrderCreateRequest',
     'OrderDetail',
-    'OrderCreatedEnvelope',
     'Product',
     'Ubigeo',
     'Catalogs',
@@ -133,7 +131,7 @@ async function main() {
         return index === -1 ? fallback : args[index + 1]
     }
     const base = process.env.API_URL?.replace(/\/$/, '') || ''
-    const source = flag('--source', base ? `${base}/api/integration/v1/openapi.json` : '../../backend/src/integration/openapi.json')
+    const source = flag('--source', base ? `${base}/api/integration/v1/openapi.json` : '../backend/src/integration/openapi.json')
     const snapshotPath = resolve(root, flag('--snapshot', 'contracts/integration-openapi.snapshot.json'))
     if (!source) throw new Error('Indica --source <url|ruta> o define API_URL')
     const current = await loadSpec(source)

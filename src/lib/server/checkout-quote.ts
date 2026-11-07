@@ -60,7 +60,7 @@ export function buildAuthoritativeCheckout(
     if (draft.currency_id !== undefined && draft.currency_id !== ORDER_CURRENCY) {
         throw new Error('INVALID_ORDER_CURRENCY')
     }
-    if (draft.payment_method !== undefined && !['tarjeta', 'yape'].includes(String(draft.payment_method))) {
+    if (draft.payment_method !== undefined && draft.payment_method !== 'tarjeta') {
         throw new Error('INVALID_PAYMENT_METHOD')
     }
     if (draft.invoice_type !== undefined && !['03', '01', 'NV'].includes(String(draft.invoice_type))) {

@@ -4,14 +4,12 @@ import CheckoutForm from '@/components/CheckoutForm.vue'
 import checkoutHero from '@/assets/home/blend.webp'
 import { serverGet as get } from '@/lib/server/public-api'
 import { activePaymentProvider } from '@/lib/server/paymentProvider'
-import empresa from '@/data/company'
 
 const res = await get('sistema', {
     keys: [
         'identity_documents',
         'delivery_types',
         'invoice_types',
-        'payment_methods',
     ],
 })
 
@@ -21,7 +19,6 @@ const {
     identity_documents = [],
     delivery_types = [],
     invoice_types = [],
-    payment_methods = [],
 } = res.ok ? res.data || {} : {}
 ---
 
@@ -93,9 +90,7 @@ const {
     <main class="checkout-page">
         <CheckoutForm
             client:load
-            empresa={empresa}
             payment_provider={paymentProvider}
-            payment_methods={payment_methods}
             identity_documents={identity_documents}
             delivery_types={delivery_types}
             invoice_types={invoice_types}
@@ -108,17 +103,13 @@ const {
     const successContent = document.querySelector('[data-checkout-success]')
     const successDescription = document.querySelector('[data-checkout-success-description]')
 
-    window.addEventListener('checkout:success', (event) => {
-        const paymentMethod = (event as CustomEvent<{ paymentMethod?: string }>).detail?.paymentMethod
-
+    window.addEventListener('checkout:success', () => {
         progressContent?.classList.add('hidden')
         successContent?.classList.remove('hidden')
 
         if (successDescription) {
             successDescription.textContent =
-                paymentMethod === 'yape'
-                    ? 'Recibimos tu pedido y verificaremos el pago realizado por Yape a la brevedad.'
-                    : 'Tu pago fue confirmado y tu pedido ya está siendo preparado con mucho cuidado.'
+                'Tu pago fue confirmado y tu pedido ya está siendo preparado con mucho cuidado.'
         }
     })
 </script>
