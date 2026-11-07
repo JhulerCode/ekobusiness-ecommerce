@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
   },
   "servers": [
@@ -885,6 +885,125 @@
         }
       }
     },
+    "/payments/niubiz/session": {
+      "post": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NiubizSessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/NiubizSession"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/niubiz/authorize": {
+      "post": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CheckoutAccess": []
+          }
+        ],
+        "description": "Autoriza el token devuelto por checkout.js. La autorización del proveedor es la fuente que confirma el pago.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NiubizAuthorizationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/NiubizAuthorization"
+          },
+          "201": {
+            "$ref": "#/components/responses/NiubizAuthorization"
+          },
+          "202": {
+            "$ref": "#/components/responses/NiubizAuthorization"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/niubiz/intents/{id}/status": {
+      "get": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CheckoutAccess": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PaymentStatus"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
     "/forms/newsletter": {
       "post": {
         "x-scopes": [
@@ -1245,6 +1364,9 @@
               "id": {
                 "type": "string"
               },
+              "order_id": {
+                "type": "string"
+              },
               "order_code": {
                 "type": "string"
               },
@@ -1252,6 +1374,179 @@
                 "type": "string"
               }
             }
+          }
+        },
+        "additionalProperties": false
+      },
+      "NiubizSessionRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "partner_order"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "origin": {
+            "type": "string",
+            "format": "uri"
+          },
+          "partner_order": {
+            "$ref": "#/components/schemas/OrderCreateRequest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NiubizSessionEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "provider",
+              "sessionToken",
+              "merchantId",
+              "checkoutScriptUrl",
+              "purchaseNumber",
+              "amount",
+              "currency",
+              "checkout_intent_id",
+              "checkout_access_token",
+              "order_code",
+              "order_id",
+              "order_access_token",
+              "lookup_code",
+              "expires_at"
+            ],
+            "properties": {
+              "provider": {
+                "const": "niubiz"
+              },
+              "sessionToken": {
+                "type": "string"
+              },
+              "merchantId": {
+                "type": "string"
+              },
+              "checkoutScriptUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "purchaseNumber": {
+                "type": "string",
+                "pattern": "^[0-9]{12}$"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "const": "PEN"
+              },
+              "checkout_intent_id": {
+                "type": "string"
+              },
+              "checkout_access_token": {
+                "type": "string"
+              },
+              "order_code": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              },
+              "order_access_token": {
+                "type": "string"
+              },
+              "lookup_code": {
+                "type": "string",
+                "pattern": "^[0-9]{6}$"
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Warning"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "NiubizAuthorizationRequest": {
+        "type": "object",
+        "required": [
+          "checkout_intent_id",
+          "transactionToken"
+        ],
+        "properties": {
+          "checkout_intent_id": {
+            "type": "string"
+          },
+          "transactionToken": {
+            "type": "string",
+            "minLength": 1
+          },
+          "origin": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NiubizAuthorizationEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "completed",
+                  "payment_failed",
+                  "manual_review",
+                  "processing"
+                ]
+              },
+              "checkout_intent_id": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              },
+              "order_code": {
+                "type": "string"
+              },
+              "access_token": {
+                "type": "string"
+              },
+              "action_description": {
+                "type": "string"
+              },
+              "transaction_date": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           }
         },
         "additionalProperties": false
@@ -1499,9 +1794,6 @@
           },
           "contact_id": {
             "type": "string"
-          },
-          "contact_data": {
-            "type": "object"
           },
           "observation": {
             "type": "string"
@@ -1958,6 +2250,26 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/PaymentStatusEnvelope"
+            }
+          }
+        }
+      },
+      "NiubizSession": {
+        "description": "Sesión de Niubiz e intento persistente creados",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NiubizSessionEnvelope"
+            }
+          }
+        }
+      },
+      "NiubizAuthorization": {
+        "description": "Resultado de la autorización de Niubiz",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NiubizAuthorizationEnvelope"
             }
           }
         }

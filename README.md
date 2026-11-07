@@ -14,6 +14,7 @@ Producción exige una API key activa con los scopes usados por la tienda.
 
 - `API_URL`: URL privada de Express; nunca se publica en el bundle.
 - `ERP_API_KEY`: credencial privada de esta aplicación; identifica empresa y scopes.
+- `PAYMENT_PROVIDER`: pasarela de tarjeta activa del checkout (`izipay` o `niubiz`); por defecto `izipay`.
 - `PUBLIC_IZIPAY_PUBLIC_KEY`: clave pública usada por el SDK de pagos.
   Debe corresponder al mismo comercio y ambiente que las credenciales privadas Izipay del backend; Astro la incorpora durante el build.
 - `PUBLIC_RECAPTCHA_SITE_KEY`: site key pública de reCAPTCHA.

@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import CheckoutForm from '@/components/CheckoutForm.vue'
 import checkoutHero from '@/assets/home/blend.webp'
 import { serverGet as get } from '@/lib/server/public-api'
-import { backendRequest } from '@/lib/server/backend'
+import { activePaymentProvider } from '@/lib/server/paymentProvider'
 import empresa from '@/data/company'
 
 const res = await get('sistema', {
@@ -15,10 +15,7 @@ const res = await get('sistema', {
     ],
 })
 
-const paymentConfig = await backendRequest<{ provider?: 'izipay' | 'niubiz' }>('payments/config')
-const paymentProvider = paymentConfig.ok && paymentConfig.data?.provider === 'niubiz'
-    ? 'niubiz'
-    : 'izipay'
+const paymentProvider = activePaymentProvider()
 
 const {
     identity_documents = [],

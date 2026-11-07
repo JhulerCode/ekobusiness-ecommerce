@@ -23,6 +23,7 @@ export default defineConfig({
                 ...process.env,
                 API_URL: 'http://127.0.0.1:4011',
                 ERP_API_KEY: 'itd_0000000000000000.e2e-integration-secret-00000000000000000000',
+                PAYMENT_PROVIDER: 'izipay',
                 PUBLIC_IZIPAY_PUBLIC_KEY: 'test-public-key',
                 PUBLIC_RECAPTCHA_SITE_KEY: 'test-site-key',
             },

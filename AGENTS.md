@@ -159,10 +159,11 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
 
 ### Environment Variables
 
-- Private vars are `API_URL` and `ERP_API_KEY`.
+- Private vars are `API_URL`, `ERP_API_KEY` and `PAYMENT_PROVIDER`.
 - Browser vars are `PUBLIC_IZIPAY_PUBLIC_KEY` and `PUBLIC_RECAPTCHA_SITE_KEY`.
-- The card payment provider (`izipay` or `niubiz`) comes from the ERP
-  `GET /payments/config` endpoint (`PAYMENT_PROVIDER`); do not duplicate it in Astro.
+- The card payment provider (`izipay` or `niubiz`) is decided by the storefront through the
+  server-only `PAYMENT_PROVIDER` variable (`activePaymentProvider`); the ERP only exposes the
+  provider-specific payment endpoints.
 
 ### Styling & Tailwind
 
