@@ -5,7 +5,7 @@ Tienda SSR construida con Astro 5, Vue 3, TypeScript estricto y Tailwind CSS 4. 
 ## Desarrollo
 
 1. Copia `.env.example` a `.env` y configura las variables.
-2. Crea la integración y su clave con el comando `integration-keys` del backend.
+2. Crea la integración y su clave desde **Configuración → Empresas → Integraciones** del ERP.
 3. Inicia Express en `http://localhost:4000` y luego ejecuta `pnpm dev`.
 
 Producción exige una API key activa con los scopes usados por la tienda.
