@@ -20,6 +20,28 @@ function item(line: string, presentation: number, quantity: number, price = 1) {
     }
 }
 
+function quote(overrides: Record<string, unknown> = {}) {
+    return {
+        quote_id: 'quote-1',
+        is_club_member: false,
+        partner_order_lines: [
+            {
+                article_id: 'product-1',
+                name: 'Producto',
+                unit: 'caja',
+                quantity: 1,
+                unit_price: 20,
+                igv_affectation: 'gravado',
+                igv_rate: 18,
+                line_name: 'Tradicional',
+                presentation: [{ label: 'Saquitos', value: 20 }],
+            },
+        ],
+        ubigeo: null,
+        ...overrides,
+    }
+}
+
 describe('promociones del checkout', () => {
     it('calcula la primera fecha según la hora de Lima', () => {
         const beforeCutoff = new Date('2026-08-28T20:59:00.000Z')
@@ -122,19 +144,9 @@ describe('promociones del checkout', () => {
             promotions: [{ key: 'inventada' }],
             delivery_date: '2026-08-23',
             partner_order_lines: [{ article_id: 'product-1', quantity: 1, unit_price: 0 }],
-        }, [{
-            id: 'product-1',
-            name: 'Producto tradicional',
-            price: 20,
-            list_price: 20,
-            line: { name: 'Tradicional' },
-            ecommerce_data: {
-                price: 20,
-                presentation: [{ label: 'Saquitos', value: 20 }],
-            },
-        }], {
-            isClubMember: false,
+        }, quote({
             ubigeo: { province: 'LIMA' },
+        }), {
             now: new Date('2026-08-22T19:00:00.000Z'),
         })
 
@@ -145,19 +157,14 @@ describe('promociones del checkout', () => {
         expect(order.delivery_address_data.ubigeo1.province).toBe('LIMA')
     })
 
-    it('el servidor de Astro valida Lima con el ubigeo obtenido del ERP', () => {
+    it('el servidor de Astro valida Lima con el ubigeo de la cotización', () => {
         expect(() => buildAuthoritativeCheckout({
             delivery_type: 'envio',
             delivery_date: '2026-08-23',
             partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
-        }, [{
-            id: 'product-1',
-            name: 'Producto',
-            price: 20,
-            ecommerce_data: { price: 20, presentation: [] },
-        }], {
-            isClubMember: false,
+        }, quote({
             ubigeo: { province: 'CALLAO' },
+        }), {
             now: new Date('2026-08-22T19:00:00.000Z'),
         })).toThrow('DELIVERY_OUTSIDE_LIMA')
     })
@@ -168,13 +175,7 @@ describe('promociones del checkout', () => {
             punto_retiro: 'oficina-ekobusiness',
             delivery_date: '2026-08-29',
             partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
-        }, [{
-            id: 'product-1',
-            name: 'Producto',
-            price: 20,
-            ecommerce_data: { price: 20, presentation: [] },
-        }], {
-            isClubMember: false,
+        }, quote(), {
             now: new Date('2026-08-28T21:00:00.000Z'),
         })).toThrow('INVALID_DELIVERY_DATE')
     })
@@ -190,13 +191,7 @@ describe('promociones del checkout', () => {
             },
             delivery_date: '2026-08-30',
             partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
-        }, [{
-            id: 'product-1',
-            name: 'Producto',
-            price: 20,
-            ecommerce_data: { price: 20, presentation: [] },
-        }], {
-            isClubMember: false,
+        }, quote(), {
             now: new Date('2026-08-28T19:00:00.000Z'),
         })
 
@@ -219,13 +214,7 @@ describe('promociones del checkout', () => {
             punto_retiro: 'local-inventado',
             delivery_date: '2026-08-30',
             partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
-        }, [{
-            id: 'product-1',
-            name: 'Producto',
-            price: 20,
-            ecommerce_data: { price: 20, presentation: [] },
-        }], {
-            isClubMember: false,
+        }, quote(), {
             now: new Date('2026-08-28T19:00:00.000Z'),
         })).toThrow('INVALID_PICKUP_LOCATION')
     })

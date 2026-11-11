@@ -12,6 +12,7 @@ export const TRACKED_OPERATIONS = [
     ['/customers/me', 'get', '200'],
     ['/orders', 'get', '200'],
     ['/orders/{id}', 'get', '200'],
+    ['/payments/quote', 'post', '201'],
     ['/payments/izipay/form-token', 'post', '201'],
 ]
 
@@ -22,6 +23,8 @@ export const TRACKED_SCHEMAS = [
     'Ubigeo',
     'Catalogs',
     'CheckoutFormTokenRequest',
+    'CheckoutQuoteRequest',
+    'CheckoutQuote',
     'OrderLookupRequest',
 ]
 

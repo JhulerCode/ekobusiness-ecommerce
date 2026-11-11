@@ -1,5 +1,5 @@
 import type { APIContext } from 'astro'
-import type { ApiResult, Product } from '@/types/api'
+import type { ApiResult } from '@/types/api'
 import {
     CHECKOUT_POLICY_VERSION,
     evaluateCheckoutPromotions,
@@ -10,24 +10,32 @@ import {
     PARTNER_ORDER_ORIGIN,
     PARTNER_ORDER_TYPE,
 } from '@/lib/api-schemas'
-import { backendRequest, resolveSession } from './backend'
+import { requestWithOptionalSession } from './backend'
 import { isDeliveryDateAllowed } from '@/lib/delivery-date'
 import { DELIVERY_TIME_RANGE, getPickupLocation } from '@/data/pickup-locations'
 
 type CheckoutDraft = Record<string, any>
 
-interface CheckoutContext {
-    isClubMember: boolean
-    ubigeo?: Record<string, any> | null
-    now?: Date
-}
-
-type QuoteItem = Product & {
+type CheckoutQuoteLine = {
+    article_id: string
+    name: string
+    unit?: string
     quantity: number
     unit_price: number
-    blend_data?: unknown
-    unit?: string
     igv_affectation?: string
+    igv_rate?: number
+    blend_data?: unknown
+    line_name?: string | null
+    presentation?: unknown
+}
+
+type CheckoutQuote = {
+    quote_id: string
+    expires_at?: string
+    currency_id?: string
+    is_club_member?: boolean
+    partner_order_lines: CheckoutQuoteLine[]
+    ubigeo?: Record<string, any> | null
 }
 
 function normalizeText(value: unknown) {
@@ -38,15 +46,10 @@ function normalizeText(value: unknown) {
         .toUpperCase()
 }
 
-function productPrice(product: Record<string, any>) {
-    const ecommerceData = product.ecommerce_data || {}
-    return Number(ecommerceData.price ?? product.list_price)
-}
-
 export function buildAuthoritativeCheckout(
     draft: CheckoutDraft,
-    products: Array<Record<string, any>>,
-    context: CheckoutContext,
+    quote: CheckoutQuote | undefined,
+    { now }: { now?: Date } = {},
 ) {
     if (!['envio', 'retiro'].includes(String(draft.delivery_type))) {
         throw new Error('INVALID_DELIVERY_TYPE')
@@ -66,9 +69,10 @@ export function buildAuthoritativeCheckout(
     if (draft.invoice_type !== undefined && !['03', '01', 'NV'].includes(String(draft.invoice_type))) {
         throw new Error('INVALID_INVOICE_TYPE')
     }
-    if (!isDeliveryDateAllowed(draft.delivery_date, context.now)) {
+    if (!isDeliveryDateAllowed(draft.delivery_date, now)) {
         throw new Error('INVALID_DELIVERY_DATE')
     }
+
     const sourceItems = Array.isArray(draft.partner_order_lines)
         ? draft.partner_order_lines
         : []
@@ -76,28 +80,34 @@ export function buildAuthoritativeCheckout(
         throw new Error('INVALID_CART')
     }
 
-    const productsById = new Map(products.map((product) => [String(product.id), product]))
-    const quoteItems: QuoteItem[] = sourceItems.map((source) => {
-        const product = productsById.get(String(source.article_id || ''))
-        const quantity = Number(source.quantity)
-        const unit_price = product ? productPrice(product) : Number.NaN
-        if (
-            !product || !Number.isFinite(quantity) || quantity <= 0 || quantity > 100 ||
-            !Number.isFinite(unit_price) || unit_price < 0
-        ) {
-            throw new Error('INVALID_CART')
-        }
-        return {
-            ...product,
-            quantity,
-            unit_price,
-            blend_data: source.blend_data,
-        } as QuoteItem
-    })
+    if (!quote?.quote_id) throw new Error('INVALID_CART')
+    const quoteLines = Array.isArray(quote.partner_order_lines)
+        ? quote.partner_order_lines
+        : []
+    if (!quoteLines.length || quoteLines.length > 50) {
+        throw new Error('INVALID_CART')
+    }
+    const quoteItems = quoteLines.map((line) => ({
+        ...line,
+        quantity: Number(line.quantity),
+        unit_price: Number(line.unit_price),
+    }))
+    if (
+        quoteItems.some(
+            (item) =>
+                !item.article_id ||
+                !Number.isFinite(item.quantity) ||
+                item.quantity <= 0 ||
+                !Number.isFinite(item.unit_price) ||
+                item.unit_price < 0,
+        )
+    ) {
+        throw new Error('INVALID_CART')
+    }
 
     if (
         draft.delivery_type === 'envio' &&
-        normalizeText(context.ubigeo?.province || context.ubigeo?.provincia) !== 'LIMA'
+        normalizeText(quote.ubigeo?.province || quote.ubigeo?.provincia) !== 'LIMA'
     ) {
         throw new Error('DELIVERY_OUTSIDE_LIMA')
     }
@@ -108,13 +118,13 @@ export function buildAuthoritativeCheckout(
         throw new Error('INVALID_PICKUP_LOCATION')
     }
 
-    const quote = evaluateCheckoutPromotions(quoteItems, {
-        isClubMember: context.isClubMember,
+    const promotionQuote = evaluateCheckoutPromotions(quoteItems, {
+        isClubMember: quote.is_club_member === true,
         deliveryType: draft.delivery_type,
     })
     const authoritativeItems = quoteItems.map((item) => ({
-        article_id: item.id,
-        name: item.ecommerce_data?.name || item.name,
+        article_id: item.article_id,
+        name: item.name,
         unit: item.unit,
         quantity: item.quantity,
         unit_price: item.unit_price,
@@ -131,15 +141,16 @@ export function buildAuthoritativeCheckout(
         type: PARTNER_ORDER_TYPE,
         origin: PARTNER_ORDER_ORIGIN,
         currency_id: ORDER_CURRENCY,
-        amount: quote.total,
-        delivery_cost: quote.deliveryCost,
+        quote_id: quote.quote_id,
+        amount: promotionQuote.total,
+        delivery_cost: promotionQuote.deliveryCost,
         delivery_address: draft.delivery_type === 'retiro'
             ? pickupLocation?.direccion
             : draft.delivery_address,
         delivery_address_data: draft.delivery_type === 'envio'
             ? {
                 ...deliveryAddressData,
-                ubigeo1: context.ubigeo,
+                ubigeo1: quote.ubigeo,
                 horario: DELIVERY_TIME_RANGE,
             }
             : {
@@ -150,7 +161,7 @@ export function buildAuthoritativeCheckout(
                 },
                 horario: DELIVERY_TIME_RANGE,
             },
-        promotions: quote.appliedPromotions.map((promotion) => ({
+        promotions: promotionQuote.appliedPromotions.map((promotion) => ({
             ...promotion,
             policy: 'sunka-checkout',
             version: CHECKOUT_POLICY_VERSION,
@@ -171,38 +182,29 @@ export async function prepareCheckoutOrder(
         return failure(422, 'invalid-cart', 'Carrito no válido', 'El carrito no contiene productos válidos.')
     }
 
-    const productPath = `productos?ids=${encodeURIComponent(ids.join(','))}`
-    const ubigeoPath = draft.delivery_type === 'envio' && draft.delivery_ubigeo_id
-        ? `locations/ubigeos?id=${encodeURIComponent(String(draft.delivery_ubigeo_id))}`
-        : null
-    const [productsResult, ubigeoResult, session] = await Promise.all([
-        backendRequest<Product[]>(productPath),
-        ubigeoPath ? backendRequest<Record<string, any>[]>(ubigeoPath) : Promise.resolve(null),
-        resolveSession(context),
-    ])
-
-    if (!productsResult.ok) {
-        return { ok: false, status: productsResult.status, problem: productsResult.problem }
-    }
-    if (ubigeoResult && !ubigeoResult.ok) {
-        return { ok: false, status: ubigeoResult.status, problem: ubigeoResult.problem }
-    }
-    if (session.status === 'error') {
-        return failure(503, 'session-unavailable', 'Servicio no disponible', 'No se pudo validar la sesión del cliente.')
+    const quoteResult = await requestWithOptionalSession<CheckoutQuote>(context, 'payments/quote', {
+        method: 'POST',
+        body: JSON.stringify({
+            partner_order_lines: sourceItems.map((item) => ({
+                article_id: item.article_id,
+                quantity: item.quantity,
+                ...(item.blend_data === undefined ? {} : { blend_data: item.blend_data }),
+            })),
+            delivery_type: draft.delivery_type,
+            ...(draft.delivery_type === 'envio' && draft.delivery_ubigeo_id
+                ? { delivery_ubigeo_id: draft.delivery_ubigeo_id }
+                : {}),
+        }),
+    })
+    if (!quoteResult.ok) {
+        return { ok: false, status: quoteResult.status, problem: quoteResult.problem }
     }
 
     try {
         return {
             ok: true,
             status: 200,
-            data: buildAuthoritativeCheckout(
-                draft,
-                productsResult.data || [],
-                {
-                    isClubMember: session.status === 'authenticated',
-                    ubigeo: ubigeoResult?.data?.[0] || null,
-                },
-            ),
+            data: buildAuthoritativeCheckout(draft, quoteResult.data),
         }
     } catch (error) {
         if (

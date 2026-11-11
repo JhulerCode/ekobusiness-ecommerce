@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
   },
   "servers": [
@@ -67,6 +67,7 @@
     "urn:itderp:problem:integration-payment-method-not-found",
     "urn:itderp:problem:integration-payment-persistence-unavailable",
     "urn:itderp:problem:integration-payment-provider-unavailable",
+    "urn:itderp:problem:integration-payment-quote-expired",
     "urn:itderp:problem:integration-product-not-found",
     "urn:itderp:problem:integration-rate-limited",
     "urn:itderp:problem:integration-ubigeo-invalid-keys",
@@ -701,6 +702,41 @@
             "$ref": "#/components/responses/OrderAccess"
           },
           "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/quote": {
+      "post": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "description": "Cotiza el carrito con los precios del catálogo. La cotización se reutiliza al crear el intento de pago y evita volver a leer artículos y ubigeos.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutQuoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CheckoutQuote"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "503": {
             "$ref": "#/components/responses/Problem"
           },
           "default": {
@@ -1748,6 +1784,10 @@
               "tarjeta"
             ]
           },
+          "quote_id": {
+            "type": "string",
+            "description": "Cotización devuelta por POST /payments/quote; fija precios y ubigeo del pedido."
+          },
           "invoice_type": {
             "type": "string",
             "enum": [
@@ -1931,6 +1971,88 @@
           "lookup_code": {
             "type": "string",
             "pattern": "^[0-9]{6}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutQuoteRequest": {
+        "type": "object",
+        "required": [
+          "partner_order_lines",
+          "delivery_type"
+        ],
+        "properties": {
+          "partner_order_lines": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/OrderLineInput"
+            }
+          },
+          "delivery_type": {
+            "type": "string",
+            "enum": [
+              "envio",
+              "retiro"
+            ]
+          },
+          "delivery_ubigeo_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutQuote": {
+        "type": "object",
+        "required": [
+          "quote_id",
+          "expires_at",
+          "currency_id",
+          "is_club_member",
+          "partner_order_lines"
+        ],
+        "properties": {
+          "quote_id": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currency_id": {
+            "const": "PEN"
+          },
+          "is_club_member": {
+            "type": "boolean"
+          },
+          "partner_order_lines": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "ubigeo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ubigeo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutQuoteEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CheckoutQuote"
           }
         },
         "additionalProperties": false
@@ -2173,6 +2295,16 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/CheckoutAttemptEnvelope"
+            }
+          }
+        }
+      },
+      "CheckoutQuote": {
+        "description": "Cotización del checkout",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CheckoutQuoteEnvelope"
             }
           }
         }
