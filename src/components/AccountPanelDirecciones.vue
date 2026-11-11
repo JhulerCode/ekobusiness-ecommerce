@@ -141,6 +141,7 @@
                             v-model="form.distrito"
                             :spin="ubigeosLoading"
                             :lista="ubigeos"
+                            mostrar="full_name"
                             @search="loadUbigeos"
                             @elegir="setUbigeo"
                             :error="errors.distrito"

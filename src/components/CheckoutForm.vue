@@ -310,6 +310,7 @@
                                 v-model="form.entrega_ubigeo"
                                 :spin="ubigeosLoading"
                                 :lista="ubigeos"
+                                mostrar="full_name"
                                 @search="loadUbigeos"
                                 @elegir="setUbigeo"
                                 :error="errors.entrega_ubigeo"
@@ -789,6 +790,7 @@ import genericUrl from '../assets/icons/card-generic.svg?url'
 import { Cart } from '../lib/cart'
 import { getProductPrice } from '../lib/pricing'
 import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draft'
+import { toOrderLines, toPromotionItems } from '../lib/checkout-lines'
 import { evaluateCheckoutPromotions } from '../lib/checkout-promotions'
 import {
     formatDeliveryDate,
@@ -884,7 +886,7 @@ export default defineComponent({
             return this.items.reduce((acc, item) => acc + item.pu * item.cantidad, 0)
         },
         promotionQuote() {
-            return evaluateCheckoutPromotions(this.items, {
+            return evaluateCheckoutPromotions(toPromotionItems(this.items), {
                 isClubMember: Boolean(this.user.id),
                 deliveryType: this.form.delivery_type,
             })
@@ -1119,7 +1121,12 @@ export default defineComponent({
                 : null
 
             if (this.form.entrega_direccion_datos.ubigeo1) {
-                this.ubigeos = [{ ...this.form.entrega_direccion_datos.ubigeo1 }]
+                const ubigeo = {
+                    ...this.form.entrega_direccion_datos.ubigeo1,
+                    full_name: this.ubigeoLabel(this.form.entrega_direccion_datos.ubigeo1),
+                }
+                this.form.entrega_direccion_datos.ubigeo1 = ubigeo
+                this.ubigeos = [ubigeo]
             }
 
             if (validReceiptTypes.includes(String(saved.invoice_type))) {
@@ -1314,7 +1321,11 @@ export default defineComponent({
             this.form.currency_id = 'PEN'
             this.form.amount = this.total.toFixed(2)
 
-            this.form.partner_order_lines = this.items
+            this.form.delivery_ubigeo_id = this.form.entrega_ubigeo
+            this.form.delivery_address = this.form.direccion_entrega
+            this.form.delivery_address_data = this.form.entrega_direccion_datos
+
+            this.form.partner_order_lines = toOrderLines(this.items)
             this.form.delivery_cost = this.deliveryCost
         },
         async pagar() {
@@ -1660,6 +1671,15 @@ export default defineComponent({
         setUbigeo(item) {
             this.form.entrega_direccion_datos.ubigeo1 = item
         },
+        ubigeoLabel(ubigeo) {
+            const parts = [
+                ubigeo.department ?? ubigeo.departamento,
+                ubigeo.province ?? ubigeo.provincia,
+                ubigeo.district ?? ubigeo.distrito,
+            ].filter(Boolean)
+
+            return ubigeo.full_name || ubigeo.nombre || parts.join(' - ')
+        },
 
         setDireccion(item) {
             if (!item) {
@@ -1667,14 +1687,15 @@ export default defineComponent({
                 return
             }
 
-            this.ubigeos = [{ ...item.ubigeo1 }]
+            const ubigeo = { ...item.ubigeo1, full_name: this.ubigeoLabel(item.ubigeo1) }
+            this.ubigeos = [ubigeo]
 
             this.form.entrega_ubigeo = item.ubigeo1.id
             this.form.direccion_entrega = item.direccion
             this.form.entrega_direccion_datos.numero = item.numero
             this.form.entrega_direccion_datos.piso = item.piso
             this.form.entrega_direccion_datos.referencia = item.referencia
-            this.form.entrega_direccion_datos.ubigeo1 = item.ubigeo1
+            this.form.entrega_direccion_datos.ubigeo1 = ubigeo
         },
         cleanDireccion() {
             this.ubigeos = []
