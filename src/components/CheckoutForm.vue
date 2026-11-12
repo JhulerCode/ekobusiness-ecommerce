@@ -16,6 +16,16 @@
         </article>
     </div>
 
+    <div
+        v-if="paymentOpening"
+        class="payment-opening-overlay"
+        role="status"
+        aria-live="polite"
+    >
+        <span class="payment-opening-overlay__spinner" aria-hidden="true"></span>
+        <p>Abriendo el formulario seguro de {{ paymentProviderLabel }}…</p>
+    </div>
+
     <section class="checkout-success" v-if="paymentSuccess == true" v-bind="$attrs">
         <article class="checkout-success__card">
             <div class="checkout-success__icon" aria-hidden="true">✓</div>
@@ -863,6 +873,7 @@ export default defineComponent({
             izipaySubmitRegistered: false,
             niubizSession: null,
             activePaymentIntent: null,
+            paymentOpening: false,
             paymentVerifying: false,
             paymentOutcomeUncertain: false,
             pendingStatusTimer: null,
@@ -1463,6 +1474,7 @@ export default defineComponent({
             }
 
             this.loadingPagar = true
+            this.paymentOpening = true
             this.errors.general = ''
             try {
                 const res = await post(`${urls.niubiz}/create-payment`, send, undefined)
@@ -1487,6 +1499,7 @@ export default defineComponent({
                 this.niubizSession = null
             } finally {
                 this.loadingPagar = false
+                this.paymentOpening = false
             }
         },
         async renderNiubizButton(session: Record<string, any>) {
@@ -1521,6 +1534,19 @@ export default defineComponent({
                 script.onerror = () => resolve()
                 window.setTimeout(resolve, 1500)
             })
+
+            const button = await this.waitForNiubizButton(container)
+            if (!button) throw new Error('NIUBIZ_BUTTON_MISSING')
+            button.style.display = 'none'
+            button.click()
+        },
+        async waitForNiubizButton(container: HTMLElement) {
+            for (let attempt = 0; attempt < 30; attempt += 1) {
+                const button = container.querySelector<HTMLButtonElement>('button.modal-opener')
+                if (button) return button
+                await this.wait(100)
+            }
+            return null
         },
         async validateCardPayment(paymentData: Record<string, unknown>, intentId: string) {
             const body = { paymentData, checkout_intent_id: intentId }
@@ -1826,6 +1852,41 @@ export default defineComponent({
     to {
         transform: rotate(360deg);
     }
+}
+
+.payment-opening-overlay {
+    position: fixed;
+    z-index: 10000;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 24px;
+    background: rgb(26 48 40 / 92%);
+    backdrop-filter: blur(8px);
+    text-align: center;
+}
+
+.payment-opening-overlay__spinner {
+    display: block;
+    width: 52px;
+    height: 52px;
+    border: 4px solid rgb(255 253 248 / 28%);
+    border-top-color: var(--sunka-brass-light);
+    border-radius: 999px;
+    animation: payment-verification-spin 0.8s linear infinite;
+}
+
+.payment-opening-overlay p {
+    color: var(--sunka-white);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+#niubizPaymentForm :deep(button.modal-opener) {
+    display: none !important;
 }
 
 .checkout-layout {
