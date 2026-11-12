@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "5.0.0",
+    "version": "5.1.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
   },
   "servers": [
@@ -1550,7 +1550,8 @@
               },
               "purchaseNumber": {
                 "type": "string",
-                "pattern": "^[0-9]{12}$"
+                "pattern": "^[0-9]{12}$",
+                "description": "Número de pedido: el code del pedido, 12 dígitos"
               },
               "amount": {
                 "type": "number",
@@ -1948,6 +1949,41 @@
         },
         "additionalProperties": true
       },
+      "OrderLine": {
+        "type": "object",
+        "required": [
+          "id",
+          "article_id",
+          "sequence",
+          "name",
+          "quantity",
+          "unit_price"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "article_id": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit_price": {
+            "type": "number"
+          },
+          "article": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": true
+      },
       "OrderDetail": {
         "type": "object",
         "required": [
@@ -2039,7 +2075,7 @@
           "partner_order_lines": {
             "type": "array",
             "items": {
-              "type": "object"
+              "$ref": "#/components/schemas/OrderLine"
             }
           }
         },

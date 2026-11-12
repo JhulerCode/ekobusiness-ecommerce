@@ -892,6 +892,9 @@ export default defineComponent({
         isNiubiz() {
             return this.payment_provider === 'niubiz'
         },
+        blockingOverlay() {
+            return this.paymentOpening || this.paymentVerifying
+        },
         orderDetailUrl() {
             return this.form.redirect_url || '/consulta-pedido'
         },
@@ -949,6 +952,9 @@ export default defineComponent({
         },
     },
     watch: {
+        blockingOverlay(active: boolean) {
+            this.setPageScrollLock(active)
+        },
         form: {
             deep: true,
             handler() {
@@ -987,9 +993,13 @@ export default defineComponent({
     beforeUnmount() {
         clearTimeout(this.draftSaveTimeout)
         clearTimeout(this.pendingStatusTimer)
+        this.setPageScrollLock(false)
         if (this.draftReady && !this.paymentSuccess && !this.paymentPending) this.saveDraft()
     },
     methods: {
+        setPageScrollLock(locked: boolean) {
+            document.body.classList.toggle('checkout-scroll-locked', locked)
+        },
         async summaryAction() {
             if (this.summaryActionLoading) return
             if (this.step === 1) {
@@ -1901,6 +1911,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+:global(body.checkout-scroll-locked) {
+    overflow: hidden;
+}
+
 .payment-verification-overlay {
     position: fixed;
     z-index: 10000;
