@@ -18,11 +18,11 @@
 
     <div
         v-if="paymentOpening"
-        class="payment-opening-overlay"
+        class="checkout-blocking-overlay"
         role="status"
         aria-live="polite"
     >
-        <span class="payment-opening-overlay__spinner" aria-hidden="true"></span>
+        <span class="checkout-blocking-overlay__spinner" aria-hidden="true"></span>
         <p>Abriendo el formulario de pago seguro…</p>
     </div>
 
@@ -775,7 +775,9 @@
         </div>
     </div>
 
-    <LoadingSpin v-if="loading" />
+    <div v-if="loading" class="checkout-blocking-overlay" role="status" aria-live="polite">
+        <span class="checkout-blocking-overlay__spinner" aria-hidden="true"></span>
+    </div>
 </template>
 
 <script lang="ts">
@@ -893,7 +895,7 @@ export default defineComponent({
             return this.payment_provider === 'niubiz'
         },
         blockingOverlay() {
-            return this.paymentOpening || this.paymentVerifying
+            return this.loading || this.paymentOpening || this.paymentVerifying
         },
         orderDetailUrl() {
             return this.form.redirect_url || '/consulta-pedido'
@@ -1968,7 +1970,7 @@ export default defineComponent({
     }
 }
 
-.payment-opening-overlay {
+.checkout-blocking-overlay {
     position: fixed;
     z-index: 10000;
     inset: 0;
@@ -1983,7 +1985,7 @@ export default defineComponent({
     text-align: center;
 }
 
-.payment-opening-overlay__spinner {
+.checkout-blocking-overlay__spinner {
     display: block;
     width: 52px;
     height: 52px;
@@ -1993,7 +1995,7 @@ export default defineComponent({
     animation: payment-verification-spin 0.8s linear infinite;
 }
 
-.payment-opening-overlay p {
+.checkout-blocking-overlay p {
     color: var(--sunka-white);
     font-size: 15px;
     font-weight: 500;
