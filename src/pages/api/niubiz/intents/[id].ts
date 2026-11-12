@@ -17,6 +17,8 @@ export const GET: APIRoute = async (context) => {
         order_id?: string
         order_code?: string
         access_token?: string
+        action_description?: string
+        transaction_date?: string
     }>(context, `payments/niubiz/intents/${encodeURIComponent(parsed.data)}/status`, {
         checkoutToken,
     })

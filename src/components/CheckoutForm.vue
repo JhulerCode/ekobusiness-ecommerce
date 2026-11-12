@@ -1664,14 +1664,25 @@ export default defineComponent({
                 if (result.ok && result.data?.status === 'completed') {
                     this.completeCardPayment(result)
                 } else if (result.ok && result.data?.status === 'payment_failed') {
-                    this.showPendingCardPayment('El pago no fue confirmado.')
+                    const reason = String(
+                        (result.data as Record<string, any>)?.action_description || '',
+                    ).trim()
+                    const message = reason
+                        ? `El pago no fue confirmado: ${reason}.`
+                        : 'El pago no fue confirmado.'
+                    this.showPendingCardPayment(message)
                     this.paymentPendingFailed = true
                     this.pendingPaymentMessage =
-                        'El pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                        `${message} Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.`
                     clearTimeout(this.pendingStatusTimer)
                 } else if (result.ok && result.data?.status === 'manual_review') {
+                    const reason = String(
+                        (result.data as Record<string, any>)?.action_description || '',
+                    ).trim()
                     this.showPendingCardPayment(
-                        'Tu pago requiere una revisión adicional. No realices otro pago.',
+                        reason
+                            ? `Tu pago requiere una revisión adicional: ${reason}. No realices otro pago.`
+                            : 'Tu pago requiere una revisión adicional. No realices otro pago.',
                     )
                 } else if (!result.ok && [400, 401, 403, 410].includes(result.status)) {
                     const detail = result.problem?.detail || 'El pago no pudo confirmarse.'
@@ -1775,14 +1786,22 @@ export default defineComponent({
                     return
                 }
                 if (result.ok && result.data?.status === 'manual_review') {
-                    this.pendingPaymentMessage =
-                        'Tu pago requiere una revisión adicional. Conservamos el pedido y te avisaremos cuando tengamos el resultado.'
+                    const reason = String(
+                        (result.data as Record<string, any>)?.action_description || '',
+                    ).trim()
+                    this.pendingPaymentMessage = reason
+                        ? `Tu pago requiere una revisión adicional: ${reason}. Conservamos el pedido y te avisaremos cuando tengamos el resultado.`
+                        : 'Tu pago requiere una revisión adicional. Conservamos el pedido y te avisaremos cuando tengamos el resultado.'
                     return
                 }
                 if (result.ok && result.data?.status === 'payment_failed') {
+                    const reason = String(
+                        (result.data as Record<string, any>)?.action_description || '',
+                    ).trim()
                     this.paymentPendingFailed = true
-                    this.pendingPaymentMessage =
-                        'El pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                    this.pendingPaymentMessage = reason
+                        ? `El pago no fue confirmado: ${reason}. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.`
+                        : 'El pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
                     return
                 }
                 this.schedulePendingStatusCheck()
