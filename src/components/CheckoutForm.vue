@@ -1544,6 +1544,7 @@ export default defineComponent({
                 throw new Error('NIUBIZ_SESSION_INCOMPLETE')
             }
 
+            const ready = this.waitForNiubizFrameReady()
             container.innerHTML = ''
             const form = document.createElement('form')
             form.method = 'post'
@@ -1589,6 +1590,37 @@ export default defineComponent({
                 document.querySelector('meta[name=viewport]')?.getAttribute('content') ?? null
             button.style.display = 'none'
             button.click()
+            await ready
+        },
+        waitForNiubizFrameReady(timeout = 10_000) {
+            const previousFrames = Array.from(
+                document.querySelectorAll<HTMLIFrameElement>('iframe#visaNetJS'),
+            )
+            return new Promise<void>((resolve) => {
+                const finish = () => {
+                    window.removeEventListener('message', handleMessage)
+                    window.clearTimeout(timer)
+                    resolve()
+                }
+                const handleMessage = (event: MessageEvent) => {
+                    if (!event.source) return
+                    const frame = Array.from(
+                        document.querySelectorAll<HTMLIFrameElement>('iframe#visaNetJS'),
+                    ).find((candidate) => candidate.contentWindow === event.source)
+                    if (!frame || previousFrames.includes(frame)) return
+                    let payload = event.data
+                    if (typeof payload === 'string') {
+                        try {
+                            payload = JSON.parse(payload)
+                        } catch {
+                            return
+                        }
+                    }
+                    if (payload?.isReady === true) finish()
+                }
+                const timer = window.setTimeout(finish, timeout)
+                window.addEventListener('message', handleMessage)
+            })
         },
         async waitForNiubizButton(container: HTMLElement) {
             for (let attempt = 0; attempt < 30; attempt += 1) {
