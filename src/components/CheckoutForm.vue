@@ -10,8 +10,8 @@
             <span class="payment-verification-overlay__spinner" aria-hidden="true"></span>
             <h2 id="payment-verification-title">Confirmando tu pago</h2>
             <p>
-                Estamos esperando la confirmación segura de {{ paymentProviderLabel }}. No cierres
-                ni recargues esta página.
+                Estamos esperando la confirmación segura de tu pago. No cierres ni recargues esta
+                página.
             </p>
         </article>
     </div>
@@ -23,7 +23,7 @@
         aria-live="polite"
     >
         <span class="payment-opening-overlay__spinner" aria-hidden="true"></span>
-        <p>Abriendo el formulario seguro de {{ paymentProviderLabel }}…</p>
+        <p>Abriendo el formulario de pago seguro…</p>
     </div>
 
     <section class="checkout-success" v-if="paymentSuccess == true" v-bind="$attrs">
@@ -534,7 +534,7 @@
                             <template v-if="form.payment_method === 'tarjeta'">
                                 <template v-if="isNiubiz">
                                     <p class="text-gray-500 text-sm">
-                                        Al continuar se abrirá el formulario seguro de Niubiz para
+                                        Al continuar se abrirá el formulario de pago seguro para
                                         ingresar los datos de tu tarjeta.
                                     </p>
                                     <div id="niubizPaymentForm" class="grid gap-3"></div>
@@ -889,9 +889,6 @@ export default defineComponent({
     computed: {
         isNiubiz() {
             return this.payment_provider === 'niubiz'
-        },
-        paymentProviderLabel() {
-            return this.isNiubiz ? 'Niubiz' : 'Izipay'
         },
         orderDetailUrl() {
             return this.form.redirect_url || '/consulta-pedido'
@@ -1381,7 +1378,7 @@ export default defineComponent({
                         return
                     }
                     this.errors.general =
-                        'Completa el pago en el formulario seguro de Niubiz para continuar.'
+                        'Completa el pago en el formulario seguro para continuar.'
                     return
                 }
                 await this.pagarConNiubiz()
@@ -1443,19 +1440,17 @@ export default defineComponent({
                         if (!intentId || this.paymentVerifying) return false
                         this.paymentVerifying = true
                         this.loadingPagar = true
-                        this.errors.general = 'Pago recibido. Esperando confirmación de Izipay.'
+                        this.errors.general = 'Pago recibido. Esperando la confirmación del pago.'
                         try {
                             const result = await this.validateCardPayment(paymentData, intentId)
                             if (result?.ok && result.data?.status === 'completed') {
                                 this.completeCardPayment(result)
                                 await KR.closePopin()
                             } else if (result?.ok && result.data?.status === 'payment_failed') {
-                                this.showPendingCardPayment(
-                                    'Izipay informó que el pago no fue confirmado.',
-                                )
+                                this.showPendingCardPayment('El pago no fue confirmado.')
                                 this.paymentPendingFailed = true
                                 this.pendingPaymentMessage =
-                                    'Izipay informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                                    'El pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
                                 clearTimeout(this.pendingStatusTimer)
                                 await KR.closePopin()
                             } else if (result?.ok && result.data?.status === 'manual_review') {
@@ -1466,9 +1461,9 @@ export default defineComponent({
                             } else {
                                 this.showPendingCardPayment(
                                     result?.ok
-                                        ? 'Izipay aún está confirmando tu pago.'
+                                        ? 'Aún estamos confirmando tu pago.'
                                         : result?.problem?.detail ||
-                                              'Izipay aún está confirmando tu pago.',
+                                              'Aún estamos confirmando tu pago.',
                                 )
                                 await KR.closePopin()
                             }
@@ -1484,7 +1479,7 @@ export default defineComponent({
                 await KR.renderElements('#myPaymentForm')
                 await KR.openPopin()
             } catch (error) {
-                console.error('No se pudo abrir el formulario de Izipay.', error)
+                console.error('No se pudo abrir el formulario de pago.', error)
                 this.errors.general =
                     'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
                 this.activePaymentIntent = null
@@ -1518,7 +1513,7 @@ export default defineComponent({
                 }
                 await this.renderNiubizButton(res.data)
             } catch (error) {
-                console.error('No se pudo abrir el formulario de Niubiz.', error)
+                console.error('No se pudo abrir el formulario de pago.', error)
                 this.errors.general =
                     'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
                 this.activePaymentIntent = null
@@ -1601,14 +1596,14 @@ export default defineComponent({
             this.closeNiubizOverlay()
             const intentId = this.activePaymentIntent?.id
             if (!intentId || !transactionToken) {
-                this.errors.general = 'No pudimos leer la respuesta de Niubiz. Vuelve a intentarlo.'
+                this.errors.general = 'No pudimos leer la respuesta del pago. Vuelve a intentarlo.'
                 return
             }
             if (this.paymentVerifying) return
 
             this.paymentVerifying = true
             this.loadingPagar = true
-            this.errors.general = `Pago recibido. Esperando confirmación de ${this.paymentProviderLabel}.`
+            this.errors.general = 'Pago recibido. Esperando la confirmación del pago.'
             try {
                 const result = await post(
                     `/api/niubiz/confirm?id=${encodeURIComponent(intentId)}`,
@@ -1618,17 +1613,17 @@ export default defineComponent({
                 if (result.ok && result.data?.status === 'completed') {
                     this.completeCardPayment(result)
                 } else if (result.ok && result.data?.status === 'payment_failed') {
-                    this.showPendingCardPayment('Niubiz informó que el pago no fue confirmado.')
+                    this.showPendingCardPayment('El pago no fue confirmado.')
                     this.paymentPendingFailed = true
                     this.pendingPaymentMessage =
-                        'Niubiz informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                        'El pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
                     clearTimeout(this.pendingStatusTimer)
                 } else if (result.ok && result.data?.status === 'manual_review') {
                     this.showPendingCardPayment(
                         'Tu pago requiere una revisión adicional. No realices otro pago.',
                     )
                 } else if (!result.ok && [400, 401, 403, 410].includes(result.status)) {
-                    const detail = result.problem?.detail || 'Niubiz no pudo confirmar el pago.'
+                    const detail = result.problem?.detail || 'El pago no pudo confirmarse.'
                     this.showPendingCardPayment(detail)
                     this.paymentPendingFailed = true
                     this.pendingPaymentMessage =
@@ -1637,8 +1632,8 @@ export default defineComponent({
                 } else {
                     this.showPendingCardPayment(
                         result.ok
-                            ? 'Niubiz aún está confirmando tu pago.'
-                            : result.problem?.detail || 'Niubiz aún está confirmando tu pago.',
+                            ? 'Aún estamos confirmando tu pago.'
+                            : result.problem?.detail || 'Aún estamos confirmando tu pago.',
                     )
                 }
             } finally {
@@ -1736,7 +1731,7 @@ export default defineComponent({
                 if (result.ok && result.data?.status === 'payment_failed') {
                     this.paymentPendingFailed = true
                     this.pendingPaymentMessage =
-                        `${this.paymentProviderLabel} informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.`
+                        'El pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
                     return
                 }
                 this.schedulePendingStatusCheck()
