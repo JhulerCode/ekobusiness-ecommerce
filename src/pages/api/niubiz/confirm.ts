@@ -1,9 +1,9 @@
-import type { APIContext, APIRoute } from 'astro'
+import type { APIRoute } from 'astro'
 import { idSchema } from '@/lib/api-schemas'
 import {
     clearCheckoutCookie, getCheckoutCookie, requestWithOptionalSession, setOrderCookie,
 } from '@/lib/server/backend'
-import { assertSameOrigin } from '@/lib/server/bff'
+import { assertSameOrigin, failure, forbiddenOrigin, json } from '@/lib/server/bff'
 
 async function readTransactionToken(request: Request) {
     const contentType = request.headers.get('content-type') || ''
@@ -17,20 +17,25 @@ async function readTransactionToken(request: Request) {
     )
 }
 
-function redirect(context: APIContext, path: string) {
-    return context.redirect(path, 303)
-}
-
 export const POST: APIRoute = async (context) => {
-    if (!assertSameOrigin(context.request)) return redirect(context, '/checkout/respuesta?status=error')
+    if (!assertSameOrigin(context.request)) return forbiddenOrigin()
 
     const id = idSchema.safeParse(new URL(context.request.url).searchParams.get('id'))
-    if (!id.success) return redirect(context, '/checkout/respuesta?status=error')
+    if (!id.success) {
+        return json(failure(
+            400, 'invalid-request', 'Solicitud no válida', 'El intento de pago no es válido.',
+        ))
+    }
 
     const transactionToken = await readTransactionToken(context.request)
     const checkoutToken = getCheckoutCookie(context, id.data)
     if (!transactionToken || !checkoutToken) {
-        return redirect(context, '/checkout/respuesta?status=error')
+        return json(failure(
+            401,
+            'checkout-access-invalid',
+            'Acceso al pago inválido',
+            'El acceso al intento de pago no es válido o ha vencido.',
+        ))
     }
 
     const result = await requestWithOptionalSession<{
@@ -40,6 +45,8 @@ export const POST: APIRoute = async (context) => {
         order_id?: string
         order_code?: string
         access_token?: string
+        action_description?: string
+        transaction_date?: string
     }>(context, 'payments/niubiz/authorize', {
         method: 'POST',
         body: JSON.stringify({
@@ -50,21 +57,19 @@ export const POST: APIRoute = async (context) => {
         checkoutToken,
     })
 
-    if (!result.ok) {
-        console.error(`[niubiz/confirm] authorize -> ${result.status} ${result.problem.type}`)
-        return redirect(context, '/checkout/respuesta?status=error')
-    }
+    if (!result.ok) return json(result)
 
     const data = result.data
     const orderId = data?.order_id || data?.id
-    if (data?.status === 'completed' && orderId && data?.access_token) {
-        setOrderCookie(context, orderId, data.access_token, 60 * 60)
+    const { access_token: accessToken, ...publicData } = data || {}
+    if (data?.status === 'completed' && orderId && accessToken) {
+        setOrderCookie(context, orderId, accessToken, 60 * 60)
         clearCheckoutCookie(context, id.data, 'niubiz')
-        return redirect(context, `/pedidos/${encodeURIComponent(orderId)}`)
+        return json({ ...result, data: { ...publicData, redirect_url: `/pedidos/${orderId}` } })
     }
 
-    if (['payment_failed', 'manual_review'].includes(data?.status || '')) {
+    if (data?.status === 'payment_failed') {
         clearCheckoutCookie(context, id.data, 'niubiz')
     }
-    return redirect(context, `/checkout/respuesta?status=${encodeURIComponent(data?.status || 'processing')}`)
+    return json({ ...result, data: publicData })
 }

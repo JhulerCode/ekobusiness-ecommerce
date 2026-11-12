@@ -872,6 +872,9 @@ export default defineComponent({
             izipayKR: null,
             izipaySubmitRegistered: false,
             niubizSession: null,
+            niubizBodyStyle: '',
+            niubizHtmlStyle: '',
+            niubizViewportContent: null,
             activePaymentIntent: null,
             paymentOpening: false,
             paymentVerifying: false,
@@ -1370,6 +1373,13 @@ export default defineComponent({
         async pagarConTarjeta() {
             if (this.isNiubiz) {
                 if (this.activePaymentIntent?.provider === 'niubiz') {
+                    const button = document.querySelector<HTMLButtonElement>(
+                        '#niubizPaymentForm button.modal-opener',
+                    )
+                    if (button) {
+                        button.click()
+                        return
+                    }
                     this.errors.general =
                         'Completa el pago en el formulario seguro de Niubiz para continuar.'
                     return
@@ -1551,8 +1561,18 @@ export default defineComponent({
                 window.setTimeout(resolve, 1500)
             })
 
+            const checkout = (window as any).VisanetCheckout
+            if (!checkout?.configuration) throw new Error('NIUBIZ_SCRIPT_UNAVAILABLE')
+            checkout.configuration.complete = (params: { token?: string }) => {
+                void this.confirmNiubizPayment(String(params?.token || ''))
+            }
+
             const button = await this.waitForNiubizButton(container)
             if (!button) throw new Error('NIUBIZ_BUTTON_MISSING')
+            this.niubizBodyStyle = document.body.style.cssText
+            this.niubizHtmlStyle = document.documentElement.style.cssText
+            this.niubizViewportContent =
+                document.querySelector('meta[name=viewport]')?.getAttribute('content') ?? null
             button.style.display = 'none'
             button.click()
         },
@@ -1563,6 +1583,68 @@ export default defineComponent({
                 await this.wait(100)
             }
             return null
+        },
+        closeNiubizOverlay() {
+            document.getElementById('visaNetWrapper')?.remove()
+            document.body.classList.remove('visanet-opened')
+            document.body.style.cssText = this.niubizBodyStyle
+            document.documentElement.style.cssText = this.niubizHtmlStyle
+            const viewport = document.querySelector('meta[name=viewport]')
+            if (viewport && this.niubizViewportContent !== null) {
+                viewport.setAttribute('content', this.niubizViewportContent)
+            }
+            this.niubizBodyStyle = ''
+            this.niubizHtmlStyle = ''
+            this.niubizViewportContent = null
+        },
+        async confirmNiubizPayment(transactionToken: string) {
+            this.closeNiubizOverlay()
+            const intentId = this.activePaymentIntent?.id
+            if (!intentId || !transactionToken) {
+                this.errors.general = 'No pudimos leer la respuesta de Niubiz. Vuelve a intentarlo.'
+                return
+            }
+            if (this.paymentVerifying) return
+
+            this.paymentVerifying = true
+            this.loadingPagar = true
+            this.errors.general = `Pago recibido. Esperando confirmación de ${this.paymentProviderLabel}.`
+            try {
+                const result = await post(
+                    `/api/niubiz/confirm?id=${encodeURIComponent(intentId)}`,
+                    { transactionToken, origin: window.location.origin },
+                    undefined,
+                )
+                if (result.ok && result.data?.status === 'completed') {
+                    this.completeCardPayment(result)
+                } else if (result.ok && result.data?.status === 'payment_failed') {
+                    this.showPendingCardPayment('Niubiz informó que el pago no fue confirmado.')
+                    this.paymentPendingFailed = true
+                    this.pendingPaymentMessage =
+                        'Niubiz informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                    clearTimeout(this.pendingStatusTimer)
+                } else if (result.ok && result.data?.status === 'manual_review') {
+                    this.showPendingCardPayment(
+                        'Tu pago requiere una revisión adicional. No realices otro pago.',
+                    )
+                } else if (!result.ok && [400, 401, 403, 410].includes(result.status)) {
+                    const detail = result.problem?.detail || 'Niubiz no pudo confirmar el pago.'
+                    this.showPendingCardPayment(detail)
+                    this.paymentPendingFailed = true
+                    this.pendingPaymentMessage =
+                        `${detail} Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.`
+                    clearTimeout(this.pendingStatusTimer)
+                } else {
+                    this.showPendingCardPayment(
+                        result.ok
+                            ? 'Niubiz aún está confirmando tu pago.'
+                            : result.problem?.detail || 'Niubiz aún está confirmando tu pago.',
+                    )
+                }
+            } finally {
+                this.paymentVerifying = false
+                this.loadingPagar = false
+            }
         },
         async validateCardPayment(paymentData: Record<string, unknown>, intentId: string) {
             const body = { paymentData, checkout_intent_id: intentId }
@@ -1654,7 +1736,7 @@ export default defineComponent({
                 if (result.ok && result.data?.status === 'payment_failed') {
                     this.paymentPendingFailed = true
                     this.pendingPaymentMessage =
-                        'Izipay informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.'
+                        `${this.paymentProviderLabel} informó que el pago no fue confirmado. Conservamos el pedido para que puedas identificarlo y solicitar ayuda antes de intentar otro pago.`
                     return
                 }
                 this.schedulePendingStatusCheck()
