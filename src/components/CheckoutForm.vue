@@ -298,8 +298,8 @@
 
                                 <JdSelect
                                     label="Dirección guardada"
-                                    :lista="user.direcciones || []"
-                                    mostrar="nombre"
+                                    :lista="user.addresses || []"
+                                    mostrar="name"
                                     v-model="form.entrega_direccion_id"
                                     :error="errors.entrega_direccion_id"
                                     @elegir="setDireccion"
@@ -1142,7 +1142,7 @@ export default defineComponent({
                 ...(saved.entrega_direccion_datos || {}),
             }
 
-            const savedAddressExists = (this.user.direcciones || []).some(
+            const savedAddressExists = (this.user.addresses || []).some(
                 (item) => String(item.id) === String(saved.entrega_direccion_id),
             )
             this.form.entrega_direccion_id = savedAddressExists ? saved.entrega_direccion_id : null
@@ -1292,31 +1292,31 @@ export default defineComponent({
 
             if (this.user.id) {
                 if (this.form.new_direccion) {
-                    const direcciones = JSON.parse(JSON.stringify(this.user.direcciones))
-                    const newDireccionId = genId()
-                    direcciones.push({
-                        id: newDireccionId,
-                        nombre: this.form.direccion_nombre,
+                    const addresses = JSON.parse(JSON.stringify(this.user.addresses || []))
+                    const newAddressId = genId()
+                    addresses.push({
+                        id: newAddressId,
+                        name: this.form.direccion_nombre,
                         ubigeo: this.form.entrega_ubigeo,
                         ubigeo1: this.form.entrega_direccion_datos.ubigeo1,
-                        direccion: this.form.direccion_entrega,
+                        address: this.form.direccion_entrega,
                         numero: this.form.entrega_direccion_datos.numero,
                         piso: this.form.entrega_direccion_datos.piso,
-                        referencia: this.form.entrega_direccion_datos.referencia,
+                        reference: this.form.entrega_direccion_datos.referencia,
                     })
                     const send = {
                         id: this.user.id,
                         tipo: 2,
                         comes_from: 'ecommerce',
-                        direcciones,
+                        addresses,
                     }
                     this.loadingContinuarPago = true
                     const res = await patch('account', send)
                     this.loadingContinuarPago = false
                     if (res.ok) {
-                        this.user.direcciones = res.data.direcciones
+                        this.user.addresses = res.data.addresses
                         this.form.new_direccion = false
-                        this.form.entrega_direccion_id = newDireccionId
+                        this.form.entrega_direccion_id = newAddressId
                     }
                 }
                 if (!this.isNiubiz && !this.user.wallet) {
@@ -1792,12 +1792,12 @@ export default defineComponent({
         },
         ubigeoLabel(ubigeo) {
             const parts = [
-                ubigeo.department ?? ubigeo.departamento,
-                ubigeo.province ?? ubigeo.provincia,
-                ubigeo.district ?? ubigeo.distrito,
+                ubigeo?.department ?? ubigeo?.departamento,
+                ubigeo?.province ?? ubigeo?.provincia,
+                ubigeo?.district ?? ubigeo?.distrito,
             ].filter(Boolean)
 
-            return ubigeo.full_name || ubigeo.nombre || parts.join(' - ')
+            return ubigeo?.full_name || ubigeo?.nombre || parts.join(' - ')
         },
 
         setDireccion(item) {
@@ -1806,14 +1806,14 @@ export default defineComponent({
                 return
             }
 
-            const ubigeo = { ...item.ubigeo1, full_name: this.ubigeoLabel(item.ubigeo1) }
+            const ubigeo = { ...(item.ubigeo1 || {}), full_name: this.ubigeoLabel(item.ubigeo1) }
             this.ubigeos = [ubigeo]
 
-            this.form.entrega_ubigeo = item.ubigeo1.id
-            this.form.direccion_entrega = item.direccion
+            this.form.entrega_ubigeo = item.ubigeo1?.id ?? item.ubigeo ?? item.distrito
+            this.form.direccion_entrega = item.address
             this.form.entrega_direccion_datos.numero = item.numero
             this.form.entrega_direccion_datos.piso = item.piso
-            this.form.entrega_direccion_datos.referencia = item.referencia
+            this.form.entrega_direccion_datos.referencia = item.reference
             this.form.entrega_direccion_datos.ubigeo1 = ubigeo
         },
         cleanDireccion() {

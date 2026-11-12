@@ -20,21 +20,21 @@
         </div>
 
         <div
-            v-if="user.direcciones && user.direcciones.length > 0"
+            v-if="user.addresses && user.addresses.length > 0"
             class="grid gap-4 xl:grid-cols-2"
         >
             <div
-                v-for="(dir, i) in user.direcciones"
+                v-for="(dir, i) in user.addresses"
                 :key="i"
                 class="flex min-h-44 justify-between gap-5 border border-sunka-sand bg-sunka-white p-5 transition-colors hover:bg-sunka-cream/50 sm:p-6"
             >
                 <div class="min-w-0">
                     <div class="mb-3 flex flex-wrap items-center gap-2">
                     <p class="font-heading text-lg font-semibold text-sunka-forest">
-                        {{ dir.nombre }}
+                        {{ dir.name }}
                     </p>
                     <span
-                        v-if="dir.principal"
+                        v-if="dir.is_primary"
                         class="border border-sunka-brass/40 bg-sunka-cream px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.15em] text-sunka-brass"
                     >
                         Principal
@@ -42,7 +42,7 @@
                     </div>
 
                     <p class="text-sm leading-relaxed text-sunka-ink/75">
-                        {{ dir.direccion }}
+                        {{ dir.address }}
                         <template v-if="dir.numero">
                             Nro: {{ dir.numero }}
                         </template>
@@ -56,8 +56,8 @@
                         {{ dir.ubigeo1.department || dir.ubigeo1.departamento }}
                     </p>
 
-                    <p v-if="dir.referencia" class="mt-3 text-xs leading-relaxed text-sunka-stone">
-                        Referencia: {{ dir.referencia }}
+                    <p v-if="dir.reference" class="mt-3 text-xs leading-relaxed text-sunka-stone">
+                        Referencia: {{ dir.reference }}
                     </p>
                 </div>
 
@@ -70,7 +70,7 @@
                         <Trash />
                     </button>
                     <button
-                        v-if="!dir.principal"
+                        v-if="!dir.is_primary"
                         @click="setPrincipal(i)"
                         title="Marcar como principal"
                         class="flex h-9 w-9 cursor-pointer items-center justify-center border border-sunka-sand text-sunka-stone transition-colors hover:border-sunka-brass hover:text-sunka-brass"
@@ -110,16 +110,16 @@
                             label="Nombre"
                             placeholder="Ej. Casa, Trabajo"
                             :nec="true"
-                            v-model="form.nombre"
-                            :error="errors.nombre"
+                            v-model="form.name"
+                            :error="errors.name"
                             class="col-span-2 md:col-span-1"
                         />
 
                         <JdInput
                             label="Dirección"
                             :nec="true"
-                            v-model="form.direccion"
-                            :error="errors.direccion"
+                            v-model="form.address"
+                            :error="errors.address"
                             class="col-span-2"
                         />
 
@@ -151,14 +151,14 @@
                         <JdTextArea
                             label="Referencia"
                             :nec="true"
-                            v-model="form.referencia"
-                            :error="errors.referencia"
+                            v-model="form.reference"
+                            :error="errors.reference"
                             class="col-span-2"
                         />
 
                         <JdCheckBox
                             label="Principal"
-                            v-model="form.principal"
+                            v-model="form.is_primary"
                         />
                     </div>
                 </main>
@@ -293,21 +293,21 @@ export default defineComponent({
         validateForm() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ''));
 
-            if (!this.form.nombre)
-                this.errors.nombre = 'Este campo es obligatorio.';
-            if (!this.form.direccion)
-                this.errors.direccion = 'Este campo es obligatorio.';
+            if (!this.form.name)
+                this.errors.name = 'Este campo es obligatorio.';
+            if (!this.form.address)
+                this.errors.address = 'Este campo es obligatorio.';
             if (!this.form.distrito)
                 this.errors.distrito = 'Este campo es obligatorio.';
-            if (!this.form.referencia)
-                this.errors.referencia = 'Este campo es obligatorio.';
+            if (!this.form.reference)
+                this.errors.reference = 'Este campo es obligatorio.';
 
             return Object.values(this.errors).every((e) => !e);
         },
-        shapeDatos(direcciones) {
+        shapeDatos(addresses) {
             return {
                 id: this.user.id,
-                direcciones,
+                addresses,
                 tipo: 2,
                 comes_from: 'ecommerce',
             };
@@ -316,15 +316,20 @@ export default defineComponent({
             if (this.loadingCreate) return;
             if (!this.validateForm()) return;
 
-            const direcciones = JSON.parse(
-                JSON.stringify(this.user.direcciones)
+            const addresses = JSON.parse(
+                JSON.stringify(this.user.addresses || [])
             );
-            if (this.form.principal == true) {
-                direcciones.forEach((d) => (d.principal = false));
+            if (this.form.is_primary == true) {
+                addresses.forEach((d) => (d.is_primary = false));
             }
-            direcciones.push({ ...this.form, id: genId() });
+            const { distrito, ...address } = this.form;
+            addresses.push({
+                ...address,
+                ubigeo: address.ubigeo1?.id ?? distrito,
+                id: genId(),
+            });
 
-            const send = this.shapeDatos(direcciones);
+            const send = this.shapeDatos(addresses);
 
             this.loadingCreate = true;
             const res = await patch('account', send);
@@ -332,41 +337,41 @@ export default defineComponent({
 
             if (res.ok) {
                 this.closeModal();
-                this.user.direcciones = res.data.direcciones;
+                this.user.addresses = res.data.addresses;
             }
         },
         async eliminar() {
-            const direcciones = JSON.parse(
-                JSON.stringify(this.user.direcciones)
+            const addresses = JSON.parse(
+                JSON.stringify(this.user.addresses || [])
             );
-            direcciones.splice(this.toDelete, 1);
+            addresses.splice(this.toDelete, 1);
 
-            const send = this.shapeDatos(direcciones);
+            const send = this.shapeDatos(addresses);
 
             this.loadingDelete = true;
             const res = await patch('account', send);
             this.loadingDelete = false;
 
             if (res.ok) {
-                this.user.direcciones = res.data.direcciones;
+                this.user.addresses = res.data.addresses;
                 this.closeQuestion();
             }
         },
         async setPrincipal(i) {
-            const direcciones = JSON.parse(
-                JSON.stringify(this.user.direcciones)
+            const addresses = JSON.parse(
+                JSON.stringify(this.user.addresses || [])
             );
-            direcciones.forEach((d) => (d.principal = false));
-            direcciones[i].principal = true;
+            addresses.forEach((d) => (d.is_primary = false));
+            addresses[i].is_primary = true;
 
-            const send = this.shapeDatos(direcciones);
+            const send = this.shapeDatos(addresses);
 
             this.loadingSetPrincipal = true;
             const res = await patch('account', send);
             this.loadingSetPrincipal = false;
 
             if (res.ok) {
-                this.user.direcciones = res.data.direcciones;
+                this.user.addresses = res.data.addresses;
             }
         },
     },

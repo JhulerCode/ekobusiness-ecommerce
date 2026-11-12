@@ -217,21 +217,21 @@ export default defineComponent({
 
         //--- Direcciones ---//
         confirmarEliminar(index) {
-            const dir = this.user.direcciones[index];
-            if (confirm(`¿Eliminar la dirección "${dir.nombre}"?`)) {
-                this.user.direcciones.splice(index, 1);
+            const dir = this.user.addresses[index];
+            if (confirm(`¿Eliminar la dirección "${dir.name}"?`)) {
+                this.user.addresses.splice(index, 1);
             }
         },
         direccionEditar(index) {
-            const dir = this.user.direcciones[index];
-            const nuevoNombre = prompt("Editar nombre de dirección:", dir.nombre);
+            const dir = this.user.addresses[index];
+            const nuevoNombre = prompt("Editar nombre de dirección:", dir.name);
             if (nuevoNombre !== null && nuevoNombre.trim() !== "") {
-                this.user.direcciones[index].nombre = nuevoNombre.trim();
+                this.user.addresses[index].name = nuevoNombre.trim();
             }
         },
         direccionMarcarPrincipal(index) {
-            this.user.direcciones.forEach((d) => (d.principal = false));
-            this.user.direcciones[index].principal = true;
+            this.user.addresses.forEach((d) => (d.is_primary = false));
+            this.user.addresses[index].is_primary = true;
         },
     },
 })
