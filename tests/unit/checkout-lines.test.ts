@@ -24,6 +24,8 @@ describe('líneas del checkout', () => {
                 unit: 'UND',
                 quantity: 2,
                 unit_price: 8.9,
+                line_name: 'Tradicional',
+                presentation: [{ label: 'Saquitos', value: 20 }],
                 blend_data: { intensidad: 2 },
             },
         ])

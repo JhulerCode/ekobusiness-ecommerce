@@ -4,7 +4,7 @@ import { requestWithOptionalSession, setCheckoutCookie, setOrderCookie } from '@
 import {
     assertSameOrigin, failure, forbiddenOrigin, invalidRequest, json, parseJson,
 } from '@/lib/server/bff'
-import { prepareCheckoutOrder } from '@/lib/server/checkout-quote'
+import { prepareCheckoutOrder } from '@/lib/server/checkout-order'
 
 type CheckoutOrder = {
     checkout_intent_id?: string
@@ -34,7 +34,7 @@ export const POST: APIRoute = async (context) => {
     if (!assertSameOrigin(context.request)) return forbiddenOrigin()
     const parsed = await parseJson(context.request, createPaymentSchema)
     if (!parsed.success) return invalidRequest()
-    const prepared = await prepareCheckoutOrder(context, parsed.data.partner_order)
+    const prepared = prepareCheckoutOrder(context, parsed.data.partner_order)
     if (!prepared.ok) {
         console.error(`[niubiz/create-payment] prepareCheckoutOrder -> ${prepared.status} ${prepared.problem.type}`)
         return json(prepared)

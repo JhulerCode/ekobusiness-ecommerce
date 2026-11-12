@@ -15,6 +15,8 @@ export function toOrderLines(items: CartItem[]) {
         unit: item.unit,
         quantity: Number(item.cantidad),
         unit_price: Number(item.pu),
+        line_name: item.line_name,
+        presentation: item.presentation,
         blend_data: item.blend_datos,
     }))
 }

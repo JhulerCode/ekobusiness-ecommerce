@@ -143,22 +143,6 @@ createServer((request, response) => {
                       },
             ),
         )
-    } else if (url.pathname === '/api/integration/v1/payments/quote') {
-        response.writeHead(201)
-        response.end(JSON.stringify({
-            data: {
-                quote_id: 'quote-1',
-                expires_at: '2099-01-01T00:00:00.000Z',
-                currency_id: 'PEN',
-                is_club_member: false,
-                partner_order_lines: [{
-                    article_id: 'product-1', name: 'Producto de prueba', unit: 'UND',
-                    quantity: 1, unit_price: 10, igv_affectation: '10', igv_rate: 18,
-                    line_name: 'Tradicional', presentation: [],
-                }],
-                ubigeo: null,
-            },
-        }))
     } else if (url.pathname === '/api/integration/v1/payments/checkout/orders') {
         response.writeHead(201)
         response.end(JSON.stringify({

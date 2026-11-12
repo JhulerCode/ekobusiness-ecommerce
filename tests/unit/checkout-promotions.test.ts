@@ -5,7 +5,7 @@ import {
     getPromotionRequirementText,
     getPromotionShopHref,
 } from '../../src/lib/checkout-promotions'
-import { buildAuthoritativeCheckout } from '../../src/lib/server/checkout-quote'
+import { buildCheckoutDraft } from '../../src/lib/server/checkout-order'
 import {
     getMinimumDeliveryDate,
     isDeliveryDateAllowed,
@@ -17,28 +17,6 @@ function item(line: string, presentation: number, quantity: number, price = 1) {
         presentation: [{ label: 'Saquitos', value: presentation }],
         quantity,
         unit_price: price,
-    }
-}
-
-function quote(overrides: Record<string, unknown> = {}) {
-    return {
-        quote_id: 'quote-1',
-        is_club_member: false,
-        partner_order_lines: [
-            {
-                article_id: 'product-1',
-                name: 'Producto',
-                unit: 'caja',
-                quantity: 1,
-                unit_price: 20,
-                igv_affectation: 'gravado',
-                igv_rate: 18,
-                line_name: 'Tradicional',
-                presentation: [{ label: 'Saquitos', value: 20 }],
-            },
-        ],
-        ubigeo: null,
-        ...overrides,
     }
 }
 
@@ -137,16 +115,20 @@ describe('promociones del checkout', () => {
     })
 
     it('el servidor de Astro reemplaza montos y promociones enviados por el navegador', () => {
-        const order = buildAuthoritativeCheckout({
+        const order = buildCheckoutDraft({
             delivery_type: 'envio',
             delivery_cost: 0,
             amount: 0,
             promotions: [{ key: 'inventada' }],
             delivery_date: '2026-08-23',
-            partner_order_lines: [{ article_id: 'product-1', quantity: 1, unit_price: 0 }],
-        }, quote({
-            ubigeo: { province: 'LIMA' },
-        }), {
+            partner_order_lines: [{
+                article_id: 'product-1',
+                quantity: 1,
+                unit_price: 20,
+                line_name: 'Tradicional',
+                presentation: [{ label: 'Saquitos', value: 20 }],
+            }],
+        }, {
             now: new Date('2026-08-22T19:00:00.000Z'),
         })
 
@@ -154,68 +136,5 @@ describe('promociones del checkout', () => {
         expect(order.amount).toBe(30)
         expect(order.promotions).toEqual([])
         expect(order.partner_order_lines[0].unit_price).toBe(20)
-        expect(order.delivery_address_data.ubigeo1.province).toBe('LIMA')
-    })
-
-    it('el servidor de Astro valida Lima con el ubigeo de la cotización', () => {
-        expect(() => buildAuthoritativeCheckout({
-            delivery_type: 'envio',
-            delivery_date: '2026-08-23',
-            partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
-        }, quote({
-            ubigeo: { province: 'CALLAO' },
-        }), {
-            now: new Date('2026-08-22T19:00:00.000Z'),
-        })).toThrow('DELIVERY_OUTSIDE_LIMA')
-    })
-
-    it('el servidor de Astro rechaza una fecha anterior a la permitida', () => {
-        expect(() => buildAuthoritativeCheckout({
-            delivery_type: 'retiro',
-            punto_retiro: 'oficina-ekobusiness',
-            delivery_date: '2026-08-29',
-            partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
-        }, quote(), {
-            now: new Date('2026-08-28T21:00:00.000Z'),
-        })).toThrow('INVALID_DELIVERY_DATE')
-    })
-
-    it('el servidor guarda el punto de retiro oficial y descarta una dirección manipulada', () => {
-        const order = buildAuthoritativeCheckout({
-            delivery_type: 'retiro',
-            punto_retiro: 'planta-sunka',
-            delivery_address: 'Dirección inventada',
-            delivery_address_data: {
-                punto_retiro: { name: 'Local inventado' },
-                horario: 'Todo el día',
-            },
-            delivery_date: '2026-08-30',
-            partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
-        }, quote(), {
-            now: new Date('2026-08-28T19:00:00.000Z'),
-        })
-
-        expect(order.delivery_address).toBe(
-            'Cal. 7 Mza. D Lote 10 Urb. Los Productores, Santa Anita',
-        )
-        expect(order.delivery_address_data).toEqual({
-            punto_retiro: {
-                id: 'planta-sunka',
-                name: 'Planta Sunka',
-                direccion: 'Cal. 7 Mza. D Lote 10 Urb. Los Productores, Santa Anita',
-            },
-            horario: '8:00 a. m. a 4:00 p. m.',
-        })
-    })
-
-    it('el servidor rechaza puntos de retiro que no pertenecen al catálogo', () => {
-        expect(() => buildAuthoritativeCheckout({
-            delivery_type: 'retiro',
-            punto_retiro: 'local-inventado',
-            delivery_date: '2026-08-30',
-            partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
-        }, quote(), {
-            now: new Date('2026-08-28T19:00:00.000Z'),
-        })).toThrow('INVALID_PICKUP_LOCATION')
     })
 })

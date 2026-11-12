@@ -92,7 +92,7 @@ test('abre un pedido sin incluir access_token en la URL', async ({ page }) => {
         const response = await fetch('/api/pedidos/consulta', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ codigo: 'SUNKA-1', codigo_consulta: '123456' }),
+            body: JSON.stringify({ order_code: 'SUNKA-1', lookup_code: '123456' }),
         })
         return response.json()
     })
@@ -123,7 +123,7 @@ test('espera la confirmación IPN antes de completar un checkout intent', async 
                     delivery_type: 'retiro',
                     punto_retiro: 'planta-sunka',
                     delivery_date: '2099-01-01',
-                    partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
+                    partner_order_lines: [{ article_id: 'product-1', quantity: 1, unit_price: 10 }],
                 },
             }),
         }).then((response) => response.json())
@@ -163,7 +163,7 @@ test('recupera un pago desde la cookie del intento sin repetir el cobro', async 
                     delivery_type: 'retiro',
                     punto_retiro: 'planta-sunka',
                     delivery_date: '2099-01-01',
-                    partner_order_lines: [{ article_id: 'product-1', quantity: 1 }],
+                    partner_order_lines: [{ article_id: 'product-1', quantity: 1, unit_price: 10 }],
                 },
             }),
         }).then((response) => response.json())
