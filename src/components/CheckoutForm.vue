@@ -796,6 +796,8 @@ import mastercardUrl from '../assets/icons/mastercard.svg?url'
 import dinersUrl from '../assets/icons/diners-club.svg?url'
 import amexUrl from '../assets/icons/american-express.svg?url'
 import genericUrl from '../assets/icons/card-generic.svg?url'
+import logoSunkaUrl from '../assets/logo-sunka-black.webp?url&no-inline'
+import logoSunkaInline from '../assets/logo-sunka-black.webp?inline'
 
 import { Cart } from '../lib/cart'
 import { getProductPrice } from '../lib/pricing'
@@ -1544,7 +1546,12 @@ export default defineComponent({
             script.setAttribute('data-amount', Number(session.amount).toFixed(2))
             script.setAttribute('data-expirationminutes', '20')
             script.setAttribute('data-timeouturl', window.location.href)
-            script.setAttribute('data-merchantlogo', `${window.location.origin}/favicon.png`)
+            script.setAttribute(
+                'data-merchantlogo',
+                import.meta.env.DEV
+                    ? logoSunkaInline
+                    : new URL(logoSunkaUrl, window.location.origin).href
+            )
             script.setAttribute('data-formbuttoncolor', '#1f3d2b')
 
             form.appendChild(script)
