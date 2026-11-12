@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "3.1.0",
+    "version": "4.0.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
   },
   "servers": [
@@ -61,11 +61,14 @@
     "urn:itderp:problem:integration-payment-access-invalid",
     "urn:itderp:problem:integration-payment-data-mismatch",
     "urn:itderp:problem:integration-payment-intent-expired",
+    "urn:itderp:problem:integration-payment-intent-not-pending",
     "urn:itderp:problem:integration-payment-invalid-cart",
     "urn:itderp:problem:integration-payment-invalid-email",
     "urn:itderp:problem:integration-payment-invalid-signature",
     "urn:itderp:problem:integration-payment-method-not-found",
     "urn:itderp:problem:integration-payment-persistence-unavailable",
+    "urn:itderp:problem:integration-payment-price-changed",
+    "urn:itderp:problem:integration-payment-provider-invalid",
     "urn:itderp:problem:integration-payment-provider-unavailable",
     "urn:itderp:problem:integration-payment-quote-expired",
     "urn:itderp:problem:integration-product-not-found",
@@ -715,7 +718,7 @@
         "x-scopes": [
           "payments:write"
         ],
-        "description": "Cotiza el carrito con los precios del catálogo. La cotización se reutiliza al crear el intento de pago y evita volver a leer artículos y ubigeos.",
+        "description": "Verifica el carrito y lo cotiza con los precios vigentes del catálogo. Rechaza artículos fuera de catálogo y precios que ya no coinciden con el unit_price que vio el consumidor. La cotización se reutiliza al crear el pedido y evita volver a leer artículos y ubigeos.",
         "requestBody": {
           "required": true,
           "content": {
@@ -731,6 +734,47 @@
             "$ref": "#/components/responses/CheckoutQuote"
           },
           "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/checkout/orders": {
+      "post": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "description": "Crea el pedido con sus líneas y el intento de pago a partir de la cotización vigente. Devuelve el acceso al intento y al pedido; la sesión del proveedor se emite después.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutOrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CheckoutOrder"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
             "$ref": "#/components/responses/Problem"
           },
           "422": {
@@ -750,6 +794,13 @@
         "x-scopes": [
           "payments:write"
         ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CheckoutAccess": []
+          }
+        ],
+        "description": "Emite el form token de Izipay para un intento de pago pendiente.",
         "requestBody": {
           "required": true,
           "content": {
@@ -762,9 +813,18 @@
         },
         "responses": {
           "201": {
-            "$ref": "#/components/responses/CheckoutAttempt"
+            "$ref": "#/components/responses/CheckoutIzipayFormToken"
           },
           "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
             "$ref": "#/components/responses/Problem"
           },
           "422": {
@@ -897,6 +957,13 @@
         "x-scopes": [
           "payments:write"
         ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CheckoutAccess": []
+          }
+        ],
+        "description": "Emite la sesión de Niubiz para un intento de pago pendiente.",
         "requestBody": {
           "required": true,
           "content": {
@@ -912,6 +979,15 @@
             "$ref": "#/components/responses/NiubizSession"
           },
           "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
             "$ref": "#/components/responses/Problem"
           },
           "422": {
@@ -1281,7 +1357,89 @@
         },
         "additionalProperties": false
       },
-      "CheckoutAttemptEnvelope": {
+      "CheckoutOrderRequest": {
+        "type": "object",
+        "required": [
+          "provider",
+          "partner_order"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "izipay",
+              "niubiz"
+            ],
+            "description": "Pasarela que emitirá la sesión de pago del intento."
+          },
+          "partner_order": {
+            "$ref": "#/components/schemas/OrderCreateRequest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutOrderEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "checkout_intent_id",
+              "checkout_access_token",
+              "order_id",
+              "order_code",
+              "order_access_token",
+              "lookup_code",
+              "amount",
+              "currency",
+              "expires_at"
+            ],
+            "properties": {
+              "checkout_intent_id": {
+                "type": "string"
+              },
+              "checkout_access_token": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              },
+              "order_code": {
+                "type": "string"
+              },
+              "order_access_token": {
+                "type": "string"
+              },
+              "lookup_code": {
+                "type": "string",
+                "pattern": "^[0-9]{6}$"
+              },
+              "amount": {
+                "type": "number",
+                "description": "Total del pedido en PEN"
+              },
+              "currency": {
+                "const": "PEN"
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Warning"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutIzipayFormTokenEnvelope": {
         "type": "object",
         "required": [
           "data"
@@ -1292,11 +1450,8 @@
             "required": [
               "formToken",
               "checkout_intent_id",
-              "checkout_access_token",
               "order_code",
               "order_id",
-              "order_access_token",
-              "lookup_code",
               "amount",
               "currency",
               "expires_at"
@@ -1308,24 +1463,15 @@
               "checkout_intent_id": {
                 "type": "string"
               },
-              "checkout_access_token": {
-                "type": "string"
-              },
               "order_code": {
                 "type": "string"
               },
               "order_id": {
                 "type": "string"
               },
-              "order_access_token": {
-                "type": "string"
-              },
-              "lookup_code": {
-                "type": "string",
-                "pattern": "^[0-9]{6}$"
-              },
               "amount": {
-                "type": "integer"
+                "type": "number",
+                "description": "Total del pedido en PEN"
               },
               "currency": {
                 "const": "PEN"
@@ -1388,10 +1534,13 @@
       "NiubizSessionRequest": {
         "type": "object",
         "required": [
-          "email",
-          "partner_order"
+          "checkout_intent_id",
+          "email"
         ],
         "properties": {
+          "checkout_intent_id": {
+            "type": "string"
+          },
           "email": {
             "type": "string",
             "format": "email",
@@ -1400,9 +1549,6 @@
           "origin": {
             "type": "string",
             "format": "uri"
-          },
-          "partner_order": {
-            "$ref": "#/components/schemas/OrderCreateRequest"
           }
         },
         "additionalProperties": false
@@ -1424,11 +1570,6 @@
               "amount",
               "currency",
               "checkout_intent_id",
-              "checkout_access_token",
-              "order_code",
-              "order_id",
-              "order_access_token",
-              "lookup_code",
               "expires_at"
             ],
             "properties": {
@@ -1450,29 +1591,14 @@
                 "pattern": "^[0-9]{12}$"
               },
               "amount": {
-                "type": "number"
+                "type": "number",
+                "description": "Total del pedido en PEN"
               },
               "currency": {
                 "const": "PEN"
               },
               "checkout_intent_id": {
                 "type": "string"
-              },
-              "checkout_access_token": {
-                "type": "string"
-              },
-              "order_code": {
-                "type": "string"
-              },
-              "order_id": {
-                "type": "string"
-              },
-              "order_access_token": {
-                "type": "string"
-              },
-              "lookup_code": {
-                "type": "string",
-                "pattern": "^[0-9]{6}$"
               },
               "expires_at": {
                 "type": "string",
@@ -1721,6 +1847,11 @@
             "type": "number",
             "exclusiveMinimum": 0,
             "maximum": 100
+          },
+          "unit_price": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Precio unitario que vio el consumidor. POST /payments/quote lo rechaza si no coincide con el catálogo vigente."
           },
           "blend_data": {}
         },
@@ -2060,10 +2191,13 @@
       "CheckoutFormTokenRequest": {
         "type": "object",
         "required": [
-          "email",
-          "partner_order"
+          "checkout_intent_id",
+          "email"
         ],
         "properties": {
+          "checkout_intent_id": {
+            "type": "string"
+          },
           "email": {
             "type": "string",
             "format": "email",
@@ -2072,9 +2206,6 @@
           "paymentMethodToken": {
             "type": "string",
             "maxLength": 500
-          },
-          "partner_order": {
-            "$ref": "#/components/schemas/OrderCreateRequest"
           }
         },
         "additionalProperties": false
@@ -2289,12 +2420,22 @@
           }
         }
       },
-      "CheckoutAttempt": {
-        "description": "Formulario e intento persistente creados",
+      "CheckoutOrder": {
+        "description": "Pedido e intento de pago creados",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/CheckoutAttemptEnvelope"
+              "$ref": "#/components/schemas/CheckoutOrderEnvelope"
+            }
+          }
+        }
+      },
+      "CheckoutIzipayFormToken": {
+        "description": "Form token de Izipay para el intento pendiente",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CheckoutIzipayFormTokenEnvelope"
             }
           }
         }
@@ -2320,7 +2461,7 @@
         }
       },
       "NiubizSession": {
-        "description": "Sesión de Niubiz e intento persistente creados",
+        "description": "Sesión de Niubiz emitida para el intento pendiente",
         "content": {
           "application/json": {
             "schema": {

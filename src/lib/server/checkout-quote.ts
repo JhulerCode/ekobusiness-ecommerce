@@ -185,11 +185,17 @@ export async function prepareCheckoutOrder(
     const quoteResult = await requestWithOptionalSession<CheckoutQuote>(context, 'payments/quote', {
         method: 'POST',
         body: JSON.stringify({
-            partner_order_lines: sourceItems.map((item) => ({
-                article_id: item.article_id,
-                quantity: item.quantity,
-                ...(item.blend_data === undefined ? {} : { blend_data: item.blend_data }),
-            })),
+            partner_order_lines: sourceItems.map((item) => {
+                const unitPrice = Number(item.unit_price)
+                return {
+                    article_id: item.article_id,
+                    quantity: item.quantity,
+                    ...(Number.isFinite(unitPrice) && item.unit_price !== null
+                        ? { unit_price: unitPrice }
+                        : {}),
+                    ...(item.blend_data === undefined ? {} : { blend_data: item.blend_data }),
+                }
+            }),
             delivery_type: draft.delivery_type,
             ...(draft.delivery_type === 'envio' && draft.delivery_ubigeo_id
                 ? { delivery_ubigeo_id: draft.delivery_ubigeo_id }

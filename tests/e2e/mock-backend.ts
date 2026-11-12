@@ -143,17 +143,44 @@ createServer((request, response) => {
                       },
             ),
         )
-    } else if (url.pathname === '/api/integration/v1/payments/izipay/form-token') {
+    } else if (url.pathname === '/api/integration/v1/payments/quote') {
         response.writeHead(201)
         response.end(JSON.stringify({
             data: {
-                formToken: 'form-token', checkout_intent_id: 'intent-1',
-                checkout_access_token: 'checkout-access', orderId: 'payment-order-1',
-                lookup_code: '123456',
-                order_id: 'payment-order-id-1', order_access_token: 'pending-order-access',
-                amount: 1000, currency: 'PEN', expires_at: '2026-08-23T00:00:00.000Z',
+                quote_id: 'quote-1',
+                expires_at: '2099-01-01T00:00:00.000Z',
+                currency_id: 'PEN',
+                is_club_member: false,
+                partner_order_lines: [{
+                    article_id: 'product-1', name: 'Producto de prueba', unit: 'UND',
+                    quantity: 1, unit_price: 10, igv_affectation: '10', igv_rate: 18,
+                    line_name: 'Tradicional', presentation: [],
+                }],
+                ubigeo: null,
             },
         }))
+    } else if (url.pathname === '/api/integration/v1/payments/checkout/orders') {
+        response.writeHead(201)
+        response.end(JSON.stringify({
+            data: {
+                checkout_intent_id: 'intent-1', checkout_access_token: 'checkout-access',
+                order_id: 'payment-order-id-1', order_code: 'SUNKA-PAY',
+                order_access_token: 'pending-order-access', lookup_code: '123456',
+                amount: 10, currency: 'PEN', expires_at: '2026-08-23T00:00:00.000Z',
+            },
+        }))
+    } else if (url.pathname === '/api/integration/v1/payments/izipay/form-token') {
+        const authorized = request.headers['x-checkout-access'] === 'checkout-access'
+        response.writeHead(authorized ? 201 : 401)
+        response.end(JSON.stringify(authorized
+            ? {
+                data: {
+                    formToken: 'form-token', checkout_intent_id: 'intent-1',
+                    order_code: 'SUNKA-PAY', order_id: 'payment-order-id-1',
+                    amount: 10, currency: 'PEN', expires_at: '2026-08-23T00:00:00.000Z',
+                },
+            }
+            : { type: 'urn:itderp:problem:integration-payment-access-invalid', title: 'Acceso al pago inválido', status: 401, detail: 'El acceso al intento de pago no es válido o ha vencido.', instance: '/api/integration/v1/payments/izipay/form-token', errorCode: 'INTEGRATION_PAYMENT_ACCESS_INVALID' }))
     } else if (url.pathname === '/api/integration/v1/payments/izipay/validate') {
         response.writeHead(202)
         response.end(JSON.stringify({

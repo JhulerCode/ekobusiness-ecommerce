@@ -812,7 +812,7 @@ import {
     PICKUP_LOCATIONS,
     getPickupLocation,
 } from '../data/pickup-locations'
-import { urls, get, post, patch } from '../lib/api'
+import { urls, get, post, patch, formatProductos } from '../lib/api'
 import { formatDate, genId } from '../lib/mine'
 
 export default defineComponent({
@@ -1035,6 +1035,28 @@ export default defineComponent({
             const changed = repriced.some((item, index) => Number(item.pu) !== Number(this.items[index]?.pu))
             this.items = repriced
             if (changed) Cart.save(repriced)
+        },
+        async handleCheckoutError(result) {
+            if (result.problem?.type === 'urn:itderp:problem:integration-payment-price-changed') {
+                await this.refreshCatalogPrices()
+                this.errors.general =
+                    'Los precios de los productos cambiaron. Actualizamos tu resumen; revisa el total e inténtalo nuevamente.'
+                return
+            }
+            this.errors.general = result.problem.detail
+        },
+        async refreshCatalogPrices() {
+            const ids = this.items.map((item) => String(item.articulo))
+            const res = await get('productos', { ids })
+            if (!res.ok) return
+            const products = formatProductos(res.data || [])
+            const byId = new Map(products.map((product) => [String(product.id), product]))
+            this.items = this.items.map((item) => {
+                const product = byId.get(String(item.articulo))
+                if (!product) return item
+                return { ...item, regular_price: product.price, club_price: product.club_price }
+            })
+            this.refreshItemPrices()
         },
         itemPrice(item) {
             return Number(item.pu) || 0
@@ -1388,10 +1410,7 @@ export default defineComponent({
                 // pedidos incompletos si el módulo local no pudiera cargarse.
                 const { default: KRGlue } = await import('@lyracom/embedded-form-glue')
                 const res = await post(`${urls.izipay}/create-payment`, send, undefined)
-                if (!res.ok) {
-                    this.errors.general = res.problem.detail
-                    return
-                }
+                if (!res.ok) return this.handleCheckoutError(res)
                 this.form.order_code = res.data.order_code
                 this.form.id = res.data.order_id
                 this.form.redirect_url = res.data.redirect_url
@@ -1478,10 +1497,7 @@ export default defineComponent({
             this.errors.general = ''
             try {
                 const res = await post(`${urls.niubiz}/create-payment`, send, undefined)
-                if (!res.ok) {
-                    this.errors.general = res.problem.detail
-                    return
-                }
+                if (!res.ok) return this.handleCheckoutError(res)
                 this.form.order_code = res.data.order_code
                 this.form.id = res.data.order_id
                 this.form.redirect_url = res.data.redirect_url
