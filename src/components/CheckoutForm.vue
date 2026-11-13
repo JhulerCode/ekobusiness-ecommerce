@@ -803,7 +803,7 @@ import logoSunkaInline from '../assets/logo-sunka-black.webp?inline'
 
 import { Cart } from '../lib/cart'
 import { getProductPrice } from '../lib/pricing'
-import { CheckoutDraft, createCheckoutCartSignature } from '../lib/checkout-draft'
+import { CheckoutDraft, createCheckoutCartSignature, createCheckoutOrderSignature } from '../lib/checkout-draft'
 import { toOrderLines, toPromotionItems } from '../lib/checkout-lines'
 import { evaluateCheckoutPromotions } from '../lib/checkout-promotions'
 import {
@@ -816,7 +816,7 @@ import {
     PICKUP_LOCATIONS,
     getPickupLocation,
 } from '../data/pickup-locations'
-import { urls, get, post, patch, formatProductos } from '../lib/api'
+import { urls, get, post, patch, delet, formatProductos } from '../lib/api'
 import { formatDate, genId } from '../lib/mine'
 
 export default defineComponent({
@@ -951,6 +951,13 @@ export default defineComponent({
                 this.items.length === 1 ? 'producto' : 'productos'
             }`
             return `${products} · Paso ${this.step} de 3`
+        },
+        orderSignature() {
+            return createCheckoutOrderSignature({
+                items: this.items,
+                form: this.form,
+                deliveryCost: this.deliveryCost,
+            })
         },
     },
     watch: {
@@ -1381,18 +1388,125 @@ export default defineComponent({
 
             await this.pagarConTarjeta()
         },
+        paymentIntentExpired(intent) {
+            return Boolean(intent?.expiresAt) && new Date(intent.expiresAt).getTime() <= Date.now()
+        },
+        niubizIntentExpiresAt(intentExpiresAt) {
+            // La sesión de Niubiz dura 20 minutos; se renueva antes de ese límite.
+            const sessionExpiresAt = Date.now() + 18 * 60 * 1000
+            const intentExpiresAtMs = new Date(intentExpiresAt).getTime()
+            return new Date(
+                Number.isFinite(intentExpiresAtMs)
+                    ? Math.min(intentExpiresAtMs, sessionExpiresAt)
+                    : sessionExpiresAt,
+            ).toISOString()
+        },
+        clearActivePaymentIntent() {
+            const intent = this.activePaymentIntent
+            this.activePaymentIntent = null
+            this.niubizSession = null
+            this.izipayKR = null
+            this.izipaySubmitRegistered = false
+            const closing = intent?.KR?.closePopin?.()
+            if (closing?.catch) closing.catch(() => {})
+            if (this.niubizBodyStyle || document.getElementById('visaNetWrapper')) {
+                this.closeNiubizOverlay()
+            }
+            const container = document.getElementById('niubizPaymentForm')
+            if (container) container.innerHTML = ''
+        },
+        async resolveUncancellableIntent(intent) {
+            const result = await get(this.paymentIntentUrl(intent.id))
+            if (result?.ok && result.data?.status === 'completed') {
+                this.completeCardPayment(result)
+                return false
+            }
+            if (result?.ok && result.data?.status === 'payment_failed') {
+                this.clearActivePaymentIntent()
+                return true
+            }
+            if (
+                result?.ok &&
+                ['processing', 'manual_review'].includes(result.data?.status)
+            ) {
+                this.showPendingCardPayment(
+                    'Tu pago anterior está en verificación. No realices otro pago.',
+                )
+                return false
+            }
+            if (!result?.ok && [401, 410].includes(result.status)) {
+                this.clearActivePaymentIntent()
+                return true
+            }
+            this.errors.general =
+                'No pudimos verificar tu pago anterior. Espera un momento y vuelve a intentarlo.'
+            return false
+        },
+        async releaseActivePaymentIntent() {
+            const intent = this.activePaymentIntent
+            if (!intent) return true
+            if (this.paymentOutcomeUncertain) {
+                this.errors.general =
+                    'Tu pago anterior sigue en verificación. No realices otro pago.'
+                return false
+            }
+            const provider = intent.provider === 'niubiz' ? 'niubiz' : 'izipay'
+            const result = await delet(`/api/${provider}/intents`, { id: intent.id })
+            if (!result.ok) {
+                if (result.status === 409) {
+                    return this.resolveUncancellableIntent(intent)
+                }
+                if (![401, 410].includes(result.status)) {
+                    console.error('No se pudo cancelar el intento de pago anterior.', result.problem)
+                }
+            }
+            this.clearActivePaymentIntent()
+            return true
+        },
+        async resumeNiubizPayment() {
+            const button = document.querySelector<HTMLButtonElement>(
+                '#niubizPaymentForm button.modal-opener',
+            )
+            if (button) {
+                button.click()
+                return
+            }
+            if (!this.niubizSession) {
+                if (!(await this.releaseActivePaymentIntent())) return
+                await this.pagarConNiubiz()
+                return
+            }
+            this.loadingPagar = true
+            this.paymentOpening = true
+            try {
+                this.closeNiubizOverlay()
+                await this.renderNiubizButton(this.niubizSession)
+            } catch (error) {
+                console.error('No se pudo reabrir el formulario de pago.', error)
+                this.errors.general =
+                    'No se pudo reabrir el formulario de pago. Vuelve a intentarlo.'
+            } finally {
+                this.loadingPagar = false
+                this.paymentOpening = false
+            }
+        },
         async pagarConTarjeta() {
+            const pendingIntent = this.activePaymentIntent
+            if (pendingIntent) {
+                const changed = pendingIntent.signature !== this.orderSignature
+                if (changed || this.paymentIntentExpired(pendingIntent)) {
+                    this.loadingPagar = true
+                    try {
+                        if (!(await this.releaseActivePaymentIntent())) return
+                    } finally {
+                        this.loadingPagar = false
+                    }
+                }
+            }
+
             if (this.isNiubiz) {
                 if (this.activePaymentIntent?.provider === 'niubiz') {
-                    const button = document.querySelector<HTMLButtonElement>(
-                        '#niubizPaymentForm button.modal-opener',
-                    )
-                    if (button) {
-                        button.click()
-                        return
-                    }
-                    this.errors.general =
-                        'Completa el pago en el formulario seguro para continuar.'
+                    await this.resumeNiubizPayment()
                     return
                 }
                 await this.pagarConNiubiz()
@@ -1416,6 +1530,10 @@ export default defineComponent({
                 }
                 await this.activePaymentIntent.KR.openPopin()
                 return
+            }
+            if (this.activePaymentIntent) {
+                const released = await this.releaseActivePaymentIntent()
+                if (!released) return
             }
             this.shapeDatos()
             const send = {
@@ -1441,17 +1559,29 @@ export default defineComponent({
 
                 const { KR } = await KRGlue.loadLibrary(endpoint, publicKey)
                 this.izipayKR = KR
-                this.activePaymentIntent = { id: res.data.checkout_intent_id, KR }
+                this.activePaymentIntent = {
+                    id: res.data.checkout_intent_id,
+                    KR,
+                    signature: this.orderSignature,
+                    expiresAt: res.data.expires_at,
+                }
 
                 await KR.setFormConfig({
                     formToken: res.data.formToken,
                     'kr-language': 'es-PE',
                 })
 
+                const registeredIntentId = this.activePaymentIntent?.id
                 if (!this.izipaySubmitRegistered) {
                     await KR.onSubmit(async (paymentData: Record<string, unknown>) => {
-                        const intentId = this.activePaymentIntent?.id
-                        if (!intentId || this.paymentVerifying) return false
+                        const intentId = registeredIntentId
+                        if (
+                            !intentId ||
+                            this.paymentVerifying ||
+                            this.activePaymentIntent?.id !== intentId
+                        ) {
+                            return false
+                        }
                         this.paymentVerifying = true
                         this.loadingPagar = true
                         this.errors.general = 'Pago recibido. Esperando la confirmación del pago.'
@@ -1496,10 +1626,8 @@ export default defineComponent({
                 console.error('No se pudo abrir el formulario de pago.', error)
                 this.errors.general =
                     'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
-                this.activePaymentIntent = null
+                this.clearActivePaymentIntent()
                 this.paymentOutcomeUncertain = false
-                this.izipayKR = null
-                this.izipaySubmitRegistered = false
             } finally {
                 this.loadingPagar = false
             }
@@ -1524,14 +1652,15 @@ export default defineComponent({
                 this.activePaymentIntent = {
                     id: res.data.checkout_intent_id,
                     provider: 'niubiz',
+                    signature: this.orderSignature,
+                    expiresAt: this.niubizIntentExpiresAt(res.data.expires_at),
                 }
                 await this.renderNiubizButton(res.data)
             } catch (error) {
                 console.error('No se pudo abrir el formulario de pago.', error)
                 this.errors.general =
                     'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
-                this.activePaymentIntent = null
-                this.niubizSession = null
+                this.clearActivePaymentIntent()
             } finally {
                 this.loadingPagar = false
                 this.paymentOpening = false
@@ -1579,6 +1708,7 @@ export default defineComponent({
             const checkout = (window as any).VisanetCheckout
             if (!checkout?.configuration) throw new Error('NIUBIZ_SCRIPT_UNAVAILABLE')
             checkout.configuration.complete = (params: { token?: string }) => {
+                if (this.activePaymentIntent?.id !== session.checkout_intent_id) return
                 void this.confirmNiubizPayment(String(params?.token || ''))
             }
 
@@ -1658,7 +1788,7 @@ export default defineComponent({
             try {
                 const result = await post(
                     `/api/niubiz/confirm?id=${encodeURIComponent(intentId)}`,
-                    { transactionToken, origin: window.location.origin },
+                    { transactionToken },
                     undefined,
                 )
                 if (result.ok && result.data?.status === 'completed') {

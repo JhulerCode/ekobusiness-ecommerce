@@ -165,6 +165,25 @@ createServer((request, response) => {
                 },
             }
             : { type: 'urn:itderp:problem:integration-payment-access-invalid', title: 'Acceso al pago inválido', status: 401, detail: 'El acceso al intento de pago no es válido o ha vencido.', instance: '/api/integration/v1/payments/izipay/form-token', errorCode: 'INTEGRATION_PAYMENT_ACCESS_INVALID' }))
+    } else if (url.pathname === '/api/integration/v1/payments/checkout/intents/intent-1') {
+        const authorized =
+            request.method === 'DELETE' &&
+            request.headers['x-checkout-access'] === 'checkout-access'
+        if (!authorized) {
+            response.writeHead(401)
+            response.end(JSON.stringify({
+                type: 'urn:itderp:problem:integration-payment-access-invalid',
+                title: 'Acceso al pago inválido',
+                status: 401,
+                detail: 'El acceso al intento de pago no es válido o ha vencido.',
+                instance: '/api/integration/v1/payments/checkout/intents/intent-1',
+                errorCode: 'INTEGRATION_PAYMENT_ACCESS_INVALID',
+            }))
+        } else {
+            response.end(JSON.stringify({
+                data: { status: 'cancelled', checkout_intent_id: 'intent-1' },
+            }))
+        }
     } else if (url.pathname === '/api/integration/v1/payments/izipay/validate') {
         response.writeHead(202)
         response.end(JSON.stringify({

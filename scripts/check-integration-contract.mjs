@@ -13,6 +13,7 @@ export const TRACKED_OPERATIONS = [
     ['/orders', 'get', '200'],
     ['/orders/{id}', 'get', '200'],
     ['/payments/checkout/orders', 'post', '201'],
+    ['/payments/checkout/intents/{id}', 'delete', '200'],
     ['/payments/izipay/form-token', 'post', '201'],
 ]
 
@@ -25,6 +26,7 @@ export const TRACKED_SCHEMAS = [
     'CheckoutFormTokenRequest',
     'CheckoutOrderRequest',
     'CheckoutOrderEnvelope',
+    'CheckoutIntentCancelEnvelope',
     'CheckoutIzipayFormTokenEnvelope',
     'NiubizSessionRequest',
     'NiubizSessionEnvelope',

@@ -150,6 +150,44 @@ test('espera la confirmación IPN antes de completar un checkout intent', async 
     expect(result.cookies).not.toContain('sunka_checkout_')
 })
 
+test('cancela el intento de pago anterior antes de crear uno nuevo', async ({ page }) => {
+    await page.goto('/')
+    const result = await page.evaluate(async () => {
+        const created = await fetch('/api/izipay/create-payment', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                email: 'cliente@example.com',
+                paymentMethodToken: 'nueva',
+                partner_order: {
+                    partner_data: {},
+                    delivery_type: 'retiro',
+                    punto_retiro: 'planta-sunka',
+                    delivery_date: '2099-01-01',
+                    partner_order_lines: [{ article_id: 'product-1', quantity: 1, unit_price: 10 }],
+                },
+            }),
+        }).then((response) => response.json())
+        const cancelled = await fetch(
+            `/api/izipay/intents/${created.data.checkout_intent_id}`,
+            { method: 'DELETE' },
+        )
+        return {
+            created,
+            cancelled: await cancelled.json(),
+            status: cancelled.status,
+            cookies: document.cookie,
+        }
+    })
+
+    expect(result.status).toBe(200)
+    expect(result.cancelled.data).toEqual({
+        status: 'cancelled',
+        checkout_intent_id: 'intent-1',
+    })
+    expect(result.cookies).not.toContain('sunka_checkout_')
+})
+
 test('recupera un pago desde la cookie del intento sin repetir el cobro', async ({ page }) => {
     await page.goto('/')
     const result = await page.evaluate(async () => {

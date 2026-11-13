@@ -3,7 +3,10 @@ import { idSchema } from '@/lib/api-schemas'
 import {
     clearCheckoutCookie, getCheckoutCookie, requestWithOptionalSession, setOrderCookie,
 } from '@/lib/server/backend'
+import { cancelCheckoutIntent } from '@/lib/server/checkout-intents'
 import { failure, json } from '@/lib/server/bff'
+
+export const DELETE: APIRoute = (context) => cancelCheckoutIntent(context, 'niubiz')
 
 export const GET: APIRoute = async (context) => {
     const parsed = idSchema.safeParse(context.params.id)

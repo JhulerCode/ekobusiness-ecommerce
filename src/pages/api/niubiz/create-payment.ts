@@ -69,7 +69,6 @@ export const POST: APIRoute = async (context) => {
             body: JSON.stringify({
                 checkout_intent_id: checkout.checkout_intent_id,
                 email: parsed.data.email,
-                origin: new URL(context.request.url).origin,
             }),
             checkoutToken: checkout.checkout_access_token,
         },

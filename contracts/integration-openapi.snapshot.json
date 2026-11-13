@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "5.1.0",
+    "version": "5.4.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
   },
   "servers": [
@@ -35,7 +35,6 @@
     "urn:itderp:problem:book-claim-unavailable",
     "urn:itderp:problem:book-claim-write-forbidden",
     "urn:itderp:problem:integration-auth-unavailable",
-    "urn:itderp:problem:integration-productos-unavailable",
     "urn:itderp:problem:integration-company-unavailable",
     "urn:itderp:problem:integration-customer-already-exists",
     "urn:itderp:problem:integration-customer-email-not-verified",
@@ -59,9 +58,11 @@
     "urn:itderp:problem:integration-order-unavailable",
     "urn:itderp:problem:integration-origin-forbidden",
     "urn:itderp:problem:integration-payment-access-invalid",
+    "urn:itderp:problem:integration-payment-data-map-missing",
     "urn:itderp:problem:integration-payment-data-mismatch",
     "urn:itderp:problem:integration-payment-delivery-outside-lima",
     "urn:itderp:problem:integration-payment-intent-expired",
+    "urn:itderp:problem:integration-payment-intent-not-cancellable",
     "urn:itderp:problem:integration-payment-intent-not-pending",
     "urn:itderp:problem:integration-payment-invalid-cart",
     "urn:itderp:problem:integration-payment-invalid-email",
@@ -72,10 +73,11 @@
     "urn:itderp:problem:integration-payment-provider-invalid",
     "urn:itderp:problem:integration-payment-provider-unavailable",
     "urn:itderp:problem:integration-product-not-found",
+    "urn:itderp:problem:integration-productos-unavailable",
     "urn:itderp:problem:integration-rate-limited",
+    "urn:itderp:problem:integration-route-not-found",
     "urn:itderp:problem:integration-ubigeo-invalid-keys",
     "urn:itderp:problem:integration-ubigeo-unavailable",
-    "urn:itderp:problem:integration-route-not-found",
     "urn:itderp:problem:partner-email-conflict"
   ],
   "paths": {
@@ -743,6 +745,42 @@
             "$ref": "#/components/responses/Problem"
           },
           "503": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/payments/checkout/intents/{id}": {
+      "delete": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CheckoutAccess": []
+          }
+        ],
+        "description": "Cancela un intento de pago pendiente. Marca el intento como failed_unpaid y el pedido como payment_failed para que no pueda cobrarse ni conciliarse. Si el pago ya fue autorizado o está en verificación, responde 409 y no lo cancela.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CheckoutIntentCancel"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
             "$ref": "#/components/responses/Problem"
           },
           "default": {
@@ -1486,6 +1524,12 @@
                 "type": "string"
               },
               "access_token": {
+                "type": "string"
+              },
+              "action_description": {
+                "type": "string"
+              },
+              "transaction_date": {
                 "type": "string"
               }
             }
@@ -2289,6 +2333,30 @@
           }
         },
         "additionalProperties": false
+      },
+      "CheckoutIntentCancelEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "status",
+              "checkout_intent_id"
+            ],
+            "properties": {
+              "status": {
+                "const": "cancelled"
+              },
+              "checkout_intent_id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
       }
     },
     "responses": {
@@ -2480,6 +2548,16 @@
           "application/problem+json": {
             "schema": {
               "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "CheckoutIntentCancel": {
+        "description": "Intento de pago cancelado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CheckoutIntentCancelEnvelope"
             }
           }
         }

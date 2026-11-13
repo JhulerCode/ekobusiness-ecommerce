@@ -67,6 +67,64 @@ export function createCheckoutCartSignature(items: DraftRecord[]) {
     return hash(stableStringify(cart))
 }
 
+function compactUbigeo(ubigeo: DraftRecord | null) {
+    if (!ubigeo) return null
+    return {
+        id: ubigeo.id ?? null,
+        code: ubigeo.code ?? null,
+        department: ubigeo.department ?? ubigeo.departamento ?? null,
+        province: ubigeo.province ?? ubigeo.provincia ?? null,
+        district: ubigeo.district ?? ubigeo.distrito ?? null,
+        full_name: ubigeo.full_name ?? null,
+    }
+}
+
+export function createCheckoutOrderSignature({
+    items,
+    form,
+    deliveryCost,
+}: {
+    items: DraftRecord[]
+    form: DraftRecord
+    deliveryCost: number
+}) {
+    const partner = form?.partner_data || {}
+    const address = form?.entrega_direccion_datos || {}
+
+    return hash(
+        stableStringify({
+            cart: createCheckoutCartSignature(items || []),
+            partner: {
+                email: partner.email || '',
+                phone1: partner.phone1 || '',
+                name: partner.name || '',
+                apellidos: partner.apellidos || '',
+                document_type: partner.document_type ?? null,
+                document_number: partner.document_number || '',
+            },
+            delivery_type: form?.delivery_type || '',
+            punto_retiro: form?.punto_retiro || null,
+            delivery_date: form?.delivery_date || null,
+            entrega_ubigeo: form?.entrega_ubigeo ?? null,
+            direccion_entrega: form?.direccion_entrega || '',
+            entrega_direccion_datos: {
+                numero: address.numero || '',
+                piso: address.piso || '',
+                referencia: address.referencia || '',
+                horario: address.horario || '',
+                punto_retiro: address.punto_retiro || null,
+                ubigeo1: compactUbigeo(address.ubigeo1),
+            },
+            invoice_type: form?.invoice_type || '',
+            invoice_ruc: form?.invoice_ruc || '',
+            invoice_business_name: form?.invoice_business_name || '',
+            payment_method: form?.payment_method || '',
+            payment_method_token: form?.paymentMethodToken || '',
+            delivery_cost: Number(deliveryCost || 0),
+        }),
+    )
+}
+
 export const CheckoutDraft = {
     get({ userId, cartSignature }: { userId: string | null; cartSignature: string }) {
         try {

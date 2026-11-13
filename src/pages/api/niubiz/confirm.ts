@@ -52,7 +52,6 @@ export const POST: APIRoute = async (context) => {
         body: JSON.stringify({
             checkout_intent_id: id.data,
             transactionToken,
-            origin: new URL(context.request.url).origin,
         }),
         checkoutToken,
     })
