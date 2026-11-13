@@ -879,6 +879,7 @@ export default defineComponent({
             niubizBodyStyle: '',
             niubizHtmlStyle: '',
             niubizViewportContent: null,
+            niubizCloseObserver: null,
             activePaymentIntent: null,
             paymentOpening: false,
             paymentVerifying: false,
@@ -1002,6 +1003,7 @@ export default defineComponent({
     beforeUnmount() {
         clearTimeout(this.draftSaveTimeout)
         clearTimeout(this.pendingStatusTimer)
+        this.stopNiubizCloseWatch()
         this.setPageScrollLock(false)
         if (this.draftReady && !this.paymentSuccess && !this.paymentPending) this.saveDraft()
     },
@@ -1402,6 +1404,7 @@ export default defineComponent({
             ).toISOString()
         },
         clearActivePaymentIntent() {
+            this.stopNiubizCloseWatch()
             const intent = this.activePaymentIntent
             this.activePaymentIntent = null
             this.niubizSession = null
@@ -1416,7 +1419,8 @@ export default defineComponent({
             if (container) container.innerHTML = ''
         },
         async resolveUncancellableIntent(intent) {
-            const result = await get(this.paymentIntentUrl(intent.id))
+            this.activePaymentIntent = intent
+            const result = await get(this.paymentIntentUrl(intent.id, intent.provider))
             if (result?.ok && result.data?.status === 'completed') {
                 this.completeCardPayment(result)
                 return false
@@ -1442,14 +1446,7 @@ export default defineComponent({
                 'No pudimos verificar tu pago anterior. Espera un momento y vuelve a intentarlo.'
             return false
         },
-        async releaseActivePaymentIntent() {
-            const intent = this.activePaymentIntent
-            if (!intent) return true
-            if (this.paymentOutcomeUncertain) {
-                this.errors.general =
-                    'Tu pago anterior sigue en verificación. No realices otro pago.'
-                return false
-            }
+        async deletePaymentIntent(intent) {
             const provider = intent.provider === 'niubiz' ? 'niubiz' : 'izipay'
             const result = await delet(`/api/${provider}/intents`, { id: intent.id })
             if (!result.ok) {
@@ -1460,8 +1457,47 @@ export default defineComponent({
                     console.error('No se pudo cancelar el intento de pago anterior.', result.problem)
                 }
             }
-            this.clearActivePaymentIntent()
             return true
+        },
+        async releaseActivePaymentIntent() {
+            const intent = this.activePaymentIntent
+            if (!intent) return true
+            if (this.paymentOutcomeUncertain) {
+                this.errors.general =
+                    'Tu pago anterior sigue en verificación. No realices otro pago.'
+                return false
+            }
+            this.clearActivePaymentIntent()
+            return this.deletePaymentIntent(intent)
+        },
+        async discardNiubizPayment(intentId) {
+            const intent = this.activePaymentIntent
+            if (!intent || intent.id !== intentId) {
+                this.stopNiubizCloseWatch()
+                return
+            }
+            if (this.paymentVerifying || this.paymentOutcomeUncertain) return
+            this.clearActivePaymentIntent()
+            await this.deletePaymentIntent(intent)
+        },
+        watchNiubizClose(intentId) {
+            this.stopNiubizCloseWatch()
+            const iframe = document.getElementById('visaNetJS')
+            if (!iframe) return
+            const check = () => {
+                if (this.paymentVerifying || this.paymentOutcomeUncertain) return
+                if (document.getElementById('visaNetJS')?.style.display === 'none') {
+                    void this.discardNiubizPayment(intentId)
+                }
+            }
+            const observer = new MutationObserver(check)
+            observer.observe(iframe, { attributes: true, attributeFilter: ['style'] })
+            this.niubizCloseObserver = observer
+            check()
+        },
+        stopNiubizCloseWatch() {
+            this.niubizCloseObserver?.disconnect()
+            this.niubizCloseObserver = null
         },
         async resumeNiubizPayment() {
             const button = document.querySelector<HTMLButtonElement>(
@@ -1660,7 +1696,7 @@ export default defineComponent({
                 console.error('No se pudo abrir el formulario de pago.', error)
                 this.errors.general =
                     'No se pudo abrir el formulario de pago. Verifica la configuración e inténtalo nuevamente.'
-                this.clearActivePaymentIntent()
+                await this.releaseActivePaymentIntent()
             } finally {
                 this.loadingPagar = false
                 this.paymentOpening = false
@@ -1673,8 +1709,8 @@ export default defineComponent({
                 throw new Error('NIUBIZ_SESSION_INCOMPLETE')
             }
 
+            this.resetNiubizSdk()
             const ready = this.waitForNiubizFrameReady()
-            container.innerHTML = ''
             const form = document.createElement('form')
             form.method = 'post'
             form.action = `${window.location.origin}/api/niubiz/confirm?id=${encodeURIComponent(session.checkout_intent_id)}`
@@ -1711,6 +1747,10 @@ export default defineComponent({
                 if (this.activePaymentIntent?.id !== session.checkout_intent_id) return
                 void this.confirmNiubizPayment(String(params?.token || ''))
             }
+            checkout.configuration.cancel = () => {
+                if (this.activePaymentIntent?.id !== session.checkout_intent_id) return
+                void this.discardNiubizPayment(session.checkout_intent_id)
+            }
 
             const button = await this.waitForNiubizButton(container)
             if (!button) throw new Error('NIUBIZ_BUTTON_MISSING')
@@ -1721,6 +1761,7 @@ export default defineComponent({
             button.style.display = 'none'
             button.click()
             await ready
+            this.watchNiubizClose(session.checkout_intent_id)
         },
         waitForNiubizFrameReady(timeout = 10_000) {
             const previousFrames = Array.from(
@@ -1773,7 +1814,18 @@ export default defineComponent({
             this.niubizHtmlStyle = ''
             this.niubizViewportContent = null
         },
+        resetNiubizSdk() {
+            this.stopNiubizCloseWatch()
+            this.closeNiubizOverlay()
+            // Niubiz ignora una segunda carga de checkout.js si el objeto global
+            // existe: se descarta para que la siguiente apertura se inicialice igual
+            // que la primera.
+            delete (window as any).VisanetCheckout
+            const container = document.getElementById('niubizPaymentForm')
+            if (container) container.innerHTML = ''
+        },
         async confirmNiubizPayment(transactionToken: string) {
+            this.stopNiubizCloseWatch()
             this.closeNiubizOverlay()
             const intentId = this.activePaymentIntent?.id
             if (!intentId || !transactionToken) {
@@ -1848,9 +1900,8 @@ export default defineComponent({
             }
             return result
         },
-        paymentIntentUrl(intentId: string) {
-            const provider = this.activePaymentIntent?.provider === 'niubiz' ? 'niubiz' : 'izipay'
-            return `/api/${provider}/intents/${encodeURIComponent(intentId)}`
+        paymentIntentUrl(intentId: string, provider = this.activePaymentIntent?.provider) {
+            return `/api/${provider === 'niubiz' ? 'niubiz' : 'izipay'}/intents/${encodeURIComponent(intentId)}`
         },
         async pollPaymentStatus(intentId: string) {
             let lastResult = null
@@ -1873,6 +1924,7 @@ export default defineComponent({
             return new Promise((resolve) => setTimeout(resolve, milliseconds))
         },
         completeCardPayment(result) {
+            this.stopNiubizCloseWatch()
             this.paymentSuccess = true
             this.paymentPending = false
             this.paymentPendingFailed = false
@@ -1889,6 +1941,7 @@ export default defineComponent({
             window.scrollTo({ top: 0, behavior: 'smooth' })
         },
         showPendingCardPayment(message) {
+            this.stopNiubizCloseWatch()
             this.paymentPending = true
             this.paymentPendingFailed = false
             this.pendingPaymentMessage = `${message} No realices otro pago para este pedido. Te enviaremos un correo cuando tengamos el resultado.`
