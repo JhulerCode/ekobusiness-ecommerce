@@ -154,6 +154,20 @@ describe('preparación del pedido del checkout', () => {
         expect(order.promotions[0].key).toBe('tradicional-general')
     })
 
+    it('atribuye el pedido de invitado al socio del servidor y descarta el del navegador', () => {
+        const order = buildCheckoutDraft(
+            draft({ partner_id: 'partner-manipulado' }),
+            { ...context, guestPartnerId: 'partner-invitado' },
+        )
+        expect(order.partner_id).toBe('partner-invitado')
+
+        const member = buildCheckoutDraft(
+            draft({ partner_id: 'partner-manipulado' }),
+            { ...context, isClubMember: true },
+        )
+        expect(member.partner_id).toBeUndefined()
+    })
+
     it('el servidor rechaza una fecha anterior a la permitida', () => {
         expect(() =>
             buildCheckoutDraft(

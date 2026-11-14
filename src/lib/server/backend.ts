@@ -29,7 +29,7 @@ const cookieOptions = (maxAge: number) => ({
     secure: import.meta.env.PROD,
 })
 
-function runtimeEnv(name: string) {
+export function runtimeEnv(name: string) {
     return process.env[name] ?? (import.meta.env as Record<string, string | undefined>)[name]
 }
 

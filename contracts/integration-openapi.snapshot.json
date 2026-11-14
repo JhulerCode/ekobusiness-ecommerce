@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "5.4.0",
+    "version": "6.0.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
   },
   "servers": [
@@ -764,7 +764,7 @@
             "CheckoutAccess": []
           }
         ],
-        "description": "Cancela un intento de pago pendiente. Marca el intento como failed_unpaid y el pedido como payment_failed para que no pueda cobrarse ni conciliarse. Si el pago ya fue autorizado o está en verificación, responde 409 y no lo cancela.",
+        "description": "Cancela un intento de pago pendiente. Con Niubiz elimina el pedido, sus líneas y el intento, porque la autorización solo se registra en el servidor; con Izipay marca el intento como failed_unpaid y el pedido como payment_failed para no perder un aviso de pago tardío. Si el pago ya fue autorizado o está en verificación, responde 409 y no lo cancela.",
         "parameters": [
           {
             "$ref": "#/components/parameters/Id"
@@ -1439,6 +1439,30 @@
         },
         "additionalProperties": false
       },
+      "CheckoutIntentCancelEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "status",
+              "checkout_intent_id"
+            ],
+            "properties": {
+              "status": {
+                "const": "cancelled"
+              },
+              "checkout_intent_id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "CheckoutIzipayFormTokenEnvelope": {
         "type": "object",
         "required": [
@@ -1880,6 +1904,10 @@
           },
           "partner_data": {
             "$ref": "#/components/schemas/PartnerData"
+          },
+          "partner_id": {
+            "type": "string",
+            "description": "Socio al que se atribuye el pedido. Obligatorio en checkout de invitado y validado contra la empresa; con sesión de cliente el ERP usa el partner de la sesión."
           },
           "partner_order_lines": {
             "type": "array",
@@ -2333,30 +2361,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "CheckoutIntentCancelEnvelope": {
-        "type": "object",
-        "required": [
-          "data"
-        ],
-        "properties": {
-          "data": {
-            "type": "object",
-            "required": [
-              "status",
-              "checkout_intent_id"
-            ],
-            "properties": {
-              "status": {
-                "const": "cancelled"
-              },
-              "checkout_intent_id": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "additionalProperties": false
       }
     },
     "responses": {
@@ -2406,6 +2410,16 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/CheckoutOrderEnvelope"
+            }
+          }
+        }
+      },
+      "CheckoutIntentCancel": {
+        "description": "Intento de pago cancelado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CheckoutIntentCancelEnvelope"
             }
           }
         }
@@ -2548,16 +2562,6 @@
           "application/problem+json": {
             "schema": {
               "$ref": "#/components/schemas/Problem"
-            }
-          }
-        }
-      },
-      "CheckoutIntentCancel": {
-        "description": "Intento de pago cancelado",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/CheckoutIntentCancelEnvelope"
             }
           }
         }

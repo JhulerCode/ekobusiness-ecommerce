@@ -10,7 +10,7 @@ import {
     PARTNER_ORDER_ORIGIN,
     PARTNER_ORDER_TYPE,
 } from '@/lib/api-schemas'
-import { ACCESS_COOKIE, REFRESH_COOKIE } from './backend'
+import { ACCESS_COOKIE, REFRESH_COOKIE, runtimeEnv } from './backend'
 import { isDeliveryDateAllowed } from '@/lib/delivery-date'
 import { DELIVERY_TIME_RANGE, getPickupLocation } from '@/data/pickup-locations'
 
@@ -22,7 +22,7 @@ function hasCustomerSession(context: APIContext) {
 
 export function buildCheckoutDraft(
     draft: CheckoutDraft,
-    { isClubMember = false, now }: { isClubMember?: boolean; now?: Date } = {},
+    { isClubMember = false, now, guestPartnerId }: { isClubMember?: boolean; now?: Date; guestPartnerId?: string } = {},
 ) {
     if (!['envio', 'retiro'].includes(String(draft.delivery_type))) {
         throw new Error('INVALID_DELIVERY_TYPE')
@@ -87,14 +87,16 @@ export function buildCheckoutDraft(
 
     const { punto_retiro: _untrustedPickup, ...deliveryAddressData } =
         draft.delivery_address_data || {}
+    const { partner_id: _untrustedPartner, ...sourceDraft } = draft
 
     return {
-        ...draft,
+        ...sourceDraft,
         type: PARTNER_ORDER_TYPE,
         origin: PARTNER_ORDER_ORIGIN,
         currency_id: ORDER_CURRENCY,
         amount: promotionQuote.total,
         delivery_cost: promotionQuote.deliveryCost,
+        ...(guestPartnerId ? { partner_id: guestPartnerId } : {}),
         delivery_address: draft.delivery_type === 'retiro'
             ? pickupLocation?.direccion
             : draft.delivery_address,
@@ -129,11 +131,22 @@ export function prepareCheckoutOrder(
     context: APIContext,
     draft: CheckoutDraft,
 ): ApiResult<CheckoutDraft> {
+    const hasSession = hasCustomerSession(context)
+    const guestPartnerId = hasSession ? undefined : runtimeEnv('ERP_GUEST_PARTNER_ID')
+    if (!hasSession && !guestPartnerId) {
+        console.error('[checkout] ERP_GUEST_PARTNER_ID no está configurada')
+        return failure(
+            503,
+            'service-unavailable',
+            'Servicio no disponible',
+            'No se pudo preparar el pedido. Intenta nuevamente más tarde.',
+        )
+    }
     try {
         return {
             ok: true,
             status: 200,
-            data: buildCheckoutDraft(draft, { isClubMember: hasCustomerSession(context) }),
+            data: buildCheckoutDraft(draft, { isClubMember: hasSession, guestPartnerId }),
         }
     } catch (error) {
         if (

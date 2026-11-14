@@ -3,6 +3,7 @@
 interface ImportMetaEnv {
     readonly API_URL: string
     readonly ERP_API_KEY: string
+    readonly ERP_GUEST_PARTNER_ID: string
     readonly PAYMENT_PROVIDER: string
     readonly PUBLIC_IZIPAY_PUBLIC_KEY: string
     readonly PUBLIC_RECAPTCHA_SITE_KEY: string
