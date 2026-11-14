@@ -40,7 +40,7 @@ function backendUrl(path: string) {
         '',
     )
     if (!base) throw new Error('API_URL no está configurada')
-    return `${base}/api/integration/v1/${path.replace(/^\//, '')}`
+    return `${base}/api/v1/${path.replace(/^\//, '')}`
 }
 
 function genericProblem(status: number, type: string, title: string, detail: string): ApiProblem {

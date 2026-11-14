@@ -2,12 +2,12 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "6.0.0",
-    "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/integration/v1/docs."
+    "version": "7.0.0",
+    "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/v1/docs."
   },
   "servers": [
     {
-      "url": "/api/integration/v1"
+      "url": "/"
     }
   ],
   "security": [
@@ -81,7 +81,7 @@
     "urn:itderp:problem:partner-email-conflict"
   ],
   "paths": {
-    "/productos": {
+    "/api/v1/productos": {
       "get": {
         "x-scopes": [
           "productos:read"
@@ -132,7 +132,7 @@
         }
       }
     },
-    "/productos/{id}": {
+    "/api/v1/productos/{id}": {
       "get": {
         "x-scopes": [
           "productos:read"
@@ -155,7 +155,7 @@
         }
       }
     },
-    "/ubigeo-data": {
+    "/api/v1/ubigeo-data": {
       "get": {
         "x-scopes": [
           "ubigeo:read"
@@ -184,7 +184,7 @@
         }
       }
     },
-    "/locations/ubigeos": {
+    "/api/v1/locations/ubigeos": {
       "get": {
         "x-scopes": [
           "ubigeo:read"
@@ -237,7 +237,7 @@
         }
       }
     },
-    "/customers/auth/register": {
+    "/api/v1/customers/auth/register": {
       "post": {
         "x-scopes": [
           "customers:auth"
@@ -268,7 +268,7 @@
         }
       }
     },
-    "/customers/auth/signin": {
+    "/api/v1/customers/auth/signin": {
       "post": {
         "x-scopes": [
           "customers:auth"
@@ -299,7 +299,7 @@
         }
       }
     },
-    "/customers/auth/refresh": {
+    "/api/v1/customers/auth/refresh": {
       "post": {
         "x-scopes": [
           "customers:auth"
@@ -336,7 +336,7 @@
         }
       }
     },
-    "/customers/auth/logout": {
+    "/api/v1/customers/auth/logout": {
       "post": {
         "x-scopes": [
           "customers:auth"
@@ -360,7 +360,7 @@
         }
       }
     },
-    "/customers/me": {
+    "/api/v1/customers/me": {
       "get": {
         "x-scopes": [
           "customers:read"
@@ -435,7 +435,7 @@
         }
       }
     },
-    "/customers/me/verification-code": {
+    "/api/v1/customers/me/verification-code": {
       "post": {
         "x-scopes": [
           "customers:write"
@@ -459,7 +459,7 @@
         }
       }
     },
-    "/customers/me/verify-code": {
+    "/api/v1/customers/me/verify-code": {
       "post": {
         "x-scopes": [
           "customers:write"
@@ -506,7 +506,7 @@
         }
       }
     },
-    "/customers/me/password": {
+    "/api/v1/customers/me/password": {
       "post": {
         "x-scopes": [
           "customers:write"
@@ -533,7 +533,7 @@
         }
       }
     },
-    "/customers/me/wallet": {
+    "/api/v1/customers/me/wallet": {
       "get": {
         "x-scopes": [
           "customers:read"
@@ -557,7 +557,7 @@
         }
       }
     },
-    "/orders": {
+    "/api/v1/orders": {
       "get": {
         "x-scopes": [
           "orders:read"
@@ -578,7 +578,7 @@
         }
       }
     },
-    "/orders/lookup": {
+    "/api/v1/orders/lookup": {
       "post": {
         "x-scopes": [
           "orders:read"
@@ -609,7 +609,7 @@
         }
       }
     },
-    "/orders/lookup/resend": {
+    "/api/v1/orders/lookup/resend": {
       "post": {
         "x-scopes": [
           "orders:read"
@@ -654,7 +654,7 @@
         }
       }
     },
-    "/orders/{id}": {
+    "/api/v1/orders/{id}": {
       "get": {
         "x-scopes": [
           "orders:read"
@@ -686,7 +686,7 @@
         }
       }
     },
-    "/orders/{id}/access": {
+    "/api/v1/orders/{id}/access": {
       "post": {
         "x-scopes": [
           "orders:read"
@@ -715,7 +715,7 @@
         }
       }
     },
-    "/payments/checkout/orders": {
+    "/api/v1/payments/checkout/orders": {
       "post": {
         "x-scopes": [
           "payments:write"
@@ -753,7 +753,7 @@
         }
       }
     },
-    "/payments/checkout/intents/{id}": {
+    "/api/v1/payments/checkout/intents/{id}": {
       "delete": {
         "x-scopes": [
           "payments:write"
@@ -789,7 +789,7 @@
         }
       }
     },
-    "/payments/izipay/form-token": {
+    "/api/v1/payments/izipay/form-token": {
       "post": {
         "x-scopes": [
           "payments:write"
@@ -839,7 +839,7 @@
         }
       }
     },
-    "/payments/izipay/validate": {
+    "/api/v1/payments/izipay/validate": {
       "post": {
         "x-scopes": [
           "payments:write"
@@ -867,7 +867,7 @@
         }
       }
     },
-    "/payments/izipay/intents/{id}/status": {
+    "/api/v1/payments/izipay/intents/{id}/status": {
       "get": {
         "x-scopes": [
           "payments:write"
@@ -899,7 +899,7 @@
         }
       }
     },
-    "/payments/izipay/payment-methods/{id}": {
+    "/api/v1/payments/izipay/payment-methods/{id}": {
       "delete": {
         "x-scopes": [
           "payments:write"
@@ -931,7 +931,7 @@
         }
       }
     },
-    "/payments/izipay/ipn": {
+    "/providers/izipay/ipn": {
       "post": {
         "security": [],
         "description": "Única confirmación autoritativa del pago; valida la firma de Izipay y responde texto plano.",
@@ -952,7 +952,7 @@
         }
       }
     },
-    "/payments/niubiz/session": {
+    "/api/v1/payments/niubiz/session": {
       "post": {
         "x-scopes": [
           "payments:write"
@@ -1002,7 +1002,7 @@
         }
       }
     },
-    "/payments/niubiz/authorize": {
+    "/api/v1/payments/niubiz/authorize": {
       "post": {
         "x-scopes": [
           "payments:write"
@@ -1055,7 +1055,7 @@
         }
       }
     },
-    "/payments/niubiz/intents/{id}/status": {
+    "/api/v1/payments/niubiz/intents/{id}/status": {
       "get": {
         "x-scopes": [
           "payments:write"
@@ -1087,7 +1087,7 @@
         }
       }
     },
-    "/forms/newsletter": {
+    "/api/v1/forms/newsletter": {
       "post": {
         "x-scopes": [
           "forms:write"
@@ -1108,7 +1108,7 @@
         }
       }
     },
-    "/forms/arco": {
+    "/api/v1/forms/arco": {
       "post": {
         "x-scopes": [
           "forms:write"
@@ -1135,7 +1135,7 @@
         }
       }
     },
-    "/forms/claims": {
+    "/api/v1/forms/claims": {
       "post": {
         "x-scopes": [
           "forms:write"

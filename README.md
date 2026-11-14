@@ -1,6 +1,6 @@
 # SUNKA Ecommerce
 
-Tienda SSR construida con Astro 5, Vue 3, TypeScript estricto y Tailwind CSS 4. Astro funciona como Backend for Frontend (BFF): el navegador consume exclusivamente rutas del mismo origen bajo `/api/*` y el BFF se comunica con `/api/integration/v1/*` del ERP.
+Tienda SSR construida con Astro 5, Vue 3, TypeScript estricto y Tailwind CSS 4. Astro funciona como Backend for Frontend (BFF): el navegador consume exclusivamente rutas del mismo origen bajo `/api/*` y el BFF se comunica con `/api/v1/*` y `/providers/*` del ERP.
 
 ## Desarrollo
 
@@ -40,7 +40,7 @@ La primera ejecución E2E requiere `pnpm exec playwright install chromium`.
 - Access y refresh tokens se almacenan en cookies `HttpOnly`, `SameSite=Lax` y `Secure` en producción.
 - Los tokens temporales de pedido se guardan en cookies con scope por pedido. El enlace del correo de confirmación intercambia el token por una cookie y redirige a la URL limpia del pedido.
 - Las rutas mutables del BFF validan `Origin`; las entradas sensibles se validan con Zod.
-- El IPN de Izipay entra directamente a Express en `/api/integration/v1/payments/izipay/ipn` y valida su firma.
+- El IPN de Izipay entra directamente a Express en `/providers/izipay/ipn` y valida su firma.
 - Catálogo, sistema y ubigeos permiten caché pública corta. Cuenta, pedidos y pagos son `no-store`.
 
 Antes de producción, ejecutar `pnpm verify`, `pnpm test:e2e` y smoke tests reales de signin, refresh, ARCO multipart, libro de reclamaciones, tarjeta, IPN y consulta de pedido.

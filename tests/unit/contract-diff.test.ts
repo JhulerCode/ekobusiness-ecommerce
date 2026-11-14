@@ -5,10 +5,10 @@ function spec(overrides: Record<string, any> = {}): any {
     return {
         info: { version: '1.1.0' },
         paths: {
-            '/orders': {
+            '/api/v1/orders': {
                 get: { responses: { 200: { content: { 'application/json': { schema: { $ref: '#/components/schemas/OrderListEnvelope' } } } } } },
             },
-            '/orders/{id}': {
+            '/api/v1/orders/{id}': {
                 get: { responses: { 200: { content: { 'application/json': { schema: { $ref: '#/components/schemas/OrderDetailEnvelope' } } } } } },
             },
         },
@@ -38,10 +38,10 @@ describe('diff del contrato de integration', () => {
 
     it('detecta operación eliminada y enum reducido', () => {
         const next = spec()
-        delete next.paths['/orders/{id}']
+        delete next.paths['/api/v1/orders/{id}']
         next.components.schemas.OrderCreateRequest.properties.payment_method.enum = ['tarjeta']
         const findings = diffContracts(spec(), next)
-        expect(findings.some((finding) => finding.includes('GET /orders/{id}'))).toBe(true)
+        expect(findings.some((finding) => finding.includes('GET /api/v1/orders/{id}'))).toBe(true)
         expect(findings.some((finding) => finding.includes('enum pierde'))).toBe(true)
     })
 
