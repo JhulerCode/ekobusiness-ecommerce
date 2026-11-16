@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "7.0.0",
+    "version": "8.0.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/v1/docs."
   },
   "servers": [
@@ -42,7 +42,6 @@
     "urn:itderp:problem:integration-customer-invalid-input",
     "urn:itderp:problem:integration-customer-invalid-session",
     "urn:itderp:problem:integration-customer-invalid-verification-code",
-    "urn:itderp:problem:integration-customer-mail-unavailable",
     "urn:itderp:problem:integration-customer-session-invalid",
     "urn:itderp:problem:integration-customer-unavailable",
     "urn:itderp:problem:integration-customer-wallet-unavailable",
@@ -55,6 +54,7 @@
     "urn:itderp:problem:integration-order-lookup-blocked",
     "urn:itderp:problem:integration-order-lookup-invalid",
     "urn:itderp:problem:integration-order-not-found",
+    "urn:itderp:problem:integration-order-price-changed",
     "urn:itderp:problem:integration-order-unavailable",
     "urn:itderp:problem:integration-origin-forbidden",
     "urn:itderp:problem:integration-payment-access-invalid",
@@ -63,6 +63,7 @@
     "urn:itderp:problem:integration-payment-delivery-outside-lima",
     "urn:itderp:problem:integration-payment-intent-expired",
     "urn:itderp:problem:integration-payment-intent-not-cancellable",
+    "urn:itderp:problem:integration-payment-intent-not-completed",
     "urn:itderp:problem:integration-payment-intent-not-pending",
     "urn:itderp:problem:integration-payment-invalid-cart",
     "urn:itderp:problem:integration-payment-invalid-email",
@@ -447,11 +448,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Código enviado"
-          },
-          "502": {
-            "$ref": "#/components/responses/Problem"
+          "200": {
+            "$ref": "#/components/responses/VerificationCode"
           },
           "default": {
             "$ref": "#/components/responses/Problem"
@@ -558,6 +556,45 @@
       }
     },
     "/api/v1/orders": {
+      "post": {
+        "x-scopes": [
+          "orders:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CustomerBearer": []
+          }
+        ],
+        "description": "Registra un pedido de venta y sus líneas sin crear un intento de pago. Reprecia las líneas con el precio vigente del catálogo, valida el ubigeo de entrega y exige el socio de la empresa cuando no hay sesión de cliente. El pago se inicia después con los recursos de /payments.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/OrderCreate"
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      },
       "get": {
         "x-scopes": [
           "orders:read"
@@ -614,6 +651,7 @@
         "x-scopes": [
           "orders:read"
         ],
+        "description": "Rota el código de consulta cuando el pedido y el correo coinciden. La respuesta con datos permite al consumidor enviar su propio correo; sin coincidencia mantiene el mensaje genérico. No envía correo desde el ERP.",
         "requestBody": {
           "required": true,
           "content": {
@@ -643,7 +681,7 @@
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/Data"
+            "$ref": "#/components/responses/OrderLookupResend"
           },
           "429": {
             "$ref": "#/components/responses/Problem"
@@ -773,6 +811,91 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/CheckoutIntentCancel"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/api/v1/payments/checkout/intents/{id}/confirmation/claim": {
+      "post": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CheckoutAccess": []
+          }
+        ],
+        "description": "Reclama la confirmación de un intento completado para que el consumidor renderice y envíe su correo. Devuelve el pedido, un código de consulta rotado y un token de acceso; 204 si la confirmación ya fue enviada o está en curso.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CheckoutConfirmationClaim"
+          },
+          "204": {
+            "description": "Confirmación ya enviada o en curso"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "410": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/api/v1/payments/checkout/intents/{id}/confirmation/complete": {
+      "post": {
+        "x-scopes": [
+          "payments:write"
+        ],
+        "security": [
+          {
+            "ApiKey": [],
+            "CheckoutAccess": []
+          }
+        ],
+        "description": "Registra el resultado del envío de la confirmación reclamada. El comprobante se emite al confirmarse el pago con independencia del resultado del correo; con sent=false el consumidor puede reintentar en una próxima consulta.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutConfirmationCompleteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CheckoutConfirmationComplete"
           },
           "401": {
             "$ref": "#/components/responses/Problem"
@@ -1353,6 +1476,18 @@
             "items": {
               "$ref": "#/components/schemas/Warning"
             }
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderCreateBody": {
+        "type": "object",
+        "required": [
+          "partner_order"
+        ],
+        "properties": {
+          "partner_order": {
+            "$ref": "#/components/schemas/OrderCreateRequest"
           }
         },
         "additionalProperties": false
@@ -2361,6 +2496,201 @@
           }
         },
         "additionalProperties": false
+      },
+      "OrderCreateEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "id",
+              "code",
+              "lookup_code",
+              "amount",
+              "currency",
+              "order_access_token"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "lookup_code": {
+                "type": "string",
+                "pattern": "^[0-9]{6}$"
+              },
+              "amount": {
+                "type": "number",
+                "description": "Total del pedido en PEN"
+              },
+              "currency": {
+                "const": "PEN"
+              },
+              "order_access_token": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "VerificationCodeEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "email",
+              "verification_code"
+            ],
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "verification_code": {
+                "type": "string",
+                "pattern": "^[0-9]{6}$"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderLookupResendEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "message"
+                ],
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "order_id",
+                  "order_code",
+                  "lookup_code",
+                  "expires_at"
+                ],
+                "properties": {
+                  "order_id": {
+                    "type": "string"
+                  },
+                  "order_code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lookup_code": {
+                    "type": "string",
+                    "pattern": "^[0-9]{6}$"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutConfirmationCompleteRequest": {
+        "type": "object",
+        "required": [
+          "sent"
+        ],
+        "properties": {
+          "sent": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutConfirmationClaimEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "order",
+              "lookup_code",
+              "access_token",
+              "email"
+            ],
+            "properties": {
+              "order": {
+                "$ref": "#/components/schemas/OrderDetail"
+              },
+              "lookup_code": {
+                "type": "string",
+                "pattern": "^[0-9]{6}$"
+              },
+              "access_token": {
+                "type": "string"
+              },
+              "email": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "email"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckoutConfirmationCompleteEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "checkout_intent_id"
+            ],
+            "properties": {
+              "checkout_intent_id": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
       }
     },
     "responses": {
@@ -2530,6 +2860,56 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/OrderDetailEnvelope"
+            }
+          }
+        }
+      },
+      "OrderCreate": {
+        "description": "Pedido registrado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrderCreateEnvelope"
+            }
+          }
+        }
+      },
+      "VerificationCode": {
+        "description": "Código de verificación generado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/VerificationCodeEnvelope"
+            }
+          }
+        }
+      },
+      "OrderLookupResend": {
+        "description": "Código de consulta rotado o mensaje genérico",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrderLookupResendEnvelope"
+            }
+          }
+        }
+      },
+      "CheckoutConfirmationClaim": {
+        "description": "Confirmación reclamada para envío por el consumidor",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CheckoutConfirmationClaimEnvelope"
+            }
+          }
+        }
+      },
+      "CheckoutConfirmationComplete": {
+        "description": "Resultado del envío registrado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CheckoutConfirmationCompleteEnvelope"
             }
           }
         }

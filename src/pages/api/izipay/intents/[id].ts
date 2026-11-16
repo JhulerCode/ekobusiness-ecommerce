@@ -4,6 +4,7 @@ import {
     clearCheckoutCookie, getCheckoutCookie, requestWithOptionalSession, setOrderCookie,
 } from '@/lib/server/backend'
 import { cancelCheckoutIntent } from '@/lib/server/checkout-intents'
+import { sendCheckoutConfirmation } from '@/lib/server/checkout-notifications'
 import { failure, json } from '@/lib/server/bff'
 
 export const DELETE: APIRoute = (context) => cancelCheckoutIntent(context, 'izipay')
@@ -30,6 +31,10 @@ export const GET: APIRoute = async (context) => {
     }
     setOrderCookie(context, data.id, data.access_token)
     clearCheckoutCookie(context, parsed.data)
+    await sendCheckoutConfirmation(context, {
+        id: parsed.data,
+        checkoutToken,
+    })
     const { access_token: _accessToken, ...publicData } = data
     return json({ ...result, data: { ...publicData, redirect_url: `/pedidos/${data.id}` } })
 }

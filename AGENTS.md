@@ -159,8 +159,11 @@ Canonical settings (from `.prettierrc.json` and `.editorconfig`):
 
 ### Environment Variables
 
-- Private vars are `API_URL`, `ERP_API_KEY`, `ERP_GUEST_PARTNER_ID` and `PAYMENT_PROVIDER`.
+- Private vars are `API_URL`, `ERP_API_KEY`, `ERP_GUEST_PARTNER_ID`, `PAYMENT_PROVIDER`,
+  `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM`.
 - Browser vars are `PUBLIC_IZIPAY_PUBLIC_KEY` and `PUBLIC_RECAPTCHA_SITE_KEY`.
+- Los correos al cliente se renderizan en `src/lib/mail/` y se envían con
+  `src/lib/server/mail.ts`; el ERP solo devuelve los datos y no redacta plantillas.
 - The card payment provider (`izipay` or `niubiz`) is decided by the storefront through the
   server-only `PAYMENT_PROVIDER` variable (`activePaymentProvider`); the ERP only exposes the
   provider-specific payment endpoints.

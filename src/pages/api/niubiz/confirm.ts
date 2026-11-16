@@ -3,6 +3,7 @@ import { idSchema } from '@/lib/api-schemas'
 import {
     clearCheckoutCookie, getCheckoutCookie, requestWithOptionalSession, setOrderCookie,
 } from '@/lib/server/backend'
+import { sendCheckoutConfirmation } from '@/lib/server/checkout-notifications'
 import { assertSameOrigin, failure, forbiddenOrigin, json } from '@/lib/server/bff'
 
 async function readTransactionToken(request: Request) {
@@ -64,6 +65,10 @@ export const POST: APIRoute = async (context) => {
     if (data?.status === 'completed' && orderId && accessToken) {
         setOrderCookie(context, orderId, accessToken, 60 * 60)
         clearCheckoutCookie(context, id.data, 'niubiz')
+        await sendCheckoutConfirmation(context, {
+            id: id.data,
+            checkoutToken,
+        })
         return json({ ...result, data: { ...publicData, redirect_url: `/pedidos/${orderId}` } })
     }
 

@@ -12,8 +12,12 @@ export const TRACKED_OPERATIONS = [
     ['/api/v1/customers/me', 'get', '200'],
     ['/api/v1/orders', 'get', '200'],
     ['/api/v1/orders/{id}', 'get', '200'],
+    ['/api/v1/orders/lookup/resend', 'post', '200'],
+    ['/api/v1/customers/me/verification-code', 'post', '200'],
     ['/api/v1/payments/checkout/orders', 'post', '201'],
     ['/api/v1/payments/checkout/intents/{id}', 'delete', '200'],
+    ['/api/v1/payments/checkout/intents/{id}/confirmation/claim', 'post', '200'],
+    ['/api/v1/payments/checkout/intents/{id}/confirmation/complete', 'post', '200'],
     ['/api/v1/payments/izipay/form-token', 'post', '201'],
 ]
 
@@ -31,6 +35,11 @@ export const TRACKED_SCHEMAS = [
     'NiubizSessionRequest',
     'NiubizSessionEnvelope',
     'OrderLookupRequest',
+    'OrderLookupResendEnvelope',
+    'VerificationCodeEnvelope',
+    'CheckoutConfirmationClaimEnvelope',
+    'CheckoutConfirmationCompleteRequest',
+    'CheckoutConfirmationCompleteEnvelope',
 ]
 
 function resolveSchema(spec, ref, seen = new Set()) {
@@ -74,8 +83,8 @@ function diffSchema(before, after, path, findings) {
         const next = afterProps[key]
         if (!prev) continue
         const child = `${path}.${key}`
-        if (prev.type && next.type && prev.type !== next.type) {
-            findings.push(`${child}: type '${prev.type}' -> '${next.type}'`)
+        if (prev.type && next.type && JSON.stringify(prev.type) !== JSON.stringify(next.type)) {
+            findings.push(`${child}: type '${JSON.stringify(prev.type)}' -> '${JSON.stringify(next.type)}'`)
         }
         if (prev.const !== undefined && prev.const !== next.const) {
             findings.push(`${child}: const '${prev.const}' -> '${next.const}'`)

@@ -4,6 +4,7 @@ import {
     clearCheckoutCookie, getCheckoutCookie, requestWithOptionalSession, setOrderCookie,
 } from '@/lib/server/backend'
 import { cancelCheckoutIntent } from '@/lib/server/checkout-intents'
+import { sendCheckoutConfirmation } from '@/lib/server/checkout-notifications'
 import { failure, json } from '@/lib/server/bff'
 
 export const DELETE: APIRoute = (context) => cancelCheckoutIntent(context, 'niubiz')
@@ -34,5 +35,9 @@ export const GET: APIRoute = async (context) => {
     }
     setOrderCookie(context, orderId, accessToken)
     clearCheckoutCookie(context, parsed.data, 'niubiz')
+    await sendCheckoutConfirmation(context, {
+        id: parsed.data,
+        checkoutToken,
+    })
     return json({ ...result, data: { ...publicData, redirect_url: `/pedidos/${orderId}` } })
 }

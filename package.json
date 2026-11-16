@@ -23,6 +23,7 @@
     "@lyracom/embedded-form-glue": "^1.4.4",
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.13.10",
+    "nodemailer": "^10.6.0",
     "tailwindcss": "^4.1.13",
     "vue": "^3.5.21",
     "zod": "^3.25.76"
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@playwright/test": "^1.62.1",
+    "@types/nodemailer": "^8.0.2",
     "typescript": "^5.9.2",
     "vitest": "^4.1.11"
   }

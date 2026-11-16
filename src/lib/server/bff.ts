@@ -1,6 +1,6 @@
 import type { APIContext } from 'astro'
 import type { z } from 'zod'
-import type { ApiProblem, ApiResult } from '@/types/api'
+import type { ApiProblem, ApiResult, ApiWarning } from '@/types/api'
 import { backendRequest, getClientIp, requestWithSession, type BackendResult } from './backend'
 
 const forwardedHeaders = ['retry-after', 'ratelimit-limit', 'ratelimit-remaining', 'ratelimit-reset']
@@ -34,6 +34,14 @@ export function json<T>(result: BackendResult<T> | ApiResult<T>, status?: number
 
 export function failure(status: number, slug: string, title: string, detail: string): ApiResult<never> {
     return { ok: false, status, problem: localProblem(status, slug, title, detail) }
+}
+
+export function emailDeliveryWarning(): ApiWarning {
+    return {
+        type: 'urn:itderp:warning:email-delivery-failed',
+        title: 'No se pudo enviar el correo',
+        detail: 'La solicitud fue registrada correctamente.',
+    }
 }
 
 export function assertSameOrigin(request: Request) {
