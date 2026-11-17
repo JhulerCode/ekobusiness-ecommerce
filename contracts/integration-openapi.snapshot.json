@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "8.0.0",
+    "version": "10.0.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/v1/docs."
   },
   "servers": [
@@ -42,44 +42,82 @@
     "urn:itderp:problem:integration-customer-invalid-input",
     "urn:itderp:problem:integration-customer-invalid-session",
     "urn:itderp:problem:integration-customer-invalid-verification-code",
-    "urn:itderp:problem:integration-customer-session-invalid",
     "urn:itderp:problem:integration-customer-unavailable",
     "urn:itderp:problem:integration-customer-wallet-unavailable",
     "urn:itderp:problem:integration-insufficient-scope",
     "urn:itderp:problem:integration-invalid-api-key",
     "urn:itderp:problem:integration-invalid-parameter",
     "urn:itderp:problem:integration-order-access-invalid",
-    "urn:itderp:problem:integration-order-guest-not-configured",
-    "urn:itderp:problem:integration-order-invalid-cart",
     "urn:itderp:problem:integration-order-lookup-blocked",
     "urn:itderp:problem:integration-order-lookup-invalid",
     "urn:itderp:problem:integration-order-not-found",
-    "urn:itderp:problem:integration-order-price-changed",
     "urn:itderp:problem:integration-order-unavailable",
     "urn:itderp:problem:integration-origin-forbidden",
-    "urn:itderp:problem:integration-payment-access-invalid",
-    "urn:itderp:problem:integration-payment-data-map-missing",
-    "urn:itderp:problem:integration-payment-data-mismatch",
-    "urn:itderp:problem:integration-payment-delivery-outside-lima",
-    "urn:itderp:problem:integration-payment-intent-expired",
-    "urn:itderp:problem:integration-payment-intent-not-cancellable",
-    "urn:itderp:problem:integration-payment-intent-not-completed",
-    "urn:itderp:problem:integration-payment-intent-not-pending",
-    "urn:itderp:problem:integration-payment-invalid-cart",
-    "urn:itderp:problem:integration-payment-invalid-email",
-    "urn:itderp:problem:integration-payment-invalid-signature",
-    "urn:itderp:problem:integration-payment-method-not-found",
-    "urn:itderp:problem:integration-payment-persistence-unavailable",
-    "urn:itderp:problem:integration-payment-price-changed",
-    "urn:itderp:problem:integration-payment-provider-invalid",
-    "urn:itderp:problem:integration-payment-provider-unavailable",
     "urn:itderp:problem:integration-product-not-found",
     "urn:itderp:problem:integration-productos-unavailable",
     "urn:itderp:problem:integration-rate-limited",
     "urn:itderp:problem:integration-route-not-found",
     "urn:itderp:problem:integration-ubigeo-invalid-keys",
     "urn:itderp:problem:integration-ubigeo-unavailable",
-    "urn:itderp:problem:partner-email-conflict"
+    "urn:itderp:problem:partner-email-conflict",
+    "urn:itderp:problem:partner-order-already-delivered",
+    "urn:itderp:problem:partner-order-already-paid",
+    "urn:itderp:problem:partner-order-already-ready",
+    "urn:itderp:problem:partner-order-article-not-found",
+    "urn:itderp:problem:partner-order-article-price-mismatch",
+    "urn:itderp:problem:partner-order-billing-incomplete",
+    "urn:itderp:problem:partner-order-cart-invalid",
+    "urn:itderp:problem:partner-order-code-conflict",
+    "urn:itderp:problem:partner-order-code-invalid",
+    "urn:itderp:problem:partner-order-contact-not-found",
+    "urn:itderp:problem:partner-order-delivery-cost-invalid",
+    "urn:itderp:problem:partner-order-delivery-location-invalid",
+    "urn:itderp:problem:partner-order-delivery-type-invalid",
+    "urn:itderp:problem:partner-order-forbidden",
+    "urn:itderp:problem:partner-order-guest-not-configured",
+    "urn:itderp:problem:partner-order-invalid-field-types",
+    "urn:itderp:problem:partner-order-invalid-status",
+    "urn:itderp:problem:partner-order-invalid-status-transition",
+    "urn:itderp:problem:partner-order-invoiced",
+    "urn:itderp:problem:partner-order-items-invalid",
+    "urn:itderp:problem:partner-order-maquila-bom-invalid",
+    "urn:itderp:problem:partner-order-maquila-content-not-service",
+    "urn:itderp:problem:partner-order-maquila-coverage-incomplete",
+    "urn:itderp:problem:partner-order-maquila-immutable",
+    "urn:itderp:problem:partner-order-maquila-items-invalid",
+    "urn:itderp:problem:partner-order-maquila-product-not-producible",
+    "urn:itderp:problem:partner-order-maquila-type-invalid",
+    "urn:itderp:problem:partner-order-metadata-invalid",
+    "urn:itderp:problem:partner-order-not-found",
+    "urn:itderp:problem:partner-order-order-not-open",
+    "urn:itderp:problem:partner-order-partner-not-found",
+    "urn:itderp:problem:partner-order-partner-role-invalid",
+    "urn:itderp:problem:partner-order-price-changed",
+    "urn:itderp:problem:partner-order-price-invalid",
+    "urn:itderp:problem:partner-order-required-fields-missing",
+    "urn:itderp:problem:partner-order-type-immutable",
+    "urn:itderp:problem:payment-attempt-access-invalid",
+    "urn:itderp:problem:payment-attempt-customer-session-invalid",
+    "urn:itderp:problem:payment-attempt-data-map-missing",
+    "urn:itderp:problem:payment-attempt-data-mismatch",
+    "urn:itderp:problem:payment-attempt-delivery-outside-lima",
+    "urn:itderp:problem:payment-attempt-ids-required",
+    "urn:itderp:problem:payment-attempt-intent-expired",
+    "urn:itderp:problem:payment-attempt-intent-not-cancellable",
+    "urn:itderp:problem:payment-attempt-intent-not-completed",
+    "urn:itderp:problem:payment-attempt-intent-not-pending",
+    "urn:itderp:problem:payment-attempt-invalid-cart",
+    "urn:itderp:problem:payment-attempt-invalid-email",
+    "urn:itderp:problem:payment-attempt-invalid-field-types",
+    "urn:itderp:problem:payment-attempt-invalid-signature",
+    "urn:itderp:problem:payment-attempt-method-not-found",
+    "urn:itderp:problem:payment-attempt-not-found",
+    "urn:itderp:problem:payment-attempt-not-reconcilable",
+    "urn:itderp:problem:payment-attempt-persistence-unavailable",
+    "urn:itderp:problem:payment-attempt-price-changed",
+    "urn:itderp:problem:payment-attempt-provider-invalid",
+    "urn:itderp:problem:payment-attempt-provider-unavailable",
+    "urn:itderp:problem:payment-attempt-required-fields-missing"
   ],
   "paths": {
     "/api/v1/productos": {
@@ -566,7 +604,7 @@
             "CustomerBearer": []
           }
         ],
-        "description": "Registra un pedido de venta y sus líneas sin crear un intento de pago. Reprecia las líneas con el precio vigente del catálogo, valida el ubigeo de entrega y exige el socio de la empresa cuando no hay sesión de cliente. El pago se inicia después con los recursos de /payments.",
+        "description": "Registra un pedido de venta y sus líneas sin crear un intento de pago. Reprecia las líneas con el precio vigente del catálogo, valida el ubigeo de entrega y exige el socio de la empresa cuando no hay sesión de cliente. El `code` lo define el consumidor y el ERP solo verifica su unicidad. El pago se inicia después con los recursos de /payments.",
         "requestBody": {
           "required": true,
           "content": {
@@ -758,7 +796,7 @@
         "x-scopes": [
           "payments:write"
         ],
-        "description": "Registra el pedido, sus líneas y el intento de pago. Reprecia las líneas con el catálogo vigente, rechaza precios que ya no coinciden y valida el ubigeo de entrega; todas las escrituras ocurren en una transacción. Devuelve el acceso al intento y al pedido; la sesión del proveedor se emite después.",
+        "description": "Registra el pedido, sus líneas y el intento de pago. Reprecia las líneas con el catálogo vigente, rechaza precios que ya no coinciden y valida el ubigeo de entrega; todas las escrituras ocurren en una transacción. El `code` lo define el consumidor, se guarda como `order_code` del intento y debe ser único por empresa. Devuelve el acceso al intento y al pedido; la sesión del proveedor se emite después.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1057,7 +1095,7 @@
     "/providers/izipay/ipn": {
       "post": {
         "security": [],
-        "description": "Única confirmación autoritativa del pago; valida la firma de Izipay y responde texto plano.",
+        "description": "�anica confirmación autoritativa del pago; valida la firma de Izipay y responde texto plano.",
         "responses": {
           "200": {
             "description": "Notificación aceptada",
@@ -2026,13 +2064,20 @@
       "OrderCreateRequest": {
         "type": "object",
         "required": [
+          "code",
           "partner_data",
           "partner_order_lines"
         ],
         "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30,
+            "description": "Número de pedido definido por el consumidor. Se guarda tal como se envía y debe ser único por empresa; el ERP no genera el código de un pedido de integración."
+          },
           "type": {
             "const": "sale",
-            "description": "Único tipo aceptado por ecommerce. Valores legacy 1/2 o 'purchase' se rechazan."
+            "description": "�anico tipo aceptado por ecommerce. Valores legacy 1/2 o 'purchase' se rechazan."
           },
           "origin": {
             "const": "integration"

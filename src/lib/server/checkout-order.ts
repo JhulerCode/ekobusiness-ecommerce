@@ -13,6 +13,7 @@ import {
 import { ACCESS_COOKIE, REFRESH_COOKIE, runtimeEnv } from './backend'
 import { isDeliveryDateAllowed } from '@/lib/delivery-date'
 import { DELIVERY_TIME_RANGE, getPickupLocation } from '@/data/pickup-locations'
+import { generateOrderCode } from './order-code'
 
 type CheckoutDraft = Record<string, any>
 
@@ -91,6 +92,7 @@ export function buildCheckoutDraft(
 
     return {
         ...sourceDraft,
+        code: generateOrderCode({ now }),
         type: PARTNER_ORDER_TYPE,
         origin: PARTNER_ORDER_ORIGIN,
         currency_id: ORDER_CURRENCY,

@@ -44,6 +44,12 @@ describe('contrato partnerOrder.type con integration', () => {
         expect(order.currency_id).toBe('PEN')
     })
 
+    it('genera el número de pedido en el BFF y descarta el del navegador', () => {
+        const order = buildCheckoutDraft(draft({ code: 'PEDIDO-MANIPULADO' }), context)
+        expect(order.code).toMatch(/^[0-9]{12}$/)
+        expect(order.code.startsWith('260828')).toBe(true)
+    })
+
     it('rechaza el type legacy numérico', () => {
         expect(() => buildCheckoutDraft(draft({ type: 2 }), context)).toThrow(
             'INVALID_ORDER_TYPE',
