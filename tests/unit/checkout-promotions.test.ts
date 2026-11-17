@@ -121,6 +121,7 @@ describe('promociones del checkout', () => {
             amount: 0,
             promotions: [{ key: 'inventada' }],
             delivery_date: '2026-08-23',
+            delivery_address_data: { ubigeo1: { province: 'Lima' } },
             partner_order_lines: [{
                 article_id: 'product-1',
                 quantity: 1,

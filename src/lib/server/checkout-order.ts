@@ -17,8 +17,26 @@ import { generateOrderCode } from './order-code'
 
 type CheckoutDraft = Record<string, any>
 
+const CHECKOUT_MAX_QUANTITY = 100
+
 function hasCustomerSession(context: APIContext) {
     return context.cookies.has(ACCESS_COOKIE) || context.cookies.has(REFRESH_COOKIE)
+}
+
+function isLimaProvince(value: unknown) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toUpperCase() === 'LIMA'
+}
+
+function netUnitPrice(item: CheckoutDraft) {
+    const price = Number(item.unit_price)
+    if (String(item.igv_afectacion) !== '10') return price
+    const rate = Number(item.igv_porcentaje)
+    if (!Number.isFinite(rate) || rate <= 0) return price
+    return price / (1 + rate / 100)
 }
 
 export function buildCheckoutDraft(
@@ -46,6 +64,13 @@ export function buildCheckoutDraft(
     if (!isDeliveryDateAllowed(draft.delivery_date, now)) {
         throw new Error('INVALID_DELIVERY_DATE')
     }
+    const deliveryUbigeo = draft.delivery_address_data?.ubigeo1 || {}
+    if (
+        draft.delivery_type === 'envio' &&
+        !isLimaProvince(deliveryUbigeo.province ?? deliveryUbigeo.provincia)
+    ) {
+        throw new Error('DELIVERY_OUTSIDE_LIMA')
+    }
 
     const sourceItems = Array.isArray(draft.partner_order_lines)
         ? draft.partner_order_lines
@@ -57,6 +82,8 @@ export function buildCheckoutDraft(
         article_id: String(item.article_id || ''),
         quantity: Number(item.quantity),
         unit_price: Number(item.unit_price),
+        igv_afectacion: item.igv_afectacion,
+        igv_porcentaje: item.igv_porcentaje,
         line_name: item.line_name,
         presentation: item.presentation,
         blend_data: item.blend_data,
@@ -67,6 +94,7 @@ export function buildCheckoutDraft(
                 !item.article_id ||
                 !Number.isFinite(item.quantity) ||
                 item.quantity <= 0 ||
+                item.quantity > CHECKOUT_MAX_QUANTITY ||
                 !Number.isFinite(item.unit_price) ||
                 item.unit_price < 0,
         )
@@ -96,6 +124,7 @@ export function buildCheckoutDraft(
         type: PARTNER_ORDER_TYPE,
         origin: PARTNER_ORDER_ORIGIN,
         currency_id: ORDER_CURRENCY,
+        payment_method: 'tarjeta',
         amount: promotionQuote.total,
         delivery_cost: promotionQuote.deliveryCost,
         ...(guestPartnerId ? { partner_id: guestPartnerId } : {}),
@@ -123,7 +152,7 @@ export function buildCheckoutDraft(
         partner_order_lines: items.map((item) => ({
             article_id: item.article_id,
             quantity: item.quantity,
-            unit_price: item.unit_price,
+            unit_price: netUnitPrice(item),
             ...(item.blend_data === undefined ? {} : { blend_data: item.blend_data }),
         })),
     }
@@ -177,6 +206,14 @@ export function prepareCheckoutOrder(
                 'invalid-pickup-location',
                 'Punto de retiro no válido',
                 'Selecciona uno de los puntos de retiro disponibles.',
+            )
+        }
+        if (error instanceof Error && error.message === 'DELIVERY_OUTSIDE_LIMA') {
+            return failure(
+                422,
+                'delivery-outside-lima',
+                'Dirección no disponible',
+                'Los envíos solo están disponibles para distritos de Lima Metropolitana.',
             )
         }
         return failure(422, 'invalid-cart', 'Carrito no válido', 'No se pudo validar el carrito.')

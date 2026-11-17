@@ -462,7 +462,7 @@ const orderTitle = pedido
                                                             </p>
                                                         </div>
                                                         <strong class="shrink-0 text-sm font-semibold text-sunka-forest">
-                                                            S/ {(item.unit_price * item.quantity).toFixed(2)}
+                                                            S/ {Number(item.total ?? item.unit_price * item.quantity).toFixed(2)}
                                                         </strong>
                                                     </article>
                                                 )

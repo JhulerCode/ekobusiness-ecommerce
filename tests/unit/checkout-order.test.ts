@@ -19,6 +19,8 @@ function draft(overrides: Record<string, unknown> = {}) {
                 article_id: 'product-1',
                 quantity: 1,
                 unit_price: 20,
+                igv_afectacion: '10',
+                igv_porcentaje: 18,
                 line_name: 'Tradicional',
                 presentation: [{ label: 'Saquitos', value: 50 }],
             },
@@ -42,6 +44,7 @@ describe('contrato partnerOrder.type con integration', () => {
         expect(order.type).toBe('sale')
         expect(order.origin).toBe('integration')
         expect(order.currency_id).toBe('PEN')
+        expect(order.payment_method).toBe('tarjeta')
     })
 
     it('genera el número de pedido en el BFF y descarta el del navegador', () => {
@@ -102,19 +105,23 @@ describe('contrato partnerOrder.type con integration', () => {
 })
 
 describe('preparación del pedido del checkout', () => {
-    it('conserva el precio visto para que el ERP lo revalide', () => {
+    it('envía al ERP el precio neto y conserva el total mostrado', () => {
         const order = buildCheckoutDraft(
-            draft({ partner_order_lines: [{ article_id: 'product-1', quantity: 1, unit_price: 1 }] }),
+            draft({
+                partner_order_lines: [
+                    {
+                        article_id: 'product-1',
+                        quantity: 1,
+                        unit_price: 20,
+                        igv_afectacion: '10',
+                        igv_porcentaje: 18,
+                    },
+                ],
+            }),
             context,
         )
-        expect(order.partner_order_lines).toEqual([
-            {
-                article_id: 'product-1',
-                quantity: 1,
-                unit_price: 1,
-            },
-        ])
-        expect(order.amount).toBe(1)
+        expect(order.partner_order_lines[0].unit_price).toBeCloseTo(20 / 1.18, 10)
+        expect(order.amount).toBe(20)
         expect(order.delivery_cost).toBe(0)
     })
 
@@ -123,6 +130,7 @@ describe('preparación del pedido del checkout', () => {
             [],
             [{ article_id: '', quantity: 1, unit_price: 20 }],
             [{ article_id: 'product-1', quantity: 0, unit_price: 20 }],
+            [{ article_id: 'product-1', quantity: 101, unit_price: 20 }],
             [{ article_id: 'product-1', quantity: 1 }],
             [{ article_id: 'product-1', quantity: 1, unit_price: -1 }],
         ]) {
@@ -137,6 +145,7 @@ describe('preparación del pedido del checkout', () => {
             draft({
                 delivery_type: 'envio',
                 delivery_ubigeo_id: '150101',
+                delivery_address_data: { ubigeo1: { province: 'Lima' } },
                 partner_order_lines: [
                     {
                         article_id: 'product-1',
@@ -181,6 +190,30 @@ describe('preparación del pedido del checkout', () => {
                 { now: new Date('2026-08-28T21:00:00.000Z') },
             ),
         ).toThrow('INVALID_DELIVERY_DATE')
+    })
+
+    it('el servidor rechaza un envío fuera de la cobertura de la tienda', () => {
+        expect(() =>
+            buildCheckoutDraft(
+                draft({
+                    delivery_type: 'envio',
+                    delivery_ubigeo_id: '080101',
+                    delivery_address_data: { ubigeo1: { province: 'Cusco' } },
+                }),
+                context,
+            ),
+        ).toThrow('DELIVERY_OUTSIDE_LIMA')
+
+        expect(
+            buildCheckoutDraft(
+                draft({
+                    delivery_type: 'envio',
+                    delivery_ubigeo_id: '150101',
+                    delivery_address_data: { ubigeo1: { province: 'Lima' } },
+                }),
+                context,
+            ).delivery_address_data.ubigeo1,
+        ).toEqual({ province: 'Lima' })
     })
 
     it('el servidor guarda el punto de retiro oficial y descarta una dirección manipulada', () => {

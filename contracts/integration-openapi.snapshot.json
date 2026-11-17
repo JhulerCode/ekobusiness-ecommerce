@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ITD ERP Integration API",
-    "version": "10.0.0",
+    "version": "11.0.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/v1/docs."
   },
   "servers": [
@@ -70,6 +70,7 @@
     "urn:itderp:problem:partner-order-code-conflict",
     "urn:itderp:problem:partner-order-code-invalid",
     "urn:itderp:problem:partner-order-contact-not-found",
+    "urn:itderp:problem:partner-order-currency-invalid",
     "urn:itderp:problem:partner-order-delivery-cost-invalid",
     "urn:itderp:problem:partner-order-delivery-location-invalid",
     "urn:itderp:problem:partner-order-delivery-type-invalid",
@@ -92,6 +93,7 @@
     "urn:itderp:problem:partner-order-order-not-open",
     "urn:itderp:problem:partner-order-partner-not-found",
     "urn:itderp:problem:partner-order-partner-role-invalid",
+    "urn:itderp:problem:partner-order-payment-method-invalid",
     "urn:itderp:problem:partner-order-price-changed",
     "urn:itderp:problem:partner-order-price-invalid",
     "urn:itderp:problem:partner-order-required-fields-missing",
@@ -100,7 +102,6 @@
     "urn:itderp:problem:payment-attempt-customer-session-invalid",
     "urn:itderp:problem:payment-attempt-data-map-missing",
     "urn:itderp:problem:payment-attempt-data-mismatch",
-    "urn:itderp:problem:payment-attempt-delivery-outside-lima",
     "urn:itderp:problem:payment-attempt-ids-required",
     "urn:itderp:problem:payment-attempt-intent-expired",
     "urn:itderp:problem:payment-attempt-intent-not-cancellable",
@@ -604,7 +605,7 @@
             "CustomerBearer": []
           }
         ],
-        "description": "Registra un pedido de venta y sus líneas sin crear un intento de pago. Reprecia las líneas con el precio vigente del catálogo, valida el ubigeo de entrega y exige el socio de la empresa cuando no hay sesión de cliente. El `code` lo define el consumidor y el ERP solo verifica su unicidad. El pago se inicia después con los recursos de /payments.",
+        "description": "Registra un pedido de venta y sus líneas sin crear un intento de pago. Valida que cada `unit_price` neto corresponda a un precio publicado del artículo convertido a neto, que la moneda y el medio de pago existan en sus catálogos y que el ubigeo de entrega exista; exige el socio de la empresa cuando no hay sesión de cliente. El `code` lo define el consumidor y el ERP solo verifica su unicidad. El pago se inicia después con los recursos de /payments.",
         "requestBody": {
           "required": true,
           "content": {
@@ -796,7 +797,7 @@
         "x-scopes": [
           "payments:write"
         ],
-        "description": "Registra el pedido, sus líneas y el intento de pago. Reprecia las líneas con el catálogo vigente, rechaza precios que ya no coinciden y valida el ubigeo de entrega; todas las escrituras ocurren en una transacción. El `code` lo define el consumidor, se guarda como `order_code` del intento y debe ser único por empresa. Devuelve el acceso al intento y al pedido; la sesión del proveedor se emite después.",
+        "description": "Registra el pedido, sus líneas y el intento de pago. Valida que cada `unit_price` neto corresponda a un precio publicado del artículo convertido a neto, que la moneda y el medio de pago existan en sus catálogos y que el ubigeo de entrega exista; el checkout de pasarela exige tarjeta. Todas las escrituras ocurren en una transacción. El `code` lo define el consumidor, se guarda como `order_code` del intento y debe ser único por empresa. Devuelve el acceso al intento y al pedido; la sesión del proveedor se emite después.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1592,10 +1593,11 @@
               },
               "amount": {
                 "type": "number",
-                "description": "Total del pedido en PEN"
+                "description": "Total del pedido en su moneda"
               },
               "currency": {
-                "const": "PEN"
+                "type": "string",
+                "description": "Código ISO 4217 del pedido"
               },
               "expires_at": {
                 "type": "string",
@@ -1668,10 +1670,11 @@
               },
               "amount": {
                 "type": "number",
-                "description": "Total del pedido en PEN"
+                "description": "Total del pedido en su moneda"
               },
               "currency": {
-                "const": "PEN"
+                "type": "string",
+                "description": "Código ISO 4217 del pedido"
               },
               "expires_at": {
                 "type": "string",
@@ -1796,10 +1799,11 @@
               },
               "amount": {
                 "type": "number",
-                "description": "Total del pedido en PEN"
+                "description": "Total del pedido en su moneda"
               },
               "currency": {
-                "const": "PEN"
+                "type": "string",
+                "description": "Código ISO 4217 del pedido"
               },
               "checkout_intent_id": {
                 "type": "string"
@@ -2049,13 +2053,12 @@
           },
           "quantity": {
             "type": "number",
-            "exclusiveMinimum": 0,
-            "maximum": 100
+            "exclusiveMinimum": 0
           },
           "unit_price": {
             "type": "number",
             "minimum": 0,
-            "description": "Precio unitario que vio el consumidor. La creación del pedido lo rechaza si no coincide con el catálogo vigente."
+            "description": "Precio unitario neto, sin IGV. Debe coincidir con un precio publicado del artículo convertido a neto (list_price, ecommerce_data.price o ecommerce_data.club_price). Si se omite, se usa list_price."
           },
           "blend_data": {}
         },
@@ -2077,7 +2080,7 @@
           },
           "type": {
             "const": "sale",
-            "description": "�anico tipo aceptado por ecommerce. Valores legacy 1/2 o 'purchase' se rechazan."
+            "description": "Único tipo aceptado por ecommerce. Valores legacy 1/2 o 'purchase' se rechazan."
           },
           "origin": {
             "const": "integration"
@@ -2092,7 +2095,6 @@
           "partner_order_lines": {
             "type": "array",
             "minItems": 1,
-            "maxItems": 50,
             "items": {
               "$ref": "#/components/schemas/OrderLineInput"
             }
@@ -2119,16 +2121,19 @@
           },
           "delivery_cost": {
             "type": "number",
-            "minimum": 0
+            "minimum": 0,
+            "description": "Cargo final de entrega; se suma tal como se envía y la factura lo convierte a valor neto."
+          },
+          "currency_id": {
+            "type": "string",
+            "description": "Código ISO 4217 de la moneda del pedido. Si se omite, se usa la moneda de la empresa; si se envía, debe existir en el catálogo."
           },
           "payment_term": {
             "type": "string"
           },
           "payment_method": {
             "type": "string",
-            "enum": [
-              "tarjeta"
-            ]
+            "description": "Debe existir en el catálogo payment_methods. El checkout de pasarela exige tarjeta."
           },
           "invoice_type": {
             "type": "string",
@@ -2177,9 +2182,7 @@
           },
           "payment_method": {
             "type": "string",
-            "enum": [
-              "tarjeta"
-            ]
+            "description": "Debe existir en el catálogo payment_methods."
           },
           "payment_status": {
             "type": "string"
@@ -2193,7 +2196,7 @@
           },
           "amount": {},
           "currency_id": {
-            "const": "PEN"
+            "type": "string"
           },
           "status": {
             "type": "string"
@@ -2228,7 +2231,20 @@
             "type": "number"
           },
           "unit_price": {
-            "type": "number"
+            "type": "number",
+            "description": "Valor unitario neto, sin IGV."
+          },
+          "subtotal": {
+            "type": "number",
+            "description": "Importe neto de la línea."
+          },
+          "igv": {
+            "type": "number",
+            "description": "IGV de la línea."
+          },
+          "total": {
+            "type": "number",
+            "description": "Importe de la línea con IGV."
           },
           "article": {
             "type": "object"
@@ -2257,7 +2273,7 @@
             "$ref": "#/components/schemas/PartnerData"
           },
           "currency_id": {
-            "const": "PEN"
+            "type": "string"
           },
           "amount": {},
           "status": {
@@ -2294,9 +2310,7 @@
           "delivery_cost": {},
           "payment_method": {
             "type": "string",
-            "enum": [
-              "tarjeta"
-            ]
+            "description": "Debe existir en el catálogo payment_methods."
           },
           "invoice_type": {
             "type": "string",
@@ -2571,10 +2585,11 @@
               },
               "amount": {
                 "type": "number",
-                "description": "Total del pedido en PEN"
+                "description": "Total del pedido en su moneda"
               },
               "currency": {
-                "const": "PEN"
+                "type": "string",
+                "description": "Código ISO 4217 del pedido"
               },
               "order_access_token": {
                 "type": "string"
