@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "ITD ERP Integration API",
+    "title": "DivergeCore Integration API",
     "version": "11.0.0",
     "description": "API server-to-server. No acepta Origin, x-company ni qry. Contrato versionado: ver CHANGELOG.md. Documentación viva en /api/v1/docs."
   },
