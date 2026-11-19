@@ -62,6 +62,17 @@ export function invalidRequest() {
     return json(failure(400, 'invalid-request', 'Solicitud no válida', 'Los datos enviados no son válidos.'))
 }
 
+export function invalidCaptcha() {
+    return json(
+        failure(
+            400,
+            'invalid-captcha',
+            'Verificación humana no válida',
+            'No se pudo validar el captcha.',
+        ),
+    )
+}
+
 export function forbiddenOrigin() {
     return json(failure(403, 'origin-forbidden', 'Origen no permitido', 'Origen de solicitud no permitido.'))
 }

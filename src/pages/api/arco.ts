@@ -1,7 +1,16 @@
 import type { APIRoute } from 'astro'
 import { allowedUploadTypes, arcoMetadataSchema, maxUploadBytes } from '@/lib/api-schemas'
 import { backendRequest, getClientIp } from '@/lib/server/backend'
-import { emailDeliveryWarning, failure, assertSameOrigin, forbiddenOrigin, invalidRequest, json } from '@/lib/server/bff'
+import {
+    emailDeliveryWarning,
+    assertSameOrigin,
+    forbiddenOrigin,
+    invalidCaptcha,
+    invalidRequest,
+    failure,
+    json,
+} from '@/lib/server/bff'
+import { verifyCaptcha } from '@/lib/server/captcha'
 import { renderArcoConfirmation } from '@/lib/mail/forms'
 import { sendMail } from '@/lib/server/mail'
 
@@ -25,8 +34,8 @@ export const POST: APIRoute = async (context) => {
     }
     if (!arcoMetadataSchema.safeParse(metadata).success) return invalidRequest()
 
+    const payload = metadata as Record<string, unknown>
     const outgoing = new FormData()
-    outgoing.set('datos', JSON.stringify(metadata))
     let fileCount = 0
     for (const [name, value] of incoming.entries()) {
         if (name === 'datos') continue
@@ -37,25 +46,31 @@ export const POST: APIRoute = async (context) => {
         outgoing.append(name, value, value.name)
     }
 
+    const clientIp = getClientIp(context.request)
+    if (!(await verifyCaptcha(payload.captcha, clientIp))) {
+        return invalidCaptcha()
+    }
+    const { captcha: _captcha, ...forwarded } = payload
+    outgoing.set('datos', JSON.stringify(forwarded))
+
     const result = await backendRequest<{ id: string; code: string }>('forms/arco', {
         method: 'POST',
         body: outgoing,
-        clientIp: getClientIp(context.request),
+        clientIp,
     })
     if (!result.ok) return json(result)
     if (!result.data?.code) {
         return json(failure(502, 'upstream-contract-error', 'Respuesta no válida', 'El servicio devolvió una respuesta no válida.'))
     }
 
-    const data = metadata as Record<string, unknown>
-    const email = String(data.email || '')
+    const email = String(payload.email || '')
     try {
         const mail = renderArcoConfirmation({
-            firstName: String(data.first_name || ''),
-            lastName: String(data.last_name || ''),
+            firstName: String(payload.first_name || ''),
+            lastName: String(payload.last_name || ''),
             code: result.data.code,
-            receivedDate: String(data.received_date || ''),
-            requestType: String(data.request_type || ''),
+            receivedDate: String(payload.received_date || ''),
+            requestType: String(payload.request_type || ''),
             email,
         })
         await sendMail({ to: email, ...mail })

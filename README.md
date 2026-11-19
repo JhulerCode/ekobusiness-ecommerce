@@ -20,6 +20,7 @@ Producción exige una API key activa con los scopes usados por la tienda.
 - `PUBLIC_IZIPAY_PUBLIC_KEY`: clave pública usada por el SDK de pagos.
   Debe corresponder al mismo comercio y ambiente que las credenciales privadas Izipay del backend; Astro la incorpora durante el build.
 - `PUBLIC_RECAPTCHA_SITE_KEY`: site key pública de reCAPTCHA.
+- `RECAPTCHA_SECRET_KEY`: clave privada de reCAPTCHA; el BFF valida el token de los formularios ARCO y libro de reclamaciones antes de reenviarlos al ERP. Nunca se publica en el bundle.
 
 `PUBLIC_API_URL` ya no se utiliza.
 
@@ -41,6 +42,7 @@ La primera ejecución E2E requiere `pnpm exec playwright install chromium`.
 - Access y refresh tokens se almacenan en cookies `HttpOnly`, `SameSite=Lax` y `Secure` en producción.
 - Los tokens temporales de pedido se guardan en cookies con scope por pedido. El enlace del correo de confirmación intercambia el token por una cookie y redirige a la URL limpia del pedido.
 - Las rutas mutables del BFF validan `Origin`; las entradas sensibles se validan con Zod.
+- Los formularios ARCO y libro de reclamaciones validan reCAPTCHA en el BFF; el token se consume y no se reenvía al ERP.
 - El IPN de Izipay entra directamente a Express en `/providers/izipay/ipn` y valida su firma.
 - Catálogo, sistema y ubigeos permiten caché pública corta. Cuenta, pedidos y pagos son `no-store`.
 

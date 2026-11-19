@@ -113,6 +113,24 @@
             </div>
         </div>
 
+        <!-- Captcha -->
+        <div class="flex flex-col gap-2 mt-6">
+            <label class="label">Verificación humana*</label>
+            <div class="flex">
+                <div
+                    class="g-recaptcha"
+                    :data-sitekey="siteKey"
+                    ref="recaptchaContainer"
+                ></div>
+            </div>
+            <p
+                v-if="errors.captcha"
+                class="text-left text-red-500 text-xs mt-1 ml-2"
+            >
+                {{ errors.captcha }}
+            </p>
+        </div>
+
         <div class="flex flex-col items-center">
             <JdButton text="Enviar" @click="enviar" :loading="loading" class="!w-60" />
 
@@ -160,6 +178,10 @@ export default defineComponent({
     },
     data() {
         return {
+            siteKey: import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY,
+            recaptchaContainer: null,
+            widgetId: null,
+
             loading: false,
             enviado: false,
             resMsg: "",
@@ -183,6 +205,10 @@ export default defineComponent({
             ],
         };
     },
+    mounted() {
+        this.recaptchaContainer = this.$refs.recaptchaContainer;
+        this.tryRender();
+    },
     methods: {
         validateForm() {
             Object.keys(this.errors).forEach((k) => (this.errors[k] = ""));
@@ -203,6 +229,7 @@ export default defineComponent({
             if (!this.form.claim_type) this.errors.claim_type = "Seleccione un tipo de solicitud.";
             if (!this.form.summary) this.errors.summary = "Resuma su reclamo.";
             if (!this.form.description) this.errors.description = "Describa su solicitud.";
+            if (!this.form.captcha) this.errors.captcha = "Resuelve el captcha.";
 
             return Object.values(this.errors).every((e) => !e);
         },
@@ -210,6 +237,26 @@ export default defineComponent({
             this.form.received_date = new Date();
         },
         async enviar() {
+            if (this.loading) return;
+
+            if (
+                window.grecaptcha &&
+                typeof window.grecaptcha.getResponse === "function"
+            ) {
+                try {
+                    const token =
+                        this.widgetId !== null
+                            ? window.grecaptcha.getResponse(this.widgetId)
+                            : window.grecaptcha.getResponse();
+                    if (token) {
+                        this.form.captcha = token;
+                        this.errors.captcha = "";
+                    }
+                } catch (err) {
+                    console.warn("No se pudo leer token grecaptcha:", err);
+                }
+            }
+
             if (!this.validateForm()) return;
 
             this.shapeDatos();
@@ -224,10 +271,74 @@ export default defineComponent({
                 this.errors.general = res.warnings?.[0]?.detail || '';
                 this.enviado = true;
 
+                try {
+                    if (
+                        window.grecaptcha &&
+                        typeof window.grecaptcha.reset === "function"
+                    ) {
+                        if (this.widgetId !== null)
+                            window.grecaptcha.reset(this.widgetId);
+                        else window.grecaptcha.reset();
+                    }
+                } catch (err) {
+                    console.warn("Error al resetear grecaptcha:", err);
+                }
+
+                this.form.captcha = "";
+
                 window.scrollTo({
                     top: 0,
                     behavior: "smooth",
                 });
+            }
+        },
+
+        renderRecaptcha() {
+            if (!this.recaptchaContainer) return;
+
+            if (this.recaptchaContainer.hasChildNodes()) {
+                if (
+                    window.grecaptcha &&
+                    typeof window.grecaptcha.getResponse === "function"
+                ) {
+                    const token = window.grecaptcha.getResponse();
+                    if (token) {
+                        this.form.captcha = token;
+                        this.errors.captcha = "";
+                    }
+                }
+                return;
+            }
+
+            try {
+                this.widgetId = window.grecaptcha.render(
+                    this.recaptchaContainer,
+                    {
+                        sitekey: this.siteKey,
+                        callback: (token) => {
+                            this.form.captcha = token;
+                            this.errors.captcha = "";
+                        },
+                        'expired-callback': () => {
+                            this.form.captcha = "";
+                            this.errors.captcha =
+                                "El captcha ha expirado, por favor verifíquelo nuevamente.";
+                        },
+                    }
+                );
+            } catch (err) {
+                console.error("❌ Error renderizando reCAPTCHA:", err);
+            }
+        },
+
+        tryRender() {
+            if (
+                window.grecaptcha &&
+                typeof window.grecaptcha.render === "function"
+            ) {
+                window.grecaptcha.ready(() => this.renderRecaptcha());
+            } else {
+                setTimeout(this.tryRender, 300);
             }
         },
     },
